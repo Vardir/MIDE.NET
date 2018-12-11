@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="API\Components\Containers\" />
+    <Folder Include="API\Extensibility\" />
+    <Folder Include="API\Modules\" />
+  </ItemGroup>
+
+</Project>
