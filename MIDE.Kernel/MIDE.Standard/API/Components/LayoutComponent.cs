@@ -8,6 +8,8 @@ namespace MIDE.Standard.API.Components
         private bool isEnabled;
         private GridLength width;
         private GridLength height;
+        private BoundingBox margin;
+        private BoundingBox padding;
         private LayoutComponent parent;
         
         public bool IsEnabled
@@ -44,6 +46,28 @@ namespace MIDE.Standard.API.Components
                 OnPropertyChanged(nameof(Height));
             }
         }
+        public virtual BoundingBox Margin
+        {
+            get => margin;
+            set
+            {
+                if (margin == value)
+                    return;
+                margin = value;
+                OnPropertyChanged(nameof(Margin));
+            }
+        }
+        public virtual BoundingBox Padding
+        {
+            get => padding;
+            set
+            {
+                if (padding == value)
+                    return;
+                padding = value;
+                OnPropertyChanged(nameof(Padding));
+            }
+        }
         public LayoutComponent Parent
         {
             get => parent;
@@ -61,6 +85,8 @@ namespace MIDE.Standard.API.Components
         public LayoutComponent(string id)
         {
             Id = id;
+            width = GridLength.Auto;
+            height = GridLength.Auto;
         }
 
         protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));

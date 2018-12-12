@@ -4,10 +4,10 @@ using MIDE.Standard.Helpers;
 namespace MIDE.Standard.API.Measurements
 {
     /// <summary>
-    /// <para>A class to represent the </para>
+    /// <para>A class to represent the size-measurement properties of the layout components</para>
     /// <para>Expected formats: x% -- percentage, x* -- relative, x -- points</para>
     /// </summary>
-    public struct GridLength
+    public struct GridLength : IEquatable<GridLength>, IComparable<GridLength>
     {
         public static GridLength Auto => new GridLength(double.NaN, GridLengthType.Auto);
 
@@ -24,7 +24,28 @@ namespace MIDE.Standard.API.Measurements
         {
             Value = value;
             Type = type;
-        }        
+        }
+
+        public bool Equals(GridLength other) => Value == other.Value && Type == other.Type;
+        public override bool Equals(object obj) => obj is GridLength gl && Equals(gl);
+        public override int GetHashCode()
+        {
+            var hashCode = 1574897;
+            hashCode *= -152295 + Value.GetHashCode();
+            hashCode *= -152295 + Type.GetHashCode();
+            return hashCode & 0xFFF;
+        }
+        public int CompareTo(GridLength other)
+        {
+            if (Type == other.Type)
+            {
+                if (Value < other.Value)
+                    return 1;
+                if (Value > other.Value)
+                    return 1;
+            }
+            return 0;
+        }
 
         /// <summary>
         /// Parses the given string and returns the parsed value
@@ -93,6 +114,11 @@ namespace MIDE.Standard.API.Measurements
                     return (1.0, GridLengthType.Relative);
                 return (double.Parse(value.Clamp(value.Length - 1)), GridLengthType.Relative);
             }
+            if (value.Length == 4)
+            {
+                if (value.Equals("auto", StringComparison.OrdinalIgnoreCase))
+                    return (double.NaN, GridLengthType.Auto);
+            }
             return (double.Parse(value), GridLengthType.Points);
         }
     }
@@ -104,5 +130,5 @@ namespace MIDE.Standard.API.Measurements
         Percentage,
         Relative,
         Points
-    }
+    }    
 }

@@ -1,4 +1,4 @@
-﻿namespace MIDE.Standard.API.Components.Modal
+﻿namespace MIDE.Standard.API.Components
 {
     public class RadioButton : CheckBox
     {

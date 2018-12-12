@@ -1,4 +1,6 @@
-﻿namespace MIDE.Standard.API.Components
+﻿using System;
+
+namespace MIDE.Standard.API.Components
 {
     public class CheckBox : LayoutComponent
     {
@@ -13,9 +15,12 @@
                     return;
                 isChecked = value;
                 OnPropertyChanged(nameof(IsChecked));
+                CheckedChanged?.Invoke(isChecked);
                 OnCheckedChanged();
             }
         }
+
+        public event Action<bool> CheckedChanged;
 
         public CheckBox(string id) : base(id) {}
 
