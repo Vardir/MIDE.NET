@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:simpleType name="aliases">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Root" />
+      <xs:enumeration value="Installed" />
+      <xs:enumeration value="Themes" />
+      <xs:enumeration value="AppAssets" />
+      <xs:enumeration value="UserSettings" />
+      <xs:enumeration value="DefaultForSolutions" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- definition of simple elements -->
+  <!--<xs:element name="n" type="xs:string" nillable="false" />-->
+
+  <!-- definition of attributes -->
+  <!--<xs:attribute name="orderid" type="xs:string"/>-->
+
+  <!-- definition of complex elements -->
+  <xs:element name="path">
+    <xs:complexType>
+      <xs:attribute name="value" use="required" type="xs:string" />
+      <xs:attribute name="alias" use="required" type="aliases"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="app.paths">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="path" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="config">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="app.paths" minOccurs="1" maxOccurs="1"/>
+      </xs:sequence>
+      <!--<xs:attribute ref="orderid" use="required"/>-->
+    </xs:complexType>
+  </xs:element>
+  
+</xs:schema>

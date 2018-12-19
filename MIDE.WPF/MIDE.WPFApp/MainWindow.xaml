@@ -1,0 +1,62 @@
+﻿<Window x:Class="MIDE.WPFApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MIDE.WPFApp"
+        xmlns:controls="clr-namespace:MIDE.WPFApp.Controls"
+        mc:Ignorable="d"
+        WindowStyle="None"
+        Height="500" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="150" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="150"/>
+        </Grid.ColumnDefinitions>
+        
+        <Menu Grid.Row="0" Grid.ColumnSpan="5">
+            
+        </Menu>
+        <ToolBar Grid.Row="1" Grid.ColumnSpan="5">
+
+        </ToolBar>
+
+        <TabControl Grid.Row="2" Grid.RowSpan="3"
+                    Name="ExplorerGroup">
+
+        </TabControl>
+        <GridSplitter Grid.Column="1" Grid.Row="2"
+                      Width="3" ResizeDirection="Columns"
+                      ResizeBehavior="PreviousAndCurrent"/>
+        <TabControl Grid.Row="2" Grid.Column="2"
+                    Name="EditorGroup">
+
+        </TabControl>
+        <GridSplitter Grid.Column="3" Grid.Row="2"
+                      Width="3" ResizeDirection="Columns"
+                      ResizeBehavior="PreviousAndNext"/>
+        <TabControl Grid.Row="2" Grid.Column="4" Grid.RowSpan="3"
+                    Name="PropertiesViewGroup">
+
+        </TabControl>
+        <GridSplitter Grid.Column="2" Grid.Row="3"
+                      Height="3" ResizeDirection="Rows"
+                      HorizontalAlignment="Stretch"
+                      ResizeBehavior="PreviousAndNext"/>
+
+        <TabControl Grid.Row="4" Grid.Column="2"
+                    Name="LogGroup">
+
+        </TabControl>
+    </Grid>
+</Window>

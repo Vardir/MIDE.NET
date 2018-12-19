@@ -1,13 +1,37 @@
 ﻿using System.Reflection;
+using System.Collections.Generic;
+using MIDE.Standard.Application.Configuration;
 
 namespace MIDE.Standard.FileSystem
 {
-    public class FileManager
+    public abstract class FileManager
     {
-        public Assembly LoadAssembly(string path)
+        protected Dictionary<ApplicationPath, string> paths;
+
+        public FileManager()
         {
-            //TODO: load assembly by the given path
-            return null;
+            paths = new Dictionary<ApplicationPath, string>();
+            foreach (var path in LoadPaths())
+            {
+                if (!paths.ContainsKey(path.Item1))
+                    paths.Add(path.Item1, path.Item2);
+                else
+                    paths[path.Item1] = path.Item2;
+            }
         }
+
+        public virtual string GetPath(ApplicationPath folder) => paths[folder];
+
+        public abstract string MapPath(string path);
+        public abstract Assembly LoadAssembly(string path);
+        public abstract IEnumerable<Config> LoadConfigurations();
+
+        protected abstract IEnumerable<(ApplicationPath, string)> LoadPaths();
+    }
+
+    public enum ApplicationPath
+    {
+        UserSettings, DefaultForSolutions,
+        AppAssets, Root, Installed, Themes
     }
 }

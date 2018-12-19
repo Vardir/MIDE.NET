@@ -10,7 +10,7 @@ namespace MIDE.Standard.API.Extensibility
         private readonly List<Module> modules;
 
         public string Id { get; }
-        public App Application { get; internal set; }
+        public AppKernel Application { get; internal set; }
         public IEnumerable<Module> Modules => modules;
 
         public AppExtension(string id)
