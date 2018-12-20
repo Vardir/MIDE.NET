@@ -6,25 +6,22 @@ using MIDE.Standard.API.Components;
 
 namespace MIDE.Standard.API.Extensibility
 {
-    public abstract class AppExtension : IApplicationComponent, IDisposable
+    public abstract class AppExtension : ApplicationComponent, IDisposable
     {
         private readonly List<Module> modules;
 
         public bool IsInitialized { get; private set; }
-        public string Id { get; }
         public AppKernel Kernel { get; internal set; }
         public IEnumerable<Module> Modules => modules;
 
-        public AppExtension(string id)
+        public AppExtension(string id) : base(id)
         {
-            Id = id;
             modules = new List<Module>();
         }
         
         public void Initialize()
         {
-            var menuContext = new MenuConstructionContext(Kernel.ApplicationMenu);
-            RegisterMenuItems(menuContext);
+            RegisterMenuItems(Kernel.ApplicationMenu);
         }
         public void Unload()
         {
@@ -59,7 +56,7 @@ namespace MIDE.Standard.API.Extensibility
             modules.Add(module);
         }
 
-        protected abstract void RegisterMenuItems(MenuConstructionContext context);
+        protected abstract void RegisterMenuItems(IMenuConstructionContext context);
 
         public void Dispose()
         {

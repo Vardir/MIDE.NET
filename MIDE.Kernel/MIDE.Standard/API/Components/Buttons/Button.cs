@@ -1,5 +1,4 @@
 ﻿using System;
-using MIDE.Standard.Helpers;
 
 namespace MIDE.Standard.API.Components
 {
@@ -22,7 +21,7 @@ namespace MIDE.Standard.API.Components
         
         public Button(string id) : base(id)
         {
-            Caption = this.FormatId();
+            Caption = FormatId();
         }
 
         public virtual void Press() => Pressed?.Invoke();

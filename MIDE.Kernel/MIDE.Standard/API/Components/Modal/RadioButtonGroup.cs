@@ -3,15 +3,12 @@ using System.Collections.Generic;
 
 namespace MIDE.Standard.API.Components
 {
-    public class RadioButtonGroup : IApplicationComponent
+    public class RadioButtonGroup : ApplicationComponent
     {
         private readonly List<RadioButton> radioButtons;
 
-        public string Id { get; }
-
-        public RadioButtonGroup(string id)
+        public RadioButtonGroup(string id) : base(id)
         {
-            Id = id;
             radioButtons = new List<RadioButton>();
         }
 

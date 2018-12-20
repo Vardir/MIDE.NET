@@ -29,9 +29,14 @@ namespace MIDE.Standard.Application
         {
             extensions = new List<AppExtension>();
             ApplicationMenu = new Menu("app-menu");
+            PopulateMenu();
         }
-
-        public void SetFileManager() { }
+        
+        /// <summary>
+        /// Starts the application kernel
+        /// </summary>
+        /// <exception cref="ApplicationException"></exception>
+        /// <exception cref="NullReferenceException"></exception>
         public void Start()
         {
             if (isRunning)
@@ -48,27 +53,16 @@ namespace MIDE.Standard.Application
             var configs = FileManager.LoadConfigurations();
             ConfigurationManager.Instance.AddRange(configs);
             LoadExtensions();
-        }
-        public void LoadExtensions()
-        {
-            //TODO: load extensions DLLs
-            //Assembly assembly = Assembly.LoadFrom("file");
-            //var types = assembly.GetTypes();
-            //for (int i = 0; i < types.Length; i++)
-            //{
-            //    bool isExtension = types[i].IsSubclassOf(typeof(AppExtension));
-            //    if (isExtension)
-            //    {
-            //        //TODO: add extension
-            //    }
-            //}
-        }
+        }        
+        /// <summary>
+        /// Stops all the current threads, releases all resources and closes the application kernel
+        /// </summary>
+        /// <exception cref="ApplicationException"></exception>
         public void Exit()
         {
             if (!isRunning)
-                throw new InvalidOperationException("Can not exit application that is not started");
+                throw new ApplicationException("Can not exit application that is not started");
             isRunning = false;
-            UnloadSolution();
             ClearTemporaryFiles();
             Dispose();
         }
@@ -86,6 +80,12 @@ namespace MIDE.Standard.Application
         }
         public override string ToString() => $"KERNEL >> {callingAssembly?.FullName ?? "?"}";
 
+        /// <summary>
+        /// Registers the given extension in the internal storage and initializes it
+        /// </summary>
+        /// <param name="extension"></param>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
         public void RegisterExtension(AppExtension extension)
         {
             if (extension == null)
@@ -96,11 +96,38 @@ namespace MIDE.Standard.Application
             extension.Initialize();
             extensions.Add(extension);
         }
-        
-        private void UnloadSolution()
-        {
 
+        /// <summary>
+        /// Populates the application menu with predefined basic items
+        /// </summary>
+        private void PopulateMenu()
+        {
+            ApplicationMenu.AddItem(new MenuButton("file"));
+            ApplicationMenu.AddItem(new MenuButton("edit"));
+            ApplicationMenu.AddItem(new MenuButton("view"));
+            ApplicationMenu.AddItem(new MenuButton("tools"));
+            ApplicationMenu.AddItem(new MenuButton("help"));
         }
+        /// <summary>
+        /// Loads all the extensions that are provided in attached assemblies
+        /// </summary>
+        private void LoadExtensions()
+        {
+            //TODO: load extensions DLLs
+            //Assembly assembly = Assembly.LoadFrom("file");
+            //var types = assembly.GetTypes();
+            //for (int i = 0; i < types.Length; i++)
+            //{
+            //    bool isExtension = types[i].IsSubclassOf(typeof(AppExtension));
+            //    if (isExtension)
+            //    {
+            //        //TODO: add extension
+            //    }
+            //}
+        }
+        /// <summary>
+        /// Unload all the resources that are used by application extensions
+        /// </summary>
         private void UnloadExtensions()
         {
             foreach (var extension in extensions)
@@ -110,11 +137,14 @@ namespace MIDE.Standard.Application
             }
             extensions.Clear();
         }
+        /// <summary>
+        /// Cleans off all the temporary files that was in use by the current application session
+        /// </summary>
         private void ClearTemporaryFiles()
         {
 
         }
-
+       
         private string VerifyAssemblyAttributes()
         {
             bool hasAppPropsAttriburte = false;

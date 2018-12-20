@@ -7,7 +7,7 @@ namespace MIDE.Kernel.ConsoleTest.Extensions
     {
         public TestExtension1(string id) : base(id) { }
 
-        protected override void RegisterMenuItems(MenuConstructionContext context)
+        protected override void RegisterMenuItems(IMenuConstructionContext context)
         {
             var exit = new MenuButton("exit");
             exit.Pressed += Kernel.Exit;

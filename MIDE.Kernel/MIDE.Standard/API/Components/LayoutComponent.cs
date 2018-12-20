@@ -1,25 +1,19 @@
-﻿using System;
-using System.Globalization;
-using System.ComponentModel;
-using MIDE.Standard.Helpers;
-using System.Text.RegularExpressions;
+﻿using System.ComponentModel;
 using MIDE.Standard.API.Measurements;
 
 namespace MIDE.Standard.API.Components
 {
-    public abstract class LayoutComponent : IApplicationComponent, INotifyPropertyChanged
+    /// <summary>
+    /// The base class for all the application components that are required to be visually represented
+    /// </summary>
+    public abstract class LayoutComponent : ApplicationComponent, INotifyPropertyChanged
     {
-        protected readonly TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
-
         private bool isEnabled = true;
         private GridLength width;
         private GridLength height;
         private BoundingBox margin;
         private BoundingBox padding;
         private LayoutComponent parent;
-
-        public const string ID_PATTERN = @"^([a-z]+[a-z0-9\-]*[a-z0-9]+)$";
-        public const string ID_PATTERN_CLEAN = @"[a-z]+[a-z0-9\-]*[a-z0-9]+";
 
         public bool IsEnabled
         {
@@ -32,7 +26,6 @@ namespace MIDE.Standard.API.Components
                 OnPropertyChanged(nameof(IsEnabled));
             }
         }
-        public string Id { get; }
         public virtual GridLength Width
         {
             get => width;
@@ -91,18 +84,11 @@ namespace MIDE.Standard.API.Components
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public LayoutComponent(string id)
-        {
-            if (string.IsNullOrWhiteSpace(id))
-                throw new ArgumentException("The ID must not be empty");
-            if (!Regex.IsMatch(id, ID_PATTERN))
-                throw new FormatException($"The ID '{id}' has invalid format");
-            Id = id;
+        public LayoutComponent(string id) : base(id)
+        {            
             width = GridLength.Auto;
             height = GridLength.Auto;
         }
-        
-        public override string ToString() => this.GetSpec();
 
         protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }

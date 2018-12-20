@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MIDE.WPFApp"
         xmlns:controls="clr-namespace:MIDE.WPFApp.Controls"
+        xmlns:app="clr-namespace:MIDE.Standard.Application;assembly=api"
         mc:Ignorable="d"
         WindowStyle="None"
         Height="500" Width="800">
@@ -24,7 +25,8 @@
             <ColumnDefinition Width="150"/>
         </Grid.ColumnDefinitions>
         
-        <Menu Grid.Row="0" Grid.ColumnSpan="5">
+        <Menu Grid.Row="0" Grid.ColumnSpan="5"
+              ItemsSource="{Binding Menu.MenuItems, Source={x:Static app:AppKernel.Instance}}">
             
         </Menu>
         <ToolBar Grid.Row="1" Grid.ColumnSpan="5">
