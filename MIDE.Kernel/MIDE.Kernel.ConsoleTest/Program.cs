@@ -1,5 +1,6 @@
 ﻿using System;
 using MIDE.Standard.Application;
+using MIDE.Kernel.ConsoleTest.Extensions;
 using MIDE.Standard.Application.Attrubites;
 
 [assembly: ApplicationProperties("consoletest")]
@@ -21,8 +22,10 @@ namespace MIDE.Kernel.ConsoleTest
 
             program.Kernel.FileManager = new WinFileManager();
             program.Kernel.Start();
+            program.Kernel.RegisterExtension(new TestExtension1("test-ext1"));
 
             Console.WriteLine("Press any key to continue...");
+            Console.ReadKey();
             program.Kernel.Exit();
         }
     }

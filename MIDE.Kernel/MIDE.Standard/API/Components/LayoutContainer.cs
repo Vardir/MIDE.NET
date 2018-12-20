@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace MIDE.Standard.API.Components
+﻿namespace MIDE.Standard.API.Components
 {
     public abstract class LayoutContainer : LayoutComponent
     {

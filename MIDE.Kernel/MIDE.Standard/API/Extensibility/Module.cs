@@ -1,8 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace MIDE.Standard.API.Extensibility
 {
-    public abstract class Module
+    public abstract class Module : IDisposable
     {
         protected object _lock = new object();
 
@@ -30,7 +31,15 @@ namespace MIDE.Standard.API.Extensibility
             var result = await Execute();
             IsRunning = false;
             return result;
-        }        
+        }
+
+        public override string ToString() => $"MODULE :: {Id}";
+
+        public void Dispose()
+        {
+            if (IsRunning)
+                Stop();
+        }
 
         protected abstract Task<ModuleExecutionResult> Execute();
     }

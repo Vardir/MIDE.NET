@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using MIDE.Standard.FileSystem;
 using System.Collections.Generic;
+using MIDE.Standard.API.Components;
 using MIDE.Standard.API.Extensibility;
 using MIDE.Standard.Application.Attrubites;
 using MIDE.Standard.Application.Configuration;
@@ -16,16 +17,18 @@ namespace MIDE.Standard.Application
         public static AppKernel Instance => instance ?? (instance = new AppKernel());
 
         private bool isRunning;
-        private Assembly callerAssembly;
+        private Assembly callingAssembly;
         private readonly List<AppExtension> extensions;
 
         public string ApplicationName { get; private set; }
         public FileManager FileManager { get; set; }
+        public Menu ApplicationMenu { get; private set; }
         public IEnumerable<AppExtension> Extensions => extensions;
 
         private AppKernel ()
         {
             extensions = new List<AppExtension>();
+            ApplicationMenu = new Menu("app-menu");
         }
 
         public void SetFileManager() { }
@@ -35,7 +38,7 @@ namespace MIDE.Standard.Application
                 throw new ApplicationException("Application kernel is already loaded and running!");
             if (FileManager == null)
                 throw new NullReferenceException("The FileManager should be assigned before starting the application");
-            callerAssembly = Assembly.GetCallingAssembly();
+            callingAssembly = Assembly.GetCallingAssembly();
             string assemblyVertification = VerifyAssemblyAttributes();
             if (assemblyVertification != null)
                 throw new ApplicationException(assemblyVertification);
@@ -66,7 +69,6 @@ namespace MIDE.Standard.Application
                 throw new InvalidOperationException("Can not exit application that is not started");
             isRunning = false;
             UnloadSolution();
-            UnloadExtensions();
             ClearTemporaryFiles();
             Dispose();
         }
@@ -82,14 +84,16 @@ namespace MIDE.Standard.Application
             //TODO: verify if the module is valid
             return null;
         }
+        public override string ToString() => $"KERNEL >> {callingAssembly?.FullName ?? "?"}";
 
-        protected internal void RegisterExtension(AppExtension extension)
+        public void RegisterExtension(AppExtension extension)
         {
             if (extension == null)
                 throw new ArgumentNullException("Extension parameter can not be null");
             if (extensions.FirstOrDefault(e => e.Id == extension.Id) != null)
                 throw new ArgumentException("Duplicate extension ID");
-            extension.Application = this;
+            extension.Kernel = this;
+            extension.Initialize();
             extensions.Add(extension);
         }
         
@@ -99,7 +103,12 @@ namespace MIDE.Standard.Application
         }
         private void UnloadExtensions()
         {
-
+            foreach (var extension in extensions)
+            {
+                extension.Unload();
+                extension.Kernel = null;
+            }
+            extensions.Clear();
         }
         private void ClearTemporaryFiles()
         {
@@ -109,7 +118,7 @@ namespace MIDE.Standard.Application
         private string VerifyAssemblyAttributes()
         {
             bool hasAppPropsAttriburte = false;
-            Attribute[] attributes = Attribute.GetCustomAttributes(callerAssembly);
+            Attribute[] attributes = Attribute.GetCustomAttributes(callingAssembly);
             for (int i = 0; i < attributes.Length; i++)
             {
                 Attribute attribute = attributes[i];
@@ -133,11 +142,7 @@ namespace MIDE.Standard.Application
             if (isRunning)
                 throw new InvalidOperationException("Can not dispose application resources while it's running");
             //TODO: dispose all the application resources
-            foreach (var extension in extensions)
-            {
-                extension.Unload();
-            }
-            extensions.Clear();
+            UnloadExtensions();
         }
     }
 }

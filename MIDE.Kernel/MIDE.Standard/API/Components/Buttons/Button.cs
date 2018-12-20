@@ -1,4 +1,5 @@
 ﻿using System;
+using MIDE.Standard.Helpers;
 
 namespace MIDE.Standard.API.Components
 {
@@ -17,10 +18,13 @@ namespace MIDE.Standard.API.Components
                 OnPropertyChanged(nameof(Caption));
             }
         }
-        public event Action Pressed;
+        public virtual event Action Pressed;
         
-        public Button(string id) : base(id) { }
+        public Button(string id) : base(id)
+        {
+            Caption = this.FormatId();
+        }
 
-        public void Press() => Pressed?.Invoke();
+        public virtual void Press() => Pressed?.Invoke();
     }
 }

@@ -46,6 +46,18 @@ namespace MIDE.Standard.API.Measurements
             }
             return 0;
         }
+        public override string ToString()
+        {
+            switch (Type)
+            {
+                case GridLengthType.Auto: return "auto";
+                case GridLengthType.Percentage: return $"{Value}%";
+                case GridLengthType.Points: return $"{Value}pt";
+                case GridLengthType.Relative: return $"{Value}*";
+                case GridLengthType.None:
+                default: return $"none:{Value}";
+            }
+        }
 
         /// <summary>
         /// Parses the given string and returns the parsed value

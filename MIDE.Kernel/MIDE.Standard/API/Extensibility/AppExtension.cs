@@ -2,15 +2,17 @@
 using System.Linq;
 using MIDE.Standard.Application;
 using System.Collections.Generic;
+using MIDE.Standard.API.Components;
 
 namespace MIDE.Standard.API.Extensibility
 {
-    public class AppExtension : IDisposable
+    public abstract class AppExtension : IApplicationComponent, IDisposable
     {
         private readonly List<Module> modules;
 
+        public bool IsInitialized { get; private set; }
         public string Id { get; }
-        public AppKernel Application { get; internal set; }
+        public AppKernel Kernel { get; internal set; }
         public IEnumerable<Module> Modules => modules;
 
         public AppExtension(string id)
@@ -18,6 +20,25 @@ namespace MIDE.Standard.API.Extensibility
             Id = id;
             modules = new List<Module>();
         }
+        
+        public void Initialize()
+        {
+            var menuContext = new MenuConstructionContext(Kernel.ApplicationMenu);
+            RegisterMenuItems(menuContext);
+        }
+        public void Unload()
+        {
+            foreach (var module in modules)
+            {
+                if (module.IsRunning)
+                    module.Stop();
+                module.Unload();
+            }
+            modules.Clear();
+            Dispose();
+        }
+
+        public override string ToString() => $"EXTENSION [{GetType().Name}] :: {Id}";
 
         /// <summary>
         /// Registers the module in the internal extension storage
@@ -31,28 +52,25 @@ namespace MIDE.Standard.API.Extensibility
                 throw new ArgumentNullException("Module parameter can not be null");
             if (modules.FirstOrDefault(m => m.Id == module.Id) != null)
                 throw new ArgumentException("Duplicate module ID");
-            var validation = Application.VerifyModule(module);
+            var validation = Kernel.VerifyModule(module);
             if (validation != null)
                 throw new ArgumentException($"The given module [{module.Id}] is invalid: {validation}");
             module.Extension = this;
             modules.Add(module);
         }
 
-        public void Unload()
+        protected abstract void RegisterMenuItems(MenuConstructionContext context);
+
+        public void Dispose()
         {
             foreach (var module in modules)
             {
                 if (module.IsRunning)
                     module.Stop();
-                module.Unload();
+                module.Dispose();
+                module.Extension = null;
             }
             modules.Clear();
-            Dispose();
-        }
-
-        public void Dispose()
-        {
-            
         }
     }
 }
