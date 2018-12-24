@@ -1,0 +1,65 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <!-- <FontFamily x:Key="YourFontFamily">pack://application;,,,/Fonts/#Font Name</FontFamily> -->
+    <!-- In the UI-component's attributes write: FontFamily="{StaticResourse YourFontFamily}" -->
+    <!-- To make a default:
+    <Style TargetType="{x:Type Control}" x:Key="BaseStyle">
+        <Setter Property="FontFamily" Value="{StaticResource YourFontFamily}"/>
+    </Style>
+    <Style TargetType="{x:Type Button}" BasedOn="{StaticResource BaseStyle}"/> -->
+
+    <FontFamily x:Key="FontAwesome">pack://application;,,,/Fonts/#FontAwesome</FontFamily>
+
+    <system:Double x:Key="FontSizeXXSmall">6</system:Double>
+    <system:Double x:Key="FontSizeXSmall">10</system:Double>
+    <system:Double x:Key="FontSizeSmall">12</system:Double>
+    <system:Double x:Key="FontSizeRegular">14</system:Double>
+    <system:Double x:Key="FontSizeLarge">20</system:Double>
+    <system:Double x:Key="FontSizeXLarge">24</system:Double>
+    <system:Double x:Key="FontSizeXXLarge">30</system:Double>
+
+    <!--Icons-->
+    <system:String x:Key="StickyNoteIcon">&#xf249;</system:String>
+    <system:String x:Key="BookmarkEmptyIcon">&#xf02e;</system:String>
+    <system:String x:Key="OpenIcon">&#xf07c;</system:String>
+    <system:String x:Key="CreateIcon">&#xf14b;</system:String>
+    <system:String x:Key="BookIcon">&#xf02d;</system:String>
+    <system:String x:Key="LightbulbIcon">&#xf0eb;</system:String>
+    <system:String x:Key="RefreshIcon">&#xf021;</system:String>
+
+    <system:String x:Key="FullnessIcon">&#xf240;</system:String>
+    <system:String x:Key="UngroupIcon">&#xf248;</system:String>
+
+    <system:String x:Key="SaveIcon">&#xf0c7;</system:String>
+    <system:String x:Key="RevertIcon">&#xf0e2;</system:String>
+    <system:String x:Key="ArrowCircleLeftIcon">&#xf137;</system:String>
+    <system:String x:Key="ExclamationCircleIcon">&#xf06a;</system:String>
+
+    <system:String x:Key="AddSquareIcon">&#xf0fe;</system:String>
+    <system:String x:Key="AddCircleIcon">&#xf055;</system:String>
+    <system:String x:Key="PlusIcon">&#xf067;</system:String>
+
+    <system:String x:Key="InputIcon">&#xf055;</system:String>
+    <system:String x:Key="MediumIcon">&#xf0fe;</system:String>
+    <system:String x:Key="OutputIcon">&#xf14d;</system:String>
+
+    <system:String x:Key="RemoveIcon">&#xf146;</system:String>
+    <system:String x:Key="LinkIcon">&#xf0c1;</system:String>
+    <system:String x:Key="UnlinkIcon">&#xf127;</system:String>
+    <system:String x:Key="EllipsisIcon">&#xf141;</system:String>
+    <!--Icons-->
+
+    <Style TargetType="{x:Type Control}" x:Key="BaseStyle">
+        <Setter Property="FontFamily" Value="Century Gothic"/>
+        <Setter Property="FontSize" Value="{StaticResource FontSizeRegular}"/>
+    </Style>
+
+    <Style TargetType="{x:Type TextBlock}" x:Key="BaseTextBlockStyle">
+        <Setter Property="FontFamily" Value="Century Gothic"/>
+        <Setter Property="FontSize" Value="{StaticResource FontSizeRegular}"/>
+    </Style>
+
+
+</ResourceDictionary>

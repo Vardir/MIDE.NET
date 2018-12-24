@@ -6,53 +6,81 @@
         xmlns:local="clr-namespace:MIDE.WPFApp"
         xmlns:controls="clr-namespace:MIDE.WPFApp.Controls"
         xmlns:app="clr-namespace:MIDE.Standard.Application;assembly=api"
-        mc:Ignorable="d"
+        xmlns:c="clr-namespace:MIDE.Standard.API.Components;assembly=api"
+        mc:Ignorable="d" x:Name="appWindow"
         WindowStyle="None"
+        Style="{StaticResource MWindow}"
+        AllowsTransparency="True"
+        MinWidth="{Binding WindowMinimumWidth}"
+        MinHeight="{Binding WindowMinimumHeight}"
+        WindowStartupLocation="CenterScreen"
+        Activated="Window_Activated" Deactivated="Window_Deactivated"
         Height="500" Width="800">
-    <Grid>
+    
+    <!--Window Chrome-based style-->
+    <!--Allows for resizing and dragging the window without standard windows's borders and header-->
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="{Binding TitleHight}"
+                      GlassFrameThickness="0"
+                      CornerRadius="0"
+                      ResizeBorderThickness="{Binding ResizeBorderThickness}"/>
+    </WindowChrome.WindowChrome>
+
+    <Grid Background="{StaticResource BackgroundDarkBrush}">
         <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
             <RowDefinition Height="40" />
-            <RowDefinition Height="40" />
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="auto" />
-            <RowDefinition Height="150" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="2*" />
             <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        
-        <Menu Grid.Row="0" Grid.ColumnSpan="5"
-              ItemsSource="{Binding Menu.MenuItems, Source={x:Static app:AppKernel.Instance}}">
-            
-        </Menu>
-        <ToolBar Grid.Row="1" Grid.ColumnSpan="5">
 
-        </ToolBar>
+        <Menu Grid.Row="0" Grid.ColumnSpan="5"
+              ItemsSource="{Binding Kernel.ApplicationMenu.Items}">
+            <Menu.ItemContainerStyle>
+                <Style TargetType="{x:Type MenuItem}">
+                    <Setter Property="Command" Value="{Binding Action}" />
+                </Style>
+            </Menu.ItemContainerStyle>
+            <Menu.ItemTemplate>
+                <HierarchicalDataTemplate DataType="{x:Type c:MenuItem}" ItemsSource="{Binding Children}">
+                    <TextBlock Text="{Binding Caption}" Foreground="{StaticResource ForegroundLightBrush}"/>
+                </HierarchicalDataTemplate>
+            </Menu.ItemTemplate>
+        </Menu>
+
+        <ItemsControl Style="{StaticResource ToolBar}" 
+                      Grid.Row="1" Grid.ColumnSpan="5">
+            
+        </ItemsControl>
 
         <TabControl Grid.Row="2" Grid.RowSpan="3"
                     Name="ExplorerGroup">
-
         </TabControl>
-        <GridSplitter Grid.Column="1" Grid.Row="2"
-                      Width="3" ResizeDirection="Columns"
-                      ResizeBehavior="PreviousAndCurrent"/>
+        <GridSplitter Grid.Column="1" Grid.Row="2" Grid.RowSpan="3"
+                      Width="2" ResizeDirection="Columns"
+                      ResizeBehavior="PreviousAndNext"/>
         <TabControl Grid.Row="2" Grid.Column="2"
                     Name="EditorGroup">
 
         </TabControl>
-        <GridSplitter Grid.Column="3" Grid.Row="2"
-                      Width="3" ResizeDirection="Columns"
+        <GridSplitter Grid.Column="3" Grid.Row="2" Grid.RowSpan="3"
+                      Width="2" ResizeDirection="Columns"
                       ResizeBehavior="PreviousAndNext"/>
         <TabControl Grid.Row="2" Grid.Column="4" Grid.RowSpan="3"
                     Name="PropertiesViewGroup">
 
         </TabControl>
         <GridSplitter Grid.Column="2" Grid.Row="3"
-                      Height="3" ResizeDirection="Rows"
+                      Height="2" ResizeDirection="Rows"
                       HorizontalAlignment="Stretch"
                       ResizeBehavior="PreviousAndNext"/>
 
@@ -60,5 +88,9 @@
                     Name="LogGroup">
 
         </TabControl>
+
+        <StatusBar Grid.Row="5" Grid.ColumnSpan="5"
+                   Height="30">
+        </StatusBar>
     </Grid>
 </Window>

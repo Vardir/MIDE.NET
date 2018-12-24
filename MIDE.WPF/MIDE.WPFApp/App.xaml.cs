@@ -12,14 +12,15 @@ namespace MIDE.WPFApp
     /// </summary>
     public partial class WPFApplication : Application
     {
-        public string ApplicationName { get; } = "WPFTemplate";
         public AppKernel Kernel => AppKernel.Instance;
 
         protected override void OnStartup(StartupEventArgs e)
         {
             Kernel.FileManager = new WinFileManager();
             Kernel.Start();
-            MainWindow = new MainWindow();
+            var window = new MainWindow();
+            MainWindow = window;
+            window.ViewModel.Title = "WPFTemplate";
             MainWindow.Show();
             base.OnStartup(e);
         }

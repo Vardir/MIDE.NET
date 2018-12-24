@@ -2,6 +2,11 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:MIDE.WPFApp.Controls">
 
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Colors.xaml"/>
+        <ResourceDictionary Source="Fonts.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+    
     <Style TargetType="{x:Type local:Resizer}">
         <Setter Property="Template">
             <Setter.Value>
@@ -64,5 +69,24 @@
         </Setter>
     </Style>
 
+    <Style TargetType="{x:Type Control}" x:Key="BasePanel" BasedOn="{StaticResource BaseStyle}">
+        <Setter Property="Background" Value="{StaticResource PanelBackground}"/>
+    </Style>
+    
+    <Style TargetType="{x:Type ItemsControl}" x:Key="ToolBar" BasedOn="{StaticResource BasePanel}">
+    </Style>
+    <Style TargetType="{x:Type Menu}" BasedOn="{StaticResource BasePanel}">
+    </Style>
+    <Style TargetType="{x:Type TabControl}" BasedOn="{StaticResource BasePanel}">
+        <Setter Property="Padding" Value="2"/>
+        <Setter Property="Margin" Value="2"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BackgroundUltraLightBrush}"/>
+    </Style>
+    <Style TargetType="{x:Type StatusBar}" BasedOn="{StaticResource BasePanel}">
+    </Style>
 
+    <Style TargetType="{x:Type GridSplitter}">
+        <Setter Property="Background" Value="{StaticResource PanelBackground}"/>
+    </Style>
 </ResourceDictionary>
