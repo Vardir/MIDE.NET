@@ -14,59 +14,45 @@ namespace MIDE.Standard.API.Components
 
         public override MenuItem this[string id] => Children.FirstOrDefault(i => i.Id == id);
 
-        public MenuGroup(string id, bool allowDuplicates = false) : base(id)
+        public MenuGroup(string id, short ordinalIndex, bool allowDuplicates = false) : base(id, ordinalIndex)
         {
             AllowIdDuplicates = allowDuplicates;
             Children = new ObservableCollection<MenuItem>();
             Children.CollectionChanged += Children_CollectionChanged;
         }
 
-        public override void Add(MenuItem item, string parentId)
+        public override void Add(MenuItem item, string parentId, bool searchRecursively = false)
         {
             if (parentId == null)
             {
-                Children.Add(item);
+                Children.Insert(item, MIN_ORDINAL, MAX_ORDINAL);
                 return;
             }
 
-            var parent = Find(parentId);
+            var parent = Find(parentId, searchRecursively);
             if (parent == null)
                 throw new ArgumentException($"The menu item with ID {parentId} not found");
             parent.Add(item, null);
         }
-        public override void AddAfter(MenuItem item, string id)
-        {
-            var prevIndex = Children.IndexOf(i => i.Id == id);
-            if (prevIndex == -1)
-                throw new ArgumentException($"Menu item with ID {id} not found");
-            if (prevIndex == Children.Count - 1)
-            {
-                Children.Add(item);
-                return;
-            }
-            Children.Insert(prevIndex, item);
-        }
-        public override void AddBefore(MenuItem item, string id)
-        {
-            var prevIndex = Children.IndexOf(i => i.Id == id);
-            if (prevIndex == -1)
-                throw new ArgumentException($"Menu item with ID {id} not found");
-            Children.Insert(prevIndex, item);
-        }
-
-        public override MenuItem Find(string id)
+                
+        public override MenuItem Find(string id, bool searchRecursively = false)
         {
             foreach (var item in Children)
             {
                 if (item.Id == id)
                     return item;
-                var inter = item.Find(id);
-                if (inter != null)
-                    return inter;
+                if (searchRecursively)
+                {
+                    var inter = item.Find(id);
+                    if (inter != null)
+                        return inter;
+                }
             }
             return null;
         }
-
+        public override (string, short)[] GetItemsOrdinals() => Children.Select(mi => (mi.Id, mi.OrdinalIndex));
+        public override string[] GetAllItemsIDs() => Children.Select(mi => mi.Id);
+        
         private void Children_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             switch (e.Action)
@@ -74,21 +60,69 @@ namespace MIDE.Standard.API.Components
                 case NotifyCollectionChangedAction.Add:
                     OnElementsAdd(e.NewItems);
                     break;
+                case NotifyCollectionChangedAction.Remove:
+                    OnElementsRemove(e.OldItems);
+                    break;
+                case NotifyCollectionChangedAction.Replace:
+                    OnElementsReplace(e.NewItems, e.OldItems);
+                    break;
+                case NotifyCollectionChangedAction.Reset:
+                    OnElementsRemove(e.OldItems);
+                    break;
             }
         }
+
         private void OnElementsAdd(IList items)
         {
-            if (AllowIdDuplicates)
-                return;
             foreach (var item in items)
             {
                 var menuItem = item as MenuItem;
-                if (Children.Count(i => i.Id == menuItem.Id) > 1)
-                    throw new InvalidOperationException("Collection can not contain duplicate entries");
-                menuItem.Parent = this;
-                menuItem.ParentItem = this;
-                menuItem.ParentMenu = ParentMenu;
+                OnElementAdd(menuItem);
             }
+        }
+        private void OnElementsRemove(IList items)
+        {
+            foreach (var item in items)
+            {
+                var menuItem = item as MenuItem;
+                OnElementRemove(menuItem);
+            }
+        }
+        private void OnElementsReplace(IList newItems, IList oldItems)
+        {
+            foreach (var item in oldItems)
+            {
+                var menuItem = item as MenuItem;
+                OnElementRemove(menuItem);
+            }
+            foreach (var item in newItems)
+            {
+                var menuItem = item as MenuItem;
+                OnElementAdd(menuItem);
+            }
+        }
+        private void OnCollectionReset(IList oldItems)
+        {
+            foreach (var item in oldItems)
+            {
+                var menuItem = item as MenuItem;
+                OnElementRemove(menuItem);
+            }
+        }
+
+        private void OnElementAdd(MenuItem menuItem)
+        {
+            if (Children.Count(i => i.Id == menuItem.Id) > 1)
+                throw new InvalidOperationException("Collection can not contain duplicate entries");
+            menuItem.Parent = this;
+            menuItem.ParentMenu = ParentMenu;
+            menuItem.ParentItem = null;
+        }
+        private void OnElementRemove(MenuItem menuItem)
+        {
+            menuItem.Parent = null;
+            menuItem.ParentMenu = null;
+            menuItem.ParentItem = null;
         }
     }
 }

@@ -4,7 +4,7 @@ namespace MIDE.Standard.API.Commands
 {
     public class RelayCommand : ICommand
     {
-        private readonly Action action;
+        protected readonly Action action;
 
         public event EventHandler CanExecuteChanged = (sender, e) => { };
 
@@ -15,6 +15,11 @@ namespace MIDE.Standard.API.Commands
 
         public void Execute(object parameter) => action?.Invoke();
 
-        public bool CanExecute(object parameter) => true;        
+        public bool CanExecute(object parameter) => true;
+        public T Cast<T>()
+            where T: RelayCommand
+        {
+            return (T)Activator.CreateInstance(typeof(T), action);
+        }
     }
 }

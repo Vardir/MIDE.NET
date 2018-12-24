@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Reflection;
 using MIDE.Standard.FileSystem;
+using MIDE.Standard.API.Services;
+using MIDE.Standard.API.Commands;
 using System.Collections.Generic;
 using MIDE.Standard.API.Components;
 using MIDE.Standard.API.Extensibility;
@@ -23,7 +25,10 @@ namespace MIDE.Standard.Application
         public string ApplicationName { get; private set; }
         public FileManager FileManager { get; set; }
         public Menu ApplicationMenu { get; private set; }
+        public IBufferProvider SystemBuffer { get; set; }
         public IEnumerable<AppExtension> Extensions => extensions;
+
+        public event Action ApplicationExit;
 
         private AppKernel ()
         {
@@ -43,6 +48,8 @@ namespace MIDE.Standard.Application
                 throw new ApplicationException("Application kernel is already loaded and running!");
             if (FileManager == null)
                 throw new NullReferenceException("The FileManager should be assigned before starting the application");
+            if (SystemBuffer == null)
+                throw new NullReferenceException("The SystemBuffer should be assigned before starting the application");
             callingAssembly = Assembly.GetCallingAssembly();
             string assemblyVertification = VerifyAssemblyAttributes();
             if (assemblyVertification != null)
@@ -65,6 +72,7 @@ namespace MIDE.Standard.Application
             isRunning = false;
             ClearTemporaryFiles();
             Dispose();
+            ApplicationExit?.Invoke();
         }
 
         /// <summary>
@@ -102,11 +110,19 @@ namespace MIDE.Standard.Application
         /// </summary>
         private void PopulateMenu()
         {
-            ApplicationMenu.AddItem(new MenuButton("file"));
-            ApplicationMenu.AddItem(new MenuButton("edit"));
-            ApplicationMenu.AddItem(new MenuButton("view"));
-            ApplicationMenu.AddItem(new MenuButton("tools"));
-            ApplicationMenu.AddItem(new MenuButton("help"));
+            ApplicationMenu.AddItem(new MenuButton("file", -99));
+            ApplicationMenu.AddItem("file", new MenuSplitter("split-exit", 98));
+            ApplicationMenu.AddItem("file", new MenuButton("exit", 99)
+            {
+                PressCommand = new RelayCommand(Exit)
+            });
+            ApplicationMenu.AddItem("file", new MenuButton("new", -99));
+            ApplicationMenu.AddItem("file/new", new MenuButton("file", -99));
+            ApplicationMenu.AddItem("file/new", new MenuButton("folder", -98));
+            ApplicationMenu.AddItem(new MenuButton("edit", -98));
+            ApplicationMenu.AddItem(new MenuButton("view", -97));
+            ApplicationMenu.AddItem(new MenuButton("tools", 50));
+            ApplicationMenu.AddItem(new MenuButton("help", 99));
         }
         /// <summary>
         /// Loads all the extensions that are provided in attached assemblies

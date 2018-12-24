@@ -73,7 +73,7 @@ namespace MIDE.WPFApp
 
             MinimizeCommand = new WindowsRelayCommand(() => window.WindowState = WindowState.Minimized);
             MaximizeCommand = new WindowsRelayCommand(() => window.WindowState ^= WindowState.Maximized); //if window is already maximized, makes it normal
-            CloseCommand = new WindowsRelayCommand(window.Close);
+            CloseCommand = new WindowsRelayCommand(Kernel.Exit);
             MenuCommand = new WindowsRelayCommand(() => SystemCommands.ShowSystemMenu(window, GetMousePosition()));
 
             //Fix window resize issue

@@ -61,8 +61,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\Base\BaseValueConverter.cs" />
+    <Compile Include="Converters\Boolean\BooleanToHorizontalAlignment.cs" />
+    <Compile Include="Converters\Boolean\BooleanToVisibility.cs" />
+    <Compile Include="Converters\Boolean\BooleanToVisibilityCollapse.cs" />
+    <Compile Include="Converters\Boolean\IntegerToBoolean.cs" />
+    <Compile Include="Converters\Boolean\InvertBoolean.cs" />
+    <Compile Include="Converters\Boolean\NullableToBoolean.cs" />
+    <Compile Include="Converters\EnumToInteger.cs" />
+    <Compile Include="Converters\RelayCommandConverter.cs" />
     <Compile Include="RelayCommands\WindowsRelayParameterizedCommand.cs" />
     <Compile Include="RelayCommands\WindowsRelayCommand.cs" />
+    <Compile Include="Services\WindowsBuffer.cs" />
     <Compile Include="Windows\WindowResizer.cs" />
     <Compile Include="Windows\ViewModels\WindowViewModel.cs" />
     <Page Include="MainWindow.xaml">

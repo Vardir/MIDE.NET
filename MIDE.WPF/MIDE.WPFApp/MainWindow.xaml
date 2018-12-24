@@ -7,6 +7,7 @@
         xmlns:controls="clr-namespace:MIDE.WPFApp.Controls"
         xmlns:app="clr-namespace:MIDE.Standard.Application;assembly=api"
         xmlns:c="clr-namespace:MIDE.Standard.API.Components;assembly=api"
+        xmlns:conv="clr-namespace:MIDE.WPFApp.ValueConverters"
         mc:Ignorable="d" x:Name="appWindow"
         WindowStyle="None"
         Style="{StaticResource MWindow}"
@@ -47,14 +48,29 @@
               ItemsSource="{Binding Kernel.ApplicationMenu.Items}">
             <Menu.ItemContainerStyle>
                 <Style TargetType="{x:Type MenuItem}">
-                    <Setter Property="Command" Value="{Binding Action}" />
+                    <Setter Property="Command" Value="{Binding PressCommand, Converter={conv:RelayCommandConverter}}" />
                 </Style>
             </Menu.ItemContainerStyle>
-            <Menu.ItemTemplate>
-                <HierarchicalDataTemplate DataType="{x:Type c:MenuItem}" ItemsSource="{Binding Children}">
+            
+            <Menu.Resources>
+                <HierarchicalDataTemplate DataType="{x:Type c:MenuGroup}" ItemsSource="{Binding Children}">
                     <TextBlock Text="{Binding Caption}" Foreground="{StaticResource ForegroundLightBrush}"/>
+                    <HierarchicalDataTemplate.ItemTemplate>
+                        <DataTemplate DataType="{x:Type c:MenuButton}">
+                            <TextBlock Text="{Binding Caption}"/>
+                        </DataTemplate>
+                    </HierarchicalDataTemplate.ItemTemplate>
                 </HierarchicalDataTemplate>
-            </Menu.ItemTemplate>
+                <DataTemplate DataType="{x:Type c:MenuSplitter}">                    
+                    <GridSplitter Height="1" HorizontalAlignment="Stretch" />
+                </DataTemplate>
+            </Menu.Resources>
+            
+            <!--<Menu.ItemTemplate>
+                <HierarchicalDataTemplate DataType="{x:Type c:MenuGroup}" ItemsSource="{Binding Children}">
+                    <TextBlock Text="{Binding Caption}"/>
+                </HierarchicalDataTemplate>
+            </Menu.ItemTemplate>-->
         </Menu>
 
         <ItemsControl Style="{StaticResource ToolBar}" 

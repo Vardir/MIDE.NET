@@ -19,7 +19,7 @@ namespace MIDE.Standard.API.Components
         /// <summary>
         /// The inline version of <seealso cref="ID_PATTERN"/> that can be used as single part in other patterns
         /// </summary>
-        public const string ID_PATTERN_CLEAN = @"[a-z]+[a-z0-9\-]*[a-z0-9]+";
+        public const string ID_PATTERN_INL = @"[a-z]+[a-z0-9\-]*[a-z0-9]+";
 
         /// <summary>
         /// The ID of the component. It has uniform format for all the components in application

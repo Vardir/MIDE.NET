@@ -1,4 +1,5 @@
-﻿using MIDE.Standard.API.Components;
+﻿using MIDE.Standard.API.Commands;
+using MIDE.Standard.API.Components;
 using MIDE.Standard.API.Extensibility;
 
 namespace MIDE.Kernel.ConsoleTest.Extensions
@@ -9,16 +10,12 @@ namespace MIDE.Kernel.ConsoleTest.Extensions
 
         protected override void RegisterMenuItems(IMenuConstructionContext context)
         {
-            var exit = new MenuButton("exit");
-            exit.Pressed += Kernel.Exit;
-            context.AddItem("/", exit);
-
-            var newFile = new MenuButton("new-file");
-            newFile.Pressed += () => System.Console.WriteLine("Creating new file");
+            var newFile = new MenuButton("new-file", -99);
+            newFile.PressCommand = new RelayCommand(() => System.Console.WriteLine("Creating new file"));
             context.AddItem("file", newFile);
 
-            var testItem = new MenuButton("test");
-            testItem.Pressed += () => System.Console.WriteLine("Test button pressed");
+            var testItem = new MenuButton("test", 0);
+            testItem.PressCommand = new RelayCommand(() => System.Console.WriteLine("Test button pressed"));
             context.AddItem("file/open/test-block", testItem);
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using MIDE.WPFApp.Services;
 using MIDE.WPFApp.FileSystem;
 using MIDE.Standard.Application;
 using MIDE.Standard.Application.Attrubites;
@@ -12,21 +13,34 @@ namespace MIDE.WPFApp
     /// </summary>
     public partial class WPFApplication : Application
     {
+        private bool kernelStopped;
+
         public AppKernel Kernel => AppKernel.Instance;
 
         protected override void OnStartup(StartupEventArgs e)
         {
             Kernel.FileManager = new WinFileManager();
+            Kernel.SystemBuffer = WindowsBuffer.Instance;
             Kernel.Start();
+            Kernel.ApplicationExit += Kernel_ApplicationExit;
             var window = new MainWindow();
             MainWindow = window;
             window.ViewModel.Title = "WPFTemplate";
             MainWindow.Show();
             base.OnStartup(e);
         }
+
+        private void Kernel_ApplicationExit()
+        {
+            MainWindow.Close();
+            kernelStopped = true;
+        }
+
         protected override void OnExit(ExitEventArgs e)
         {
-            Kernel.Exit();
+            if (!kernelStopped)
+                Kernel.Exit();
+            MainWindow?.Close();
             base.OnExit(e);
         }
     }
