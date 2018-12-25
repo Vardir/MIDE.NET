@@ -8,6 +8,9 @@ using System.Text.RegularExpressions;
 
 namespace MIDE.Standard.API.Components
 {
+    /// <summary>
+    /// The main application menu
+    /// </summary>
     public class Menu : LayoutContainer, IMenuConstructionContext
     {
         /// <summary>
@@ -100,6 +103,38 @@ namespace MIDE.Standard.API.Components
         }
        
         public override bool Contains(string id) => Items.FirstOrDefault(i => i.Id == id) != null;
+        /// <summary>
+        /// Verifies if the given path is exist in the menu and it's sub-items
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="FormatException"></exception>
+        public bool Exists(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path) || path.Length == 0)
+                throw new ArgumentException("The path can not be empty");
+            if (path == "/")
+                return true;
+            if (!Regex.IsMatch(path, PATH_PATTERN))
+                throw new FormatException("Path has invalid format");
+
+            var (rootId, tail) = path.ExtractUntil(0, '/');
+            var root = this[rootId];
+            if (root == null)
+                return false;
+            string segment = tail;
+            while (!string.IsNullOrEmpty(segment))
+            {
+                var (elementId, tail2) = segment.ExtractUntil(0, '/');
+                var element = root[elementId];
+                if (element == null)
+                    return false;
+                root = element;
+                segment = tail2;
+            }
+            return true;
+        }
         /// <summary>
         /// Searches recursively for the menu item with specified ID. Returns null if nothing found
         /// </summary>

@@ -45,32 +45,25 @@
         </Grid.ColumnDefinitions>
 
         <Menu Grid.Row="0" Grid.ColumnSpan="5"
-              ItemsSource="{Binding Kernel.ApplicationMenu.Items}">
+              ItemsSource="{Binding Kernel.ApplicationMenu.Items}"
+              Background="{StaticResource BackgroundDarkBrush}"
+              Foreground="{StaticResource ForegroundLightBrush}">
             <Menu.ItemContainerStyle>
                 <Style TargetType="{x:Type MenuItem}">
                     <Setter Property="Command" Value="{Binding PressCommand, Converter={conv:RelayCommandConverter}}" />
                 </Style>
             </Menu.ItemContainerStyle>
-            
+
             <Menu.Resources>
                 <HierarchicalDataTemplate DataType="{x:Type c:MenuGroup}" ItemsSource="{Binding Children}">
-                    <TextBlock Text="{Binding Caption}" Foreground="{StaticResource ForegroundLightBrush}"/>
-                    <HierarchicalDataTemplate.ItemTemplate>
-                        <DataTemplate DataType="{x:Type c:MenuButton}">
-                            <TextBlock Text="{Binding Caption}"/>
-                        </DataTemplate>
-                    </HierarchicalDataTemplate.ItemTemplate>
+                    <TextBlock Text="{Binding Caption}"
+                               Foreground="{StaticResource ForegroundLightBrush}"/>
                 </HierarchicalDataTemplate>
-                <DataTemplate DataType="{x:Type c:MenuSplitter}">                    
-                    <GridSplitter Height="1" HorizontalAlignment="Stretch" />
-                </DataTemplate>
+
+                <HierarchicalDataTemplate DataType="{x:Type c:MenuSplitter}">
+                    <Separator/>
+                </HierarchicalDataTemplate>
             </Menu.Resources>
-            
-            <!--<Menu.ItemTemplate>
-                <HierarchicalDataTemplate DataType="{x:Type c:MenuGroup}" ItemsSource="{Binding Children}">
-                    <TextBlock Text="{Binding Caption}"/>
-                </HierarchicalDataTemplate>
-            </Menu.ItemTemplate>-->
         </Menu>
 
         <ItemsControl Style="{StaticResource ToolBar}" 
