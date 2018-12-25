@@ -2,14 +2,14 @@
 using System.Linq;
 using System.Reflection;
 using MIDE.Standard.FileSystem;
-using MIDE.Standard.API.Services;
-using MIDE.Standard.API.Commands;
+using MIDE.API.Services;
+using MIDE.API.Commands;
 using System.Collections.Generic;
-using MIDE.Standard.API.Components;
-using MIDE.Standard.API.Extensibility;
+using MIDE.API.Components;
+using MIDE.API.Extensibility;
 using MIDE.Standard.Application.Attrubites;
 using MIDE.Standard.Application.Configuration;
-using Module = MIDE.Standard.API.Extensibility.Module;
+using Module = MIDE.API.Extensibility.Module;
 
 namespace MIDE.Standard.Application
 {

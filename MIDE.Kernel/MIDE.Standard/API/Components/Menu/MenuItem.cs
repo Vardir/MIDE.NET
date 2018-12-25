@@ -1,6 +1,6 @@
 ﻿using MIDE.Standard.Helpers;
 
-namespace MIDE.Standard.API.Components
+namespace MIDE.API.Components
 {
     public abstract class MenuItem : Button
     {

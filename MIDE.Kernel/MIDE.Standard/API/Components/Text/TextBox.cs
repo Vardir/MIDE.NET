@@ -1,20 +1,18 @@
-﻿using MIDE.Standard.API.Validation;
-
-namespace MIDE.Standard.API.Components
+﻿namespace MIDE.API.Components
 {
     public class TextBox : TextComponent
     {
-        private bool isValid;
+        private bool isReadonly;
 
-        public bool IsValid
+        public bool IsReadonly
         {
-            get => IsValid;
-            private set
+            get => isReadonly;
+            set
             {
-                if (isValid == value)
+                if (value == isReadonly)
                     return;
-                isValid = value;
-                OnPropertyChanged(nameof(IsValid));
+                isReadonly = value;
+                OnPropertyChanged(nameof(IsReadonly));
             }
         }
         public override string Text
@@ -22,22 +20,16 @@ namespace MIDE.Standard.API.Components
             get => text;
             set
             {
-                if (text == value || !IsEnabled)
+                if (text == value || IsReadonly || !IsEnabled)
                     return;
                 text = value;
-                IsValid = Validator.IsValid(text);
-                if (isValid)
-                    LastValid = value;
                 OnPropertyChanged(nameof(Text));
             }
         }
         public string Default { get; }
-        public string LastValid { get; private set; }
-        public IValidator<string> Validator { get; }
 
-        public TextBox(string id, string defaultValue = null, IValidator<string> validator = null) : base(id)
+        public TextBox(string id, string defaultValue = null) : base(id)
         {
-            Validator = validator;
             Default = defaultValue;
         }
 

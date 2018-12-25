@@ -142,5 +142,170 @@ namespace MIDE.Standard.Helpers
             }
             return last;
         }
+
+        /// <summary>
+        /// Checks if another collection contains any of the items from the current one
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="collection"></param>
+        /// <param name="another"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static bool AnyIn<T>(this IEnumerable<T> collection, IEnumerable<T> another)
+            where T: IComparable<T>
+        {
+            if (another == null)
+                throw new ArgumentNullException(nameof(another));
+
+            foreach (var item in collection)
+            {
+                foreach (var item2 in another)
+                {
+                    if (item.CompareTo(item2) == 0)
+                        return true;
+                }
+            }
+            return false;
+        }
+        /// <summary>
+        /// Checks if another collection contains any of the items from the current one transformed with the provided function
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="Y"></typeparam>
+        /// <param name="collection"></param>
+        /// <param name="extractor"></param>
+        /// <param name="another"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static bool AnyIn<T, Y>(this IEnumerable<T> collection, Func<T, Y> extractor, IEnumerable<Y> another)
+            where Y : IComparable<Y>
+        {
+            if (another == null)
+                throw new ArgumentNullException(nameof(another));
+            if (extractor == null)
+                throw new ArgumentNullException(nameof(extractor));
+
+            foreach (var item in collection)
+            {
+                foreach (var item2 in another)
+                {
+                    var extracted = extractor(item);
+                    if (extracted.CompareTo(item2) == 0)
+                        return true;
+                }
+            }
+            return false;
+        }
+        /// <summary>
+        /// Checks if another collection, transformed with the provided function, contains any of the items from the current one
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="Y"></typeparam>
+        /// <param name="collection"></param>
+        /// <param name="extractor"></param>
+        /// <param name="another"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static bool AnyIn<T, Y>(this IEnumerable<T> collection, IEnumerable<Y> another, Func<Y, T> extractor)
+            where T : IComparable<T>
+        {
+            if (another == null)
+                throw new ArgumentNullException(nameof(another));
+            if (extractor == null)
+                throw new ArgumentNullException(nameof(extractor));
+
+            foreach (var item in collection)
+            {
+                foreach (var item2 in another)
+                {
+                    var extracted = extractor(item2);
+                    if (extracted.CompareTo(item) == 0)
+                        return true;
+                }
+            }
+            return false;
+        }
+        /// <summary>
+        /// Checks if another collection does not contain any of the items from the current one
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="collection"></param>
+        /// <param name="another"></param>
+        /// <returns></returns>
+        public static bool AnyNotIn<T>(this IEnumerable<T> collection, IEnumerable<T> another)
+            where T: IComparable<T>
+        {
+            if (another == null)
+                throw new ArgumentNullException(nameof(another));
+
+            bool found = false;
+            foreach (var item in collection)
+            {
+                foreach (var item2 in another)
+                {
+                    if (item.CompareTo(item2) == 0)
+                        found = true;
+                }
+            }
+            return !found;
+        }
+        /// <summary>
+        /// Checks if another collection does not contain any of the items from the current one transformed with the provided function
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="Y"></typeparam>
+        /// <param name="collection"></param>
+        /// <param name="extractor"></param>
+        /// <param name="another"></param>
+        /// <returns></returns>
+        public static bool AnyNotIn<T, Y>(this IEnumerable<T> collection, Func<T, Y> extractor, IEnumerable<Y> another)
+            where Y : IComparable<Y>
+        {
+            if (another == null)
+                throw new ArgumentNullException(nameof(another));
+            if (extractor == null)
+                throw new ArgumentNullException(nameof(extractor));
+
+            bool found = false;
+            foreach (var item in collection)
+            {
+                foreach (var item2 in another)
+                {
+                    var extracted = extractor(item);
+                    if (extracted.CompareTo(item2) == 0)
+                        found = true;
+                }
+            }
+            return !found;
+        }
+        /// <summary>
+        /// Checks if another collection, transformed with the provided function, does not contain any of the items from the current one
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="Y"></typeparam>
+        /// <param name="collection"></param>
+        /// <param name="extractor"></param>
+        /// <param name="another"></param>
+        /// <returns></returns>
+        public static bool AnyNotIn<T, Y>(this IEnumerable<T> collection, IEnumerable<Y> another, Func<Y, T> extractor)
+            where T : IComparable<T>
+        {
+            if (another == null)
+                throw new ArgumentNullException(nameof(another));
+            if (extractor == null)
+                throw new ArgumentNullException(nameof(extractor));
+
+            bool found = false;
+            foreach (var item in collection)
+            {
+                foreach (var item2 in another)
+                {
+                    var extracted = extractor(item2);
+                    if (extracted.CompareTo(item) == 0)
+                        found = true;
+                }
+            }
+            return !found;
+        }
     }
 }

@@ -1,6 +1,6 @@
-﻿using MIDE.Standard.API.Commands;
-using MIDE.Standard.API.Components;
-using MIDE.Standard.API.Extensibility;
+﻿using MIDE.API.Commands;
+using MIDE.API.Components;
+using MIDE.API.Extensibility;
 
 namespace MIDE.Kernel.ConsoleTest.Extensions
 {

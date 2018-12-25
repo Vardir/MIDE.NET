@@ -1,4 +1,4 @@
-﻿namespace MIDE.Standard.API.Localization
+﻿namespace MIDE.API.Localization
 {
     public interface ILocalizationProvider
     {

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
-using MIDE.Standard.API.Measurements;
+using MIDE.API.Measurements;
 
-namespace MIDE.Standard.API.Components
+namespace MIDE.API.Components
 {
     /// <summary>
     /// The base class for all the application components that are required to be visually represented

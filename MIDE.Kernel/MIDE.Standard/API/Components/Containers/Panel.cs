@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 
-namespace MIDE.Standard.API.Components
+namespace MIDE.API.Components
 {
     public class Panel : LayoutContainer
     {

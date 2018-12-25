@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace MIDE.Standard.API.Extensibility
+namespace MIDE.API.Extensibility
 {
     public abstract class Module : IDisposable
     {

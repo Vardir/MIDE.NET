@@ -1,6 +1,6 @@
-﻿using MIDE.Standard.API.Commands;
+﻿using MIDE.API.Commands;
 
-namespace MIDE.Standard.API.Components
+namespace MIDE.API.Components
 {
     public class Button : LayoutComponent
     {

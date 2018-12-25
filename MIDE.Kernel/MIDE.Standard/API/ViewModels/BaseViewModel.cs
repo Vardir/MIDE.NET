@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace MIDE.Standard.API.ViewModels
+namespace MIDE.API.ViewModels
 {
     [Serializable]
     public class BaseViewModel : INotifyPropertyChanged

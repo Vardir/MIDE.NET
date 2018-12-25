@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace MIDE.Standard.API.Components
+namespace MIDE.API.Components
 {
     /// <summary>
     /// The base class that should be implemented for all elements

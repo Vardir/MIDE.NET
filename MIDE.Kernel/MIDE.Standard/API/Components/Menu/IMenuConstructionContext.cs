@@ -1,4 +1,4 @@
-﻿namespace MIDE.Standard.API.Components
+﻿namespace MIDE.API.Components
 {
     /// <summary>
     /// Provides a simple construction interface to menu that allows only possibility to add items and receive basic information about menu contents

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MIDE.Standard.API.Components
+namespace MIDE.API.Components
 {
     public class CheckBox : LayoutComponent
     {

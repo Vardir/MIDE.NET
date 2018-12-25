@@ -1,4 +1,4 @@
-﻿using MIDE.Standard.API.Components;
+﻿using MIDE.API.Components;
 using System.Collections.ObjectModel;
 
 namespace MIDE.Standard.Helpers

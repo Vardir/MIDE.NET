@@ -1,6 +1,6 @@
-﻿using MIDE.Standard.API.Measurements;
+﻿using MIDE.API.Measurements;
 
-namespace MIDE.Standard.API.Components
+namespace MIDE.API.Components
 {
     public class StackPanel : Panel
     {

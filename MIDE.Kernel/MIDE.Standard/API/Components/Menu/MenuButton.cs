@@ -1,4 +1,4 @@
-﻿namespace MIDE.Standard.API.Components
+﻿namespace MIDE.API.Components
 {
     public class MenuButton : MenuGroup
     {

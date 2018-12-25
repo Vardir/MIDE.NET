@@ -1,5 +1,5 @@
 ﻿using System.Windows;
-using MIDE.Standard.API.Services;
+using MIDE.API.Services;
 
 namespace MIDE.WPFApp.Services
 {

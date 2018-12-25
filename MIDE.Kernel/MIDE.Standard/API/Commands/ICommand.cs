@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MIDE.Standard.API.Commands
+namespace MIDE.API.Commands
 {
     public interface ICommand
     {

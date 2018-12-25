@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MIDE.Standard.API.Components
+namespace MIDE.API.Components
 {
     public class RadioButtonGroup : ApplicationComponent
     {

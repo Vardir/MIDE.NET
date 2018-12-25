@@ -1,6 +1,6 @@
-﻿namespace MIDE.Standard.API.Components
+﻿namespace MIDE.API.Components
 {
-    public class TextComponent : LayoutComponent
+    public abstract class TextComponent : LayoutComponent
     {
         protected string text;
 

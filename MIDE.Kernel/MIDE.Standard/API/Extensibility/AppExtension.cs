@@ -2,9 +2,9 @@
 using System.Linq;
 using MIDE.Standard.Application;
 using System.Collections.Generic;
-using MIDE.Standard.API.Components;
+using MIDE.API.Components;
 
-namespace MIDE.Standard.API.Extensibility
+namespace MIDE.API.Extensibility
 {
     public abstract class AppExtension : ApplicationComponent, IDisposable
     {

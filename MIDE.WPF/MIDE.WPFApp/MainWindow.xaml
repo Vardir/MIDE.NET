@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:MIDE.WPFApp"
         xmlns:controls="clr-namespace:MIDE.WPFApp.Controls"
         xmlns:app="clr-namespace:MIDE.Standard.Application;assembly=api"
-        xmlns:c="clr-namespace:MIDE.Standard.API.Components;assembly=api"
+        xmlns:c="clr-namespace:MIDE.API.Components;assembly=api"
         xmlns:conv="clr-namespace:MIDE.WPFApp.ValueConverters"
         mc:Ignorable="d" x:Name="appWindow"
         WindowStyle="None"

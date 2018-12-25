@@ -1,7 +1,7 @@
 ﻿using System;
 using MIDE.Standard.Helpers;
 
-namespace MIDE.Standard.API.Measurements
+namespace MIDE.API.Measurements
 {
     /// <summary>
     /// A class to represent a simple box border that can be used to outline the layout components.

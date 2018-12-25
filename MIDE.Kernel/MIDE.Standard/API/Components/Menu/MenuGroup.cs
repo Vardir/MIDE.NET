@@ -5,7 +5,7 @@ using MIDE.Standard.Helpers;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 
-namespace MIDE.Standard.API.Components
+namespace MIDE.API.Components
 {
     public class MenuGroup : MenuItem
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MIDE.Standard.API.Measurements
+namespace MIDE.API.Measurements
 {
     /// <summary>
     /// A class to represent a simple box that can be used as margin or padding box.

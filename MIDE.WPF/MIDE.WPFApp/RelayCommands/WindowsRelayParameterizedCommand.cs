@@ -1,5 +1,5 @@
 ﻿using System;
-using MIDE.Standard.API.Commands;
+using MIDE.API.Commands;
 
 namespace MIDE.WPFApp.RelayCommands
 {

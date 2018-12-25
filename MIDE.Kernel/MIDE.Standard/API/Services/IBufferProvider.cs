@@ -1,4 +1,4 @@
-﻿namespace MIDE.Standard.API.Services
+﻿namespace MIDE.API.Services
 {
     /// <summary>
     /// Provides the bridge between application and buffer service (such as Windows system buffer) to store and retrieve data.

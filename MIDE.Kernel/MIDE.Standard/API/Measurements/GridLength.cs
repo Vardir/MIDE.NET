@@ -1,7 +1,7 @@
 ﻿using System;
 using MIDE.Standard.Helpers;
 
-namespace MIDE.Standard.API.Measurements
+namespace MIDE.API.Measurements
 {
     /// <summary>
     /// <para>A class to represent the size-measurement properties of the layout components</para>

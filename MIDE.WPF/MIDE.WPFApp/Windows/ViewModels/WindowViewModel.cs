@@ -3,7 +3,7 @@ using System.Windows;
 using MIDE.WPFApp.Windows;
 using System.Windows.Input;
 using MIDE.WPFApp.RelayCommands;
-using MIDE.Standard.API.ViewModels;
+using MIDE.API.ViewModels;
 using System.Runtime.InteropServices;
 using ICommand = System.Windows.Input.ICommand;
 using MIDE.Standard.Application;

@@ -6,7 +6,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Text.RegularExpressions;
 
-namespace MIDE.Standard.API.Components
+namespace MIDE.API.Components
 {
     /// <summary>
     /// The main application menu
