@@ -1,10 +1,12 @@
-﻿using MIDE.API.Commands;
+﻿using MIDE.API.Visuals;
+using MIDE.API.Commands;
 
 namespace MIDE.API.Components
 {
     public class Button : LayoutComponent
     {
         private string caption;
+        private Glyph glyph;
 
         public string Caption
         {
@@ -15,6 +17,17 @@ namespace MIDE.API.Components
                     return;
                 caption = value;
                 OnPropertyChanged(nameof(Caption));
+            }
+        }
+        public Glyph ButtonGlyph
+        {
+            get => glyph;
+            set
+            {
+                if (value == glyph)
+                    return;
+                glyph = value;
+                OnPropertyChanged(nameof(ButtonGlyph));
             }
         }
         public ICommand PressCommand { get; set; }

@@ -15,6 +15,7 @@
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <NeutralLanguage>en</NeutralLanguage>
     <LangVersion>7.1</LangVersion>
+    <RootNamespace>MIDE</RootNamespace>
   </PropertyGroup>
 
 </Project>
