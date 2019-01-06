@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
+using MIDE.Helpers;
 using System.Collections;
-using MIDE.Standard.Helpers;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Text.RegularExpressions;

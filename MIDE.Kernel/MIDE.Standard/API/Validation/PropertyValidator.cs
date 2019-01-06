@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
+using MIDE.Helpers;
 using System.Reflection;
 using System.Collections;
-using MIDE.Standard.Helpers;
 using System.ComponentModel;
 using System.Collections.Generic;
 

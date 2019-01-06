@@ -1,6 +1,9 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:MIDE.WPFApp.Controls">
+                    xmlns:local="clr-namespace:MIDE.WPFApp.Controls"
+                    xmlns:api="clr-namespace:MIDE.API.Components;assembly=api"
+                    xmlns:c="clr-namespace:MIDE.WPFApp.ValueConverters"
+                    xmlns:ctr="clr-namespace:MIDE.WPFApp.Controls">
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="Colors.xaml"/>
@@ -19,7 +22,6 @@
             </Setter.Value>
         </Setter>
     </Style>
-
     <Style TargetType="{x:Type local:ResizablePanel}">
         <Setter Property="Template">
             <Setter.Value>
@@ -307,4 +309,88 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+    <!--MENU-->
+        
+    <!--API Controls-->
+    <DataTemplate DataType="{x:Type api:Button}">
+        <Button Margin="{Binding Margin, Converter={c:MeasurementsConverter}}" 
+                Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
+                Height="{Binding Height, Converter={c:MeasurementsConverter}}"
+                Width="{Binding Width, Converter={c:MeasurementsConverter}}"
+                IsEnabled="{Binding IsEnabled}">
+            <StackPanel Orientation="Horizontal">
+                <ContentPresenter Content="{Binding ButtonGlyph}" Margin="0 0 5 0"/>
+                <TextBlock Text="{Binding Caption}"
+                           FontFamily="{Binding FontFamily, RelativeSource={RelativeSource AncestorType=Button}}"
+                           FontSize="{Binding FontSize, RelativeSource={RelativeSource AncestorType=Button}}"
+                           FontStretch="{Binding FontStretch, RelativeSource={RelativeSource AncestorType=Button}}"
+                           FontStyle="{Binding FontStyle, RelativeSource={RelativeSource AncestorType=Button}}"
+                           FontWeight="{Binding FontWeight, RelativeSource={RelativeSource AncestorType=Button}}"/>
+            </StackPanel>
+        </Button>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type api:CheckBox}">
+        <CheckBox Margin="{Binding Margin, Converter={c:MeasurementsConverter}}" 
+                  Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
+                  Height="{Binding Height, Converter={c:MeasurementsConverter}}"
+                  Width="{Binding Width, Converter={c:MeasurementsConverter}}"
+                  IsChecked="{Binding IsChecked}"
+                  IsEnabled="{Binding IsEnabled}"/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type api:GridLayout}">
+        <ctr:Grid Layout="{Binding}"></ctr:Grid>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type api:Label}">
+        <Label Margin="{Binding Margin, Converter={c:MeasurementsConverter}}" 
+               Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
+               Height="{Binding Height, Converter={c:MeasurementsConverter}}"
+               Width="{Binding Width, Converter={c:MeasurementsConverter}}"
+               IsEnabled="{Binding IsEnabled}"
+               Content="{Binding Text}"/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type api:RadioButton}">
+        <RadioButton Margin="{Binding Margin, Converter={c:MeasurementsConverter}}" 
+                     Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
+                     Height="{Binding Height, Converter={c:MeasurementsConverter}}"
+                     Width="{Binding Width, Converter={c:MeasurementsConverter}}"
+                     IsEnabled="{Binding IsEnabled}"
+                     IsChecked="{Binding IsChecked}"/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type api:TextBox}">
+        <TextBlock Margin="{Binding Margin, Converter={c:MeasurementsConverter}}" 
+                   Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
+                   Height="{Binding Height, Converter={c:MeasurementsConverter}}"
+                   Width="{Binding Width, Converter={c:MeasurementsConverter}}"
+                   IsEnabled="{Binding IsEnabled}"
+                   Text="{Binding Text}"/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type api:Panel}">
+        <ItemsControl ItemsSource="{Binding Children}"
+                      Margin="{Binding Margin, Converter={c:MeasurementsConverter}}" 
+                      Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
+                      Height="{Binding Height, Converter={c:MeasurementsConverter}}"
+                      Width="{Binding Width, Converter={c:MeasurementsConverter}}"
+                      IsEnabled="{Binding IsEnabled}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type api:StackPanel}">
+        <ItemsControl ItemsSource="{Binding Children}"
+                      Margin="{Binding Margin, Converter={c:MeasurementsConverter}}" 
+                      Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
+                      Height="{Binding Height, Converter={c:MeasurementsConverter}}"
+                      Width="{Binding Width, Converter={c:MeasurementsConverter}}"
+                      IsEnabled="{Binding IsEnabled}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="{Binding Orientation, Converter={c:OrientationConverter}}"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+    </DataTemplate>
+    <!--API Control-->
 </ResourceDictionary>

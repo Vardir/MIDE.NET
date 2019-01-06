@@ -1,10 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MIDE.Standard.Helpers
+namespace MIDE.Helpers
 {
     public static class CollectionHelpers
     {
+        /// <summary>
+        /// Checks whether the given collection contains an element that matches the predicate
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="collection"></param>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        public static bool Contains<T>(this IEnumerable<T> collection, Func<T, bool> predicate)
+        {
+            if (predicate == null)
+                throw new ArgumentNullException(nameof(predicate));
+            foreach (var item in collection)
+            {
+                if (predicate(item))
+                    return true;
+            }
+            return false;
+        }
         /// <summary>
         /// Finds the first occurrence of the item by the given predicate and gives out it's index. Returns -1 if none found
         /// </summary>
@@ -307,5 +325,21 @@ namespace MIDE.Standard.Helpers
             }
             return !found;
         }
+        /// <summary>
+        /// Verifies if the given index is out of range for the current collection
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public static bool OutOfRange<T>(this IList<T> list, int index) => index < 0 && index >= list.Count;
+        /// <summary>
+        /// Verifies if the given index is out of range for the current array
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public static bool OutOfRange<T>(this T[] array, int index) => index < 0 || index >= array.Length;
     }
 }

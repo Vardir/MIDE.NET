@@ -1,7 +1,7 @@
 ﻿using System;
-using MIDE.Standard.Application;
+using MIDE.Application;
 using MIDE.Kernel.ConsoleTest.Extensions;
-using MIDE.Standard.Application.Attrubites;
+using MIDE.Application.Attrubites;
 
 [assembly: ApplicationProperties("consoletest")]
 

@@ -9,26 +9,26 @@ namespace MIDE.API.Measurements
     /// </summary>
     public struct BoundingBox : IEquatable<BoundingBox>
     {
-        public readonly GridLength Left;
-        public readonly GridLength Top;
-        public readonly GridLength Right;
-        public readonly GridLength Bottom;
+        public readonly double Left;
+        public readonly double Top;
+        public readonly double Right;
+        public readonly double Bottom;
 
-        public BoundingBox(GridLength all)
+        public BoundingBox(double all)
         {
             Left = all;
             Top = all;
             Right = all;
             Bottom = all;
         }
-        public BoundingBox(GridLength horizontal, GridLength vertical)
+        public BoundingBox(double horizontal, double vertical)
         {
             Left = horizontal;
             Top = vertical;
             Right = horizontal;
             Bottom = vertical;
         }
-        public BoundingBox(GridLength left, GridLength top, GridLength right, GridLength bottom)
+        public BoundingBox(double left, double top, double right, double bottom)
         {
             Left = left;
             Top = top;
@@ -55,10 +55,10 @@ namespace MIDE.API.Measurements
         public override int GetHashCode()
         {
             var hashCode = 55158;
-            hashCode *= -152 + EqualityComparer<GridLength>.Default.GetHashCode(Left);
-            hashCode *= -152 + EqualityComparer<GridLength>.Default.GetHashCode(Right);
-            hashCode *= -152 + EqualityComparer<GridLength>.Default.GetHashCode(Top);
-            hashCode *= -152 + EqualityComparer<GridLength>.Default.GetHashCode(Bottom);
+            hashCode *= -152 + EqualityComparer<double>.Default.GetHashCode(Left);
+            hashCode *= -152 + EqualityComparer<double>.Default.GetHashCode(Right);
+            hashCode *= -152 + EqualityComparer<double>.Default.GetHashCode(Top);
+            hashCode *= -152 + EqualityComparer<double>.Default.GetHashCode(Bottom);
             return hashCode & 0xFFF;
         }
 
@@ -77,21 +77,21 @@ namespace MIDE.API.Measurements
             string[] splited = str.Split(' ');
             if (splited.Length == 1)
             {
-                GridLength length = GridLength.Parse(splited[0]);
+                double length = double.Parse(splited[0]);
                 return new BoundingBox(length);
             }
             else if (splited.Length == 2)
             {
-                GridLength horizontal = GridLength.Parse(splited[0]);
-                GridLength vertical = GridLength.Parse(splited[1]);
+                double horizontal = double.Parse(splited[0]);
+                double vertical = double.Parse(splited[1]);
                 return new BoundingBox(horizontal, vertical);
             }
             else if (splited.Length == 4)
             {
-                GridLength left = GridLength.Parse(splited[0]);
-                GridLength top = GridLength.Parse(splited[1]);
-                GridLength right = GridLength.Parse(splited[2]);
-                GridLength bottom = GridLength.Parse(splited[3]);
+                double left = double.Parse(splited[0]);
+                double top = double.Parse(splited[1]);
+                double right = double.Parse(splited[2]);
+                double bottom = double.Parse(splited[3]);
                 return new BoundingBox(left, top, right, bottom);
             }
             throw new FormatException("The input string has invalid format");

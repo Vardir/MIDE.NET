@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using MIDE.Standard.FileSystem;
+using MIDE.FileSystem;
 using System.Collections.Generic;
-using MIDE.Standard.Application.Configuration;
+using MIDE.Application.Configuration;
 
 namespace MIDE.Kernel.ConsoleTest
 {

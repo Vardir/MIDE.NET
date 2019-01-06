@@ -1,4 +1,4 @@
-﻿using MIDE.Standard.Helpers;
+﻿using MIDE.Helpers;
 
 namespace MIDE.API.Components
 {

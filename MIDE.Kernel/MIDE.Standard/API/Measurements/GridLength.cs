@@ -1,5 +1,5 @@
 ﻿using System;
-using MIDE.Standard.Helpers;
+using MIDE.Helpers;
 
 namespace MIDE.API.Measurements
 {
@@ -95,13 +95,21 @@ namespace MIDE.API.Measurements
             return (true, new GridLength(length, type));
         }
 
-        public static bool operator==(GridLength left, GridLength right)
+        public static bool operator ==(GridLength left, GridLength right)
         {
             return left.Type == right.Type && left.Value == right.Value;
         }
         public static bool operator !=(GridLength left, GridLength right)
         {
             return left.Type != right.Type || left.Value != right.Value;
+        }
+        public static bool operator <(GridLength left, GridLength right)
+        {
+            return left.Type == right.Type && left.Value < right.Value;
+        }
+        public static bool operator >(GridLength left, GridLength right)
+        {
+            return left.Type == right.Type && left.Value > right.Value;
         }
 
         /// <summary>

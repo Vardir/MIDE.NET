@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MIDE.WPFApp"
         xmlns:controls="clr-namespace:MIDE.WPFApp.Controls"
-        xmlns:app="clr-namespace:MIDE.Standard.Application;assembly=api"
+        xmlns:app="clr-namespace:MIDE.Application;assembly=api"
         xmlns:c="clr-namespace:MIDE.API.Components;assembly=api"
         xmlns:conv="clr-namespace:MIDE.WPFApp.ValueConverters"
         mc:Ignorable="d" x:Name="appWindow"
@@ -72,21 +72,22 @@
         </ItemsControl>
 
         <TabControl Grid.Row="2" Grid.RowSpan="3"
-                    Name="ExplorerGroup">
+                    Name="ExplorerSection">
+            
         </TabControl>
         <GridSplitter Grid.Column="1" Grid.Row="2" Grid.RowSpan="3"
                       Width="2" ResizeDirection="Columns"
                       ResizeBehavior="PreviousAndNext"/>
         <TabControl Grid.Row="2" Grid.Column="2"
-                    Name="EditorGroup">
+                    Name="EditorSection">
 
         </TabControl>
         <GridSplitter Grid.Column="3" Grid.Row="2" Grid.RowSpan="3"
                       Width="2" ResizeDirection="Columns"
                       ResizeBehavior="PreviousAndNext"/>
         <TabControl Grid.Row="2" Grid.Column="4" Grid.RowSpan="3"
-                    Name="PropertiesViewGroup">
-
+                    Name="PropertyViewSection">
+            
         </TabControl>
         <GridSplitter Grid.Column="2" Grid.Row="3"
                       Height="2" ResizeDirection="Rows"
@@ -94,7 +95,7 @@
                       ResizeBehavior="PreviousAndNext"/>
 
         <TabControl Grid.Row="4" Grid.Column="2"
-                    Name="LogGroup">
+                    Name="LogSection">
 
         </TabControl>
 

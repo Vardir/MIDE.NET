@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 
-namespace MIDE.Standard.Application.Attrubites
+namespace MIDE.Application.Attrubites
 {
     public class ApplicationPropertiesAttribute : Attribute
     {

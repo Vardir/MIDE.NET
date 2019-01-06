@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace MIDE.Standard.Helpers
+namespace MIDE.Helpers
 {
     public static class StringHelpers
     {

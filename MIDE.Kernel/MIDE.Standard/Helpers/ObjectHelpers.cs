@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MIDE.Standard.Helpers
+namespace MIDE.Helpers
 {
     public static class ObjectHelpers
     {
@@ -18,5 +18,6 @@ namespace MIDE.Standard.Helpers
         {
             return value.Equals(first) && value.Equals(second);
         }
+        public static bool IsNot<T>(this object obj) => !(obj is T);
     }
 }

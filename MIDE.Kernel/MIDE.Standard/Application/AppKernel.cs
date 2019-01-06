@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Linq;
+using MIDE.FileSystem;
 using System.Reflection;
-using MIDE.Standard.FileSystem;
 using MIDE.API.Services;
 using MIDE.API.Commands;
-using System.Collections.Generic;
 using MIDE.API.Components;
 using MIDE.API.Extensibility;
-using MIDE.Standard.Application.Attrubites;
-using MIDE.Standard.Application.Configuration;
+using System.Collections.Generic;
+using MIDE.Application.Attrubites;
+using MIDE.Application.Configuration;
 using Module = MIDE.API.Extensibility.Module;
 
-namespace MIDE.Standard.Application
+namespace MIDE.Application
 {
     public class AppKernel : IDisposable
     {

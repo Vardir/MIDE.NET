@@ -1,7 +1,7 @@
 ﻿using MIDE.API.Components;
 using System.Collections.ObjectModel;
 
-namespace MIDE.Standard.Helpers
+namespace MIDE.Helpers
 {
     internal static class MenuHelpers
     {

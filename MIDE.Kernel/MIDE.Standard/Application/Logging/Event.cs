@@ -1,4 +1,4 @@
-﻿namespace MIDE.Standard.Application.Logging
+﻿namespace MIDE.Application.Logging
 {
     public class Event
     {

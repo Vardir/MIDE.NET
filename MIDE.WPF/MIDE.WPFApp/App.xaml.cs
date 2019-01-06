@@ -1,8 +1,8 @@
 ﻿using System.Windows;
+using MIDE.Application;
 using MIDE.WPFApp.Services;
 using MIDE.WPFApp.FileSystem;
-using MIDE.Standard.Application;
-using MIDE.Standard.Application.Attrubites;
+using MIDE.Application.Attrubites;
 
 [assembly: ApplicationProperties("wpftemplate")]
 
@@ -11,7 +11,7 @@ namespace MIDE.WPFApp
     /// <summary>
     /// Interaction logic for WPFApplication.xaml
     /// </summary>
-    public partial class WPFApplication : Application
+    public partial class WPFApplication : System.Windows.Application
     {
         private bool kernelStopped;
 

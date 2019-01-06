@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MIDE.Standard.Application.Configuration
+namespace MIDE.Application.Configuration
 {
     public class ConfigurationManager
     {

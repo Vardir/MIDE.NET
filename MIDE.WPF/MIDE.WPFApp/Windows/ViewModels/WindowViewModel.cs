@@ -6,7 +6,7 @@ using MIDE.WPFApp.RelayCommands;
 using MIDE.API.ViewModels;
 using System.Runtime.InteropServices;
 using ICommand = System.Windows.Input.ICommand;
-using MIDE.Standard.Application;
+using MIDE.Application;
 
 namespace MIDE.WPFApp
 {

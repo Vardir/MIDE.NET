@@ -1,8 +1,8 @@
 ﻿using System.Reflection;
 using System.Collections.Generic;
-using MIDE.Standard.Application.Configuration;
+using MIDE.Application.Configuration;
 
-namespace MIDE.Standard.FileSystem
+namespace MIDE.FileSystem
 {
     public abstract class FileManager
     {

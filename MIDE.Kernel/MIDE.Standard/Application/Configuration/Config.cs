@@ -1,4 +1,4 @@
-﻿namespace MIDE.Standard.Application.Configuration
+﻿namespace MIDE.Application.Configuration
 {
     public struct Config
     {

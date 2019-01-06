@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Linq;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace MIDE.API.Components
 {
     public class Panel : LayoutContainer
     {
-        protected List<LayoutComponent> Children { get; }
+        public ObservableCollection<LayoutComponent> Children { get; }
 
         public LayoutComponent this[string id] => Children.FirstOrDefault(c => c.Id == id);
 
         public Panel(string id) : base(id)
         {
-            Children = new List<LayoutComponent>();
+            Children = new ObservableCollection<LayoutComponent>();
         }
 
         /// <summary>

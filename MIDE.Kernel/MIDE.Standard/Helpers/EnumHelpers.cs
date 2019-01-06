@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MIDE.Standard.Helpers
+namespace MIDE.Helpers
 {
     public static class EnumHelpers
     {
