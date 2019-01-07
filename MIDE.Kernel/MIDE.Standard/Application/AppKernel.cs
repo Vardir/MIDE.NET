@@ -8,6 +8,7 @@ using MIDE.API.Components;
 using MIDE.API.Extensibility;
 using System.Collections.Generic;
 using MIDE.Application.Attrubites;
+using MIDE.Application.Initializers;
 using MIDE.Application.Configuration;
 using Module = MIDE.API.Extensibility.Module;
 
@@ -24,17 +25,17 @@ namespace MIDE.Application
 
         public string ApplicationName { get; private set; }
         public FileManager FileManager { get; set; }
-        public Menu ApplicationMenu { get; private set; }
         public IBufferProvider SystemBuffer { get; set; }
         public IEnumerable<AppExtension> Extensions => extensions;
+        public IUIManager UIManager { get; set; }
+        public List<IApplicationInitializer> Initializers { get; }
 
         public event Action ApplicationExit;
 
         private AppKernel ()
         {
             extensions = new List<AppExtension>();
-            ApplicationMenu = new Menu("app-menu");
-            PopulateMenu();
+            Initializers = new List<IApplicationInitializer>();
         }
         
         /// <summary>
@@ -47,9 +48,11 @@ namespace MIDE.Application
             if (isRunning)
                 throw new ApplicationException("Application kernel is already loaded and running!");
             if (FileManager == null)
-                throw new NullReferenceException("The FileManager should be assigned before starting the application");
+                throw new NullReferenceException("The FileManager expected to be assigned before application start");
             if (SystemBuffer == null)
-                throw new NullReferenceException("The SystemBuffer should be assigned before starting the application");
+                throw new NullReferenceException("The SystemBuffer expected to be assigned before application start");
+            if (UIManager == null)
+                throw new NullReferenceException("The UIHandler expected to be assigned before application start");
             callingAssembly = Assembly.GetCallingAssembly();
             string assemblyVertification = VerifyAssemblyAttributes();
             if (assemblyVertification != null)
@@ -57,6 +60,10 @@ namespace MIDE.Application
 
             isRunning = true;
             //TODO: prepare application
+            foreach (var initializer in Initializers)
+            {
+                initializer.Execute(this);
+            }
             var configs = FileManager.LoadConfigurations();
             ConfigurationManager.Instance.AddRange(configs);
             LoadExtensions();
@@ -104,26 +111,7 @@ namespace MIDE.Application
             extension.Initialize();
             extensions.Add(extension);
         }
-
-        /// <summary>
-        /// Populates the application menu with predefined basic items
-        /// </summary>
-        private void PopulateMenu()
-        {
-            ApplicationMenu.AddItem(new MenuButton("file", -99));
-            ApplicationMenu.AddItem("file", new MenuSplitter("split-exit", 98));
-            ApplicationMenu.AddItem("file", new MenuButton("exit", 99)
-            {
-                PressCommand = new RelayCommand(Exit)
-            });
-            ApplicationMenu.AddItem("file", new MenuButton("new", -99));
-            ApplicationMenu.AddItem("file/new", new MenuButton("file", -99));
-            ApplicationMenu.AddItem("file/new", new MenuButton("folder", -98));
-            ApplicationMenu.AddItem(new MenuButton("edit", -98));
-            ApplicationMenu.AddItem(new MenuButton("view", -97));
-            ApplicationMenu.AddItem(new MenuButton("tools", 50));
-            ApplicationMenu.AddItem(new MenuButton("help", 99));
-        }
+        
         /// <summary>
         /// Loads all the extensions that are provided in attached assemblies
         /// </summary>

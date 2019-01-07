@@ -75,9 +75,13 @@
     <Compile Include="Converters\MeasurementsConverter.cs" />
     <Compile Include="Converters\OrientationConverter.cs" />
     <Compile Include="Converters\RelayCommandConverter.cs" />
+    <Compile Include="Converters\TabSectionExtractor.cs" />
     <Compile Include="Helpers\MeasurementsHelper.cs" />
+    <Compile Include="Initializers\TabSectionInitializer.cs" />
+    <Compile Include="Initializers\WPFMenuInitializer.cs" />
     <Compile Include="RelayCommands\WindowsRelayParameterizedCommand.cs" />
     <Compile Include="RelayCommands\WindowsRelayCommand.cs" />
+    <Compile Include="Services\UIManager.cs" />
     <Compile Include="Services\WindowsBuffer.cs" />
     <Compile Include="Windows\WindowResizer.cs" />
     <Compile Include="Windows\ViewModels\WindowViewModel.cs" />
@@ -93,8 +97,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Controls\ResizablePanel.cs" />
-    <Compile Include="Controls\Resizer.cs" />
+    <Compile Include="Controls\Resizer\ResizablePanel.cs" />
+    <Compile Include="Controls\Resizer\Resizer.cs" />
     <Compile Include="FileSystem\WinFileManager.cs" />
     <Compile Include="Windows\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

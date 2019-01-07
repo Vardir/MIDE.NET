@@ -1,7 +1,8 @@
 ﻿using System;
 using MIDE.Application;
-using MIDE.Kernel.ConsoleTest.Extensions;
+using MIDE.API.Components;
 using MIDE.Application.Attrubites;
+using MIDE.Kernel.ConsoleTest.Extensions;
 
 [assembly: ApplicationProperties("consoletest")]
 
@@ -13,7 +14,6 @@ namespace MIDE.Kernel.ConsoleTest
 
         private Program()
         {
-
         }
 
         public static void Main(string[] args)

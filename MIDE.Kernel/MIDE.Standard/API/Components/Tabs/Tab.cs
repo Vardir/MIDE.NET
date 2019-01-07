@@ -27,13 +27,14 @@
                 if (value == null)
                     return;
                 contentContainer = value;
+                contentContainer.Parent = this;
                 OnPropertyChanged(nameof(ContentContainer));
             }
         }
 
         public Tab(string id) : base(id)
         {
-
+            Header = FormatId();
         }
 
         public override void AddChild(LayoutComponent component) => contentContainer?.AddChild(component);

@@ -2,6 +2,7 @@
 using MIDE.Application;
 using MIDE.WPFApp.Services;
 using MIDE.WPFApp.FileSystem;
+using MIDE.WPFApp.Initializers;
 using MIDE.Application.Attrubites;
 
 [assembly: ApplicationProperties("wpftemplate")]
@@ -19,15 +20,24 @@ namespace MIDE.WPFApp
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            Kernel.FileManager = new WinFileManager();
-            Kernel.SystemBuffer = WindowsBuffer.Instance;
+            Initialize();
             Kernel.Start();
-            Kernel.ApplicationExit += Kernel_ApplicationExit;
             var window = new MainWindow();
             MainWindow = window;
             window.ViewModel.Title = "WPFTemplate";
             MainWindow.Show();
             base.OnStartup(e);
+        }
+
+        private void Initialize()
+        {
+            Kernel.ApplicationExit += Kernel_ApplicationExit;
+            Kernel.FileManager = new WinFileManager();
+            Kernel.UIManager = new UIManager();
+            Kernel.SystemBuffer = WindowsBuffer.Instance;
+
+            Kernel.Initializers.Add(new ApplicationMenuInitializer(Kernel));
+            Kernel.Initializers.Add(new TabSectionInitializer());
         }
 
         private void Kernel_ApplicationExit()

@@ -33,6 +33,7 @@ namespace MIDE.WPFApp.Helpers
                 case APIM.GridLengthType.Auto: return WIN.GridUnitType.Auto;
                 case APIM.GridLengthType.Relative: return WIN.GridUnitType.Star;
                 case APIM.GridLengthType.Points: return WIN.GridUnitType.Pixel;
+                case APIM.GridLengthType.None: return WIN.GridUnitType.Auto;
                 default:
                     throw new ArgumentException("Unsupported measurement");
             }

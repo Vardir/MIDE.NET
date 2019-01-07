@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
+using System.Collections;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 
 namespace MIDE.API.Components
 {
@@ -13,6 +15,7 @@ namespace MIDE.API.Components
         public Panel(string id) : base(id)
         {
             Children = new ObservableCollection<LayoutComponent>();
+            Children.CollectionChanged += Items_CollectionChanged;
         }
 
         /// <summary>
@@ -64,5 +67,73 @@ namespace MIDE.API.Components
         /// <param name="id"></param>
         /// <returns></returns>
         public override LayoutComponent Find(string id) => Children.FirstOrDefault(c => c.Id == id);
+
+        private void Items_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    OnElementsAdd(e.NewItems);
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    OnElementsRemove(e.OldItems);
+                    break;
+                case NotifyCollectionChangedAction.Replace:
+                    OnElementsReplace(e.NewItems, e.OldItems);
+                    break;
+                case NotifyCollectionChangedAction.Reset:
+                    OnElementsRemove(e.OldItems);
+                    break;
+            }
+        }
+
+        private void OnElementsAdd(IList items)
+        {
+            foreach (var item in items)
+            {
+                var component = item as LayoutComponent;
+                OnElementAdd(component);
+            }
+        }
+        private void OnElementsRemove(IList items)
+        {
+            foreach (var item in items)
+            {
+                var component = item as LayoutComponent;
+                OnElementRemove(component);
+            }
+        }
+        private void OnElementsReplace(IList newItems, IList oldItems)
+        {
+            foreach (var item in oldItems)
+            {
+                var component = item as LayoutComponent;
+                OnElementRemove(component);
+            }
+            foreach (var item in newItems)
+            {
+                var component = item as LayoutComponent;
+                OnElementAdd(component);
+            }
+        }
+        private void OnCollectionReset(IList oldItems)
+        {
+            foreach (var item in oldItems)
+            {
+                var component = item as LayoutComponent;
+                OnElementRemove(component);
+            }
+        }
+
+        private void OnElementAdd(LayoutComponent component)
+        {
+            if (Children.Count(child => child.Id == component.Id) > 1)
+                throw new InvalidOperationException("Collection can not contain duplicate entries");
+            component.Parent = this;
+        }
+        private void OnElementRemove(LayoutComponent item)
+        {
+            item.Parent = null;
+        }
     }
 }

@@ -21,7 +21,7 @@ namespace MIDE.API.Extensibility
         
         public void Initialize()
         {
-            RegisterMenuItems(Kernel.ApplicationMenu);
+            RegisterMenuItems(Kernel.UIManager.ApplicationMenu);
         }
         public void Unload()
         {

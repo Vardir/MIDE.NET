@@ -2,7 +2,6 @@
 using MIDE.Helpers;
 using MIDE.API.Measurements;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 
@@ -43,16 +42,18 @@ namespace MIDE.API.Components
         }
         public ObservableCollection<GridRow> Rows { get; }
         public ObservableCollection<GridColumn> Columns { get; }
-
+        public ObservableCollection<GridCell> Children { get; }
+        
         public GridLayout(string id) : base(id)
         {
             Rows = new ObservableCollection<GridRow>();
             Columns = new ObservableCollection<GridColumn>();
+            Children = new ObservableCollection<GridCell>();
         }
 
         public override void AddChild(LayoutComponent component)
         {
-            throw new System.NotImplementedException();
+            AddChild(component, 0, 0);
         }
         public void AddChild(LayoutComponent component, int row, int column)
         {
@@ -60,15 +61,36 @@ namespace MIDE.API.Components
                 throw new IndexOutOfRangeException("Row index is out of range");
             if (Columns.OutOfRange(column))
                 throw new IndexOutOfRangeException("Column index is out of range");
-            Rows[row][column] = component;
+            int index = Children.FirstIndexWith(cell => cell.Row == row && cell.Column == column);
+            if (index == -1)
+                Children.Add(new GridCell(component, row, column));
+            else
+                Children[index].Component = component;
         }
         public override void RemoveChild(string id)
         {
-            throw new System.NotImplementedException();
+            int index = Children.FirstIndexWith(cell => cell.Component.Id == id);
+            if (index == -1)
+                return;
+            Children.RemoveAt(index);
+        }
+        public void RemoveChild(int row, int column)
+        {
+            if (Rows.OutOfRange(row))
+                throw new IndexOutOfRangeException("Row index is out of range");
+            if (Columns.OutOfRange(column))
+                throw new IndexOutOfRangeException("Column index is out of range");
+            int index = Children.FirstIndexWith(cell => cell.Row == row && cell.Column == column);
+            if (index == -1)
+                return;
+            Children.RemoveAt(index);
         }
         public override void RemoveChild(LayoutComponent component)
         {
-            throw new System.NotImplementedException();
+            int index = Children.FirstIndexWith(cell => cell.Component == component);
+            if (index == -1)
+                return;
+            Children.RemoveAt(index);
         }
 
         public override bool Contains(string id)
@@ -81,6 +103,57 @@ namespace MIDE.API.Components
         }
     }
 
+    public class GridCell : INotifyPropertyChanged
+    {
+        private int row;
+        private int column;
+        private LayoutComponent component;
+
+        public int Row
+        {
+            get => row;
+            set
+            {
+                if (value == row)
+                    return;
+                row = value;
+                OnPropertyChanged(nameof(Row));
+            }
+        }
+        public int Column
+        {
+            get => column;
+            set
+            {
+                if (value == column)
+                    return;
+                column = value;
+                OnPropertyChanged(nameof(Column));
+            }
+        }
+        public LayoutComponent Component
+        {
+            get => component;
+            set
+            {
+                if (value == component)
+                    return;
+                component = value;
+                OnPropertyChanged(nameof(Component));
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        
+        public GridCell(LayoutComponent component, int row, int column)
+        {
+            Row = row;
+            Column = column;
+            Component = component;
+        }
+
+        protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+    }
     public class GridColumn : INotifyPropertyChanged
     {
         private GridLength width;
@@ -129,13 +202,11 @@ namespace MIDE.API.Components
 
         protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
-    public class GridRow : INotifyPropertyChanged, INotifyCollectionChanged
+    public class GridRow : INotifyPropertyChanged
     {
         private GridLength height;
         private GridLength minHeight;
         private GridLength maxHeight;
-
-        private List<LayoutComponent> Cells { get; }
         
         public GridLength Height
         {
@@ -178,28 +249,8 @@ namespace MIDE.API.Components
         public event PropertyChangedEventHandler PropertyChanged;
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
-        public LayoutComponent this[int index]
-        {
-            get => Cells[index];
-            set
-            {
-                OnCollectionChanged(NotifyCollectionChangedAction.Replace, value, Cells[index], index);
-                Cells[index] = value;
-            }
-        } 
-
-        public GridRow()
-        {
-            Cells = new List<LayoutComponent>();
-        }
-
-        public int GetFirstEmptyCellIndex() => Cells.FindIndex(l => l == null);
-
+        public GridRow() { }
+        
         protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        protected void OnCollectionChanged(NotifyCollectionChangedAction action, object newItem, object oldItem, int index)
-        {
-            var args = new NotifyCollectionChangedEventArgs(action, newItem, oldItem, index);
-            CollectionChanged?.Invoke(this, args);
-        }
     }
 }

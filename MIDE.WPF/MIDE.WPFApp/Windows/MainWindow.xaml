@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MIDE.WPFApp"
+        xmlns:api="clr-namespace:MIDE.API.Components;assembly=api"
         xmlns:controls="clr-namespace:MIDE.WPFApp.Controls"
         xmlns:app="clr-namespace:MIDE.Application;assembly=api"
         xmlns:c="clr-namespace:MIDE.API.Components;assembly=api"
@@ -45,7 +46,7 @@
         </Grid.ColumnDefinitions>
 
         <Menu Grid.Row="0" Grid.ColumnSpan="5"
-              ItemsSource="{Binding Kernel.ApplicationMenu.Items}"
+              ItemsSource="{Binding Kernel.UIManager.ApplicationMenu.Items}"
               Background="{StaticResource BackgroundDarkBrush}"
               Foreground="{StaticResource ForegroundLightBrush}">
             <Menu.ItemContainerStyle>
@@ -71,9 +72,38 @@
             
         </ItemsControl>
 
-        <TabControl Grid.Row="2" Grid.RowSpan="3"
+        <TabControl ItemsSource="{Binding Kernel.UIManager, 
+                                  Converter={conv:TabSectionExtractor}, 
+                                  ConverterParameter=browsers}"
+                    Grid.Row="2" Grid.RowSpan="3"
                     Name="ExplorerSection">
-            
+            <TabControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Header}"/>
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+            <TabControl.ContentTemplate>
+                <DataTemplate>
+                    <ContentPresenter Content="{Binding ContentContainer}"/>
+                </DataTemplate>
+            </TabControl.ContentTemplate>
+            <!--<TabControl.ItemContainerStyle>
+                <Style TargetType="{x:Type TabItem}">
+                    <Setter Property="Header" Value="{Binding Header}"/>
+                    <Setter Property="Content">
+                        <Setter.Value>
+                            <ContentPresenter Content="{Binding ContentContainer}"/>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TabControl.ItemContainerStyle>-->
+            <!--<TabControl.ItemTemplate>
+                <DataTemplate DataType="{x:Type api:Tab}">
+                    <TabItem Header="{Binding Header}">
+                        <ContentPresenter Content="{Binding ContentContainer}"/>
+                    </TabItem>
+                </DataTemplate>
+            </TabControl.ItemTemplate>-->
         </TabControl>
         <GridSplitter Grid.Column="1" Grid.Row="2" Grid.RowSpan="3"
                       Width="2" ResizeDirection="Columns"

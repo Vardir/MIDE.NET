@@ -11,6 +11,8 @@ namespace MIDE.WPFApp.Controls
     /// </summary>
     public partial class Grid : UserControl
     {
+        private System.Windows.Controls.Grid container;
+
         public GridLayout Layout
         {
             get => (GridLayout)GetValue(LayoutProperty);
@@ -24,13 +26,13 @@ namespace MIDE.WPFApp.Controls
         public Grid()
         {
             InitializeComponent();
+            container = wrapper.ItemsPanel.LoadContent() as System.Windows.Controls.Grid;
         }
 
         private void ClearContents()
         {
             container.RowDefinitions.Clear();
             container.ColumnDefinitions.Clear();
-            container.Children.Clear();
         }
         private void UpdateToLayout()
         {

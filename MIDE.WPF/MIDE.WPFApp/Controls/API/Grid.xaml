@@ -6,11 +6,24 @@
              xmlns:local="clr-namespace:MIDE.WPFApp.Controls"
              xmlns:c="clr-namespace:MIDE.WPFApp.ValueConverters"
              mc:Ignorable="d"
-             d:DesignHeight="450" d:DesignWidth="800"
+             d:DesignHeight="450" d:DesignWidth="518.381"
              Margin="{Binding Margin, Converter={c:MeasurementsConverter}}"
              Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
              Width="{Binding Width, Converter={c:MeasurementsConverter}}"
              Height="{Binding Heigth, Converter={c:MeasurementsConverter}}">
-    <Grid Name="container">
-    </Grid>
+    <ItemsControl ItemsSource="{Binding Children}"
+                  Name="wrapper">
+        <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+                <Grid/>
+            </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+            <DataTemplate>
+                <ContentPresenter Content="{Binding Component}"
+                                  Grid.Row="{Binding Row, Mode=OneWay}"
+                                  Grid.Column="{Binding Column, Mode=OneWay}"/>
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+    </ItemsControl>
 </UserControl>
