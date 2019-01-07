@@ -3,6 +3,9 @@ using MIDE.API.Components;
 using MIDE.WPFApp.Helpers;
 using System.ComponentModel;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Controls.Primitives;
+using System.Reflection;
 
 namespace MIDE.WPFApp.Controls
 {
@@ -26,7 +29,12 @@ namespace MIDE.WPFApp.Controls
         public Grid()
         {
             InitializeComponent();
-            container = wrapper.ItemsPanel.LoadContent() as System.Windows.Controls.Grid;
+
+            wrapper.ApplyTemplate();
+            var b = VisualTreeHelper.GetChild(wrapper, 0) as Border;
+            var p = b.Child as ItemsPresenter;
+            p.ApplyTemplate();
+            container = VisualTreeHelper.GetChild(p, 0) as System.Windows.Controls.Grid;
         }
 
         private void ClearContents()
@@ -52,10 +60,10 @@ namespace MIDE.WPFApp.Controls
                 container.RowDefinitions.Add(rowDef);
                 if (i < layout.Rows.Count - 1)
                 {
-                    container.RowDefinitions.Add(new RowDefinition()
-                    {
-                        Height = margin
-                    });
+                    //container.RowDefinitions.Add(new RowDefinition()
+                    //{
+                    //    Height = margin
+                    //});
                 }
             }
             margin = layout.ColumnMargin.ToWindows();
@@ -71,10 +79,10 @@ namespace MIDE.WPFApp.Controls
                 container.ColumnDefinitions.Add(colDef);
                 if (i < layout.Columns.Count - 1)
                 {
-                    container.ColumnDefinitions.Add(new ColumnDefinition()
-                    {
-                        Width = margin
-                    });
+                    //container.ColumnDefinitions.Add(new ColumnDefinition()
+                    //{
+                    //    Width = margin
+                    //});
                 }
             }
         }

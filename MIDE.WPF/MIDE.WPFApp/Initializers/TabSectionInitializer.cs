@@ -14,10 +14,13 @@ namespace MIDE.WPFApp.Initializers
             var grid = new GridLayout("container");
             tab.ContentContainer = grid;
             grid.Columns.Add(new GridColumn() { Width = new API.Measurements.GridLength("*") });
+            grid.Columns.Add(new GridColumn() { Width = new API.Measurements.GridLength("*") });
+            grid.Rows.Add(new GridRow() { Height = new API.Measurements.GridLength("50") });
+            grid.Rows.Add(new GridRow() { Height = new API.Measurements.GridLength("50") });
             grid.Rows.Add(new GridRow() { Height = new API.Measurements.GridLength("50") });
             grid.Rows.Add(new GridRow() { Height = new API.Measurements.GridLength("50") });
             grid.AddChild(new Button("test-button"), 0, 0);
-            grid.AddChild(new Button("test-button2"), 1, 0);
+            grid.AddChild(new Button("test-button2"), 2, 0);
 
             appKernel.UIManager.AddSection(new TabSection("editors"));
             appKernel.UIManager.AddSection(new TabSection("properties"));
