@@ -2,6 +2,9 @@
 {
     public class Label : TextComponent
     {
-        public Label(string id) : base(id) {}
+        public Label(string id, string text) : base(id)
+        {
+            Text = text;
+        }
     }
 }

@@ -15,13 +15,15 @@
                   Name="wrapper">
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
-                <Grid ShowGridLines="True"/>
+                <Grid/>
             </ItemsPanelTemplate>
         </ItemsControl.ItemsPanel>
+
         <ItemsControl.ItemContainerStyle>
-            <Style>
-                <Setter Property="Grid.Row" Value="{Binding Row}"/>
-                <Setter Property="Grid.Column" Value="{Binding Column}"/>
+            <Style TargetType="ContentPresenter">
+                <Setter Property="Grid.Row" Value="{Binding Row, Converter={c:GridIndexConverter}}"/>
+                <Setter Property="Grid.Column" Value="{Binding Column, Converter={c:GridIndexConverter}}"/>
+                <!--<Setter Property="Content" Value="{Binding Component}"/>-->
             </Style>
         </ItemsControl.ItemContainerStyle>
         <ItemsControl.ItemTemplate>

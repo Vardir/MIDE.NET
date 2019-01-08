@@ -200,6 +200,19 @@ namespace MIDE.API.Components
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        public GridColumn()
+        {
+            Width = new GridLength("*");
+            MinWidth = new GridLength(0);
+            MaxWidth = new GridLength(double.MaxValue);
+        }
+        public GridColumn(GridLength width)
+        {
+            Width = width;
+            MinWidth = new GridLength(0);
+            MaxWidth = new GridLength(double.MaxValue);
+        }
+
         protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
     public class GridRow : INotifyPropertyChanged
@@ -249,7 +262,18 @@ namespace MIDE.API.Components
         public event PropertyChangedEventHandler PropertyChanged;
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
-        public GridRow() { }
+        public GridRow()
+        {
+            Height = new GridLength("*");
+            MinHeight = new GridLength(0);
+            MaxHeight = new GridLength(double.MaxValue);
+        }
+        public GridRow(GridLength heigth)
+        {
+            Height = heigth;
+            MinHeight = new GridLength(0);
+            MaxHeight = new GridLength(double.MaxValue);
+        }
         
         protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }

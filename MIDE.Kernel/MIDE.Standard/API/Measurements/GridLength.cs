@@ -20,7 +20,7 @@ namespace MIDE.API.Measurements
             Value = result.value;
             Type = result.type;
         }
-        public GridLength(double value, GridLengthType type)
+        public GridLength(double value, GridLengthType type = GridLengthType.Points)
         {
             Value = value;
             Type = type;

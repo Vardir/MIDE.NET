@@ -17,7 +17,7 @@
         }
         public override string Text
         {
-            get => text;
+            get => text ?? Default;
             set
             {
                 if (text == value || IsReadonly || !IsEnabled)

@@ -54,16 +54,16 @@ namespace MIDE.WPFApp.Controls
                 var rowDef = new RowDefinition()
                 {
                     Height = row.Height.ToWindows(),
-                    //MinHeight = row.MinHeight.Value,
-                    //MaxHeight = row.MaxHeight.Value
+                    MinHeight = row.MinHeight.Value,
+                    MaxHeight = row.MaxHeight.Value
                 };
                 container.RowDefinitions.Add(rowDef);
                 if (i < layout.Rows.Count - 1)
                 {
-                    //container.RowDefinitions.Add(new RowDefinition()
-                    //{
-                    //    Height = margin
-                    //});
+                    container.RowDefinitions.Add(new RowDefinition()
+                    {
+                        Height = margin
+                    });
                 }
             }
             margin = layout.ColumnMargin.ToWindows();
@@ -73,16 +73,16 @@ namespace MIDE.WPFApp.Controls
                 var colDef = new ColumnDefinition()
                 {
                     Width = column.Width.ToWindows(),
-                    //MinWidth = column.MinWidth.Value,
-                    //MaxWidth = column.MaxWidth.Value
+                    MinWidth = column.MinWidth.Value,
+                    MaxWidth = column.MaxWidth.Value
                 };
                 container.ColumnDefinitions.Add(colDef);
                 if (i < layout.Columns.Count - 1)
                 {
-                    //container.ColumnDefinitions.Add(new ColumnDefinition()
-                    //{
-                    //    Width = margin
-                    //});
+                    container.ColumnDefinitions.Add(new ColumnDefinition()
+                    {
+                        Width = margin
+                    });
                 }
             }
         }

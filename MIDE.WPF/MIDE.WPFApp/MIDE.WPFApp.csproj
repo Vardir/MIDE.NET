@@ -72,6 +72,7 @@
     <Compile Include="Converters\Boolean\InvertBoolean.cs" />
     <Compile Include="Converters\Boolean\NullableToBoolean.cs" />
     <Compile Include="Converters\EnumToInteger.cs" />
+    <Compile Include="Converters\GridIndexConverter.cs" />
     <Compile Include="Converters\MeasurementsConverter.cs" />
     <Compile Include="Converters\OrientationConverter.cs" />
     <Compile Include="Converters\RelayCommandConverter.cs" />

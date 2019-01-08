@@ -6,6 +6,7 @@
                     xmlns:ctr="clr-namespace:MIDE.WPFApp.Controls">
 
     <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Texts.xaml"/>
         <ResourceDictionary Source="Colors.xaml"/>
         <ResourceDictionary Source="Fonts.xaml"/>
     </ResourceDictionary.MergedDictionaries>
@@ -342,12 +343,13 @@
         <ctr:Grid Layout="{Binding}"></ctr:Grid>
     </DataTemplate>
     <DataTemplate DataType="{x:Type api:Label}">
-        <Label Margin="{Binding Margin, Converter={c:MeasurementsConverter}}" 
-               Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
-               Height="{Binding Height, Converter={c:MeasurementsConverter}}"
-               Width="{Binding Width, Converter={c:MeasurementsConverter}}"
-               IsEnabled="{Binding IsEnabled}"
-               Content="{Binding Text}"/>
+        <TextBlock Margin="{Binding Margin, Converter={c:MeasurementsConverter}}" 
+                   Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
+                   Height="{Binding Height, Converter={c:MeasurementsConverter}}"
+                   Width="{Binding Width, Converter={c:MeasurementsConverter}}"
+                   IsEnabled="{Binding IsEnabled}"
+                   Text="{Binding Text}"
+                   Style="{StaticResource DefaultTextBlock}"/>
     </DataTemplate>
     <DataTemplate DataType="{x:Type api:RadioButton}">
         <RadioButton Margin="{Binding Margin, Converter={c:MeasurementsConverter}}" 
@@ -358,12 +360,12 @@
                      IsChecked="{Binding IsChecked}"/>
     </DataTemplate>
     <DataTemplate DataType="{x:Type api:TextBox}">
-        <TextBlock Margin="{Binding Margin, Converter={c:MeasurementsConverter}}" 
-                   Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
-                   Height="{Binding Height, Converter={c:MeasurementsConverter}}"
-                   Width="{Binding Width, Converter={c:MeasurementsConverter}}"
-                   IsEnabled="{Binding IsEnabled}"
-                   Text="{Binding Text}"/>
+        <TextBox Margin="{Binding Margin, Converter={c:MeasurementsConverter}}" 
+                 Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
+                 Height="{Binding Height, Converter={c:MeasurementsConverter}}"
+                 Width="{Binding Width, Converter={c:MeasurementsConverter}}"
+                 IsEnabled="{Binding IsEnabled}"
+                 Text="{Binding Text}"/>
     </DataTemplate>
     <DataTemplate DataType="{x:Type api:Panel}">
         <ItemsControl ItemsSource="{Binding Children}"
