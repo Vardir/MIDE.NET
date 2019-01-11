@@ -37,11 +37,11 @@
             Header = FormatId();
         }
 
-        public override void AddChild(LayoutComponent component) => contentContainer?.AddChild(component);
-        public override void RemoveChild(string id) => contentContainer?.RemoveChild(id);
-        public override void RemoveChild(LayoutComponent component) => contentContainer?.RemoveChild(component);
-
         public override bool Contains(string id) => contentContainer?.Contains(id) ?? false;
         public override LayoutComponent Find(string id) => contentContainer?.Find(id);
+
+        protected override void AddChild_Impl(LayoutComponent component) => contentContainer?.AddChild(component);
+        protected override void RemoveChild_Impl(string id) => contentContainer?.RemoveChild(id);
+        protected override void RemoveChild_Impl(LayoutComponent component) => contentContainer?.RemoveChild(component);
     }
 }

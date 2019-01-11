@@ -9,7 +9,7 @@ namespace MIDE.WPFApp.ValueConverters
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is UIManager manager)
-                return manager[parameter as string].Tabs;
+                return manager[parameter as string];
             throw new ArgumentException("Not a UIManager value given");
         }
 

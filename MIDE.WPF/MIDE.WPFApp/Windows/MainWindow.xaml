@@ -72,11 +72,13 @@
             
         </ItemsControl>
 
-        <TabControl ItemsSource="{Binding Kernel.UIManager, 
+        <TabControl DataContext="{Binding Kernel.UIManager, 
                                   Converter={conv:TabSectionExtractor}, 
                                   ConverterParameter=browsers}"
+                    ItemsSource="{Binding Tabs}"
                     Grid.Row="2" Grid.RowSpan="3"
-                    Name="ExplorerSection">
+                    Name="ExplorerSection"
+                    SelectedIndex="{Binding SelectedIndex}">
             <TabControl.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Header}"/>
@@ -84,26 +86,10 @@
             </TabControl.ItemTemplate>
             <TabControl.ContentTemplate>
                 <DataTemplate>
-                    <ContentPresenter Content="{Binding ContentContainer}"/>
+                    <ContentPresenter Content="{Binding ContentContainer}"
+                                      Margin="1 3 1 1"/>
                 </DataTemplate>
             </TabControl.ContentTemplate>
-            <!--<TabControl.ItemContainerStyle>
-                <Style TargetType="{x:Type TabItem}">
-                    <Setter Property="Header" Value="{Binding Header}"/>
-                    <Setter Property="Content">
-                        <Setter.Value>
-                            <ContentPresenter Content="{Binding ContentContainer}"/>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </TabControl.ItemContainerStyle>-->
-            <!--<TabControl.ItemTemplate>
-                <DataTemplate DataType="{x:Type api:Tab}">
-                    <TabItem Header="{Binding Header}">
-                        <ContentPresenter Content="{Binding ContentContainer}"/>
-                    </TabItem>
-                </DataTemplate>
-            </TabControl.ItemTemplate>-->
         </TabControl>
         <GridSplitter Grid.Column="1" Grid.Row="2" Grid.RowSpan="3"
                       Width="2" ResizeDirection="Columns"
@@ -112,6 +98,7 @@
                     Name="EditorSection">
 
         </TabControl>
+        
         <GridSplitter Grid.Column="3" Grid.Row="2" Grid.RowSpan="3"
                       Width="2" ResizeDirection="Columns"
                       ResizeBehavior="PreviousAndNext"/>

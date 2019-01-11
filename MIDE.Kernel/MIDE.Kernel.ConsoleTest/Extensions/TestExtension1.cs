@@ -1,9 +1,11 @@
 ﻿using MIDE.API.Commands;
 using MIDE.API.Components;
 using MIDE.API.Extensibility;
+using MIDE.Application.Attrubites;
 
 namespace MIDE.Kernel.ConsoleTest.Extensions
 {
+    [Dependency(Version = "0.3.1", Type = DependencyType.ApplicationKernel)]
     public class TestExtension1 : AppExtension
     {
         public TestExtension1(string id) : base(id) { }

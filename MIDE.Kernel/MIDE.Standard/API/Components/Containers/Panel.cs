@@ -17,43 +17,7 @@ namespace MIDE.API.Components
             Children = new ObservableCollection<LayoutComponent>();
             Children.CollectionChanged += Items_CollectionChanged;
         }
-
-        /// <summary>
-        /// Adds the specified component to the collection
-        /// </summary>
-        /// <param name="component"></param>
-        /// <exception cref="ArgumentException"></exception>
-        /// <exception cref="ArgumentNullException"></exception>
-        public override void AddChild(LayoutComponent component)
-        {
-            if (component == null)
-                throw new ArgumentNullException("The argument should not be null");
-            if (Children.FirstOrDefault(c => c.Id == component.Id) != null)
-                throw new ArgumentException("The component with the same ID is already in the collection");
-            Children.Add(component);
-        }
-
-        /// <summary>
-        /// Searches child with the specified ID and removes it from the collection
-        /// </summary>
-        /// <param name="id"></param>
-        public override void RemoveChild(string id)
-        {
-            var child = Children.FirstOrDefault(c => c.Id == id);
-            if (child != null)
-                RemoveChild(child);
-        }
-
-        /// <summary>
-        /// Removes the specified component from the collection
-        /// </summary>
-        /// <param name="component"></param>
-        public override void RemoveChild(LayoutComponent component)
-        {
-            Children.Remove(component);
-            component.Parent = null;
-        }
-
+              
         /// <summary>
         /// Checks whether the item with the specified ID is in collection
         /// </summary>
@@ -67,6 +31,26 @@ namespace MIDE.API.Components
         /// <param name="id"></param>
         /// <returns></returns>
         public override LayoutComponent Find(string id) => Children.FirstOrDefault(c => c.Id == id);
+
+        protected override void AddChild_Impl(LayoutComponent component)
+        {
+            if (component == null)
+                throw new ArgumentNullException("The argument should not be null");
+            if (Children.FirstOrDefault(c => c.Id == component.Id) != null)
+                throw new ArgumentException("The component with the same ID is already in the collection");
+            Children.Add(component);
+        }
+        protected override void RemoveChild_Impl(string id)
+        {
+            var child = Children.FirstOrDefault(c => c.Id == id);
+            if (child != null)
+                RemoveChild(child);
+        }
+        protected override void RemoveChild_Impl(LayoutComponent component)
+        {
+            Children.Remove(component);
+            component.Parent = null;
+        }
 
         private void Items_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {

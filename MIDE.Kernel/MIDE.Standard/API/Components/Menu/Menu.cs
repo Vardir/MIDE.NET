@@ -26,39 +26,8 @@ namespace MIDE.API.Components
         {
             Items = new ObservableCollection<MenuItem>();
             Items.CollectionChanged += Items_CollectionChanged;
-        }
+        }        
         
-        public override void RemoveChild(string id)
-        {
-            var item = Items.FirstOrDefault(i => i.Id == id);
-            Items.Remove(item);
-        }
-        /// <summary>
-        /// Adds the specified element into the list of menu items. If the component is not subtype of MenuItem exception thrown
-        /// </summary>
-        /// <param name="component"></param>
-        /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="ArgumentException"></exception>
-        public override void AddChild(LayoutComponent component)
-        {
-            if (component == null)
-                throw new ArgumentNullException(nameof(component));
-            if (!(component is MenuItem menuItem))
-                throw new ArgumentException($"Menu can not contain elements of type {component.GetType()}");
-
-            Items.Insert(menuItem, MenuItem.MIN_ORDINAL, MenuItem.MAX_ORDINAL);
-        }
-        /// <summary>
-        /// Removes the component from the list of menu items.
-        /// </summary>
-        /// <param name="component"></param>
-        /// <exception cref="ArgumentException"></exception>
-        public override void RemoveChild(LayoutComponent component)
-        {
-            if (!(component is MenuItem menuItem))
-                throw new ArgumentException($"Menu does not contain elements of type {component.GetType()}");
-            Items.Remove(menuItem);
-        }
         public void AddItem(MenuItem item) => Items.Insert(item, MenuItem.MIN_ORDINAL, MenuItem.MAX_ORDINAL);
         /// <summary>
         /// Puts the specified element to the last one element in path. Each non-existing element in path will be created.
@@ -219,6 +188,27 @@ namespace MIDE.API.Components
                 segment = tail2;
             }
             return root.GetAllItemsIDs();
+        }
+
+        protected override void RemoveChild_Impl(string id)
+        {
+            var item = Items.FirstOrDefault(i => i.Id == id);
+            Items.Remove(item);
+        }
+        protected override void AddChild_Impl(LayoutComponent component)
+        {
+            if (component == null)
+                throw new ArgumentNullException(nameof(component));
+            if (!(component is MenuItem menuItem))
+                throw new ArgumentException($"Menu can not contain elements of type {component.GetType()}");
+
+            Items.Insert(menuItem, MenuItem.MIN_ORDINAL, MenuItem.MAX_ORDINAL);
+        }
+        protected override void RemoveChild_Impl(LayoutComponent component)
+        {
+            if (!(component is MenuItem menuItem))
+                throw new ArgumentException($"Menu does not contain elements of type {component.GetType()}");
+            Items.Remove(menuItem);
         }
 
         private void Items_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

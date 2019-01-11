@@ -5,6 +5,7 @@ namespace MIDE.API.Components
     public class CheckBox : LayoutComponent
     {
         private bool isChecked;
+        private string caption;
 
         public bool IsChecked
         {
@@ -17,6 +18,17 @@ namespace MIDE.API.Components
                 OnPropertyChanged(nameof(IsChecked));
                 CheckedChanged?.Invoke(isChecked);
                 OnCheckedChanged();
+            }
+        }
+        public string Caption
+        {
+            get => caption;
+            set
+            {
+                if (value == caption)
+                    return;
+                caption = value;
+                OnPropertyChanged(nameof(Caption));
             }
         }
 

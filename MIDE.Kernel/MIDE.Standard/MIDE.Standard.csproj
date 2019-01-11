@@ -16,6 +16,7 @@
     <NeutralLanguage>en</NeutralLanguage>
     <LangVersion>7.1</LangVersion>
     <RootNamespace>MIDE</RootNamespace>
+    <Version>0.3.1</Version>
   </PropertyGroup>
 
 </Project>

@@ -9,8 +9,8 @@ namespace MIDE.WPFApp.Initializers
         public void Execute(AppKernel appKernel)
         {
             appKernel.UIManager.AddSection(new TabSection("browsers"));
-            appKernel.UIManager["browsers"].Insert(0, new Tab("file-explorer"));
-            var tab = (appKernel.UIManager["browsers"].Find("file-explorer")) as Tab;
+            var tab = new Tab("test-type");
+            appKernel.UIManager["browsers"].Insert(0, tab);
             var grid = new GridLayout("container");
             tab.ContentContainer = grid;
             grid.ColumnMargin = new API.Measurements.GridLength("5");
@@ -29,6 +29,10 @@ namespace MIDE.WPFApp.Initializers
             grid.AddChild(new Button("test-button2"), 2, 1);
 
             appKernel.UIManager.AddSection(new TabSection("editors"));
+            var expl = new FileExplorer("file-explorer");
+            appKernel.UIManager["browsers"].Insert(0, expl);
+            expl.Show("C:/");
+            
             appKernel.UIManager.AddSection(new TabSection("properties"));
             appKernel.UIManager.AddSection(new TabSection("loggers"));
         }

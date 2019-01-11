@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Drawing;
+using System.ComponentModel;
 
 namespace MIDE.API.Visuals
 {
@@ -8,6 +9,8 @@ namespace MIDE.API.Visuals
     public class Glyph : INotifyPropertyChanged
     {
         private object value;
+        private Color alternateColor;
+
         public object Value
         {
             get => value;
@@ -22,12 +25,34 @@ namespace MIDE.API.Visuals
             }
         }
         public GlyphKind Kind { get; }
+        public Color AlternateColor
+        {
+            get => alternateColor;
+            set
+            {
+                if (value == alternateColor)
+                    return;
+                alternateColor = value;
+                OnPropertyChanged(nameof(AlternateColor));
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Glyph(GlyphKind kind)
+        public Glyph(string fontAwesomeIcon)
+        {
+            Kind = GlyphKind.FontAwesome;
+            Value = fontAwesomeIcon;
+        }
+        public Glyph(char unicodeSymbol)
+        {
+            Kind = GlyphKind.UnicodeSymbol;
+            Value = unicodeSymbol;
+        }
+        public Glyph(object value, GlyphKind kind = GlyphKind.ImagePath)
         {
             Kind = kind;
+            Value = value;
         }
 
         protected void OnPropertyChanged(string propertyName)
@@ -39,20 +64,27 @@ namespace MIDE.API.Visuals
         {
             switch (Kind)
             {
-                case GlyphKind.Char:
+                case GlyphKind.UnicodeSymbol:
+                    if (value is string code)
+                    {
+                        //TODO: validate Unicode symbol format
+                    }
                     return value is char;
-                case GlyphKind.String:
+                case GlyphKind.FontAwesome:
                     if (value is string str)
                     {
-                        //TODO: validate string glyph
+                        //TODO: add format validation
+                        return !string.IsNullOrWhiteSpace(str);
                     }
-                    break;
-                case GlyphKind.Image:
+                    return value is char;
+                case GlyphKind.ImagePath:
                     if (value is string imgPath)
                     {
                         //TODO: validate path of the glyph
                     }
-                    //TODO: add supported formats for the glyph (bitmaps etc.)
+                    break;
+                case GlyphKind.Bitmap:
+                    //TODO: validate reference to a bitmap
                     break;
             }
             return false;
@@ -64,14 +96,18 @@ namespace MIDE.API.Visuals
         /// <summary>
         /// The glyph is represented by the char symbol (e.g. /u0159)
         /// </summary>
-        Char,
+        UnicodeSymbol,
         /// <summary>
         /// The glyph is represented as string instruction
         /// </summary>
-        String,
+        FontAwesome,
         /// <summary>
-        /// The glyph is represented by a path to the existing image on device or in-memory image
+        /// The glyph is represented by a path to the existing image on device
         /// </summary>
-        Image
+        ImagePath,
+        /// <summary>
+        /// The glyph is represented by an in-memory bitmap image
+        /// </summary>
+        Bitmap
     }
 }

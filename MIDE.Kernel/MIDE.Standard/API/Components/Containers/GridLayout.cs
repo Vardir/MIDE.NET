@@ -51,43 +51,31 @@ namespace MIDE.API.Components
             Children = new ObservableCollection<GridCell>();
         }
 
-        public override void AddChild(LayoutComponent component)
-        {
-            AddChild(component, 0, 0);
-        }
         public void AddChild(LayoutComponent component, int row, int column)
         {
+            if (IsSealed)
+                throw new InvalidOperationException("Can not add any child elements into a sealed control");
             if (Rows.OutOfRange(row))
                 throw new IndexOutOfRangeException("Row index is out of range");
             if (Columns.OutOfRange(column))
                 throw new IndexOutOfRangeException("Column index is out of range");
+
             int index = Children.FirstIndexWith(cell => cell.Row == row && cell.Column == column);
             if (index == -1)
                 Children.Add(new GridCell(component, row, column));
             else
                 Children[index].Component = component;
         }
-        public override void RemoveChild(string id)
-        {
-            int index = Children.FirstIndexWith(cell => cell.Component.Id == id);
-            if (index == -1)
-                return;
-            Children.RemoveAt(index);
-        }
         public void RemoveChild(int row, int column)
         {
+            if (IsSealed)
+                throw new InvalidOperationException("Can not remove child elements from a sealed control");
             if (Rows.OutOfRange(row))
                 throw new IndexOutOfRangeException("Row index is out of range");
             if (Columns.OutOfRange(column))
                 throw new IndexOutOfRangeException("Column index is out of range");
+
             int index = Children.FirstIndexWith(cell => cell.Row == row && cell.Column == column);
-            if (index == -1)
-                return;
-            Children.RemoveAt(index);
-        }
-        public override void RemoveChild(LayoutComponent component)
-        {
-            int index = Children.FirstIndexWith(cell => cell.Component == component);
             if (index == -1)
                 return;
             Children.RemoveAt(index);
@@ -101,6 +89,26 @@ namespace MIDE.API.Components
         {
             throw new System.NotImplementedException();
         }
+
+        protected override void AddChild_Impl(LayoutComponent component)
+        {
+            AddChild(component, 0, 0);
+        }
+        protected override void RemoveChild_Impl(string id)
+        {
+            int index = Children.FirstIndexWith(cell => cell.Component.Id == id);
+            if (index == -1)
+                return;
+            Children.RemoveAt(index);
+        }
+        protected override void RemoveChild_Impl(LayoutComponent component)
+        {
+            int index = Children.FirstIndexWith(cell => cell.Component == component);
+            if (index == -1)
+                return;
+            Children.RemoveAt(index);
+        }
+
     }
 
     public class GridCell : INotifyPropertyChanged

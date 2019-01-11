@@ -14,6 +14,8 @@ namespace MIDE.Kernel.ConsoleTest
 
         private Program()
         {
+            FileExplorer explorer = new FileExplorer("fexp-1");
+            explorer.Show("C:/");
         }
 
         public static void Main(string[] args)

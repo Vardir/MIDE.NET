@@ -3,8 +3,6 @@ using System.Linq;
 using MIDE.FileSystem;
 using System.Reflection;
 using MIDE.API.Services;
-using MIDE.API.Commands;
-using MIDE.API.Components;
 using MIDE.API.Extensibility;
 using System.Collections.Generic;
 using MIDE.Application.Attrubites;

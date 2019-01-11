@@ -43,6 +43,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -71,6 +72,7 @@
     <Compile Include="Converters\Boolean\IntegerToBoolean.cs" />
     <Compile Include="Converters\Boolean\InvertBoolean.cs" />
     <Compile Include="Converters\Boolean\NullableToBoolean.cs" />
+    <Compile Include="Converters\ColorConverter.cs" />
     <Compile Include="Converters\EnumToInteger.cs" />
     <Compile Include="Converters\GridIndexConverter.cs" />
     <Compile Include="Converters\MeasurementsConverter.cs" />
@@ -84,9 +86,14 @@
     <Compile Include="RelayCommands\WindowsRelayCommand.cs" />
     <Compile Include="Services\UIManager.cs" />
     <Compile Include="Services\WindowsBuffer.cs" />
+    <Compile Include="Styles\Selectors\GlyphTemplateSelector.cs" />
     <Compile Include="Windows\WindowResizer.cs" />
     <Compile Include="Windows\ViewModels\WindowViewModel.cs" />
     <Page Include="Controls\API\Grid.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\TreeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -6,6 +6,21 @@ namespace MIDE.Helpers
     public static class CollectionHelpers
     {
         /// <summary>
+        /// Adds a range of items to an existing collection
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="collection"></param>
+        /// <param name="items"></param>
+        public static void AddRange<T>(this ICollection<T> collection, IEnumerable<T> items)
+        {
+            if (items == null)
+                throw new ArgumentNullException(nameof(items));
+
+            foreach (var item in items)
+                collection.Add(item);
+        }
+
+        /// <summary>
         /// Checks whether the given collection contains an element that matches the predicate
         /// </summary>
         /// <typeparam name="T"></typeparam>
