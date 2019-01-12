@@ -1,6 +1,8 @@
 ﻿using MIDE.Application;
 using MIDE.API.Components;
 using MIDE.Application.Initializers;
+using MIDE.API.Commands;
+using System;
 
 namespace MIDE.WPFApp.Initializers
 {
@@ -9,7 +11,7 @@ namespace MIDE.WPFApp.Initializers
         public void Execute(AppKernel appKernel)
         {
             appKernel.UIManager.AddSection(new TabSection("browsers"));
-            var tab = new Tab("test-type");
+            var tab = new Tab("test-tab");
             appKernel.UIManager["browsers"].Insert(0, tab);
             var grid = new GridLayout("container");
             tab.ContentContainer = grid;
@@ -32,6 +34,11 @@ namespace MIDE.WPFApp.Initializers
             var expl = new FileExplorer("file-explorer");
             appKernel.UIManager["browsers"].Insert(0, expl);
             expl.Show("C:/");
+            expl.TabToolbar.AddChild(new ToolbarButton("test-button")
+            {
+                Caption = "Say", ButtonGlyph = new API.Visuals.Glyph("\uf001"),
+                PressCommand = new RelayCommand(() => Console.WriteLine("Hello"))
+            });
             
             appKernel.UIManager.AddSection(new TabSection("properties"));
             appKernel.UIManager.AddSection(new TabSection("loggers"));

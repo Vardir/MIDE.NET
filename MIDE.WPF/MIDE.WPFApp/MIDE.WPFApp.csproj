@@ -86,6 +86,10 @@
     <Compile Include="RelayCommands\WindowsRelayCommand.cs" />
     <Compile Include="Services\UIManager.cs" />
     <Compile Include="Services\WindowsBuffer.cs" />
+    <Page Include="Styles\DefaultControls.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Compile Include="Styles\Selectors\GlyphTemplateSelector.cs" />
     <Compile Include="Windows\WindowResizer.cs" />
     <Compile Include="Windows\ViewModels\WindowViewModel.cs" />

@@ -12,6 +12,7 @@
                 <ResourceDictionary Source="Styles/Buttons.xaml" />
                 <ResourceDictionary Source="Styles/Windows.xaml" />
                 <ResourceDictionary Source="Styles/TreeView.xaml" />
+                <ResourceDictionary Source="Styles/DefaultControls.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

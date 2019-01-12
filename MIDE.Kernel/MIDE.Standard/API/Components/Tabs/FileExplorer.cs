@@ -3,6 +3,7 @@ using MIDE.Helpers;
 using MIDE.FileSystem;
 using MIDE.API.Commands;
 using System.Collections.Generic;
+using MIDE.API.Measurements;
 
 namespace MIDE.API.Components
 {
@@ -25,11 +26,16 @@ namespace MIDE.API.Components
 
         protected override void InitializeComponents()
         {
-            Panel panel = new Panel("container");
+            StackPanel stack = new StackPanel("container");
+            stack.Orientation = StackOrientation.Vertical;
+            ActionTextBox searchBox = new ActionTextBox("search");
+            searchBox.ActionButton.Caption = "@";
+            searchBox.Margin = new BoundingBox(0, 0, 0, 5);
             treeView = new TreeView("files-view");
 
-            ContentContainer = panel;
-            panel.Children.Add(treeView);
+            ContentContainer = stack;
+            stack.AddChild(searchBox);
+            stack.AddChild(treeView);
         }        
     }
 

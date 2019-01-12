@@ -19,6 +19,7 @@
                 OnPropertyChanged(nameof(Header));
             }
         }
+        public Toolbar TabToolbar { get; }
         public LayoutContainer ContentContainer
         {
             get => contentContainer;
@@ -35,6 +36,7 @@
         public Tab(string id) : base(id)
         {
             Header = FormatId();
+            TabToolbar = new Toolbar("toolbar");
         }
 
         public override bool Contains(string id) => contentContainer?.Contains(id) ?? false;
