@@ -1,8 +1,8 @@
-﻿using MIDE.Application;
+﻿using System;
+using MIDE.Application;
+using MIDE.API.Commands;
 using MIDE.API.Components;
 using MIDE.Application.Initializers;
-using MIDE.API.Commands;
-using System;
 
 namespace MIDE.WPFApp.Initializers
 {
@@ -10,9 +10,9 @@ namespace MIDE.WPFApp.Initializers
     {
         public void Execute(AppKernel appKernel)
         {
-            appKernel.UIManager.AddSection(new TabSection("browsers"));
+            appKernel.UIManager.AddTabSection(new TabSection("browsers"));
             var tab = new Tab("test-tab");
-            appKernel.UIManager["browsers"].Insert(0, tab);
+            appKernel.UIManager.AddTab(tab, "browsers");
             var grid = new GridLayout("container");
             tab.ContentContainer = grid;
             grid.ColumnMargin = new API.Measurements.GridLength("5");
@@ -30,18 +30,12 @@ namespace MIDE.WPFApp.Initializers
             grid.AddChild(new TextBox("test-tbox3", "World"), 2, 0);
             grid.AddChild(new Button("test-button2"), 2, 1);
 
-            appKernel.UIManager.AddSection(new TabSection("editors"));
+            appKernel.UIManager.AddTabSection(new TabSection("editors"));
             var expl = new FileExplorer("file-explorer");
-            appKernel.UIManager["browsers"].Insert(0, expl);
-            expl.Show("C:/");
-            expl.TabToolbar.AddChild(new ToolbarButton("test-button")
-            {
-                Caption = "Say", ButtonGlyph = new API.Visuals.Glyph("\uf001"),
-                PressCommand = new RelayCommand(() => Console.WriteLine("Hello"))
-            });
+            appKernel.UIManager.AddTab(expl, "browsers");
             
-            appKernel.UIManager.AddSection(new TabSection("properties"));
-            appKernel.UIManager.AddSection(new TabSection("loggers"));
+            appKernel.UIManager.AddTabSection(new TabSection("properties"));
+            appKernel.UIManager.AddTabSection(new TabSection("loggers"));
         }
     }
 }

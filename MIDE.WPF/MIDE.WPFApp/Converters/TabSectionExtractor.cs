@@ -1,5 +1,5 @@
 ﻿using System;
-using MIDE.WPFApp.Services;
+using MIDE.API.Services;
 using System.Globalization;
 
 namespace MIDE.WPFApp.ValueConverters

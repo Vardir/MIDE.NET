@@ -33,7 +33,6 @@ namespace MIDE.WPFApp
         {
             Kernel.ApplicationExit += Kernel_ApplicationExit;
             Kernel.FileManager = new WinFileManager();
-            Kernel.UIManager = new UIManager();
             Kernel.SystemBuffer = WindowsBuffer.Instance;
 
             Kernel.Initializers.Add(new ApplicationMenuInitializer(Kernel));

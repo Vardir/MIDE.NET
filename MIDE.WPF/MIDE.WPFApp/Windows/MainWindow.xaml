@@ -16,6 +16,7 @@
         MinWidth="{Binding WindowMinimumWidth}"
         MinHeight="{Binding WindowMinimumHeight}"
         WindowStartupLocation="CenterScreen"
+        WindowState="Maximized"
         Activated="Window_Activated" Deactivated="Window_Deactivated"
         Height="500" Width="800">
     

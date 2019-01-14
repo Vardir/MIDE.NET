@@ -99,6 +99,7 @@
                 Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
                 Height="{Binding Height, Converter={c:MeasurementsConverter}}"
                 Width="{Binding Width, Converter={c:MeasurementsConverter}}"
+                Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
                 IsEnabled="{Binding IsEnabled}"
                 Content="{Binding Caption}"
                 Command="{Binding PressCommand, Converter={c:RelayCommandConverter}}">
@@ -118,6 +119,7 @@
                   Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
                   Height="{Binding Height, Converter={c:MeasurementsConverter}}"
                   Width="{Binding Width, Converter={c:MeasurementsConverter}}"
+                  Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
                   IsChecked="{Binding IsChecked}"
                   IsEnabled="{Binding IsEnabled}"
                   Content="{Binding Caption}"/>
@@ -130,6 +132,7 @@
                    Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
                    Height="{Binding Height, Converter={c:MeasurementsConverter}}"
                    Width="{Binding Width, Converter={c:MeasurementsConverter}}"
+                   Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
                    IsEnabled="{Binding IsEnabled}"
                    Text="{Binding Text}"
                    Style="{StaticResource DefaultTextBlock}"/>
@@ -139,6 +142,7 @@
                      Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
                      Height="{Binding Height, Converter={c:MeasurementsConverter}}"
                      Width="{Binding Width, Converter={c:MeasurementsConverter}}"
+                     Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
                      IsEnabled="{Binding IsEnabled}"
                      IsChecked="{Binding IsChecked}"
                      Content="{Binding Caption}"/>
@@ -148,6 +152,7 @@
                  Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
                  Height="{Binding Height, Converter={c:MeasurementsConverter}}"
                  Width="{Binding Width, Converter={c:MeasurementsConverter}}"
+                 Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
                  IsEnabled="{Binding IsEnabled}"
                  IsReadOnly="{Binding IsReadonly}"
                  Text="{Binding Text}"/>
@@ -158,6 +163,7 @@
                       Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
                       Height="{Binding Height, Converter={c:MeasurementsConverter}}"
                       Width="{Binding Width, Converter={c:MeasurementsConverter}}"
+                      Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
                       IsEnabled="{Binding IsEnabled}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -172,6 +178,7 @@
                       Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
                       Height="{Binding Height, Converter={c:MeasurementsConverter}}"
                       Width="{Binding Width, Converter={c:MeasurementsConverter}}"
+                      Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
                       IsEnabled="{Binding IsEnabled}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -205,6 +212,7 @@
                 Margin="{Binding Margin, Converter={c:MeasurementsConverter}}"
                 Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
                 IsEnabled="{Binding IsEnabled}"
+                Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
                 Name="border">
             <Grid Background="{StaticResource BackgroundNormalBrush}">
                 <Grid.ColumnDefinitions>
@@ -219,10 +227,6 @@
                                   Grid.Column="1"/>
             </Grid>
             <Border.Triggers>
-                <!--<Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="BorderBrush" Value="#FF7EB4EA"
-                            TargetName="border"/>
-                </Trigger>-->
                 <EventTrigger RoutedEvent="MouseEnter">
                     <BeginStoryboard>
                         <Storyboard>

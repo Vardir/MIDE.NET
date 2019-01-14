@@ -79,12 +79,12 @@
     <Compile Include="Converters\OrientationConverter.cs" />
     <Compile Include="Converters\RelayCommandConverter.cs" />
     <Compile Include="Converters\TabSectionExtractor.cs" />
+    <Compile Include="Converters\VisibilityConverter.cs" />
     <Compile Include="Helpers\MeasurementsHelper.cs" />
     <Compile Include="Initializers\TabSectionInitializer.cs" />
     <Compile Include="Initializers\WPFMenuInitializer.cs" />
     <Compile Include="RelayCommands\WindowsRelayParameterizedCommand.cs" />
     <Compile Include="RelayCommands\WindowsRelayCommand.cs" />
-    <Compile Include="Services\UIManager.cs" />
     <Compile Include="Services\WindowsBuffer.cs" />
     <Page Include="Styles\DefaultControls.xaml">
       <Generator>MSBuild:Compile</Generator>

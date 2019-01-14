@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
 using MIDE.Helpers;
+using System.Collections;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 
 namespace MIDE.API.Components
 {
@@ -43,6 +45,7 @@ namespace MIDE.API.Components
         public TabSection(string id) : base(id)
         {
             Tabs = new ObservableCollection<Tab>();
+            Tabs.CollectionChanged += Tabs_CollectionChanged;
         }
 
         public void Insert(int index, Tab tab)
@@ -53,6 +56,8 @@ namespace MIDE.API.Components
                 throw new IndexOutOfRangeException();
             if (tab == null)
                 throw new ArgumentNullException(nameof(tab));
+            if (Tabs.Contains(t => t.Id == tab.Id))
+                throw new ArgumentException($"The section already contains a tab with ID {tab.Id}");
 
             Tabs.Insert(index, tab);
             SelectedIndex = index;
@@ -73,10 +78,8 @@ namespace MIDE.API.Components
                 throw new ArgumentNullException(nameof(component));
             if (!(component is Tab tab))
                 throw new ArgumentException($"Argument was expected to be a Tab, but {component.GetType()} given");
-            if (Tabs.Contains(t => t.Id == tab.Id))
-                throw new ArgumentException($"The section already contains a tab with ID {tab.Id}");
+            
             Tabs.Add(tab);
-            SelectedIndex = Tabs.Count - 1;
         }
         protected override void RemoveChild_Impl(string id)
         {
@@ -84,8 +87,6 @@ namespace MIDE.API.Components
             if (index == -1)
                 return;
             Tabs.RemoveAt(index);
-            if (index == selectedIndex)
-                SelectedIndex = 0;
         }
         protected override void RemoveChild_Impl(LayoutComponent component)
         {
@@ -99,6 +100,50 @@ namespace MIDE.API.Components
             Tabs.RemoveAt(index);
             if (index == selectedIndex)
                 SelectedIndex = 0;
+        }
+
+        private void Tabs_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    OnTabsAdd(e.NewItems);
+                    break;
+                case NotifyCollectionChangedAction.Replace:
+                    OnTabsReplace(e.NewItems, e.OldItems);
+                    break;
+                case NotifyCollectionChangedAction.Reset:
+                    OnTabsRemove(e.OldItems);
+                    break;
+            }
+        }
+
+        private void OnTabsAdd(IList items)
+        {
+            foreach (var item in items)
+            {
+                var tab = item as Tab;
+                if (Tabs.Count(t => t.Id == tab.Id) > 1)
+                    throw new ArgumentException($"The section already contains a tab with ID {tab.Id}");
+                tab.ParentSection = this;
+                tab.Parent = this;
+            }
+            SelectedIndex = Tabs.Count - 1;
+        }
+        private void OnTabsRemove(IList items)
+        {
+            foreach (var item in items)
+            {
+                var tab = item as Tab;
+                tab.ParentSection = null;
+                tab.Parent = this;
+            }
+            SelectedIndex = Tabs.Count - 1;
+        }
+        private void OnTabsReplace(IList newItems, IList oldItems)
+        {
+            OnTabsAdd(newItems);
+            OnTabsRemove(oldItems);
         }
     }
 }

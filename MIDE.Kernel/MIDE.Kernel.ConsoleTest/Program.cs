@@ -14,8 +14,14 @@ namespace MIDE.Kernel.ConsoleTest
 
         private Program()
         {
-            FileExplorer explorer = new FileExplorer("fexp-1");
-            explorer.Show("C:/");
+            Kernel.UIManager.AddTabSection(new TabSection("browsers"));
+            var expl = new FileExplorer("file-explorer");
+            expl.Show("C:/");
+            expl.Show("C:/Users");
+            expl.Show("E:/");
+            (expl.TabToolbar.Find("back") as ToolbarButton).Press(null);
+            (expl.TabToolbar.Find("back") as ToolbarButton).Press(null);
+            Kernel.UIManager.AddTab(expl, "browsers");
         }
 
         public static void Main(string[] args)

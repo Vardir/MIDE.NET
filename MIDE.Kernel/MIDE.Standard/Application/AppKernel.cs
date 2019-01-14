@@ -25,13 +25,14 @@ namespace MIDE.Application
         public FileManager FileManager { get; set; }
         public IBufferProvider SystemBuffer { get; set; }
         public IEnumerable<AppExtension> Extensions => extensions;
-        public IUIManager UIManager { get; set; }
+        public UIManager UIManager { get; set; }
         public List<IApplicationInitializer> Initializers { get; }
 
         public event Action ApplicationExit;
 
         private AppKernel ()
         {
+            UIManager = new UIManager();
             extensions = new List<AppExtension>();
             Initializers = new List<IApplicationInitializer>();
         }

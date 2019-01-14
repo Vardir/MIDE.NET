@@ -1,4 +1,6 @@
-﻿namespace MIDE.API.Components
+﻿using MIDE.API.Commands;
+
+namespace MIDE.API.Components
 {
     /// <summary>
     /// A tab item used to contain a group of components
@@ -8,6 +10,7 @@
         private string header;
         private LayoutContainer contentContainer;
 
+        public bool AllowDuplicates { get; }
         public string Header
         {
             get => header;
@@ -19,6 +22,7 @@
                 OnPropertyChanged(nameof(Header));
             }
         }
+        public TabSection ParentSection { get; internal set; }
         public Toolbar TabToolbar { get; }
         public LayoutContainer ContentContainer
         {
@@ -32,11 +36,14 @@
                 OnPropertyChanged(nameof(ContentContainer));
             }
         }
+        public ICommand CloseCommand { get; }
 
-        public Tab(string id) : base(id)
+        public Tab(string id, bool allowDuplicates = false) : base(id)
         {
             Header = FormatId();
+            AllowDuplicates = allowDuplicates;
             TabToolbar = new Toolbar("toolbar");
+            TabToolbar.Parent = this;
         }
 
         public override bool Contains(string id) => contentContainer?.Contains(id) ?? false;

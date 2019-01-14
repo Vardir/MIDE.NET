@@ -9,6 +9,7 @@ namespace MIDE.API.Components
     public abstract class LayoutComponent : ApplicationComponent, INotifyPropertyChanged
     {
         private bool isEnabled = true;
+        private Visibility visibility;
         private GridLength width;
         private GridLength height;
         private BoundingBox margin;
@@ -24,6 +25,17 @@ namespace MIDE.API.Components
                     return;
                 isEnabled = value;
                 OnPropertyChanged(nameof(IsEnabled));
+            }
+        }
+        public Visibility Visibility
+        {
+            get => visibility;
+            set
+            {
+                if (value == visibility)
+                    return;
+                visibility = value;
+                OnPropertyChanged(nameof(Visibility));
             }
         }
         public virtual GridLength Width

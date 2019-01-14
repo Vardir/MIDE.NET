@@ -8,20 +8,21 @@ using System.Collections.Generic;
 
 namespace MIDE.API.Validation
 {
-    public abstract class PropertyValidator<T> : INotifyDataErrorInfo
+    public abstract class PropertyValidator<T> : Validator, INotifyPropertyChanged
     {
-        protected const BindingFlags PROP_FLAGS = BindingFlags.GetProperty | BindingFlags.SetProperty | BindingFlags.Public | BindingFlags.Instance;
+        protected const BindingFlags PROP_FLAGS = BindingFlags.GetProperty | BindingFlags.SetProperty | 
+                                                  BindingFlags.Public | BindingFlags.Instance;
 
-        private INotifyPropertyChanged attachedObject;
+        private IValidate attachedObject;
         private readonly Type supportedPropertyType;
         private List<PropertyInfo> supportedProps;
         private List<ValidationError> validationMessages;
 
-        public bool HasErrors => validationMessages.Count > 0;
+        public override bool HasErrors => validationMessages.Count > 0;
         public bool RaiseExceptionOnError { get; }
 
-        public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
-
+        public event PropertyChangedEventHandler PropertyChanged;
+        
         public PropertyValidator(bool raiseExceptionOnError)
         {
             validationMessages = new List<ValidationError>();
@@ -35,14 +36,18 @@ namespace MIDE.API.Validation
         /// </summary>
         /// <param name="obj"></param>
         /// <exception cref="ArgumentNullException"></exception>
-        public void AttachTo(INotifyPropertyChanged obj, params string[] propertiesToObserve)
+        public void AttachTo(IValidate obj, params string[] propertiesToObserve)
         {
             if (attachedObject != null)
+            {
+                attachedObject.Validators.Remove(this);
                 attachedObject.PropertyChanged -= Obj_PropertyChanging;
+            }
 
             attachedObject = obj ?? throw new ArgumentNullException(nameof(obj));
             LoadSupportedProperties(obj.GetType(), propertiesToObserve);
             obj.PropertyChanged += Obj_PropertyChanging;
+            obj.Validators.Add(this);
         }
 
         /// <summary>
@@ -51,7 +56,13 @@ namespace MIDE.API.Validation
         /// </summary>
         /// <param name="propertyName"></param>
         /// <returns></returns>
-        public IEnumerable GetErrors(string propertyName = null)
+        public override IEnumerable GetErrors(string propertyName)
+        {
+            if (propertyName == null)
+                return validationMessages;
+            return validationMessages.Where(v => v.PropertyName == propertyName);
+        }
+        public IEnumerable<ValidationError> GetAllErrors(string propertyName = null)
         {
             if (propertyName == null)
                 return validationMessages;
@@ -63,6 +74,16 @@ namespace MIDE.API.Validation
         protected void AddError(string property, string message, object value)
         {
             validationMessages.Add(new ValidationError(property, message, value));
+            OnPropertyChanged(nameof(HasErrors));
+        }
+        protected void ClearErrors()
+        {
+            validationMessages.Clear();
+            OnPropertyChanged(nameof(HasErrors));
+        }
+        protected void OnPropertyChanged(string name)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
         private void LoadSupportedProperties(Type type, string[] propsToObserve)
@@ -92,7 +113,7 @@ namespace MIDE.API.Validation
             {
                 if (RaiseExceptionOnError)
                     throw new FormatException($"Property [{e.PropertyName}]: Value has invalid format");
-                ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(e.PropertyName));
+                InvokeErrorsChanged(new DataErrorsChangedEventArgs(e.PropertyName));
             }
         }
     }

@@ -89,12 +89,16 @@ namespace MIDE.API.Bindings
         /// <param name="destinationExpr">Expression to extract a property from the destination</param>
         /// <param name="convertFunc">Converter function that is used when source value is being passed to destination</param>
         /// <param name="backConvertFunc">Converter function that is used when destination value is being passed to source</param>
-        public void Bind<T, Y>(Expression<Func<TSource, T>> sourceExpr, Expression<Func<TDestination, Y>> destinationExpr, 
-                               Func<T, Y> convertFunc, Func<Y, T> convertBackFunc)
+        public void Bind<T, Y>(Expression<Func<TSource, T>> sourceExpr, Expression<Func<TDestination, Y>> destinationExpr,
+                               Func<T, Y> convertFunc, Func<Y, T> convertBackFunc, Defaults<T,Y> defaults = default)
         {
             sourceProperty = sourceType.GetProperty(GetMember(sourceExpr.Body));
             destinationProperty = destinationType.GetProperty(GetMember(destinationExpr.Body));
             converter = new ValueConverter<T,Y>(convertFunc, convertBackFunc);
+            if (defaults.sourceIsSet && sourceProperty.CanWrite)
+                sourceProperty.SetValue(source, defaults.source);
+            if (defaults.destinationIsSet && destinationProperty.CanWrite)
+                destinationProperty.SetValue(destination, defaults.destination);
         }
         /// <summary>
         /// Sets up the property binding for the objects this instance is attached to
@@ -104,11 +108,16 @@ namespace MIDE.API.Bindings
         /// <param name="sourceExpr">Expression to extract a property from the source</param>
         /// <param name="destinationExpr">Expression to extract a property from the destination</param>
         /// <param name="converter">The converter that is used when value is being passed to source/destination property</param>
-        public void Bind<T, Y>(Expression<Func<TSource, T>> sourceExpr, Expression<Func<TDestination, Y>> destinationExpr, ValueConverter<T, Y> converter)
+        public void Bind<T, Y>(Expression<Func<TSource, T>> sourceExpr, Expression<Func<TDestination, Y>> destinationExpr, 
+                               ValueConverter<T, Y> converter, Defaults<T,Y> defaults = default)
         {
             this.converter = converter ?? throw new ArgumentNullException(nameof(converter));
             sourceProperty = sourceType.GetProperty(GetMember(sourceExpr.Body));
             destinationProperty = destinationType.GetProperty(GetMember(destinationExpr.Body));
+            if (defaults.sourceIsSet && sourceProperty.CanWrite)
+                sourceProperty.SetValue(source, defaults.source);
+            if (defaults.destinationIsSet && destinationProperty.CanWrite)
+                destinationProperty.SetValue(destination, defaults.destination);
         }
 
         private string GetMember(Expression expr)
@@ -179,6 +188,35 @@ namespace MIDE.API.Bindings
             }
             public Y Convert(T value) => convert(value);
             public T ConvertBack(Y value) => convertBack(value);
+        }        
+    }
+    public struct Defaults<T, Y>
+    {
+        public readonly bool sourceIsSet;
+        public readonly bool destinationIsSet;
+        public readonly T source;
+        public readonly Y destination;
+
+        public Defaults(T source)
+        {
+            this.source = source;
+            destination = default;
+            sourceIsSet = true;
+            destinationIsSet = false;
+        }
+        public Defaults(Y destination)
+        {
+            this.destination = destination;
+            source = default;
+            sourceIsSet = false;
+            destinationIsSet = true;
+        }
+        public Defaults(T source, Y destination)
+        {
+            this.source = source;
+            this.destination = destination;
+            sourceIsSet = true;
+            destinationIsSet = true;
         }
     }
 }

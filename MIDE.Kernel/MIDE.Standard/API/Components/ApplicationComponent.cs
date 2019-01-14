@@ -24,7 +24,7 @@ namespace MIDE.API.Components
         /// <summary>
         /// The ID of the component. It has uniform format for all the components in application
         /// </summary>
-        public string Id { get; }
+        public string Id { get; private set; }
 
         public ApplicationComponent(string id)
         {
@@ -35,7 +35,7 @@ namespace MIDE.API.Components
 
             Id = id;
         }
-
+        
         /// <summary>
         /// Formats the ID of the component. Replace all '-' symbols with spaces and make the resulting sentence title case.
         /// <para>The ID 'hello-world' transforms into 'Hello World'</para>
@@ -48,5 +48,34 @@ namespace MIDE.API.Components
         /// <returns></returns>
         public string GetSpec() => $"[{GetType().Name}] ID:{Id}";
         public override string ToString() => GetSpec();
+
+        protected internal void GenerateNextId()
+        {
+            if (char.IsDigit(Id[Id.Length - 1]))
+            {
+                int firstDigit = Id.Length - 1;
+                bool hasDash = false;
+                int i = Id.Length - 1;
+                int number = 1;
+                for (; i > 0; i--)
+                {
+                    if (!char.IsDigit(Id[i]))
+                    {
+                        hasDash = Id[i] == '-';
+                        break;
+                    }
+                }
+                string newId = Id;
+                if (hasDash)
+                {
+                    number = int.Parse(Id.Substring(i + 1, Id.Length - (i + 1))) + 1;
+                    newId = Id.Remove(i);
+                }
+                newId = newId + '-' + number;
+                Id = newId;
+                return;
+            }
+            Id = Id + "-" + 1;
+        }
     }
 }

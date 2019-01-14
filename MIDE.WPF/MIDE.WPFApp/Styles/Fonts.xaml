@@ -49,6 +49,8 @@
     <system:String x:Key="LinkIcon">&#xf0c1;</system:String>
     <system:String x:Key="UnlinkIcon">&#xf127;</system:String>
     <system:String x:Key="EllipsisIcon">&#xf141;</system:String>
+
+    <system:String x:Key="CloseIcon">&#xf057;</system:String>
     <!--Icons-->
 
     <Style TargetType="{x:Type Control}" x:Key="BaseStyle">
