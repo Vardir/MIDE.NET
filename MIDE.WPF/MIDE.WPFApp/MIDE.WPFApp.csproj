@@ -62,10 +62,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\ActionableContentPresenter.cs" />
     <Compile Include="Controls\API\Grid.xaml.cs">
       <DependentUpon>Grid.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ContentPresenter.cs" />
     <Compile Include="Converters\Base\BaseValueConverter.cs" />
     <Compile Include="Converters\Boolean\BooleanToHorizontalAlignment.cs" />
     <Compile Include="Converters\Boolean\BooleanToVisibility.cs" />
