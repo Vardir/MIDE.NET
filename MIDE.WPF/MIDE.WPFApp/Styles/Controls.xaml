@@ -7,10 +7,10 @@
                     xmlns:v="clr-namespace:MIDE.API.Visuals;assembly=api">
 
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="Texts.xaml"/>
         <ResourceDictionary Source="Colors.xaml"/>
         <ResourceDictionary Source="Fonts.xaml"/>
-        <ResourceDictionary Source="TreeView.xaml"/>
+        <ResourceDictionary Source="DefaultControls.xaml"/>
+        <ResourceDictionary Source="Shared.xaml"/>
     </ResourceDictionary.MergedDictionaries>
     
     <Style TargetType="{x:Type ctr:Resizer}">
@@ -73,25 +73,6 @@
             </Setter.Value>
         </Setter>
     </Style>
-
-    <Style TargetType="{x:Type ContentPresenter}" x:Key="GlyphPresenter">
-        <Setter Property="ContentTemplateSelector">
-            <Setter.Value>
-                <local:GlyphTemplateSelector>
-                    <local:GlyphTemplateSelector.FontAwesomeTemplate>
-                        <DataTemplate>
-                            <TextBlock FontFamily="{StaticResource FontAwesome}" Margin="0 0 5 0"
-                                       Text="{Binding Value}">
-                                <TextBlock.Foreground>
-                                    <SolidColorBrush Color="{Binding AlternateColor, Converter={c:ColorConverter}}"/>
-                                </TextBlock.Foreground>
-                            </TextBlock>
-                        </DataTemplate>
-                    </local:GlyphTemplateSelector.FontAwesomeTemplate>
-                </local:GlyphTemplateSelector>
-            </Setter.Value>            
-        </Setter>
-    </Style>
     
     <!--API Controls-->
     <DataTemplate DataType="{x:Type api:Button}">
@@ -101,18 +82,8 @@
                 Width="{Binding Width, Converter={c:MeasurementsConverter}}"
                 Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
                 IsEnabled="{Binding IsEnabled}"
-                Content="{Binding Caption}"
-                Command="{Binding PressCommand, Converter={c:RelayCommandConverter}}">
-            <!--<StackPanel Orientation="Horizontal">-->
-                <!--<ContentPresenter Content="{Binding ButtonGlyph}" Margin="0 0 5 0" Style="{StaticResource GlyphPresenter}"/>-->
-            <!--<TextBlock Text="Alloha"
-                       FontFamily="{Binding FontFamily, RelativeSource={RelativeSource AncestorType=Button}}"
-                       FontSize="{Binding FontSize, RelativeSource={RelativeSource AncestorType=Button}}"
-                       FontStretch="{Binding FontStretch, RelativeSource={RelativeSource AncestorType=Button}}"
-                       FontStyle="{Binding FontStyle, RelativeSource={RelativeSource AncestorType=Button}}"
-                       FontWeight="{Binding FontWeight, RelativeSource={RelativeSource AncestorType=Button}}"/>-->
-            <!--</StackPanel>-->
-        </Button>
+                Command="{Binding PressCommand, Converter={c:RelayCommandConverter}}"
+                Style="{StaticResource ActionButton}"/>
     </DataTemplate>
     <DataTemplate DataType="{x:Type api:CheckBox}">
         <CheckBox Margin="{Binding Margin, Converter={c:MeasurementsConverter}}" 
@@ -245,6 +216,12 @@
                 </EventTrigger>
             </Border.Triggers>
         </Border>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type api:ToolbarButton}">
+        <Button IsEnabled="{Binding IsEnabled}"
+                Command="{Binding PressCommand, Converter={c:RelayCommandConverter}}"
+                Style="{StaticResource ActionButton}"/>
     </DataTemplate>
     <!--API Control-->
 </ResourceDictionary>

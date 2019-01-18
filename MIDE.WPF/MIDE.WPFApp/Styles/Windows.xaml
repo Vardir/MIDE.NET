@@ -5,8 +5,7 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="Colors.xaml"/>
         <ResourceDictionary Source="Fonts.xaml"/>
-        <ResourceDictionary Source="Texts.xaml"/>
-        <ResourceDictionary Source="Buttons.xaml"/>
+        <ResourceDictionary Source="DefaultControls.xaml"/>
     </ResourceDictionary.MergedDictionaries>
     
     <Style TargetType="{x:Type local:MainWindow}" x:Key="MWindow">

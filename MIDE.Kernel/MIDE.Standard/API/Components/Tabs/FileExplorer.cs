@@ -8,6 +8,7 @@ using MIDE.API.Measurements;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using IO = System.IO;
+using System.Drawing;
 
 namespace MIDE.API.Components
 {
@@ -49,10 +50,16 @@ namespace MIDE.API.Components
 
         protected override void InitializeComponents()
         {
-            StackPanel stack = new StackPanel("container");
-            stack.Orientation = StackOrientation.Vertical;
+            GridLayout grid = new GridLayout("container");
+            grid.Rows.AddRange(new[]{
+                new GridRow(new GridLength("auto")),
+                new GridRow(new GridLength("auto")),
+                new GridRow(new GridLength("*"))
+                });
+            grid.Columns.Add(new GridColumn(new GridLength("*")));
             searchBox = new ActionTextBox("search");
-            searchBox.ActionButton.Caption = "@";
+            searchBox.ActionButton.Caption = null;
+            searchBox.ActionButton.ButtonGlyph = new Visuals.Glyph("\uf002") { AlternateColor = Color.White };
             searchBox.ActionButton.PressCommand = new RelayCommand(ShowCurrent);
             searchBox.Margin = new BoundingBox(0, 0, 0, 5);
             pathValidator = new PathValidator(false);
@@ -61,33 +68,39 @@ namespace MIDE.API.Components
             errorMessage = new Label("error-box", null);
             errorMessage.Visibility = Visibility.Collapsed;
             ToolbarButton homeButton = new ToolbarButton("home");
+            homeButton.Caption = null;
             homeButton.Order = 99;
+            homeButton.ButtonGlyph = new Visuals.Glyph("\uf015") { AlternateColor = Color.White };
             homeButton.PressCommand = new RelayCommand(GoHome);
             ToolbarButton backButton = new ToolbarButton("back");
+            backButton.Caption = null;
             backButton.Order = 101;
+            backButton.ButtonGlyph = new Visuals.Glyph("\uf048") { AlternateColor = Color.White };
             backButton.PressCommand = new RelayCommand(GoBack);
             ToolbarButton forwardButton = new ToolbarButton("forward");
+            forwardButton.Caption = null;
             forwardButton.Order = 100;
+            forwardButton.ButtonGlyph = new Visuals.Glyph("\uf051") { AlternateColor = Color.White };
             forwardButton.PressCommand = new RelayCommand(GoForward);
 
             var backButtonBinding1 = new ObjectBinding<ObservableCollection<string>, ToolbarButton>(browseHistory, backButton);
             backButtonBinding1.BindingKind = BindingKind.OneWay;
             backButtonBinding1.Bind(items => items.Count, button => button.IsEnabled,
-                                    count => count > 0, b => 0);
+                                    count => count > 0, null);
             var backButtonBinding2 = new ObjectBinding<FileExplorer, ToolbarButton>(this, backButton);
             backButtonBinding2.BindingKind = BindingKind.OneWay;
             backButtonBinding2.Bind(ex => ex.CurrentHistoryIndex, button => button.IsEnabled,
-                                    index => index > 0, b => 0,
+                                    index => index > 0, null,
                                     new Defaults<int, bool>(false));
 
             var forwardButtonBinding1 = new ObjectBinding<ObservableCollection<string>, ToolbarButton>(browseHistory, forwardButton);
             forwardButtonBinding1.BindingKind = BindingKind.OneWay;
             forwardButtonBinding1.Bind(coll => coll.Count, button => button.IsEnabled,
-                                       count => count > 0, b => 0);
+                                       count => count > 0, null);
             var forwardButtonBinding2 = new ObjectBinding<FileExplorer, ToolbarButton>(this, forwardButton);
             forwardButtonBinding2.BindingKind = BindingKind.OneWay;
             forwardButtonBinding2.Bind(ex => ex.CurrentHistoryIndex, button => button.IsEnabled,
-                                       index => index > 0, b => 0,
+                                       index => index < browseHistory.Count - 1, null,
                                        new Defaults<int, bool>(false));
 
             var errorBinding = new ObjectBinding<PathValidator, Label>(pathValidator, errorMessage);
@@ -97,21 +110,21 @@ namespace MIDE.API.Components
                               {
                                   errorMessage.Text = string.Join("\n", pathValidator.GetAllErrors().Select(e => e.ValidationMessage));
                                   return hasErrors ? Visibility.Visible : Visibility.Collapsed;
-                              }, c => false,
+                              }, null,
                               new Defaults<bool, Visibility>(Visibility.Collapsed));
 
             TabToolbar.AddChild(backButton);
             TabToolbar.AddChild(forwardButton);
             TabToolbar.AddChild(homeButton);
-            ContentContainer = stack;
-            stack.AddChild(searchBox);
-            stack.AddChild(errorMessage);
-            stack.AddChild(treeView);
+            ContentContainer = grid;
+            grid.AddChild(searchBox, 0, 0);
+            grid.AddChild(errorMessage, 1, 0);
+            grid.AddChild(treeView, 2, 0);
         }
 
         private void GoHome()
         {
-            searchBox.Text = null;
+            searchBox.Text = @"\";
             ShowCurrent();
         }
         private void GoBack()
@@ -136,23 +149,14 @@ namespace MIDE.API.Components
         {
             if (pathValidator.HasErrors)
                 return;
-            //if (pathValidator.HasErrors)
-            //{
-            //    errorMessage.Text = string.Join("\n", pathValidator.GetAllErrors().Select(e => e.ValidationMessage));
-            //    errorMessage.Visibility = Visibility.Visible;
-            //    return;
-            //}
-            //else
-            //    errorMessage.Visibility = Visibility.Collapsed;
 
             treeView.Items.Clear();
             var items = Enumerable.Empty<DirectoryItem>();
-            if (string.IsNullOrEmpty(searchBox.Text))
+            if (searchBox.Text == @"\")
                 items = FileSystemInfo.GetLogicalDrives();
             else
-            {
                 items = FileSystemInfo.GetDirectoryContents(searchBox.Text);
-            }
+            
             treeView.Items.AddRange(items
                     .Select(item => new FileExplorerItem(item.name, item.fullPath, item.itemClass)));
 
@@ -169,9 +173,7 @@ namespace MIDE.API.Components
 
             protected override void Validate(string property, string value)
             {
-                if (string.IsNullOrEmpty(value))
-                    return;
-                if (!IO.Directory.Exists(value) && !IO.File.Exists(value))
+                if (!IO.Directory.Exists(value) && !IO.File.Exists(value) && value != @"\")
                 {
                     AddError(property, "The specified path does not exist", value);
                     return;

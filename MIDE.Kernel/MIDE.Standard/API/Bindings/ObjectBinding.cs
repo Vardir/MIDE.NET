@@ -94,7 +94,16 @@ namespace MIDE.API.Bindings
         {
             sourceProperty = sourceType.GetProperty(GetMember(sourceExpr.Body));
             destinationProperty = destinationType.GetProperty(GetMember(destinationExpr.Body));
-            converter = new ValueConverter<T,Y>(convertFunc, convertBackFunc);
+
+            if (convertFunc != null && convertBackFunc != null)
+                converter = new ValueConverter<T, Y>(convertFunc, convertBackFunc);
+            else if (convertFunc == null)
+                converter = new ValueConverter<T, Y>(convertBackFunc);
+            else if (convertBackFunc == null)
+                converter = new ValueConverter<T, Y>(convertFunc);
+            else
+                throw new ArgumentNullException("At least one of the converters must be set");
+
             if (defaults.sourceIsSet && sourceProperty.CanWrite)
                 sourceProperty.SetValue(source, defaults.source);
             if (defaults.destinationIsSet && destinationProperty.CanWrite)
@@ -163,33 +172,8 @@ namespace MIDE.API.Bindings
             suppressHandler = false;
         }
 
-        public class ValueConverter<T, Y> : IValueConverter
-        {
-            private readonly Func<T, Y> convert;
-            private readonly Func<Y, T> convertBack;
-
-            public ValueConverter(Func<T, Y> convert, Func<Y, T> convertBack)
-            {
-                this.convert = convert ?? throw new ArgumentNullException(nameof(convert));
-                this.convertBack = convertBack ?? throw new ArgumentNullException(nameof(convertBack));
-            }
-
-            public object Convert(object value)
-            {
-                if (value is T _value)
-                    return convert(_value);
-                throw new ArgumentException($"The value was expected to be of type [{typeof(T)}]");
-            }
-            public object ConvertBack(object value)
-            {
-                if (value is Y _value)
-                    return convertBack(_value);
-                throw new ArgumentException($"The value was expected to be of type [{typeof(Y)}]");
-            }
-            public Y Convert(T value) => convert(value);
-            public T ConvertBack(Y value) => convertBack(value);
-        }        
     }
+
     public struct Defaults<T, Y>
     {
         public readonly bool sourceIsSet;

@@ -39,17 +39,21 @@ namespace MIDE.API.Visuals
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Glyph(string fontAwesomeIcon)
+        public Glyph()
+        {
+            AlternateColor = Color.White;
+        }
+        public Glyph(string fontAwesomeIcon) : base()
         {
             Kind = GlyphKind.FontAwesome;
             Value = fontAwesomeIcon;
         }
-        public Glyph(char unicodeSymbol)
+        public Glyph(char unicodeSymbol) : base()
         {
             Kind = GlyphKind.UnicodeSymbol;
             Value = unicodeSymbol;
         }
-        public Glyph(object value, GlyphKind kind = GlyphKind.ImagePath)
+        public Glyph(object value, GlyphKind kind = GlyphKind.ImagePath) : base()
         {
             Kind = kind;
             Value = value;

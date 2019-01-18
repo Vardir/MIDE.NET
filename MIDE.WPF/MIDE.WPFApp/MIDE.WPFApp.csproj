@@ -65,6 +65,7 @@
     <Compile Include="Controls\API\Grid.xaml.cs">
       <DependentUpon>Grid.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ContentPresenter.cs" />
     <Compile Include="Converters\Base\BaseValueConverter.cs" />
     <Compile Include="Converters\Boolean\BooleanToHorizontalAlignment.cs" />
     <Compile Include="Converters\Boolean\BooleanToVisibility.cs" />
@@ -72,6 +73,7 @@
     <Compile Include="Converters\Boolean\IntegerToBoolean.cs" />
     <Compile Include="Converters\Boolean\InvertBoolean.cs" />
     <Compile Include="Converters\Boolean\NullableToBoolean.cs" />
+    <Compile Include="Converters\Visibility\NullableToVisibility.cs" />
     <Compile Include="Converters\ColorConverter.cs" />
     <Compile Include="Converters\EnumToInteger.cs" />
     <Compile Include="Converters\GridIndexConverter.cs" />
@@ -79,7 +81,8 @@
     <Compile Include="Converters\OrientationConverter.cs" />
     <Compile Include="Converters\RelayCommandConverter.cs" />
     <Compile Include="Converters\TabSectionExtractor.cs" />
-    <Compile Include="Converters\VisibilityConverter.cs" />
+    <Compile Include="Converters\Visibility\IntegerToVisibility.cs" />
+    <Compile Include="Converters\Visibility\VisibilityConverter.cs" />
     <Compile Include="Helpers\MeasurementsHelper.cs" />
     <Compile Include="Initializers\TabSectionInitializer.cs" />
     <Compile Include="Initializers\WPFMenuInitializer.cs" />
@@ -97,7 +100,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Styles\TreeView.xaml">
+    <Page Include="Styles\Shared.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -116,10 +119,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Styles\Buttons.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Styles\Windows.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -133,10 +132,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Styles\Fonts.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Styles\Texts.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

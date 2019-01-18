@@ -53,15 +53,4 @@
     <system:String x:Key="CloseIcon">&#xf057;</system:String>
     <!--Icons-->
 
-    <Style TargetType="{x:Type Control}" x:Key="BaseStyle">
-        <Setter Property="FontFamily" Value="Century Gothic"/>
-        <Setter Property="FontSize" Value="{StaticResource FontSizeRegular}"/>
-    </Style>
-
-    <Style TargetType="{x:Type TextBlock}" x:Key="BaseTextBlockStyle">
-        <Setter Property="FontFamily" Value="Century Gothic"/>
-        <Setter Property="FontSize" Value="{StaticResource FontSizeRegular}"/>
-    </Style>
-
-
 </ResourceDictionary>
