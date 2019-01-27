@@ -6,6 +6,7 @@ using MIDE.Application.Attrubites;
 namespace MIDE.Kernel.ConsoleTest.Extensions
 {
     [Dependency(Version = "0.3.1", Type = DependencyType.ApplicationKernel)]
+    [ExtensionProperties(Version = "1.0.0")]
     public class TestExtension1 : AppExtension
     {
         public TestExtension1(string id) : base(id) { }

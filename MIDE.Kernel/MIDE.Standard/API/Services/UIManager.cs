@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using System.Collections;
 using MIDE.API.Components;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace MIDE.API.Services
         private List<TabSection> tabSections;
         private Dictionary<string, Tab> tabs;
 
+        public Platform CurrentPlatform { get; set; }
         public Menu ApplicationMenu { get; }
 
         public TabSection this[string id] => tabSections.Find(ts => ts.Id == id);
@@ -45,6 +47,10 @@ namespace MIDE.API.Services
             tabSections.Add(section);
             section.Tabs.CollectionChanged += SectionTabs_CollectionChanged;
         }
+        public virtual void RegisterUIExtension(object obj) { }
+        public virtual void RegisterUIExtension(string path) { }
+        public virtual void RegisterUIExtension(Type type) { }
+        public virtual void RegisterUIExtension(Assembly assembly) { }
 
         private void SectionTabs_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -113,5 +119,10 @@ namespace MIDE.API.Services
             OnSectionRemoveTabs(oldItems);
             OnSectionAddTabs(newItems);
         }
+    }
+
+    public enum Platform
+    {
+        WindowsConsole, WPF, WinForms //TODO: add more platforms
     }
 }

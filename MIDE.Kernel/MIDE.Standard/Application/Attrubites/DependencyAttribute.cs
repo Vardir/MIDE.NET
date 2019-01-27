@@ -9,8 +9,6 @@ namespace MIDE.Application.Attrubites
         private string version;
         private string dependentOn;
 
-        public const string VERSION_PATTERN = @"^[0-9]\.[0-9]\.[0-9]$";
-
         public string DependentOn
         {
             get => dependentOn;
@@ -18,7 +16,7 @@ namespace MIDE.Application.Attrubites
             {
                 if (string.IsNullOrWhiteSpace(value))
                     throw new ArgumentException();
-                if (!Regex.IsMatch(value, ApplicationComponent.ID_PATTERN))
+                if (!Regex.IsMatch(value, ApplicationPropertiesAttribute.APP_NAME_PATTERN))
                     throw new FormatException("Value was of invalid format");
                 dependentOn = value;
             }
@@ -30,7 +28,7 @@ namespace MIDE.Application.Attrubites
             {
                 if (string.IsNullOrWhiteSpace(value))
                     throw new ArgumentException();
-                if (!Regex.IsMatch(value, VERSION_PATTERN))
+                if (!Regex.IsMatch(value, ApplicationPropertiesAttribute.VERSION_PATTERN))
                     throw new FormatException("Value was of invalid format");
                 version = value;
             }

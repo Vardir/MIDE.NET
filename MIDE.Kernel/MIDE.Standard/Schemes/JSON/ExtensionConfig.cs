@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using MIDE.API.Services;
 using Newtonsoft.Json.Converters;
 
 namespace MIDE.Schemes.JSON
@@ -44,9 +45,5 @@ namespace MIDE.Schemes.JSON
     public enum MemberRole
     {
         Extension, Resource //TODO: add more roles
-    }
-    public enum Platform
-    {
-        WPF, WinForms //TODO: add more platforms
     }
 }

@@ -66,7 +66,7 @@ namespace MIDE.Application
                 throw new ApplicationException(assemblyVertification);
 
             isRunning = true;
-            //TODO: prepare application
+            //TODO: prepare URANUS
             foreach (var initializer in Initializers)
             {
                 initializer.Execute(this);
@@ -74,7 +74,7 @@ namespace MIDE.Application
             var configs = LoadConfigurations();
             ConfigurationManager.Instance.AddRange(configs);
             LoadExtensions();
-        }        
+        }
         /// <summary>
         /// Stops all the current threads, releases all resources and closes the application kernel
         /// </summary>
@@ -169,6 +169,14 @@ namespace MIDE.Application
                 }
                 foreach (var member in config.ExtensionMembers)
                 {
+                    if (member.Target == MemberTarget.UI)
+                    {
+                        if (member.Platform == UIManager.CurrentPlatform)
+                        {
+                            if (member.Role == MemberRole.Extension)
+                                UIManager.RegisterUIExtension(member.Path);
+                        }
+                    }
                     //TODO: load members
                 }
             }
@@ -216,27 +224,30 @@ namespace MIDE.Application
         }
         private string VerifyExtensionAttributes(Type type, string id)
         {
-            bool coreVerified = false;
+            bool kernelVerified = false;
             foreach (var attribute in type.GetCustomAttributes())
             {
                 if (attribute is DependencyAttribute dependency)
                 {
                     if (dependency.Type == DependencyType.ApplicationKernel)
                     {
-                        if (coreVerified)
+                        if (kernelVerified)
                             return $"Duplicate DependencyAttribute entry of type ApplicationKernel on extension [{type} :: ID-{id}]";
                         if (dependency.Version != Version)
                             return $"Extension [{type} :: {id}] is targeting Kernel version {dependency.Version} but current is {Version}";
-                        coreVerified = true;
+                        kernelVerified = true;
                     }
                     else if (dependency.Type == DependencyType.Extension)
                     {
-                        //TODO: verify if there is registered extension
-                        //TODO: verify if the dependent extension has valid version
+                        var any = Extensions.FirstOrDefault(e => e.GetType().Name == dependency.DependentOn);
+                        if (any == null)
+                            throw new ApplicationException($"Extension [{type} :: {id}] requires an extension [{dependency.DependentOn}]");
+                        if (any.Version != dependency.Version)
+                            throw new ApplicationException($"Extension [{type} :: {id}] requires an extension [{dependency.DependentOn}] v{dependency.Version} but got v{any.Version}");
                     }
                 }
             }
-            if (!coreVerified)
+            if (!kernelVerified)
                 return $"An expected DependencyAttribute of type ApplicationKernel not found on extension [{type} :: ID-{id}]";
             return null;
         }

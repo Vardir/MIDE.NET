@@ -11,6 +11,7 @@ namespace MIDE.API.Extensibility
         private readonly List<Module> modules;
 
         public bool IsInitialized { get; private set; }
+        public string Version { get; internal set; }
         public AppKernel Kernel { get; internal set; }
         public IEnumerable<Module> Modules => modules;
 
