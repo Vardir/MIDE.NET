@@ -2,6 +2,7 @@
 using MIDE.Helpers;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
+using MIDE.Schemes.JSON;
 
 namespace MIDE.FileSystem
 {
@@ -49,24 +50,14 @@ namespace MIDE.FileSystem
             else
                 allPaths.Add(pathKey, value);
         }
-        public void LoadPaths(JArray array)
+        public void LoadPaths(IEnumerable<ApplicationPathItem> collection)
         {
-            foreach (var obj in array)
+            if (collection == null)
+                return;
+
+            foreach (var path in collection)
             {
-                if (obj.Type != JTokenType.Object)
-                    throw new FormatException("Expected JSON object as paths item");
-                var jo = obj as JObject;
-                var key = jo.Properties().FirstWith(p => p.Name == "key", p => p.Value);
-                if (key == null)
-                    throw new FormatException("Expected 'key' property for path item");
-                if (key.Type != JTokenType.String)
-                    throw new FormatException("Expected JSON string as item's 'key' value");
-                var value = jo.Properties().FirstWith(p => p.Name == "path", p => p.Value);
-                if (value == null)
-                    throw new FormatException("Expected 'value' property for path item");
-                if (value.Type != JTokenType.String)
-                    throw new FormatException("Expected JSON string as items's 'path' value");
-                AddOrUpdate(key.ToString(), value.ToString());
+                AddOrUpdate(path.Key, path.Value);
             }
         }
 

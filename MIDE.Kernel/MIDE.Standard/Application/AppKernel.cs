@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using MIDE.FileSystem;
 using System.Reflection;
 using MIDE.API.Services;
-using Newtonsoft.Json.Linq;
+using MIDE.Schemes.JSON;
 using MIDE.API.Extensibility;
 using System.Collections.Generic;
 using MIDE.Application.Attrubites;
@@ -130,27 +130,10 @@ namespace MIDE.Application
         private IEnumerable<Config> LoadConfigurations()
         {
             string configData = FileManager.ReadOrCreate("config.json", $"{{ \"core_version\": \"{Version}\"}}");
-            JToken root = JsonConvert.DeserializeObject(configData) as JToken;
-            foreach (var child in root)
-            {
-                if (child is JProperty prop)
-                {
-                    if (prop.Name == "core_version")
-                    {
-                        if (prop.Value.ToString() != Version)
-                            throw new ApplicationException($"Expected application kernel v{Version}, but got v{prop.Value}");
-
-                        yield return new Config("core_version", prop.Value.ToString());
-                    }
-                    else if (prop.Name == "paths")
-                    {
-                        if (!(prop.Value is JArray array))
-                            throw new FormatException("Can not read configuration: invalid paths format, expected JSON array");
-                        
-                        FileManager.LoadPaths(array);
-                    }
-                }
-            }
+            var appConfig = JsonConvert.DeserializeObject<ApplicationConfig>(configData);
+            if (appConfig.KernelVersion != Version)
+                throw new ApplicationException($"Expected application kernel v{Version}, but got v{appConfig.KernelVersion}");
+            FileManager.LoadPaths(appConfig.Paths);
             yield break;
         }
         
@@ -163,51 +146,30 @@ namespace MIDE.Application
         {
             var directory = FileManager.GetOrAddPath(ApplicationPath.Extensions, "extensions\\");
             var initData = FileManager.ReadOrCreate(directory + "init.json", "{ \"register\": [] }");
-            JObject root = JsonConvert.DeserializeObject(initData) as JObject;
-            if (root == null)
-                throw new FormatException("The file has an invalid format");
-            var register = root.Property("register");
-            var array = register.Value as JArray;
-            if (array == null)
-                throw new FormatException("'register' property was expected to have JSON array as it's value");
-            foreach (var token in array)
+            var init = JsonConvert.DeserializeObject<ExtensionsInit>(initData);
+            foreach (var item in init.Items)
             {
-                if (!(token is JObject obj))
-                    throw new FormatException("'register' property was expected to have JSON array of JSON objects");
-
-                var enabled = obj.Property("enabled");
-                if (enabled != null)
-                {
-                    if (enabled.Value.Type != JTokenType.Boolean)
-                        throw new FormatException($"Extension config.json expected to have 'enabled' property of type JSON boolean, but got {enabled.Value.Type}");
-                    if (enabled.Value.ToString().ToLower() == JsonConvert.False)
-                        continue;
-                }
-                var path = obj.Property("path");
-                if (path == null || path.Value.Type != JTokenType.String)
-                    throw new FormatException("'register' property item expected to have a string property 'path'");
-                var id = obj.Property("id");
-                if (id == null || id.Value.Type != JTokenType.String)
-                    throw new FormatException("'register' property item expected to have a string property 'id'");
-                string extensionId = id.Value.ToString();
-                string extensionPath = FileManager.GetPath(ApplicationPath.Extensions) + "\\" + path.Value.ToString();
-                string config = FileManager.TryRead(extensionPath + "config.json");
-                if (config == null)
-                    throw new ApplicationException($"Extension '{extensionId}' does not have config.json file");
-                JObject configRoot = JsonConvert.DeserializeObject(config) as JObject;
-                var self = configRoot.Property("self");
-                if (self == null || self.Value.Type != JTokenType.String)
-                    throw new FormatException("Extension config.json expected to have 'self' property with path to DLL");                
-                Assembly assembly = Assembly.LoadFrom(extensionPath + self.Value.ToString());
+                if (!item.Enabled)
+                    continue;
+                string extensionPath = FileManager.GetPath(ApplicationPath.Extensions) + "\\" + item.Path;
+                string configData = FileManager.TryRead(extensionPath + "config.json");
+                if (configData == null)
+                    throw new ApplicationException($"Extension '{item.Id}' does not have config.json file");
+                var config = JsonConvert.DeserializeObject<ExtensionConfig>(configData);
+                Assembly assembly = Assembly.LoadFrom(extensionPath + config.DllPath);
                 var types = assembly.GetTypes();
                 for (int i = 0; i < types.Length; i++)
                 {
                     bool isExtension = types[i].IsSubclassOf(typeof(AppExtension));
                     if (isExtension)
                     {
-                        var instance = Activator.CreateInstance(types[i], extensionId) as AppExtension;
+                        var instance = Activator.CreateInstance(types[i], item.Id) as AppExtension;
                         RegisterExtension(instance);
                     }
+                }
+                foreach (var member in config.ExtensionMembers)
+                {
+                    //TODO: load members
                 }
             }
         }
