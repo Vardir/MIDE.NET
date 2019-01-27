@@ -18,10 +18,12 @@ namespace MIDE.API.Extensibility
         {
             modules = new List<Module>();
         }
-        
+
         public void Initialize()
         {
             RegisterMenuItems(Kernel.UIManager.ApplicationMenu);
+            RegisterModules();
+            IsInitialized = true;
         }
         public void Unload()
         {
@@ -57,6 +59,7 @@ namespace MIDE.API.Extensibility
         }
 
         protected abstract void RegisterMenuItems(IMenuConstructionContext context);
+        protected abstract void RegisterModules();
 
         public void Dispose()
         {

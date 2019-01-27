@@ -1,0 +1,40 @@
+{
+  "core_version": "0.3.1",
+  "paths": [
+    {
+      "key" : "appassets",
+      "path": "root\\assets\\",
+      "type": "folder"
+    },
+    {
+      "key" : "installed",
+      "path" : "E:\\Projects\\C#\\Libs\\MIDE.NET\\MIDE.Kernel\\MIDE.Kernel.ConsoleTest\\bin\\Debug\\",
+      "type": "folder"
+    },
+    {
+      "key" : "defaultforsolutions",
+      "path": "root\\solutions\\",
+      "type": "folder"
+    },
+    {
+      "key" : "root",
+      "path": "root\\",
+      "type": "folder"
+    },
+    {
+      "key": "themes",
+      "path": "root\\themes\\",
+      "type": "folder"
+    },
+    {
+      "key": "usersettings",
+      "path": "root\\user.settings.json",
+      "type": "file"
+    },
+    {
+      "key": "extensions",
+      "path": "root\\extensions\\",
+      "type": "folder"
+    }
+  ]
+}

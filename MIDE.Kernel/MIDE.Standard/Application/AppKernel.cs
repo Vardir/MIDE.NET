@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
+using Newtonsoft.Json;
 using MIDE.FileSystem;
 using System.Reflection;
 using MIDE.API.Services;
+using Newtonsoft.Json.Linq;
 using MIDE.API.Extensibility;
 using System.Collections.Generic;
 using MIDE.Application.Attrubites;
@@ -18,9 +20,11 @@ namespace MIDE.Application
         public static AppKernel Instance => instance ?? (instance = new AppKernel());
 
         private bool isRunning;
+        private Assembly currentAssembly;
         private Assembly callingAssembly;
         private readonly List<AppExtension> extensions;
 
+        public string Version { get; }
         public string ApplicationName { get; private set; }
         public FileManager FileManager { get; set; }
         public IBufferProvider SystemBuffer { get; set; }
@@ -30,13 +34,17 @@ namespace MIDE.Application
 
         public event Action ApplicationExit;
 
-        private AppKernel ()
+        private AppKernel()
         {
             UIManager = new UIManager();
             extensions = new List<AppExtension>();
             Initializers = new List<IApplicationInitializer>();
+
+            currentAssembly = Assembly.GetAssembly(typeof(AppKernel));
+            var version = currentAssembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
+            Version = version.InformationalVersion;
         }
-        
+
         /// <summary>
         /// Starts the application kernel
         /// </summary>
@@ -63,7 +71,7 @@ namespace MIDE.Application
             {
                 initializer.Execute(this);
             }
-            var configs = FileManager.LoadConfigurations();
+            var configs = LoadConfigurations();
             ConfigurationManager.Instance.AddRange(configs);
             LoadExtensions();
         }        
@@ -92,7 +100,7 @@ namespace MIDE.Application
             //TODO: verify if the module is valid
             return null;
         }
-        public override string ToString() => $"KERNEL >> {callingAssembly?.FullName ?? "?"}";
+        public override string ToString() => $"KERNEL [{Version}] >> {callingAssembly?.FullName ?? "?"}";
 
         /// <summary>
         /// Registers the given extension in the internal storage and initializes it
@@ -106,27 +114,102 @@ namespace MIDE.Application
                 throw new ArgumentNullException("Extension parameter can not be null");
             if (extensions.FirstOrDefault(e => e.Id == extension.Id) != null)
                 throw new ArgumentException("Duplicate extension ID");
+            var type = extension.GetType();
+            string error = VerifyExtensionAttributes(type, extension.Id);
+            if (error != null)
+                throw new InvalidOperationException($"Extension [{extension.GetType()} :: {extension.Id}] can not be registered due to error: {error}");
             extension.Kernel = this;
             extension.Initialize();
             extensions.Add(extension);
         }
         
         /// <summary>
+        /// Loads all the configurations that are set in config.json file located in the same folder with application itself
+        /// </summary>
+        /// <returns></returns>
+        private IEnumerable<Config> LoadConfigurations()
+        {
+            string configData = FileManager.ReadOrCreate("config.json", $"{{ \"core_version\": \"{Version}\"}}");
+            JToken root = JsonConvert.DeserializeObject(configData) as JToken;
+            foreach (var child in root)
+            {
+                if (child is JProperty prop)
+                {
+                    if (prop.Name == "core_version")
+                    {
+                        if (prop.Value.ToString() != Version)
+                            throw new ApplicationException($"Expected application kernel v{Version}, but got v{prop.Value}");
+
+                        yield return new Config("core_version", prop.Value.ToString());
+                    }
+                    else if (prop.Name == "paths")
+                    {
+                        if (!(prop.Value is JArray array))
+                            throw new FormatException("Can not read configuration: invalid paths format, expected JSON array");
+                        
+                        FileManager.LoadPaths(array);
+                    }
+                }
+            }
+            yield break;
+        }
+        
+        /// <summary>
         /// Loads all the extensions that are provided in attached assemblies
         /// </summary>
+        /// <exception cref="FormatException"></exception>
+        /// <exception cref="ApplicationException"></exception>
         private void LoadExtensions()
         {
-            //TODO: load extensions DLLs
-            //Assembly assembly = Assembly.LoadFrom("file");
-            //var types = assembly.GetTypes();
-            //for (int i = 0; i < types.Length; i++)
-            //{
-            //    bool isExtension = types[i].IsSubclassOf(typeof(AppExtension));
-            //    if (isExtension)
-            //    {
-            //        //TODO: add extension
-            //    }
-            //}
+            var directory = FileManager.GetOrAddPath(ApplicationPath.Extensions, "extensions\\");
+            var initData = FileManager.ReadOrCreate(directory + "init.json", "{ \"register\": [] }");
+            JObject root = JsonConvert.DeserializeObject(initData) as JObject;
+            if (root == null)
+                throw new FormatException("The file has an invalid format");
+            var register = root.Property("register");
+            var array = register.Value as JArray;
+            if (array == null)
+                throw new FormatException("'register' property was expected to have JSON array as it's value");
+            foreach (var token in array)
+            {
+                if (!(token is JObject obj))
+                    throw new FormatException("'register' property was expected to have JSON array of JSON objects");
+
+                var enabled = obj.Property("enabled");
+                if (enabled != null)
+                {
+                    if (enabled.Value.Type != JTokenType.Boolean)
+                        throw new FormatException($"Extension config.json expected to have 'enabled' property of type JSON boolean, but got {enabled.Value.Type}");
+                    if (enabled.Value.ToString().ToLower() == JsonConvert.False)
+                        continue;
+                }
+                var path = obj.Property("path");
+                if (path == null || path.Value.Type != JTokenType.String)
+                    throw new FormatException("'register' property item expected to have a string property 'path'");
+                var id = obj.Property("id");
+                if (id == null || id.Value.Type != JTokenType.String)
+                    throw new FormatException("'register' property item expected to have a string property 'id'");
+                string extensionId = id.Value.ToString();
+                string extensionPath = FileManager.GetPath(ApplicationPath.Extensions) + "\\" + path.Value.ToString();
+                string config = FileManager.TryRead(extensionPath + "config.json");
+                if (config == null)
+                    throw new ApplicationException($"Extension '{extensionId}' does not have config.json file");
+                JObject configRoot = JsonConvert.DeserializeObject(config) as JObject;
+                var self = configRoot.Property("self");
+                if (self == null || self.Value.Type != JTokenType.String)
+                    throw new FormatException("Extension config.json expected to have 'self' property with path to DLL");                
+                Assembly assembly = Assembly.LoadFrom(extensionPath + self.Value.ToString());
+                var types = assembly.GetTypes();
+                for (int i = 0; i < types.Length; i++)
+                {
+                    bool isExtension = types[i].IsSubclassOf(typeof(AppExtension));
+                    if (isExtension)
+                    {
+                        var instance = Activator.CreateInstance(types[i], extensionId) as AppExtension;
+                        RegisterExtension(instance);
+                    }
+                }
+            }
         }
         /// <summary>
         /// Unload all the resources that are used by application extensions
@@ -167,6 +250,32 @@ namespace MIDE.Application
             if (!hasAppPropsAttriburte)
                 throw new ApplicationException($"Missing application properties attribute [{typeof(ApplicationPropertiesAttribute)}]");
 
+            return null;
+        }
+        private string VerifyExtensionAttributes(Type type, string id)
+        {
+            bool coreVerified = false;
+            foreach (var attribute in type.GetCustomAttributes())
+            {
+                if (attribute is DependencyAttribute dependency)
+                {
+                    if (dependency.Type == DependencyType.ApplicationKernel)
+                    {
+                        if (coreVerified)
+                            return $"Duplicate DependencyAttribute entry of type ApplicationKernel on extension [{type} :: ID-{id}]";
+                        if (dependency.Version != Version)
+                            return $"Extension [{type} :: {id}] is targeting Kernel version {dependency.Version} but current is {Version}";
+                        coreVerified = true;
+                    }
+                    else if (dependency.Type == DependencyType.Extension)
+                    {
+                        //TODO: verify if there is registered extension
+                        //TODO: verify if the dependent extension has valid version
+                    }
+                }
+            }
+            if (!coreVerified)
+                return $"An expected DependencyAttribute of type ApplicationKernel not found on extension [{type} :: ID-{id}]";
             return null;
         }
 

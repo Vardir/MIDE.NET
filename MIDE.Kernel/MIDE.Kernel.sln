@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MIDE.Standard", "MIDE.Stand
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MIDE.Kernel.ConsoleTest", "MIDE.Kernel.ConsoleTest\MIDE.Kernel.ConsoleTest.csproj", "{BBAC57A9-8387-46D2-AC07-9CEF8E21DD23}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestExtension", "TestExtension\TestExtension.csproj", "{F873CE11-B347-454D-9859-531E54BE3398}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{BBAC57A9-8387-46D2-AC07-9CEF8E21DD23}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BBAC57A9-8387-46D2-AC07-9CEF8E21DD23}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BBAC57A9-8387-46D2-AC07-9CEF8E21DD23}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F873CE11-B347-454D-9859-531E54BE3398}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F873CE11-B347-454D-9859-531E54BE3398}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F873CE11-B347-454D-9859-531E54BE3398}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F873CE11-B347-454D-9859-531E54BE3398}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

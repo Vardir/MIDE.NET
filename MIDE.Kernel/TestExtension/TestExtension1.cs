@@ -20,5 +20,9 @@ namespace MIDE.Kernel.ConsoleTest.Extensions
             testItem.PressCommand = new RelayCommand(() => System.Console.WriteLine("Test button pressed"));
             context.AddItem("file/open/test-block", testItem);
         }
+        protected override void RegisterModules()
+        {
+            
+        }
     }
 }
