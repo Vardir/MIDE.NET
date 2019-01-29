@@ -27,7 +27,7 @@ namespace MIDE.Application
         public string Version { get; }
         public string ApplicationName { get; private set; }
         public FileManager FileManager { get; set; }
-        public IBufferProvider SystemBuffer { get; set; }
+        public IClipboardProvider SystemClipboard { get; set; }
         public IEnumerable<AppExtension> Extensions => extensions;
         public UIManager UIManager { get; set; }
         public List<IApplicationInitializer> Initializers { get; }
@@ -56,7 +56,7 @@ namespace MIDE.Application
                 throw new ApplicationException("Application kernel is already loaded and running!");
             if (FileManager == null)
                 throw new NullReferenceException("The FileManager expected to be assigned before application start");
-            if (SystemBuffer == null)
+            if (SystemClipboard == null)
                 throw new NullReferenceException("The SystemBuffer expected to be assigned before application start");
             if (UIManager == null)
                 throw new NullReferenceException("The UIHandler expected to be assigned before application start");
@@ -129,7 +129,7 @@ namespace MIDE.Application
         /// <returns></returns>
         private IEnumerable<Config> LoadConfigurations()
         {
-            string configData = FileManager.ReadOrCreate("config.json", $"{{ \"core_version\": \"{Version}\"}}");
+            string configData = FileManager.ReadOrCreate("config.json", $"{{ \"kernel_version\": \"{Version}\"}}");
             var appConfig = JsonConvert.DeserializeObject<ApplicationConfig>(configData);
             if (appConfig.KernelVersion != Version)
                 throw new ApplicationException($"Expected application kernel v{Version}, but got v{appConfig.KernelVersion}");

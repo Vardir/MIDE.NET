@@ -41,6 +41,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\MIDE.Kernel\MIDE.Standard\bin\Release\netstandard2.0\api.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -88,11 +91,12 @@
     <Compile Include="Initializers\WPFMenuInitializer.cs" />
     <Compile Include="RelayCommands\WindowsRelayParameterizedCommand.cs" />
     <Compile Include="RelayCommands\WindowsRelayCommand.cs" />
-    <Compile Include="Services\WindowsBuffer.cs" />
     <Page Include="Styles\DefaultControls.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="Services\WindowsClipboard.cs" />
+    <Compile Include="Services\WPFUIManager.cs" />
     <Compile Include="Styles\Selectors\GlyphTemplateSelector.cs" />
     <Compile Include="Windows\WindowResizer.cs" />
     <Compile Include="Windows\ViewModels\WindowViewModel.cs" />
@@ -156,6 +160,7 @@
     </EmbeddedResource>
     <Resource Include="Fonts\fa-solid-900.ttf" />
     <Resource Include="Fonts\fontawesome-webfont.ttf" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -163,11 +168,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="config.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

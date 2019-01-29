@@ -1,10 +1,8 @@
 ﻿using System;
 using System.IO;
-using System.Xml.Linq;
-using System.Reflection;
 using MIDE.FileSystem;
 using System.Collections.Generic;
-using MIDE.Application.Configuration;
+using System.Text;
 
 namespace MIDE.WPFApp.FileSystem
 {
@@ -16,36 +14,35 @@ namespace MIDE.WPFApp.FileSystem
             if (!Directory.Exists(directory))
                 Directory.CreateDirectory(directory);
         }
-        
+
         public override string MapPath(string path)
         {
             throw new NotImplementedException();
         }
-        public override Assembly LoadAssembly(string path)
+        public override string TryRead(string filePath)
         {
-            throw new NotImplementedException();
+            if (!File.Exists(filePath))
+                return null;
+            return File.ReadAllText(filePath);
         }
-        public override IEnumerable<Config> LoadConfigurations()
+        public override string ReadOrCreate(string filePath, string defaultContent = "")
         {
-#pragma warning disable CS0162
-            if (2 * 1 == 3)
-                yield return default;
-#pragma warning restore CS0162
-        }
-
-        protected override IEnumerable<(ApplicationPath, string)> LoadPaths()
-        {
-            XDocument xdoc = XDocument.Load("config.xml");
-            foreach (XElement path in xdoc.Element("config").Element("app.paths").Elements())
+            if (!File.Exists(filePath))
             {
-                XAttribute valueAttr = path.Attribute("value");
-                XAttribute aliasAttr = path.Attribute("alias");
-
-                bool aliasParsed = Enum.TryParse(aliasAttr.Value, out ApplicationPath alias);
-                if (!aliasParsed)
-                    throw new FormatException("The given alias name is incorrect");
-                yield return (alias, valueAttr.Value);
+                using (FileStream fs = File.Create(filePath))
+                {
+                    byte[] bytes = Encoding.UTF8.GetBytes(defaultContent);
+                    fs.Write(bytes, 0, bytes.Length);
+                    return defaultContent;
+                }
             }
+            return File.ReadAllText(filePath);
+        }
+        public override IEnumerable<string> EnumerateFiles(string directory, string filter = null)
+        {
+            if (!Directory.Exists(directory))
+                throw new ArgumentException($"Directory not found [{directory}]");
+            return Directory.EnumerateFiles(directory, filter);
         }
     }
 }
