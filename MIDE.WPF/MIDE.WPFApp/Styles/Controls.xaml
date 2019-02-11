@@ -4,7 +4,8 @@
                     xmlns:c="clr-namespace:MIDE.WPFApp.ValueConverters"
                     xmlns:local="clr-namespace:MIDE.WPFApp.Styles"
                     xmlns:ctr="clr-namespace:MIDE.WPFApp.Controls"
-                    xmlns:v="clr-namespace:MIDE.API.Visuals;assembly=api">
+                    xmlns:it="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+                    xmlns:ui="clr-namespace:MIDE.WPFApp.UI">
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="Colors.xaml"/>
@@ -73,7 +74,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+        
     <!--API Controls-->
     <DataTemplate DataType="{x:Type api:Button}">
         <Button Margin="{Binding Margin, Converter={c:MeasurementsConverter}}" 
@@ -163,6 +164,12 @@
             <TreeView.ItemContainerStyle>
                 <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource DefaultTreeViewItem}">
                     <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+                    <Setter Property="ContextMenu">
+                        <Setter.Value>
+                            <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}"
+                                         ItemsSource="{Binding ContextMenu.Items}"/>
+                        </Setter.Value>
+                    </Setter>
                 </Style>
             </TreeView.ItemContainerStyle>
             <TreeView.ItemTemplate>
@@ -174,6 +181,9 @@
                     </StackPanel>
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
+            <!--<it:Interaction.Behaviors>
+                <ui:TreeViewMultipleSelectionBehavior/>
+            </it:Interaction.Behaviors>-->
         </TreeView>
     </DataTemplate>
     <DataTemplate DataType="{x:Type api:ActionTextBox}">

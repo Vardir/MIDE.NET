@@ -15,6 +15,7 @@ namespace MIDE.API.Components
         private BoundingBox margin;
         private BoundingBox padding;
         private LayoutComponent parent;
+        private ContextMenu currentContextMenu;
 
         public bool IsEnabled
         {
@@ -93,7 +94,18 @@ namespace MIDE.API.Components
                 OnPropertyChanged(nameof(Parent));
             }
         }
-
+        public ContextMenu CurrentContextMenu
+        {
+            get => currentContextMenu;
+            protected set
+            {
+                if (value == currentContextMenu)
+                    return;
+                currentContextMenu = value;
+                OnPropertyChanged(nameof(CurrentContextMenu));
+            }
+        }
+        
         public event PropertyChangedEventHandler PropertyChanged;
 
         public LayoutComponent(string id) : base(id)

@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using MIDE.Helpers;
+using System.Drawing;
 using MIDE.FileSystem;
 using MIDE.API.Bindings;
 using MIDE.API.Commands;
@@ -8,7 +10,6 @@ using MIDE.API.Measurements;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using IO = System.IO;
-using System.Drawing;
 
 namespace MIDE.API.Components
 {
@@ -39,6 +40,7 @@ namespace MIDE.API.Components
             IsSealed = true;
             _pushHistory = true;
             browseHistory = new ObservableCollection<string>();
+            
             InitializeComponents();
         }
 
@@ -157,8 +159,11 @@ namespace MIDE.API.Components
             else
                 items = FileSystemInfo.GetDirectoryContents(searchBox.Text);
             
-            treeView.Items.AddRange(items
-                    .Select(item => new FileExplorerItem(item.name, item.fullPath, item.itemClass)));
+            treeView.Items.AddRange(items.Select(item => {
+                var fei = new FileExplorerItem(item.name, item.fullPath, item.itemClass);
+                fei.ContextMenu = FileExplorerContextMenu.Instance.Select(fei);
+                return fei;
+            }));
 
             if (_pushHistory)
             {
@@ -166,7 +171,7 @@ namespace MIDE.API.Components
                 CurrentHistoryIndex = browseHistory.Count - 1;
             }
         }
-
+                
         protected class PathValidator : PropertyValidator<string>
         {
             public PathValidator(bool raiseExceptionOnError) : base(raiseExceptionOnError) { }
@@ -246,6 +251,74 @@ namespace MIDE.API.Components
         {
             if (!ObjectClass.IsFile)
                 Children.Add(null);
+        }
+    }
+
+    public class FileExplorerContextMenu
+    {
+        private static FileExplorerContextMenu instance;
+        public static FileExplorerContextMenu Instance => instance ?? (instance = new FileExplorerContextMenu());
+
+        private Dictionary<string, ContextMenu> contextMenuSchemes;
+        
+        private FileExplorerContextMenu ()
+        {
+            contextMenuSchemes = new Dictionary<string, ContextMenu>()
+            {
+                ["__default"] = new ContextMenu("default-contextmenu"),
+                ["file"] = new ContextMenu("file-contextmenu"),
+                ["folder"] = new ContextMenu("folder-contextmenu")
+            };
+            InitializeSchemes();
+        }
+
+        public void AddScheme(string key, ContextMenu menuScheme)
+        {
+            if (key == null)
+                throw new ArgumentNullException(nameof(key));
+            if (menuScheme == null)
+                throw new ArgumentNullException(nameof(menuScheme));
+            if (contextMenuSchemes.ContainsKey(key))
+                contextMenuSchemes[key] = menuScheme;
+            else
+                contextMenuSchemes.Add(key, menuScheme);
+        }
+
+        public bool HasMenuScheme(string key) => contextMenuSchemes.ContainsKey(key);
+        public bool HasMenuScheme(Func<ContextMenu, bool> predicate)
+        {
+            foreach (var kvp in contextMenuSchemes)
+            {
+                if (predicate(kvp.Value))
+                    return true;
+            }
+            return false;
+        }
+        public ContextMenu Select(TreeViewItem item)
+        {
+            if (!(item is FileExplorerItem fItem))
+                throw new ArgumentException($"Expected [FileExplorerItem] but got [{item?.GetType()}]");
+            return Select(fItem);
+        }
+        public ContextMenu Select(FileExplorerItem item)
+        {
+            if (contextMenuSchemes.TryGetValue(item.ItemClass, out ContextMenu scheme)) { }
+
+            return scheme ?? contextMenuSchemes["__default"];
+        }
+
+        private void InitializeSchemes()
+        {
+            var flscheme = contextMenuSchemes["file"];
+            flscheme.AddItem(new MenuButton("open", -99));
+            flscheme.AddItem(new MenuSplitter("splitter-1", -90));
+            flscheme.AddItem(new MenuButton("properties", 0));
+
+            var fdscheme = contextMenuSchemes["folder"];
+            var addbtn = new MenuButton("add", -99);
+            addbtn.Add(new MenuButton("new-empty-file", -99) { Caption = "New empty file..." }, null);
+            addbtn.Add(new MenuButton("new-folder", -98), null);
+            fdscheme.AddItem(addbtn);
         }
     }
 }

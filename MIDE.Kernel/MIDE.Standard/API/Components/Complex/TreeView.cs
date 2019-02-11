@@ -22,6 +22,7 @@ namespace MIDE.API.Components
         private string caption;
         private string itemClass;
         private Glyph glyph;
+        private ContextMenu contextMenu;
 
         public abstract bool CanExpand { get; }
         public abstract bool IsExpanded
@@ -43,7 +44,6 @@ namespace MIDE.API.Components
                 OnPropertyChanged(nameof(Caption));
             }
         }
-
         public string ItemClass
         {
             get => itemClass;
@@ -64,6 +64,17 @@ namespace MIDE.API.Components
                     return;
                 glyph = value;
                 OnPropertyChanged(nameof(ItemGlyph));
+            }
+        }
+        public ContextMenu ContextMenu
+        {
+            get => contextMenu;
+            set
+            {
+                if (value == contextMenu)
+                    return;
+                contextMenu = value;
+                OnPropertyChanged(nameof(ContextMenu));
             }
         }
         public ObservableCollection<TreeViewItem> Children { get; }

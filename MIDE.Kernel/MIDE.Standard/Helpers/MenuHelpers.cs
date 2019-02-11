@@ -27,7 +27,10 @@ namespace MIDE.Helpers
                 if (lastLesser == -1)
                 {
                     int fGreater = menuItems.FirstIndexWith(i => i.OrdinalIndex > ordinal);
-                    menuItems.Insert(fGreater, item);
+                    if (fGreater == -1)
+                        menuItems.Add(item);
+                    else
+                        menuItems.Insert(fGreater, item);
                 }
                 else if (lastLesser == menuItems.Count - 1)
                     menuItems.Add(item);
