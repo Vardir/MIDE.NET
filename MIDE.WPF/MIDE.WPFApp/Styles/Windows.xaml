@@ -17,10 +17,10 @@
                         <Grid>
                             <!--Opacity mask-->
                             <Border x:Name="container"
-                                        Background="{StaticResource BackgroundLightBrush}"/>
+                                    Background="{StaticResource Window_BodyBackground_Brush}"/>
 
                             <!--Window corners-->
-                            <Border Background="{StaticResource BackgroundNormalBrush}">
+                            <Border Background="{StaticResource Window_BodyBackground_Brush}">
                                 <!--Window corners shadow-->
                                 <Border.Effect>
                                     <DropShadowEffect ShadowDepth="0" Opacity="0.8"
@@ -29,7 +29,7 @@
                             </Border>
 
                             <!--Window header-->
-                            <Grid>
+                            <Grid Background="{StaticResource Window_HeaderBackground_Brush}">
                                 <Grid.OpacityMask>
                                     <VisualBrush Visual="{Binding ElementName=container}"/>
                                 </Grid.OpacityMask>
@@ -39,7 +39,7 @@
                                     <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
 
-                                <Border BorderThickness="0 0 0 1" BorderBrush="{StaticResource BackgroundDarkBrush}" />
+                                <Border BorderThickness="0 0 0 1" BorderBrush="{StaticResource Window_Border_Brush}" />
 
                                 <!--Window header contents-->
                                 <Grid Panel.ZIndex="1">
@@ -51,29 +51,29 @@
 
                                     <!--Icon-->
                                     <Button Grid.Column="0" Style="{StaticResource SystemIconButton}"
-                                                Command="{Binding MenuCommand}">
+                                            Command="{Binding MenuCommand}">
                                         <TextBlock Text="{Binding Title, FallbackValue=WPFTemplate}" VerticalAlignment="Center"
-                                                       Foreground="{StaticResource ForegroundLightBlueBrush}"
-                                                       FontWeight="SemiBold" FontSize="{StaticResource FontSizeLarge}"/>
+                                                   Foreground="{StaticResource Window_HeaderForeground_Brush}"
+                                                   FontWeight="SemiBold" FontSize="{StaticResource FontSizeLarge}"/>
                                     </Button>
 
                                     <!--Menu buttons-->
                                     <StackPanel Grid.Column="2" Orientation="Horizontal">
                                         <Button Style="{StaticResource WindowControlButton}"
-                                                    Content="_"
-                                                    Command="{Binding MinimizeCommand}"/>
+                                                Content="_"
+                                                Command="{Binding MinimizeCommand}"/>
                                         <Button Style="{StaticResource WindowControlButton}" 
-                                                    Content="[ ]"
-                                                    Command="{Binding MaximizeCommand}"/>
-                                        <Button Style="{StaticResource WindowCloseButton}"
-                                                    Content="X"
-                                                    Command="{Binding CloseCommand}"/>
+                                                Content="[ ]"
+                                                Command="{Binding MaximizeCommand}"/>
+                                        <Button Style="{StaticResource WindowControlButton}"
+                                                Content="X"
+                                                Command="{Binding CloseCommand}"/>
                                     </StackPanel>
                                 </Grid>
 
                                 <!--Window contents-->
                                 <Border Grid.Row="1" Padding="{Binding InnerContentPadding}"
-                                            Background="{StaticResource BackgroundLightBrush}" ClipToBounds="True">
+                                        Background="{StaticResource Window_BodyBackground_Brush}" ClipToBounds="True">
 
                                     <ContentPresenter Content="{TemplateBinding Content}"/>
                                 </Border>

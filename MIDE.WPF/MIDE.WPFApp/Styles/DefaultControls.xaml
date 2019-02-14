@@ -10,29 +10,32 @@
     </ResourceDictionary.MergedDictionaries>
 
     <Style TargetType="{x:Type Control}" x:Key="BasePanel" BasedOn="{StaticResource BaseStyle}">
-        <Setter Property="Background" Value="{StaticResource PanelBackground}"/>
+        <Setter Property="Background" Value="{StaticResource Panel_Background_Brush}"/>
     </Style>
     
     <Style TargetType="{x:Type StatusBar}" BasedOn="{StaticResource BasePanel}">
     </Style>
     <Style TargetType="{x:Type GridSplitter}">
-        <Setter Property="Background" Value="{StaticResource PanelBackground}"/>
+        <Setter Property="Background" Value="{StaticResource Panel_Background_Brush}"/>
     </Style>
 
     <Style x:Key="VerticalDotsThumb" TargetType="{x:Type Thumb}">
         <Setter Property="Control.Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Thumb}">
-                    <Border Padding="{TemplateBinding Control.Padding}" Background="Transparent" SnapsToDevicePixels="true">
+                    <Border Padding="{TemplateBinding Control.Padding}" 
+                            Background="Transparent" SnapsToDevicePixels="true">
                         <Rectangle>
                             <Shape.Fill>
-                                <DrawingBrush Viewbox="0,0,4,4" Viewport="0,0,4,4" TileMode="Tile" ViewportUnits="Absolute"
+                                <DrawingBrush Viewbox="0,0,4,4" Viewport="0,0,4,4" 
+                                              TileMode="Tile" ViewportUnits="Absolute"
                                               ViewboxUnits="Absolute">
                                     <DrawingBrush.Drawing>
                                         <DrawingGroup>
                                             <DrawingGroup.Children>
-                                                <GeometryDrawing Brush="{StaticResource ForegroundLightBrush}" Geometry="M 1,1 L 1,3 3,3 3,1 Z"/>
-                                                <GeometryDrawing Brush="{StaticResource BackgroundDarkBrush}" 
+                                                <GeometryDrawing Brush="{StaticResource Thumb_Brush}" 
+                                                                 Geometry="M 1,1 L 1,3 3,3 3,1 Z"/>
+                                                <GeometryDrawing Brush="{StaticResource Panel_Background_Brush}" 
                                                                  Geometry="M 0,0 L 0,2 2,2 2,0 Z"/>
                                             </DrawingGroup.Children>
                                         </DrawingGroup>
@@ -53,7 +56,8 @@
 
     <!--MENU-->
     <Style TargetType="{x:Type Menu}" BasedOn="{StaticResource BasePanel}">
-        <Setter Property="Foreground" Value="{StaticResource ForegroundLightBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource Menu_Foreground_Brush}"/>
+        <Setter Property="Background" Value="{StaticResource Menu_Background_Brush}"/>
         <Setter Property="ItemContainerStyle">
             <Setter.Value>
                 <Style TargetType="{x:Type MenuItem}">
@@ -68,7 +72,7 @@
                         <HierarchicalDataTemplate DataType="{x:Type ctrapi:MenuButton}"
                                                   ItemsSource="{Binding Children}">
                             <TextBlock Text="{Binding Caption}"
-                                       Foreground="{StaticResource ForegroundLightBrush}"/>
+                                       Foreground="{StaticResource Menu_Foreground_Brush}"/>
                         </HierarchicalDataTemplate>
                         <!--<HierarchicalDataTemplate DataType="{x:Type ctrapi:MenuGroup}">
                             <Grid>
@@ -113,14 +117,15 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Separator}">
-                    <Border BorderThickness="1" BorderBrush="{StaticResource BackgroundLightBrush}"/>
+                    <Border BorderThickness="1" BorderBrush="{StaticResource Menu_Separator_Brush}"/>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
     <ControlTemplate x:Key="{x:Static MenuItem.TopLevelHeaderTemplateKey}" TargetType="{x:Type MenuItem}">
-        <Border x:Name="Border" BorderThickness="1" BorderBrush="{StaticResource BackgroundLightBrush}">
-            <Grid Background="{StaticResource BackgroundDarkBrush}">
+        <Border x:Name="Border" BorderThickness="1" 
+                BorderBrush="{StaticResource Menu_Border_Brush}">
+            <Grid Background="{StaticResource Menu_Background_Brush}">
                 <ContentPresenter Margin="6,3,6,3"
                                   ContentSource="Header"
                                   RecognizesAccessKey="True" />
@@ -133,8 +138,8 @@
                     <!--Menu top-level stack-->
                     <Border x:Name="SubmenuBorder"
                             SnapsToDevicePixels="True"
-                            BorderThickness="1" BorderBrush="{StaticResource BackgroundLightBrush}"
-                            Background="{StaticResource BackgroundDarkBrush}">
+                            BorderThickness="1" BorderBrush="{StaticResource Menu_Border_Brush}"
+                            Background="{StaticResource Menu_ItemBackground_Brush}">
                         <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
                     </Border>
                 </Popup>
@@ -146,13 +151,13 @@
             </Trigger>
             <Trigger Property="IsHighlighted" Value="true">
                 <Setter TargetName="Border" Property="BorderBrush" Value="Transparent" />
-                <Setter Property="Background" TargetName="Border" Value="{StaticResource BackgroundSemiLightBrush}"/>
+                <Setter Property="Background" TargetName="Border" Value="{StaticResource Menu_ItemBackgroundHovered_Brush}"/>
             </Trigger>
             <Trigger SourceName="Popup" Property="AllowsTransparency" Value="True">
                 <Setter TargetName="SubmenuBorder" Property="Padding" Value="0,0,0,3" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
-                <Setter Property="Foreground" Value="{StaticResource BackgroundSemiLightBrush}" />
+                <Setter Property="Foreground" Value="{StaticResource Menu_ItemBackgroundDisabled_Brush}" />
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
@@ -163,10 +168,11 @@
         </Border>
         <ControlTemplate.Triggers>
             <Trigger Property="IsHighlighted" Value="True">
-                <Setter Property="Background" TargetName="Border" Value="{StaticResource BackgroundSemiLightBrush}"/>
+                <Setter Property="Background" TargetName="Border" 
+                        Value="{StaticResource Menu_ItemBackgroundHovered_Brush}"/>
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
-                <Setter Property="Foreground" Value="{StaticResource BackgroundLightBrush}"/>
+                <Setter Property="Foreground" Value="{StaticResource Menu_ItemBackgroundDisabled_Brush}"/>
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
@@ -188,8 +194,8 @@
                         Width="13" Height="13"
                         Visibility="Collapsed"
                         Margin="6,0,6,0"
-                        BorderThickness="1" BorderBrush="{StaticResource BackgroundNormalBrush}"
-                        Background="{StaticResource BackgroundDarkBrush}">
+                        BorderThickness="1" BorderBrush="{StaticResource Menu_Border_Brush}"
+                        Background="{StaticResource Menu_ItemBackground_Brush}">
                     <!--Arrow for sub-items stack-->
                     <Path x:Name="CheckMark"
                           Width="7" Height="7"
@@ -197,7 +203,7 @@
                           SnapsToDevicePixels="False"
                           StrokeThickness="2"
                           Data="M 0 0 L 7 7 M 0 7 L 7 0"
-                          Fill="{StaticResource BackgroundLightBrush}"/>
+                          Fill="{StaticResource Menu_Arrow_Brush}"/>
                 </Border>
                 <ContentPresenter x:Name="HeaderHost"
                                   Grid.Column="1"
@@ -224,10 +230,12 @@
                 <Setter TargetName="Icon" Property="Visibility" Value="Hidden" />
             </Trigger>
             <Trigger Property="IsHighlighted" Value="true">
-                <Setter Property="Background" TargetName="Border" Value="{StaticResource BackgroundSemiLightBrush}"/>
+                <Setter Property="Background" TargetName="Border" 
+                        Value="{StaticResource Menu_ItemBackgroundHovered_Brush}"/>
+                <Setter Property="Fill" TargetName="CheckMark" Value="{StaticResource Menu_ArrowHovered_Brush}"/>
             </Trigger>
             <Trigger Property="IsEnabled" Value="false">
-                <Setter Property="Foreground" Value="{StaticResource ForegroundLightBrush}"/>
+                <Setter Property="Foreground" Value="{StaticResource Menu_ItemBackgroundDisabled_Brush}"/>
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
@@ -258,7 +266,7 @@
                       HorizontalAlignment="Center"
                       VerticalAlignment="Center"
                       Data="M 0 0 L 0 7 L 4 3.5 Z"
-                      Fill="{StaticResource BackgroundLightBrush}"/>
+                      Fill="{StaticResource Menu_Arrow_Brush}"/>
                 <Popup x:Name="Popup"
                         Placement="Right"
                         IsOpen="{TemplateBinding IsSubmenuOpen}"
@@ -268,8 +276,8 @@
                     <!--Child items stack-->
                     <Border x:Name="SubmenuBorder"
                             SnapsToDevicePixels="True"
-                            Background="{StaticResource BackgroundDarkBrush}"
-                            BorderThickness="1" BorderBrush="{StaticResource BackgroundNormalBrush}">
+                            Background="{StaticResource Menu_ItemBackground_Brush}"
+                            BorderThickness="1" BorderBrush="{StaticResource Menu_Border_Brush}">
                         <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
                     </Border>
                 </Popup>
@@ -280,13 +288,13 @@
                 <Setter TargetName="Icon" Property="Visibility" Value="Collapsed" />
             </Trigger>
             <Trigger Property="IsHighlighted" Value="true">
-                <Setter Property="Background" TargetName="Border" Value="{StaticResource BackgroundNormalBrush}"/>
+                <Setter Property="Background" TargetName="Border" Value="{StaticResource Menu_ItemBackgroundHovered_Brush}"/>
             </Trigger>
             <Trigger SourceName="Popup" Property="AllowsTransparency" Value="True">
                 <Setter TargetName="SubmenuBorder" Property="Padding" Value="0,3,0,3" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="false">
-                <Setter Property="Foreground" Value="{StaticResource BackgroundSemiLightBrush}"/>
+                <Setter Property="Foreground" Value="{StaticResource Menu_ItemBackgroundDisabled_Brush}"/>
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
@@ -312,14 +320,14 @@
     
     <!--Context Menu-->
     <Style TargetType="{x:Type ContextMenu}" BasedOn="{StaticResource BasePanel}">
-        <Setter Property="Control.Background" Value="{StaticResource BackgroundNormalBrush}"/>
+        <Setter Property="Control.Background" Value="{StaticResource Menu_Background_Brush}"/>
         <Setter Property="Control.FontSize" Value="{StaticResource FontSizeRegular}"/>
         <Setter Property="Control.FontStyle" Value="Normal"/>
         <Setter Property="Control.FontWeight" Value="Normal"/>
-        <Setter Property="Control.Foreground" Value="{StaticResource ForegroundLightBrush}"/>
+        <Setter Property="Control.Foreground" Value="{StaticResource Menu_Foreground_Brush}"/>
         <Setter Property="Control.VerticalContentAlignment" Value="Center"/>
         <Setter Property="Control.BorderThickness" Value="1"/>
-        <Setter Property="Control.BorderBrush" Value="{StaticResource BackgroundDarkBrush}"/>
+        <Setter Property="Control.BorderBrush" Value="{StaticResource Menu_Border_Brush}"/>
         <Setter Property="Control.Padding" Value="2"/>
         <Setter Property="Grid.IsSharedSizeScope" Value="true"/>
         <Setter Property="ContextMenu.HasDropShadow"
@@ -333,7 +341,7 @@
                         <HierarchicalDataTemplate DataType="{x:Type ctrapi:MenuButton}"
                                                   ItemsSource="{Binding Children}">
                             <TextBlock Text="{Binding Caption}"
-                                       Foreground="{StaticResource ForegroundLightBrush}"/>
+                                       Foreground="{StaticResource Menu_Foreground_Brush}"/>
                         </HierarchicalDataTemplate>
                         <HierarchicalDataTemplate DataType="{x:Type ctrapi:MenuSplitter}">
                             <Separator/>
@@ -344,16 +352,21 @@
                             BorderBrush="{TemplateBinding Control.BorderBrush}"
                             BorderThickness="{TemplateBinding Control.BorderThickness}">
                         <ScrollViewer Name="ContextMenuScrollViewer" Grid.ColumnSpan="2" Margin="1,0"
-                                      Style="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type FrameworkElement}, ResourceId=MenuScrollViewer}}">
+                                      Style="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type FrameworkElement}, 
+                                                                                    ResourceId=MenuScrollViewer}}">
                             <Grid RenderOptions.ClearTypeHint="Enabled">
                                 <Canvas Height="0" Width="0" HorizontalAlignment="Left" VerticalAlignment="Top">
                                     <Rectangle Name="OpaqueRect" Height="{Binding ElementName=ContextMenuBorder, Path=ActualHeight}"
                                                Width="{Binding ElementName=ContextMenuBorder, Path=ActualWidth}"
                                                Fill="{Binding ElementName=ContextMenuBorder, Path=Background}"/>
                                 </Canvas>
-                                <Rectangle Fill="{StaticResource BackgroundNormalBrush}" HorizontalAlignment="Left" Width="28" Margin="1,2" RadiusX="2" RadiusY="2"/>
-                                <Rectangle HorizontalAlignment="Left" Width="1" Margin="29,2,0,2" Fill="{StaticResource BackgroundNormalBrush}"/>
-                                <Rectangle HorizontalAlignment="Left" Width="1" Margin="30,2,0,2" Fill="{StaticResource BackgroundNormalBrush}"/>
+                                <Rectangle Fill="{StaticResource Menu_Background_Brush}"
+                                           HorizontalAlignment="Left" Width="28" Margin="1,2"
+                                           RadiusX="2" RadiusY="2"/>
+                                <Rectangle HorizontalAlignment="Left" Width="1" Margin="29,2,0,2"
+                                           Fill="{StaticResource Menu_Background_Brush}"/>
+                                <Rectangle HorizontalAlignment="Left" Width="1" Margin="30,2,0,2"
+                                           Fill="{StaticResource Menu_Background_Brush}"/>
                                 <ItemsPresenter Name="ItemsPresenter" Margin="{TemplateBinding Control.Padding}"
                                                 KeyboardNavigation.DirectionalNavigation="Cycle"
                                                 SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}"/>
@@ -383,9 +396,9 @@
     <!--Context Menu-->
             
     <Style TargetType="{x:Type TabItem}">
-        <Setter Property="Control.Foreground" Value="{StaticResource ForegroundLightBrush}"/>
-        <Setter Property="Control.Background" Value="{StaticResource BackgroundNormalBrush}"/>
-        <Setter Property="Control.BorderBrush" Value="{StaticResource BackgroundLightBrush}"/>
+        <Setter Property="Control.Foreground" Value="{StaticResource Tab_Foreground_Brush}"/>
+        <Setter Property="Control.Background" Value="{StaticResource Tab_HeaderBackground_Brush}"/>
+        <Setter Property="Control.BorderBrush" Value="{StaticResource Tab_Border_Brush}"/>
         <Setter Property="FrameworkElement.Margin" Value="0"/>
         <Setter Property="Control.Padding" Value="6,2,6,2"/>
         <Setter Property="Control.HorizontalContentAlignment" Value="Stretch"/>
@@ -398,19 +411,14 @@
                                 Background="{TemplateBinding Control.Background}"
                                 BorderBrush="{TemplateBinding Control.BorderBrush}" Margin="0">
                             <Border x:Name="innerBorder" BorderThickness="1,1,1,0" 
-                                    Background="{StaticResource BackgroundNormalBrush}"
-                                    BorderBrush="{StaticResource BackgroundLightBrush}" Margin="-1" Opacity="0"/>
+                                    Background="{StaticResource Tab_HeaderBackground_Brush}"
+                                    BorderBrush="{StaticResource Tab_HeaderBorder_Brush}" Margin="-1" Opacity="0"/>
                         </Border>
                         <ContentPresenter x:Name="contentPresenter" ContentSource="Header"
                                           SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" 
                                           Focusable="false"
-                                          Margin="{TemplateBinding Control.Padding}" RecognizesAccessKey="true"
-                                          HorizontalAlignment="{Binding HorizontalContentAlignment, 
-                                                                        RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
-                                          VerticalAlignment="{Binding VerticalContentAlignment, 
-                                                                      RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+                                          Margin="{TemplateBinding Control.Padding}" RecognizesAccessKey="true"/>
                     </Grid>
-
                     <ControlTemplate.Triggers>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
@@ -421,8 +429,8 @@
                                                              RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}"
                                            Value="Left"/>
                             </MultiDataTrigger.Conditions>
-                            <Setter TargetName="mainBorder" Value="{StaticResource BackgroundLightBrush}" Property="Border.Background"/>
-                            <Setter TargetName="mainBorder" Value="{StaticResource BackgroundBlueBrush}" Property="Border.BorderBrush"/>
+                            <Setter TargetName="mainBorder" Value="{StaticResource Tab_HeaderBackgroundHovered_Brush}" Property="Border.Background"/>
+                            <Setter TargetName="mainBorder" Value="{StaticResource Tab_HeaderBorderHovered_Brush}" Property="Border.BorderBrush"/>
                             <Setter TargetName="innerBorder" Property="Border.BorderThickness" Value="1,1,0,1"/>
                             <Setter TargetName="mainBorder" Property="Border.BorderThickness" Value="1,1,0,1"/>
                         </MultiDataTrigger>
@@ -435,8 +443,8 @@
                                                              RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}"
                                            Value="Bottom"/>
                             </MultiDataTrigger.Conditions>
-                            <Setter TargetName="mainBorder" Value="{StaticResource BackgroundLightBrush}" Property="Border.Background"/>
-                            <Setter TargetName="mainBorder" Value="{StaticResource BackgroundBlueBrush}" Property="Border.BorderBrush"/>
+                            <Setter TargetName="mainBorder" Value="{StaticResource Tab_HeaderBackgroundHovered_Brush}" Property="Border.Background"/>
+                            <Setter TargetName="mainBorder" Value="{StaticResource Tab_HeaderBorderHovered_Brush}" Property="Border.BorderBrush"/>
                             <Setter TargetName="innerBorder" Property="Border.BorderThickness" Value="1,0,1,1"/>
                             <Setter TargetName="mainBorder" Property="Border.BorderThickness" Value="1,0,1,1"/>
                         </MultiDataTrigger>
@@ -449,8 +457,8 @@
                                                              RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}"
                                            Value="Right"/>
                             </MultiDataTrigger.Conditions>
-                            <Setter TargetName="mainBorder" Value="{StaticResource BackgroundLightBrush}" Property="Border.Background"/>
-                            <Setter TargetName="mainBorder" Value="{StaticResource BackgroundBlueBrush}" Property="Border.BorderBrush"/>
+                            <Setter TargetName="mainBorder" Value="{StaticResource Tab_HeaderBackgroundHovered_Brush}" Property="Border.Background"/>
+                            <Setter TargetName="mainBorder" Value="{StaticResource Tab_HeaderBorderHovered_Brush}" Property="Border.BorderBrush"/>
                             <Setter TargetName="innerBorder" Property="Border.BorderThickness" Value="0,1,1,1"/>
                             <Setter TargetName="mainBorder" Property="Border.BorderThickness" Value="0,1,1,1"/>
                         </MultiDataTrigger>
@@ -462,23 +470,23 @@
                                                              RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}"
                                            Value="Top"/>
                             </MultiDataTrigger.Conditions>
-                            <Setter TargetName="mainBorder" Value="{StaticResource BackgroundLightBrush}" Property="Border.Background"/>
-                            <Setter TargetName="mainBorder" Value="{StaticResource BackgroundBlueBrush}" Property="Border.BorderBrush"/>
+                            <Setter TargetName="mainBorder" Value="{StaticResource Tab_HeaderBackgroundHovered_Brush}" Property="Border.Background"/>
+                            <Setter TargetName="mainBorder" Value="{StaticResource Tab_HeaderBorderHovered_Brush}" Property="Border.BorderBrush"/>
                             <Setter TargetName="innerBorder" Property="Border.BorderThickness" Value="1,1,1,0"/>
                             <Setter TargetName="mainBorder" Property="Border.BorderThickness" Value="1,1,1,0"/>
                         </MultiDataTrigger>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding Path=IsEnabled, 
-                                                             RelativeSource={RelativeSource Self}}" 
+                                <Condition Binding="{Binding Path=IsEnabled,
+                                                             RelativeSource={RelativeSource Self}}"
                                            Value="false"/>
                                 <Condition Binding="{Binding Path=TabStripPlacement, 
                                                              RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}"
                                            Value="Left"/>
                             </MultiDataTrigger.Conditions>
                             <Setter TargetName="contentPresenter" Property="UIElement.Opacity" Value="0.56"/>
-                            <Setter TargetName="mainBorder" Value="{StaticResource BackgroundNormalBrush}" Property="Border.Background"/>
-                            <Setter TargetName="mainBorder" Value="{StaticResource BackgroundNormalBrush}" Property="Border.BorderBrush"/>
+                            <Setter TargetName="mainBorder" Value="{StaticResource Tab_HeaderBackgroundDisabled_Brush}" Property="Border.Background"/>
+                            <Setter TargetName="mainBorder" Value="{StaticResource Tab_HeaderBorderDisabled_Brush}" Property="Border.BorderBrush"/>
                             <Setter TargetName="innerBorder" Property="Border.BorderThickness" Value="1,1,0,1"/>
                             <Setter TargetName="mainBorder" Property="Border.BorderThickness" Value="1,1,0,1"/>
                         </MultiDataTrigger>
@@ -492,8 +500,8 @@
                                            Value="Bottom"/>
                             </MultiDataTrigger.Conditions>
                             <Setter TargetName="contentPresenter" Property="UIElement.Opacity" Value="0.56"/>
-                            <Setter TargetName="mainBorder" Value="{StaticResource BackgroundNormalBrush}" Property="Border.Background"/>
-                            <Setter TargetName="mainBorder" Value="{StaticResource BackgroundNormalBrush}" Property="Border.BorderBrush"/>
+                            <Setter TargetName="mainBorder" Value="{StaticResource Tab_HeaderBackgroundDisabled_Brush}" Property="Border.Background"/>
+                            <Setter TargetName="mainBorder" Value="{StaticResource Tab_HeaderBorderDisabled_Brush}" Property="Border.BorderBrush"/>
                             <Setter TargetName="innerBorder" Property="Border.BorderThickness" Value="1,0,1,1"/>
                             <Setter TargetName="mainBorder" Property="Border.BorderThickness" Value="1,0,1,1"/>
                         </MultiDataTrigger>
@@ -507,8 +515,8 @@
                                            Value="Right"/>
                             </MultiDataTrigger.Conditions>
                             <Setter TargetName="contentPresenter" Property="UIElement.Opacity" Value="0.56"/>
-                            <Setter TargetName="mainBorder" Value="{StaticResource BackgroundNormalBrush}" Property="Border.Background"/>
-                            <Setter TargetName="mainBorder" Value="{StaticResource BackgroundNormalBrush}" Property="Border.BorderBrush"/>
+                            <Setter TargetName="mainBorder" Value="{StaticResource Tab_HeaderBackgroundDisabled_Brush}" Property="Border.Background"/>
+                            <Setter TargetName="mainBorder" Value="{StaticResource Tab_HeaderBorderDisabled_Brush}" Property="Border.BorderBrush"/>
                             <Setter TargetName="innerBorder" Property="Border.BorderThickness" Value="0,1,1,1"/>
                             <Setter TargetName="mainBorder" Property="Border.BorderThickness" Value="0,1,1,1"/>
                         </MultiDataTrigger>
@@ -522,7 +530,7 @@
                                            Value="Top"/>
                             </MultiDataTrigger.Conditions>
                             <Setter TargetName="contentPresenter" Property="UIElement.Opacity" Value="0.56"/>
-                            <Setter TargetName="mainBorder" Value="{StaticResource BackgroundNormalBrush}" Property="Border.Background"/>
+                            <Setter TargetName="mainBorder" Value="{StaticResource Tab_HeaderBackgroundDisabled_Brush}" Property="Border.Background"/>
                             <Setter TargetName="innerBorder" Property="Border.BorderThickness" Value="1,1,1,0"/>
                             <Setter TargetName="mainBorder" Property="Border.BorderThickness" Value="1,1,1,0"/>
                         </MultiDataTrigger>
@@ -535,6 +543,8 @@
                                                              RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}"
                                            Value="Left"/>
                             </MultiDataTrigger.Conditions>
+                            <Setter Property="Control.Foreground" Value="{StaticResource Tab_HeaderForeground_Brush}"/>
+                            <Setter Property="Control.FontWeight" Value="Normal"/>
                             <Setter TargetName="innerBorder" Property="Border.BorderThickness" Value="1,1,0,1"/>
                             <Setter TargetName="mainBorder" Property="Border.BorderThickness" Value="1,1,0,1"/>
                         </MultiDataTrigger>
@@ -548,12 +558,14 @@
                                            Value="Left"/>
                             </MultiDataTrigger.Conditions>
                             <Setter Property="Panel.ZIndex" Value="1"/>
+                            <Setter Property="Control.Foreground" Value="{StaticResource Tab_HeaderForegroundHovered_Brush}"/>
+                            <Setter Property="Control.FontWeight" Value="Bold"/>
                             <Setter Property="FrameworkElement.Margin" Value="-2,-2,0,-2"/>
                             <Setter TargetName="innerBorder" Property="UIElement.Opacity" Value="1"/>
                             <Setter TargetName="innerBorder" Property="Border.BorderThickness" Value="1,1,0,1"/>
                             <Setter TargetName="mainBorder" Property="Border.BorderThickness" Value="1,1,0,1"/>
-                            <Setter TargetName="mainBorder" Property="Border.Background" Value="{StaticResource BackgroundLightBrush}"/>
-                            <Setter TargetName="innerBorder" Property="Border.Background" Value="{StaticResource BackgroundLightBrush}"/>
+                            <Setter TargetName="mainBorder" Property="Border.Background" Value="{StaticResource Tab_HeaderBackgroundHovered_Brush}"/>
+                            <Setter TargetName="innerBorder" Property="Border.Background" Value="{StaticResource Tab_HeaderBackgroundHovered_Brush}"/>
                         </MultiDataTrigger>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
@@ -564,6 +576,8 @@
                                                              RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}"
                                            Value="Bottom"/>
                             </MultiDataTrigger.Conditions>
+                            <Setter Property="Control.Foreground" Value="{StaticResource Tab_HeaderForeground_Brush}"/>
+                            <Setter Property="Control.FontWeight" Value="Normal"/>
                             <Setter TargetName="innerBorder" Property="Border.BorderThickness" Value="1,0,1,1"/>
                             <Setter TargetName="mainBorder" Property="Border.BorderThickness" Value="1,0,1,1"/>
                         </MultiDataTrigger>
@@ -578,11 +592,13 @@
                             </MultiDataTrigger.Conditions>
                             <Setter Property="Panel.ZIndex" Value="1"/>
                             <Setter Property="FrameworkElement.Margin" Value="-2,0,-2,-2"/>
+                            <Setter Property="Control.Foreground" Value="{StaticResource Tab_HeaderForegroundHovered_Brush}"/>
+                            <Setter Property="Control.FontWeight" Value="Bold"/>
                             <Setter TargetName="innerBorder" Property="UIElement.Opacity" Value="1"/>
                             <Setter TargetName="innerBorder" Property="Border.BorderThickness" Value="1,0,1,1"/>
                             <Setter TargetName="mainBorder" Property="Border.BorderThickness" Value="1,0,1,1"/>
-                            <Setter TargetName="mainBorder" Property="Border.Background" Value="{StaticResource BackgroundLightBrush}"/>
-                            <Setter TargetName="innerBorder" Property="Border.Background" Value="{StaticResource BackgroundLightBrush}"/>
+                            <Setter TargetName="mainBorder" Property="Border.Background" Value="{StaticResource Tab_HeaderBackgroundHovered_Brush}"/>
+                            <Setter TargetName="innerBorder" Property="Border.Background" Value="{StaticResource Tab_HeaderBackgroundHovered_Brush}"/>
                         </MultiDataTrigger>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
@@ -593,6 +609,8 @@
                                                              RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}"
                                            Value="Right"/>
                             </MultiDataTrigger.Conditions>
+                            <Setter Property="Control.Foreground" Value="{StaticResource Tab_HeaderForeground_Brush}"/>
+                            <Setter Property="Control.FontWeight" Value="Normal"/>
                             <Setter TargetName="innerBorder" Property="Border.BorderThickness" Value="0,1,1,1"/>
                             <Setter TargetName="mainBorder" Property="Border.BorderThickness" Value="0,1,1,1"/>
                         </MultiDataTrigger>
@@ -607,11 +625,13 @@
                             </MultiDataTrigger.Conditions>
                             <Setter Property="Panel.ZIndex" Value="1"/>
                             <Setter Property="FrameworkElement.Margin" Value="0,-2,-2,-2"/>
+                            <Setter Property="Control.Foreground" Value="{StaticResource Tab_HeaderForegroundHovered_Brush}"/>
+                            <Setter Property="Control.FontWeight" Value="Bold"/>
                             <Setter TargetName="innerBorder" Property="UIElement.Opacity" Value="1"/>
                             <Setter TargetName="innerBorder" Property="Border.BorderThickness" Value="0,1,1,1"/>
                             <Setter TargetName="mainBorder" Property="Border.BorderThickness" Value="0,1,1,1"/>
-                            <Setter TargetName="mainBorder" Property="Border.Background" Value="{StaticResource BackgroundLightBrush}"/>
-                            <Setter TargetName="innerBorder" Property="Border.Background" Value="{StaticResource BackgroundLightBrush}"/>
+                            <Setter TargetName="mainBorder" Property="Border.Background" Value="{StaticResource Tab_HeaderBackgroundHovered_Brush}"/>
+                            <Setter TargetName="innerBorder" Property="Border.Background" Value="{StaticResource Tab_HeaderBackgroundHovered_Brush}"/>
                         </MultiDataTrigger>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
@@ -622,6 +642,8 @@
                                                              RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}"
                                            Value="Top"/>
                             </MultiDataTrigger.Conditions>
+                            <Setter Property="Control.Foreground" Value="{StaticResource Tab_HeaderForeground_Brush}"/>
+                            <Setter Property="Control.FontWeight" Value="Normal"/>
                             <Setter TargetName="innerBorder" Property="Border.BorderThickness" Value="1,1,1,0"/>
                             <Setter TargetName="mainBorder" Property="Border.BorderThickness" Value="1,1,1,0"/>
                         </MultiDataTrigger>
@@ -636,11 +658,13 @@
                             </MultiDataTrigger.Conditions>
                             <Setter Property="Panel.ZIndex" Value="1"/>
                             <Setter Property="FrameworkElement.Margin" Value="-2,-2,-2,0"/>
+                            <Setter Property="Control.Foreground" Value="{StaticResource Tab_HeaderForegroundHovered_Brush}"/>
+                            <Setter Property="Control.FontWeight" Value="Bold"/>
                             <Setter TargetName="innerBorder" Property="UIElement.Opacity" Value="1"/>
                             <Setter TargetName="innerBorder" Property="Border.BorderThickness" Value="1,1,1,0"/>
                             <Setter TargetName="mainBorder" Property="Border.BorderThickness" Value="1,1,1,0"/>
-                            <Setter TargetName="mainBorder" Property="Border.Background" Value="{StaticResource BackgroundLightBrush}"/>
-                            <Setter TargetName="innerBorder" Property="Border.Background" Value="{StaticResource BackgroundLightBrush}"/>
+                            <Setter TargetName="mainBorder" Property="Border.Background" Value="{StaticResource Tab_HeaderBackgroundHovered_Brush}"/>
+                            <Setter TargetName="innerBorder" Property="Border.Background" Value="{StaticResource Tab_HeaderBackgroundHovered_Brush}"/>
                         </MultiDataTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -671,7 +695,7 @@
         <Setter Property="Padding" Value="2"/>
         <Setter Property="Margin" Value="2"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="BorderBrush" Value="{StaticResource BackgroundUltraLightBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource Tab_Border_Brush}"/>
         <Setter Property="ItemsSource" Value="{Binding Tabs}"/>
         <Setter Property="SelectedIndex" Value="{Binding SelectedIndex, Mode=TwoWay}"/>
         <Setter Property="SelectedValue" Value="{Binding SelectedTab, Mode=OneWay}"/>
@@ -682,26 +706,24 @@
                         <Grid.Resources>
                             <Style TargetType="{x:Type Button}" x:Key="XButton">
                                 <Setter Property="Background" Value="Transparent" />
-                                <Setter Property="Foreground" Value="{StaticResource ForegroundLightBrush}"/>
+                                <Setter Property="Foreground" Value="{StaticResource Tab_HeaderForeground_Brush}"/>
                                 <Setter Property="Margin" Value="2 0 0 2"/>
                                 <Setter Property="Padding" Value="2"/>
                                 <Setter Property="FontSize" Value="{StaticResource FontSizeSmall}"/>
-
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate TargetType="{x:Type Button}">
                                             <Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}"
                                                     Width="{Binding Height, RelativeSource={RelativeSource Self}}">
-                                                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" 
+                                                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center"
                                                            Text="{TemplateBinding Content}" />
                                             </Border>
                                         </ControlTemplate>
                                     </Setter.Value>
                                 </Setter>
-
                                 <Style.Triggers>
                                     <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="{StaticResource BackgroundDarkBrush}" />
+                                        <Setter Property="Background" Value="{StaticResource Tab_HeaderBackground_Brush}" />
                                     </Trigger>
                                 </Style.Triggers>
                             </Style>
@@ -710,12 +732,15 @@
                             <ColumnDefinition/>
                             <ColumnDefinition Width="auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="{Binding Header}"/>
+                        <TextBlock Text="{Binding Header}"
+                                   Name="HeaderText"
+                                   Foreground="{StaticResource Tab_HeaderForeground_Brush}"
+                                   Margin="0 0 15 0"/>
                         <Button Name="CloseButton"
                                 Grid.Column="1"
+                                FontFamily="Helvetica"
                                 Style="{StaticResource XButton}"
-                                FontFamily="{StaticResource FontAwesome}"
-                                Content="{StaticResource CloseIcon}"/>
+                                Content="X" FontWeight="Bold"/>
                     </Grid>
                 </DataTemplate>
             </Setter.Value>
@@ -730,7 +755,7 @@
                 </DataTemplate>
             </Setter.Value>
         </Setter>
-        <Setter Property="Control.Background" Value="{StaticResource BackgroundNormalBrush}"/>
+        <Setter Property="Control.Background" Value="{StaticResource Toolbar_Background_Brush}"/>
         <Setter Property="Control.Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ToolBar}">
@@ -745,8 +770,8 @@
                                    PopupAnimation="{DynamicResource {x:Static SystemParameters.ComboBoxPopupAnimationKey}}"
                                    IsOpen="{Binding Path=IsOverflowOpen, RelativeSource={RelativeSource TemplatedParent}}">
                                 <Border x:Name="ToolBarSubMenuBorder" 
-                                        Background="{StaticResource BackgroundNormalBrush}" 
-                                        BorderBrush="{StaticResource BackgroundLightBrush}"
+                                        Background="{StaticResource Toolbar_Background_Brush}" 
+                                        BorderBrush="{StaticResource Toolbar_SubmenuBorder_Brush}"
                                         BorderThickness="1" RenderOptions.ClearTypeHint="Enabled">
                                         <ToolBarOverflowPanel x:Name="PART_ToolBarOverflowPanel"
                                                               Margin="2" WrapWidth="200" Focusable="true"
@@ -821,7 +846,7 @@
                 <ControlTemplate TargetType="{x:Type Thumb}">
                     <Border x:Name="rectangle"
                             SnapsToDevicePixels="True"
-                            Background="{StaticResource BackgroundLightBrush}"
+                            Background="{StaticResource ScrollBar_Thumb_Brush}"
                             CornerRadius="4"
                             Height="{TemplateBinding Height}"
                             Width="{TemplateBinding Width}"/>
@@ -948,40 +973,13 @@
             </Setter.Value>
         </Setter>
     </Style>    
-
-    <Style TargetType="{x:Type Button}" BasedOn="{StaticResource BaseStyle}" x:Key="CommandButton">
-        <Setter Property="Background" Value="{StaticResource BackgroundVeryLightBrush}" />
-        <Setter Property="Padding" Value="5"/>
-        <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="Foreground" Value="{StaticResource ForegroundSemiLightBrush}"/>
-
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Button}">
-                    <Border Padding="{TemplateBinding Padding}"                            
-                            Background="{TemplateBinding Background}"
-                            Width="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Button}}">
-                        <TextBlock VerticalAlignment="Center" 
-                                   HorizontalAlignment="Center" 
-                                   Text="{TemplateBinding Content}" />
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-
-        <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="{StaticResource BackgroundLightBrush}" />
-            </Trigger>
-        </Style.Triggers>
-    </Style>
+    
     <Style TargetType="{x:Type Button}" BasedOn="{StaticResource BaseStyle}">
-        <Setter Property="Background" Value="{StaticResource BackgroundLightBrush}" />
+        <Setter Property="Background" Value="{StaticResource Button_Background_Brush}" />
         <Setter Property="Padding" Value="5"/>
         <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="Foreground" Value="{StaticResource ForegroundLightBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource Button_Foreground_Brush}"/>
         <Setter Property="Cursor" Value="Hand"/>
-
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
@@ -994,10 +992,10 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="{StaticResource BackgroundSemiLightBrush}" />
+                <Setter Property="Background" Value="{StaticResource Button_BackgroundHovered_Brush}" />
+                <Setter Property="Foreground" Value="{StaticResource Button_ForegroundHovered_Brush}"/>
             </Trigger>
         </Style.Triggers>
     </Style>
@@ -1015,12 +1013,11 @@
         </Setter>
     </Style>
     <Style TargetType="{x:Type Button}" x:Key="SmallControlButton">
-        <Setter Property="Background" Value="{StaticResource BackgroundDarkBrush}" />
-        <Setter Property="Foreground" Value="{StaticResource ForegroundLightBrush}"/>
+        <Setter Property="Background" Value="{StaticResource Button_Background_Brush}" />
+        <Setter Property="Foreground" Value="{StaticResource Button_Foreground_Brush}"/>
         <Setter Property="Margin" Value="2 0 0 2"/>
         <Setter Property="Padding" Value="2"/>
         <Setter Property="FontSize" Value="{StaticResource FontSizeSmall}"/>
-
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
@@ -1031,10 +1028,10 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="{StaticResource BackgroundLightBrush}" />
+                <Setter Property="Background" Value="{StaticResource Button_BackgroundHovered_Brush}" />
+                <Setter Property="Foreground" Value="{StaticResource Button_ForegroundHovered_Brush}" />
             </Trigger>
         </Style.Triggers>
     </Style>
@@ -1047,14 +1044,13 @@
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Padding" Value="5"/>
         <Setter Property="VerticalAlignment" Value="Stretch" />
-        <Setter Property="Foreground" Value="{StaticResource ForegroundDarkBrush}"/>
-
+        <Setter Property="Foreground" Value="{StaticResource Window_ControlButtonForeground_Brush}"/>
+        <Setter Property="Background" Value="{StaticResource Window_ControlButtonBackground_Brush}"/>
         <Setter Property="LayoutTransform">
             <Setter.Value>
                 <ScaleTransform ScaleX="1.5" />
             </Setter.Value>
         </Setter>
-
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
@@ -1064,26 +1060,17 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="{StaticResource BackgroundLightBrush}" />
-            </Trigger>
-        </Style.Triggers>
-    </Style>
-    <Style TargetType="{x:Type Button}" x:Key="WindowCloseButton" BasedOn="{StaticResource WindowControlButton}">
-        <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="Red" />
-                <Setter Property="Foreground" Value="{StaticResource ForegroundLightBrush}"/>
+                <Setter Property="Background" Value="{StaticResource Window_ControlButtonBackgroundHovered_Brush}" />
+                <Setter Property="Foreground" Value="{StaticResource Window_ControlButtonForegroundHovered_Brush}" />
             </Trigger>
         </Style.Triggers>
     </Style>
     <Style TargetType="{x:Type Button}" x:Key="LinkButton">
-        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Background" Value="{StaticResource Link_BackgroundBrush}"/>
         <Setter Property="Cursor" Value="Hand"/>
-        <Setter Property="Foreground" Value="{StaticResource ForegroundLightBrush}"/>
-
+        <Setter Property="Foreground" Value="{StaticResource Link_Foreground_Brush}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
@@ -1091,31 +1078,34 @@
                             BorderThickness="0 0 0 1">
                         <ContentPresenter />
                     </Border>
-
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="ContentFrame" Property="BorderBrush" Value="{StaticResource ForegroundSemiLightBrush}"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource Link_BackgroundHovered_Brush}"/>
+                <Setter Property="Foreground" Value="{StaticResource Link_ForegroundHovered_Brush}"/>
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="True">
+                <Setter Property="Background" Value="{StaticResource Link_BackgroundDisabled_Brush}"/>
+                <Setter Property="Foreground" Value="{StaticResource Link_ForegroundDisabled_Brush}"/>
+            </Trigger>
+        </Style.Triggers>
     </Style>
     <Style TargetType="{x:Type Button}" BasedOn="{StaticResource BaseStyle}"
            x:Key="ActionButton">
-        <Setter Property="Background" Value="{StaticResource BackgroundNormalBrush}" />
+        <Setter Property="Background" Value="{StaticResource Button_Background_Brush}" />
         <Setter Property="Padding" Value="1"/>
         <Setter Property="FontSize" Value="{StaticResource FontSizeLarge}"/>
         <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="Foreground" Value="{StaticResource ForegroundLightBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource Button_Foreground_Brush}"/>
         <Setter Property="Cursor" Value="Hand"/>
-
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
                     <Border Padding="{TemplateBinding Padding}"       
-                                        BorderThickness="0"
-                                        Background="{TemplateBinding Background}">
+                            BorderThickness="0"
+                            Background="{TemplateBinding Background}">
                         <StackPanel Orientation="Horizontal">
                             <ContentPresenter Content="{Binding ButtonGlyph}" Style="{StaticResource GlyphPresenter}"/>
                             <TextBlock VerticalAlignment="Center" 
@@ -1131,18 +1121,19 @@
 
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="{StaticResource BackgroundLightBrush}" />
+                <Setter Property="Background" Value="{StaticResource Button_BackgroundHovered_Brush}" />
+                <Setter Property="Foreground" Value="{StaticResource Button_ForegroundHovered_Brush}" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
-                <Setter Property="Background" Value="{StaticResource BackgroundDarkBrush}"/>
-                <Setter Property="Foreground" Value="{StaticResource ForegroundDarkBrush}"/>
+                <Setter Property="Background" Value="{StaticResource Button_BackgroundDisabled_Brush}"/>
+                <Setter Property="Foreground" Value="{StaticResource Button_ForegroundDisabled_Brush}"/>
             </Trigger>
         </Style.Triggers>
     </Style>
-
+    
     <Style TargetType="{x:Type TreeView}">
-        <Setter Property="Background" Value="{StaticResource BackgroundDarkBrush}"/>
-        <Setter Property="Foreground" Value="{StaticResource ForegroundLightBrush}"/>
+        <Setter Property="Background" Value="{StaticResource TreeView_Background_Brush}"/>
+        <Setter Property="Foreground" Value="{StaticResource TreeView_Foreground_Brush}"/>
     </Style>
     <Style x:Key="TreeViewItemFocusVisual">
         <Setter Property="Control.Template">
@@ -1163,8 +1154,8 @@
                 <ControlTemplate TargetType="{x:Type ToggleButton}">
                     <Border Background="Transparent" Height="16" Padding="5,5,5,5" Width="16">
                         <Path x:Name="ExpandPath" Data="{StaticResource TreeArrow}" 
-                              Fill="{StaticResource BackgroundBlueLightBrush}" 
-                              Stroke="{StaticResource BackgroundUltraLightBrush}">
+                              Fill="{StaticResource Toggle_Background_Brush}" 
+                              Stroke="{StaticResource Toggle_Border_Brush}">
                             <Path.RenderTransform>
                                 <RotateTransform Angle="135" CenterY="3" CenterX="3"/>
                             </Path.RenderTransform>
@@ -1177,20 +1168,20 @@
                                     <RotateTransform Angle="180" CenterY="3" CenterX="3"/>
                                 </Setter.Value>
                             </Setter>
-                            <Setter Property="Fill" TargetName="ExpandPath" Value="{StaticResource BackgroundBlueLightBrush}"/>
-                            <Setter Property="Stroke" TargetName="ExpandPath" Value="{StaticResource BackgroundUltraLightBrush}"/>
+                            <Setter Property="Fill" TargetName="ExpandPath" Value="{StaticResource Toggle_BackgroundOpened_Brush}"/>
+                            <Setter Property="Stroke" TargetName="ExpandPath" Value="{StaticResource Toggle_BorderOpened_Brush}"/>
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Stroke" TargetName="ExpandPath" Value="{StaticResource BackgroundUltraLightBrush}"/>
-                            <Setter Property="Fill" TargetName="ExpandPath" Value="{StaticResource BackgroundBlueLightBrush}"/>
+                            <Setter Property="Stroke" TargetName="ExpandPath" Value="{StaticResource Toggle_Background_Brush}"/>
+                            <Setter Property="Fill" TargetName="ExpandPath" Value="{StaticResource Toggle_BackgroundHovered_Brush}"/>
                         </Trigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsMouseOver" Value="True"/>
                                 <Condition Property="IsChecked" Value="True"/>
                             </MultiTrigger.Conditions>
-                            <Setter Property="Stroke" TargetName="ExpandPath" Value="{StaticResource BackgroundUltraLightBrush}"/>
-                            <Setter Property="Fill" TargetName="ExpandPath" Value="{StaticResource BackgroundBlueLightBrush}"/>
+                            <Setter Property="Stroke" TargetName="ExpandPath" Value="{StaticResource Toggle_BorderHovered_Brush}"/>
+                            <Setter Property="Fill" TargetName="ExpandPath" Value="{StaticResource Toggle_BackgroundHovered_Brush}"/>
                         </MultiTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -1198,13 +1189,13 @@
         </Setter>
     </Style>
     <Style TargetType="{x:Type TreeViewItem}" x:Key="DefaultTreeViewItem">
-        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Background" Value="{StaticResource TreeView_ItemBackground_Brush}"/>
         <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment,
                                                               RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
         <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, 
                                                             RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
         <Setter Property="Padding" Value="1,0,0,0"/>
-        <Setter Property="Foreground" Value="{StaticResource ForegroundLightBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource TreeView_Foreground_Brush}"/>
         <Setter Property="FocusVisualStyle" Value="{StaticResource TreeViewItemFocusVisual}"/>
         <Setter Property="Template">
             <Setter.Value>
@@ -1241,19 +1232,20 @@
                             <Setter Property="Visibility" TargetName="Expander" Value="Hidden"/>
                         </Trigger>
                         <Trigger Property="IsSelected" Value="true">
-                            <Setter Property="Background" TargetName="Bd" Value="{StaticResource BackgroundBlueBrush}"/>
-                            <Setter Property="Foreground" Value="{StaticResource ForegroundLightBrush}"/>
+                            <Setter Property="Background" TargetName="Bd" Value="{StaticResource TreeView_ItemBackgroundSelected_Brush}"/>
+                            <Setter Property="Foreground" Value="{StaticResource TreeView_ItemForegroundSelected_Brush}"/>
                         </Trigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsSelected" Value="true"/>
                                 <Condition Property="IsSelectionActive" Value="false"/>
                             </MultiTrigger.Conditions>
-                            <Setter Property="Background" TargetName="Bd" Value="{StaticResource BackgroundLightBrush}"/>
-                            <Setter Property="Foreground" Value="{StaticResource ForegroundDarkBrush}"/>
+                            <Setter Property="Background" TargetName="Bd" Value="{StaticResource TreeView_ItemBackgroundSelectedInactive_Brush}"/>
+                            <Setter Property="Foreground" Value="{StaticResource TreeView_ItemForegroundSelectedInactive_Brush}"/>
                         </MultiTrigger>
                         <Trigger Property="IsEnabled" Value="false">
-                            <Setter Property="Foreground" Value="{StaticResource ForegroundDarkBrush}"/>
+                            <Setter Property="Foreground" Value="{StaticResource TreeView_ItemForegroundDisabled_Brush}"/>
+                            <Setter Property="Background" Value="{StaticResource TreeView_ItemBackgroundDisabled_Brush}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -1274,19 +1266,37 @@
 
     <Style TargetType="{x:Type TextBox}" x:Key="UnderscoredTextBox">
         <Setter Property="BorderThickness" Value="0 0 0 1"/>
-        <Setter Property="BorderBrush" Value="{StaticResource BackgroundNormalBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource Textbox_Border_Brush}"/>
         <Setter Property="Background" Value="Transparent" />
     </Style>
     <Style TargetType="{x:Type TextBox}">
-        <Setter Property="Background" Value="{StaticResource BackgroundLightBrush}"/>
-        <Setter Property="Foreground" Value="{StaticResource ForegroundLightBrush}"/>
+        <Setter Property="Background" Value="{StaticResource Textbox_Background_Brush}"/>
+        <Setter Property="Foreground" Value="{StaticResource Textbox_Foreground_Brush}"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="BorderBrush" Value="{StaticResource BackgroundNormalBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource Textbox_Border_Brush}"/>
         <Setter Property="FontSize" Value="{StaticResource FontSizeRegular}"/>
         <Setter Property="Margin" Value="5"/>
+        <Style.Triggers>
+            <EventTrigger RoutedEvent="MouseEnter">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <ColorAnimation To="{StaticResource Textbox_BorderHovered}" Duration="0:0:0.3" 
+                                        Storyboard.TargetProperty="BorderBrush.Color" />
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+            <EventTrigger RoutedEvent="MouseLeave">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <ColorAnimation From="{StaticResource Textbox_Border}" Duration="0:0:0.3" 
+                                        Storyboard.TargetProperty="BorderBrush.Color" />
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </Style.Triggers>
     </Style>
     <Style TargetType="{x:Type TextBlock}" x:Key="DefaultTextBlock">
-        <Setter Property="Foreground" Value="{StaticResource ForegroundLightBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource Label_Foreground_Brush}"/>
         <Setter Property="FontSize" Value="{StaticResource FontSizeRegular}"/>
         <Setter Property="Margin" Value="5"/>
     </Style>
@@ -1296,46 +1306,42 @@
                 <ColumnDefinition />
                 <ColumnDefinition Width="20" />
             </Grid.ColumnDefinitions>
-            <Border
-                  x:Name="Border" 
-                  Grid.ColumnSpan="2"
-                  CornerRadius="0"
-                  Background="{StaticResource BackgroundLightBrush}"
-                  BorderBrush="{StaticResource BackgroundDarkBrush}"
-                  BorderThickness="1" />
-            <Border 
-                  Grid.Column="0"
-                  CornerRadius="0" 
-                  Margin="1"
-                  Background="{StaticResource BackgroundVeryLightBrush}" 
-                  BorderBrush="{StaticResource BackgroundDarkBrush}"
-                  BorderThickness="0,0,1,0" />
-            <Path
-                  x:Name="Arrow"
+            <Border x:Name="Border" 
+                    Grid.ColumnSpan="2"
+                    CornerRadius="0"
+                    Background="{StaticResource Textbox_Background_Brush}"
+                    BorderBrush="{StaticResource Textbox_Border_Brush}"
+                    BorderThickness="1" />
+            <Border Grid.Column="0"
+                    CornerRadius="0" 
+                    Margin="1"
+                    Background="{StaticResource Textbox_Background_Brush}"
+                    BorderBrush="{StaticResource Textbox_Border_Brush}"
+                    BorderThickness="0,0,1,0" />
+            <Path x:Name="Arrow"
                   Grid.Column="1"     
-                  Fill="{StaticResource BackgroundVeryLightBrush}"
+                  Fill="{StaticResource ComboBox_Toggle_Brush}"
                   HorizontalAlignment="Center"
                   VerticalAlignment="Center"
-                  Data="M0,0 L0,2 L4,6 L8,2 L8,0 L4,4 z"
-                />
+                  Data="M0,0 L0,2 L4,6 L8,2 L8,0 L4,4 z"/>
         </Grid>
-        <!--<ControlTemplate.Triggers>
+        <ControlTemplate.Triggers>
             <Trigger Property="ToggleButton.IsMouseOver" Value="true">
-                <Setter TargetName="Border" Property="Background" Value="#808080" />
+                <Setter TargetName="Border" Property="Background" Value="{StaticResource Textbox_BackgroundHovered_Brush}" />
             </Trigger>
             <Trigger Property="ToggleButton.IsChecked" Value="true">
-                <Setter TargetName="Border" Property="Background" Value="#E0E0E0" />
+                <Setter TargetName="Border" Property="Background" Value="{StaticResource ComboBox_ToggleBackgroundHovered_Brush}" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
-                <Setter TargetName="Border" Property="Background" Value="#EEEEEE" />
-                <Setter TargetName="Border" Property="BorderBrush" Value="#AAAAAA" />
-                <Setter Property="Foreground" Value="#888888"/>
-                <Setter TargetName="Arrow" Property="Fill" Value="#888888" />
+                <Setter TargetName="Border" Property="Background" Value="{StaticResource Textbox_BackgroundDisabled_Brush}" />
+                <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource Textbox_BorderDisabled_Brush}" />
+                <Setter Property="Foreground" Value="{StaticResource Textbox_ForegroundDisabled_Brush}"/>
+                <Setter TargetName="Arrow" Property="Fill" Value="{StaticResource Textbox_ForegroundDisabled_Brush}" />
             </Trigger>
-        </ControlTemplate.Triggers>-->
+        </ControlTemplate.Triggers>
     </ControlTemplate>
     <ControlTemplate x:Key="ComboBoxTextBox" TargetType="{x:Type TextBox}">
-        <Border x:Name="PART_ContentHost" Focusable="False" Background="{StaticResource BackgroundVeryLightBrush}" />
+        <Border x:Name="PART_ContentHost" Focusable="False" Background="{StaticResource Textbox_Background_Brush}" />
     </ControlTemplate>
     <Style TargetType="{x:Type ComboBox}">
         <Setter Property="SnapsToDevicePixels" Value="true"/>
@@ -1343,8 +1349,8 @@
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
         <Setter Property="ScrollViewer.CanContentScroll" Value="true"/>
-        <Setter Property="Foreground" Value="{StaticResource ForegroundSemiLightBrush}"/>
-        <Setter Property="Background" Value="{StaticResource BackgroundVeryLightBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource Textbox_Foreground_Brush}"/>
+        <Setter Property="Background" Value="{StaticResource Textbox_Background_Brush}"/>
         <Setter Property="Padding" Value="2"/>
         <Setter Property="Template">
             <Setter.Value>
@@ -1372,8 +1378,8 @@
                                  VerticalAlignment="Center" 
                                  Margin="3,3,23,3"
                                  Focusable="True" 
-                                 Background="{StaticResource BackgroundVeryLightBrush}"
-                                 Foreground="{StaticResource ForegroundLightGreenBrush}"
+                                 Background="{StaticResource Textbox_Foreground_Brush}"
+                                 Foreground="{StaticResource Textbox_Background_Brush}"
                                  Visibility="Hidden"
                                  IsReadOnly="{TemplateBinding IsReadOnly}"/>
                         <Popup  Name="Popup"
@@ -1388,9 +1394,9 @@
                                   MinWidth="{TemplateBinding ActualWidth}"
                                   MaxHeight="{TemplateBinding MaxDropDownHeight}">
                                 <Border x:Name="DropDownBorder"
-                                        Background="{StaticResource BackgroundNormalBrush}"
+                                        Background="{StaticResource ComboBox_DropdownBackground_Brush}"
                                         BorderThickness="1"
-                                        BorderBrush="{StaticResource BackgroundUltraLightBrush}"/>
+                                        BorderBrush="{StaticResource ComboBox_DropdownBorder_Brush}"/>
                                 <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
                                     <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
                                 </ScrollViewer>
@@ -1402,7 +1408,7 @@
                             <Setter TargetName="DropDownBorder" Property="MinHeight" Value="95"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="false">
-                            <Setter Property="Foreground" Value="{StaticResource ForegroundUltraLightBrush}"/>
+                            <Setter Property="Foreground" Value="{StaticResource Textbox_ForegroundDisabled_Brush}"/>
                         </Trigger>
                         <Trigger Property="IsGrouping" Value="true">
                             <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
@@ -1425,7 +1431,7 @@
     </Style>
     <Style x:Key="{x:Type ComboBoxItem}" TargetType="{x:Type ComboBoxItem}">
         <Setter Property="SnapsToDevicePixels" Value="true"/>
-        <Setter Property="Foreground" Value="{StaticResource ForegroundSemiLightBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource ComboBox_DropdownForeground_Brush}"/>
         <Setter Property="OverridesDefaultStyle" Value="true"/>
         <Setter Property="Template">
             <Setter.Value>
@@ -1437,10 +1443,11 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsHighlighted" Value="true">
-                            <Setter TargetName="Border" Property="Background" Value="{StaticResource BackgroundLightBrush}"/>
+                            <Setter TargetName="Border" Property="Background" 
+                                    Value="{StaticResource ComboBox_BackgroundHoveredBrush}"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="false">
-                            <Setter Property="Foreground" Value="{StaticResource BackgroundUltraLightBrush}"/>
+                            <Setter Property="Foreground" Value="{StaticResource Textbox_ForegroundDisabled_Brush}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

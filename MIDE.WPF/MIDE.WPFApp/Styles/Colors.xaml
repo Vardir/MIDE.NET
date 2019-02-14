@@ -2,106 +2,269 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options">
 
-    <!--Foreground-->
-    <Color x:Key="ForegroundLightBlue">#04B5FF</Color>
-    <SolidColorBrush x:Key="ForegroundLightBlueBrush" Color="{StaticResource ForegroundLightBlue}" />
+    <Color x:Key="Window_Border">#007ACC</Color>
+    <Color x:Key="Window_BodyBackground">#1E1E1E</Color>
+    <Color x:Key="Window_HeaderBackground">#2D2D30</Color>
+    <Color x:Key="Window_HeaderForeground">#FFFFFF</Color>
+    <Color x:Key="Window_ControlButtonForeground">#FFFFFF</Color>
+    <Color x:Key="Window_ControlButtonBackground">#2D2D30</Color>
+    <Color x:Key="Window_ControlButtonForegroundHovered">#FFFFFF</Color>
+    <Color x:Key="Window_ControlButtonBackgroundHovered">#3F3F41</Color>
 
-    <Color x:Key="ForegroundLightGreen">#56E66E</Color>
-    <SolidColorBrush x:Key="ForegroundLightGreenBrush" Color="{StaticResource ForegroundLightGreen}" />
+    <Color x:Key="Panel_Background">#252526</Color>
 
-    <Color x:Key="ForegroundRed">#FF0000</Color>
-    <SolidColorBrush x:Key="ForegroundRedBrush" Color="{StaticResource ForegroundRed}" />
+    <Color x:Key="Menu_Arrow">#FFFFFF</Color>
+    <Color x:Key="Menu_ArrowHovered">#007ACC</Color>
+    <Color x:Key="Menu_Border">#333334</Color>
+    <Color x:Key="Menu_Separator">#333334</Color>
+    <Color x:Key="Menu_Background">#2D2D30</Color>
+    <Color x:Key="Menu_Foreground">#FFFFFF</Color>
+    <Color x:Key="Menu_ItemBackground">#1E1E1E</Color>
+    <Color x:Key="Menu_ItemForegroundDisabled">#656565</Color>
+    <Color x:Key="Menu_ItemBackgroundDisabled">#333334</Color>
+    <Color x:Key="Menu_ItemBackgroundHovered">#3E3E40</Color>
+    <Color x:Key="Menu_ItemForegroundHovered">#FFFFFF</Color>
 
-    <Color x:Key="ForegroundOrange">#FFBF66</Color>
-    <SolidColorBrush x:Key="ForegroundOrangeBrush" Color="{StaticResource ForegroundOrange}" />
+    <Color x:Key="Thumb">#333334</Color>
 
-    <Color x:Key="ForegroundUltraLight">#888888</Color>
-    <SolidColorBrush x:Key="ForegroundUltraLightBrush" Color="{StaticResource ForegroundUltraLight}" />
+    <Color x:Key="Toolbar_Separator">#333334</Color>
+    <Color x:Key="Toolbar_Background">#2D2D30</Color>
+    <Color x:Key="Toolbar_Foreground">#FFFFFF</Color>
+    <Color x:Key="Toolbar_SubmenuBorder">#333334</Color>
+    <Color x:Key="Toolbar_ItemForegroundDisabled">#656565</Color>
+    <Color x:Key="Toolbar_ItemBackgroundDisabled">#2D2D30</Color>
+    <Color x:Key="Toolbar_ItemBackgroundHovered">#3E3E40</Color>
+    <Color x:Key="Toolbar_ItemForegroundHovered">#FFFFFF</Color>
 
-    <Color x:Key="ForegroundLight">#FFFFFF</Color>
-    <SolidColorBrush x:Key="ForegroundLightBrush" Color="{StaticResource ForegroundLight}" />
-
-    <Color x:Key="ForegroundSemiLight">#BCBCBC</Color>
-    <SolidColorBrush x:Key="ForegroundSemiLightBrush" Color="{StaticResource ForegroundSemiLight}" />
-
-    <Color x:Key="ForegroundDark">#9F9F9F</Color>
-    <SolidColorBrush x:Key="ForegroundDarkBrush" Color="{StaticResource ForegroundDark}" />
-
-    <Color x:Key="ForegroundVeryDark">#000000</Color>
-    <SolidColorBrush x:Key="ForegroundVeryDarkBrush" Color="{StaticResource ForegroundVeryDark}" />
-    <!--Foreground-->
-
-    <!--Background-->
-    <Color x:Key="BackgroundWhite">#ffffff</Color>
-    <SolidColorBrush x:Key="BackgroundWhiteBrush" Color="{StaticResource BackgroundWhite}" />
-
-    <Color x:Key="BackgroundUltraLight">#888888</Color>
-    <SolidColorBrush x:Key="BackgroundUltraLightBrush" Color="{StaticResource BackgroundUltraLight}" />
-
-    <Color x:Key="BackgroundVeryLight">#7B7B7B</Color>
-    <SolidColorBrush x:Key="BackgroundVeryLightBrush" Color="{StaticResource BackgroundVeryLight}" />
-
-    <Color x:Key="BackgroundLight">#535353</Color>
-    <SolidColorBrush x:Key="BackgroundLightBrush" Color="{StaticResource BackgroundLight}" />
-
-    <Color x:Key="BackgroundBlue">#007ACC</Color>
-    <SolidColorBrush x:Key="BackgroundBlueBrush" Color="{StaticResource BackgroundBlue}" />
+    <Color x:Key="Link_Background">#00000000</Color>
+    <Color x:Key="Link_Foreground">#3878C1</Color>
+    <Color x:Key="Link_BackgroundDisabled">#00000000</Color>
+    <Color x:Key="Link_ForegroundDisabled">#656565</Color>
+    <Color x:Key="Link_BackgroundHovered">#00000000</Color>
+    <Color x:Key="Link_ForegroundHovered">#2356A1</Color>
     
-    <Color x:Key="BackgroundBlueLight">#67BAF2</Color>
-    <SolidColorBrush x:Key="BackgroundBlueLightBrush" Color="{StaticResource BackgroundBlueLight}" />
+    <Color x:Key="Button_Border">#6A6A75</Color>
+    <Color x:Key="Button_Background">#3F3F46</Color>
+    <Color x:Key="Button_Foreground">#FFFFFF</Color>
+    <Color x:Key="Button_BackgroundDisabled">#252526</Color>
+    <Color x:Key="Button_ForegroundDisabled">#656565</Color>
+    <Color x:Key="Button_BorderDisabled">#6A6A75</Color>
+    <Color x:Key="Button_BorderHovered">#6A6A75</Color>
+    <Color x:Key="Button_BackgroundHovered">#54545C</Color>
+    <Color x:Key="Button_ForegroundHovered">#FFFFFF</Color>
 
-    <Color x:Key="BackgroundGreenSemiDark">#38543f</Color>
-    <SolidColorBrush x:Key="BackgroundGreenSemiDarkBrush" Color="{StaticResource BackgroundGreenSemiDark}" />
+    <Color x:Key="Label_Foreground">#FFFFFF</Color>
+    <Color x:Key="Label_ForegroundDisabled">#656565</Color>
 
-    <Color x:Key="BackgroundSemiLight">#3A3A3A</Color>
-    <SolidColorBrush x:Key="BackgroundSemiLightBrush" Color="{StaticResource BackgroundSemiLight}" />
+    <Color x:Key="Radiobutton_Outercircle">#6A6A75</Color>
+    <Color x:Key="Radiobutton_Innercircle">#00000000</Color>
+    <Color x:Key="Radiobutton_InnercircleChecked">#54545C</Color>
+    <Color x:Key="Radiobutton_OutercircleDisabled">#6A6A75</Color>
+    <Color x:Key="Radiobutton_InnercircleCheckedDisabled">#252526</Color>
 
-    <Color x:Key="BackgroundNormal">#353535</Color>
-    <SolidColorBrush x:Key="BackgroundNormalBrush" Color="{StaticResource BackgroundNormal}" />
+    <Color x:Key="Checkbox_Box">#6A6A75</Color>
+    <Color x:Key="Checkbox_BoxFill">#00000000</Color>
+    <Color x:Key="Checkbox_BoxFillChecked">#54545C</Color>
+    <Color x:Key="Checkbox_BoxDisabled">#6A6A75</Color>
+    <Color x:Key="Checkbox_BoxFillCheckedDisabled">#252526</Color>
 
-    <Color x:Key="BackgroundDark">#282828</Color>
-    <SolidColorBrush x:Key="BackgroundDarkBrush" Color="{StaticResource BackgroundDark}" />
+    <Color x:Key="Textbox_Border">#6A6A75</Color>
+    <Color x:Key="Textbox_Background">#333337</Color>
+    <Color x:Key="Textbox_BackgroundHovered">#3F3F46</Color>
+    <Color x:Key="Textbox_Foreground">#FFFFFF</Color>
+    <Color x:Key="Textbox_ForegroundSelected">#FFFFFF</Color>
+    <Color x:Key="Textbox_BackgroundSelected">#007ACC</Color>
+    <Color x:Key="Textbox_ForegroundHovered">#FFFFFF</Color>
+    <Color x:Key="Textbox_BackgoundDisabled">#2D2D30</Color>
+    <Color x:Key="Textbox_ForegroundDisabled">#656565</Color>
+    <Color x:Key="Textbox_BorderDisabled">#6A6A75</Color>
+    <Color x:Key="Textbox_BorderHovered">#007ACC</Color>
 
-    <Color x:Key="BackgroundVeryDark">#000000</Color>
-    <SolidColorBrush x:Key="BackgroundVeryDarkBrush" Color="{StaticResource BackgroundVeryDark}" />
+    <Color x:Key="ComboBox_Toggle">#6A6A75</Color>
+    <Color x:Key="ComboBox_DropdownBackground">#6A6A75</Color>
+    <Color x:Key="ComboBox_DropdownBorder">#6A6A75</Color>
+    <Color x:Key="ComboBox_DropdownForeground">#6A6A75</Color>
+    <Color x:Key="ComboBox_ToggleHovered">#007ACC</Color>
+    <Color x:Key="ComboBox_ToggleBackground">#333337</Color>
+    <Color x:Key="ComboBox_ToggleBackgroundHovered">#1F1F20</Color>
 
-    <Color x:Key="Background01">#282828</Color>
-    <SolidColorBrush x:Key="PanelBackground" Color="{StaticResource BackgroundDark}" />
-    <!--Background-->
+    <Color x:Key="Tab_Border">#6A6A75</Color>
+    <Color x:Key="Tab_Background">#252526</Color>
+    <Color x:Key="Tab_Foreground">#FFFFFF</Color>
+    <Color x:Key="Tab_HeaderBorder">#8DA3C1</Color>
+    <Color x:Key="Tab_HeaderBackground">#8DA3C1</Color>
+    <Color x:Key="Tab_HeaderForeground">#000000</Color>
+    <Color x:Key="Tab_HeaderBorderHovered">#B0CBF1</Color>
+    <Color x:Key="Tab_HeaderBorderDisabled">#B0CBF1</Color>
+    <Color x:Key="Tab_HeaderBorderSelected">#B0CBF1</Color>
+    <Color x:Key="Tab_HeaderBackgroundHovered">#B0CBF1</Color>
+    <Color x:Key="Tab_HeaderForegroundHovered">#000000</Color>
+    <Color x:Key="Tab_HeaderBackgroundSelected">#B0CBF1</Color>
+    <Color x:Key="Tab_HeaderForegroundSelected">#000000</Color>
+    <Color x:Key="Tab_HeaderBackgroundDisabled">#2D2D30</Color>
+    <Color x:Key="Tab_HeaderForegroundDisabled">#656565</Color>
 
-    <!--Brushes-->
-    <VisualBrush x:Key="WhiteHatchBrush" TileMode="Tile"
-                 Viewport="0,0,5,5" ViewportUnits="Absolute"
-                 Viewbox="0,0,5,5" ViewboxUnits="Absolute"
-                 po:Freeze="True">
-        <VisualBrush.Visual>
-            <Path Data="M 0 5 L 5 0 M -2 2 L 2 -2 M 3 7 L 7 3"
-              Stroke="{StaticResource BackgroundWhiteBrush}" StrokeEndLineCap="Square"
-              RenderOptions.EdgeMode="Aliased" />
-        </VisualBrush.Visual>
-    </VisualBrush>
+    <Color x:Key="Toggle_Background">#00000000</Color>
+    <Color x:Key="Toggle_BackgroundOpened">#000000</Color>
+    <Color x:Key="Toggle_BorderHovered">#007ACC</Color>
+    <Color x:Key="Toggle_Border">#FFFFFF</Color>
+    <Color x:Key="Toggle_BorderOpened">#FFFFFF</Color>
+    <Color x:Key="Toggle_BackgroundHovered">#007ACC</Color>
+    
+    <Color x:Key="TreeView_Border">#252526</Color>    
+    <Color x:Key="TreeView_Background">#252526</Color>
+    <Color x:Key="TreeView_Foreground">#FFFFFF</Color>
+    <Color x:Key="TreeView_ItemBackground">#00000000</Color>
+    <Color x:Key="TreeView_ItemBackgroundDisabled">#00000000</Color>
+    <Color x:Key="TreeView_ItemForegroundDisabled">#656565</Color>
+    <Color x:Key="TreeView_ItemBackgroundSelected">#007ACC</Color>
+    <Color x:Key="TreeView_ItemForegroundSelected">#FFFFFF</Color>
+    <Color x:Key="TreeView_ItemBackgroundSelectedInactive">#3F3F46</Color>
+    <Color x:Key="TreeView_ItemForegroundSelectedInactive">#FFFFFF</Color>
 
-    <VisualBrush x:Key="LightHatchBrush" TileMode="Tile"
-                 Viewport="0,0,5,5" ViewportUnits="Absolute"
-                 Viewbox="0,0,5,5" ViewboxUnits="Absolute"
-                 po:Freeze="True">
-        <VisualBrush.Visual>
-            <Path Data="M 0 5 L 5 0 M -2 2 L 2 -2 M 3 7 L 7 3"
-              Stroke="{StaticResource BackgroundLightBrush}" StrokeEndLineCap="Square"
-              RenderOptions.EdgeMode="Aliased" />
-        </VisualBrush.Visual>
-    </VisualBrush>
+    <Color x:Key="ScrollBar_Background">#3E3E42</Color>
+    <Color x:Key="ScrollBar_Bar">#686868</Color>
+    <Color x:Key="ScrollBar_Thumb">#686868</Color>
+    <Color x:Key="Scrollbar_BarHovered">#9E9E9E</Color>
+    <Color x:Key="Scrollbar_BarDisabled">#6A6A75</Color>
 
-    <VisualBrush x:Key="DarkHatchBrush" TileMode="Tile"
-                 Viewport="0,0,5,5" ViewportUnits="Absolute"
-                 Viewbox="0,0,5,5" ViewboxUnits="Absolute"
-                 po:Freeze="True">
-        <VisualBrush.Visual>
-            <Path Data="M 0 5 L 5 0 M -2 2 L 2 -2 M 3 7 L 7 3"
-              Stroke="{StaticResource BackgroundDarkBrush}" StrokeEndLineCap="Square"
-              RenderOptions.EdgeMode="Aliased" />
-        </VisualBrush.Visual>
-    </VisualBrush>
-    <!--Brushes-->
+    <Color x:Key="StatusBar_Backgound">#007ACC</Color>
+    <Color x:Key="StatusBar_Foreground">#FFFFFF</Color>
 
+    <Color x:Key="ProgressBar_Backgound">#333337</Color>
+    <Color x:Key="ProgressBar_Foreground">#007ACC</Color>
+
+    <!--BRUSHES-->
+    <SolidColorBrush x:Key="Window_Border_Brush" Color="{StaticResource Window_Border}" />
+    <SolidColorBrush x:Key="Window_BodyBackground_Brush" Color="{StaticResource Window_BodyBackground}" />
+    <SolidColorBrush x:Key="Window_HeaderBackground_Brush" Color="{StaticResource Window_HeaderBackground}" />
+    <SolidColorBrush x:Key="Window_HeaderForeground_Brush" Color="{StaticResource Window_HeaderForeground}" />
+    <SolidColorBrush x:Key="Window_ControlButtonForeground_Brush" Color="{StaticResource Window_ControlButtonForeground}" />
+    <SolidColorBrush x:Key="Window_ControlButtonBackground_Brush" Color="{StaticResource Window_ControlButtonBackground}" />
+    <SolidColorBrush x:Key="Window_ControlButtonForegroundHovered_Brush" Color="{StaticResource Window_ControlButtonForegroundHovered}" />
+    <SolidColorBrush x:Key="Window_ControlButtonBackgroundHovered_Brush" Color="{StaticResource Window_ControlButtonBackgroundHovered}" />
+
+    <SolidColorBrush x:Key="Panel_Background_Brush" Color="{StaticResource Panel_Background}" />
+
+    <SolidColorBrush x:Key="Menu_Arrow_Brush" Color="{StaticResource Menu_Arrow}" />
+    <SolidColorBrush x:Key="Menu_ArrowHovered_Brush" Color="{StaticResource Menu_ArrowHovered}" />
+    <SolidColorBrush x:Key="Menu_Border_Brush" Color="{StaticResource Menu_Border}" />
+    <SolidColorBrush x:Key="Menu_Separator_Brush" Color="{StaticResource Menu_Separator}" />
+    <SolidColorBrush x:Key="Menu_Background_Brush" Color="{StaticResource Menu_Background}" />
+    <SolidColorBrush x:Key="Menu_Foreground_Brush" Color="{StaticResource Menu_Foreground}" />
+    <SolidColorBrush x:Key="Menu_ItemBackground_Brush" Color="{StaticResource Menu_ItemBackground}" />
+    <SolidColorBrush x:Key="Menu_ItemForegroundDisabled_Brush" Color="{StaticResource Menu_ItemForegroundDisabled}" />
+    <SolidColorBrush x:Key="Menu_ItemBackgroundDisabled_Brush" Color="{StaticResource Menu_ItemBackgroundDisabled}" />
+    <SolidColorBrush x:Key="Menu_ItemBackgroundHovered_Brush" Color="{StaticResource Menu_ItemBackgroundHovered}" />
+    <SolidColorBrush x:Key="Menu_ItemForegroundHovered_Brush" Color="{StaticResource Menu_ItemForegroundHovered}" />
+    
+    <SolidColorBrush x:Key="Thumb_Brush" Color="{StaticResource Thumb}" />
+    
+    <SolidColorBrush x:Key="Toolbar_Separator_Brush" Color="{StaticResource Toolbar_Separator}" />
+    <SolidColorBrush x:Key="Toolbar_Background_Brush" Color="{StaticResource Toolbar_Background}" />
+    <SolidColorBrush x:Key="Toolbar_SubmenuBorder_Brush" Color="{StaticResource Toolbar_SubmenuBorder}" />
+    <SolidColorBrush x:Key="Toolbar_Foreground_Brush" Color="{StaticResource Toolbar_Foreground}" />
+    <SolidColorBrush x:Key="Toolbar_ItemForegroundDisabled_Brush" Color="{StaticResource Toolbar_ItemForegroundDisabled}" />
+    <SolidColorBrush x:Key="Toolbar_ItemBackgroundHovered_Brush" Color="{StaticResource Toolbar_ItemBackgroundHovered}" />
+    <SolidColorBrush x:Key="Toolbar_ItemForegroundHovered_Brush" Color="{StaticResource Toolbar_ItemForegroundHovered}" />
+
+    <SolidColorBrush x:Key="Link_BackgroundBrush" Color="{StaticResource Link_Background}" />
+    <SolidColorBrush x:Key="Link_Foreground_Brush" Color="{StaticResource Link_Foreground}" />
+    <SolidColorBrush x:Key="Link_BackgroundDisabled_Brush" Color="{StaticResource Link_BackgroundDisabled}" />
+    <SolidColorBrush x:Key="Link_ForegroundDisabled_Brush" Color="{StaticResource Link_ForegroundDisabled}" />
+    <SolidColorBrush x:Key="Link_BackgroundHovered_Brush" Color="{StaticResource Link_BackgroundHovered}" />
+    <SolidColorBrush x:Key="Link_ForegroundHovered_Brush" Color="{StaticResource Link_ForegroundHovered}" />
+    
+    <SolidColorBrush x:Key="Button_Border_Brush" Color="{StaticResource Button_Border}" />
+    <SolidColorBrush x:Key="Button_Background_Brush" Color="{StaticResource Button_Background}" />
+    <SolidColorBrush x:Key="Button_Foreground_Brush" Color="{StaticResource Button_Foreground}" />
+    <SolidColorBrush x:Key="Button_BackgroundDisabled_Brush" Color="{StaticResource Button_BackgroundDisabled}" />
+    <SolidColorBrush x:Key="Button_ForegroundDisabled_Brush" Color="{StaticResource Button_ForegroundDisabled}" />
+    <SolidColorBrush x:Key="Button_BorderDisabled_Brush" Color="{StaticResource Button_BorderDisabled}" />
+    <SolidColorBrush x:Key="Button_BorderHovered_Brush" Color="{StaticResource Button_BorderHovered}" />
+    <SolidColorBrush x:Key="Button_BackgroundHovered_Brush" Color="{StaticResource Button_BackgroundHovered}" />
+    <SolidColorBrush x:Key="Button_ForegroundHovered_Brush" Color="{StaticResource Button_ForegroundHovered}" />
+    
+    <SolidColorBrush x:Key="Label_Foreground_Brush" Color="{StaticResource Label_Foreground}" />
+    <SolidColorBrush x:Key="Label_ForegroundDisabled_Brush" Color="{StaticResource Label_ForegroundDisabled}" />
+   
+    <SolidColorBrush x:Key="Radiobutton_Outercircle_Brush" Color="{StaticResource Radiobutton_Outercircle}" />
+    <SolidColorBrush x:Key="Radiobutton_Innercircle_Brush" Color="{StaticResource Radiobutton_Innercircle}" />
+    <SolidColorBrush x:Key="Radiobutton_InnercircleChecked_Brush" Color="{StaticResource Radiobutton_InnercircleChecked}" />
+    <SolidColorBrush x:Key="Radiobutton_OutercircleDisabled_Brush" Color="{StaticResource Radiobutton_OutercircleDisabled}" />
+    <SolidColorBrush x:Key="Radiobutton_InnercircleCheckedDisabled_Brush" Color="{StaticResource Radiobutton_InnercircleCheckedDisabled}" />
+        
+    <SolidColorBrush x:Key="Checkbox_Box_Brush" Color="{StaticResource Checkbox_Box}" />
+    <SolidColorBrush x:Key="Checkbox_BoxFill_Brush" Color="{StaticResource Checkbox_BoxFill}" />
+    <SolidColorBrush x:Key="Checkbox_BoxFillChecked_Brush" Color="{StaticResource Checkbox_BoxFillChecked}" />
+    <SolidColorBrush x:Key="Checkbox_BoxDisabled_Brush" Color="{StaticResource Checkbox_BoxDisabled}" />
+    <SolidColorBrush x:Key="Checkbox_BoxFillCheckedDisabled_Brush" Color="{StaticResource Checkbox_BoxFillCheckedDisabled}" />
+    
+    <SolidColorBrush x:Key="Textbox_Border_Brush" Color="{StaticResource Textbox_Border}" />
+    <SolidColorBrush x:Key="Textbox_Background_Brush" Color="{StaticResource Textbox_Background}" />
+    <SolidColorBrush x:Key="Textbox_BackgroundHovered_Brush" Color="{StaticResource Textbox_BackgroundHovered}" />
+    <SolidColorBrush x:Key="Textbox_Foreground_Brush" Color="{StaticResource Textbox_Foreground}" />
+    <SolidColorBrush x:Key="Textbox_ForegroundSelected_Brush" Color="{StaticResource Textbox_ForegroundSelected}" />
+    <SolidColorBrush x:Key="Textbox_BackgroundSelected_Brush" Color="{StaticResource Textbox_BackgroundSelected}" />
+    <SolidColorBrush x:Key="Textbox_ForegroundHovered_Brush" Color="{StaticResource Textbox_ForegroundHovered}" />
+    <SolidColorBrush x:Key="Textbox_BackgoundDisabled_Brush" Color="{StaticResource Textbox_BackgoundDisabled}" />
+    <SolidColorBrush x:Key="Textbox_ForegroundDisabled_Brush" Color="{StaticResource Textbox_ForegroundDisabled}" />
+    <SolidColorBrush x:Key="Textbox_BorderDisabled_Brush" Color="{StaticResource Textbox_BorderDisabled}" />
+    <SolidColorBrush x:Key="Textbox_BorderHovered_Brush" Color="{StaticResource Textbox_BorderHovered}" />
+
+    <SolidColorBrush x:Key="ComboBox_DropdownBackground_Brush" Color="{StaticResource ComboBox_DropdownBackground}" />
+    <SolidColorBrush x:Key="ComboBox_DropdownBorder_Brush" Color="{StaticResource ComboBox_DropdownBorder}" />
+    <SolidColorBrush x:Key="ComboBox_DropdownForeground_Brush" Color="{StaticResource ComboBox_DropdownForeground}" />
+    <SolidColorBrush x:Key="ComboBox_Toggle_Brush" Color="{StaticResource ComboBox_Toggle}" />
+    <SolidColorBrush x:Key="ComboBox_ToggleHovered_Brush" Color="{StaticResource ComboBox_ToggleHovered}" />
+    <SolidColorBrush x:Key="ComboBox_ToggleBackground_Brush" Color="{StaticResource ComboBox_ToggleBackground}" />
+    <SolidColorBrush x:Key="ComboBox_ToggleBackgroundHovered_Brush" Color="{StaticResource ComboBox_ToggleBackgroundHovered}" />
+
+    <SolidColorBrush x:Key="Tab_Border_Brush" Color="{StaticResource Tab_Border}" />
+    <SolidColorBrush x:Key="Tab_Background_Brush" Color="{StaticResource Tab_Background}" />
+    <SolidColorBrush x:Key="Tab_Foreground_Brush" Color="{StaticResource Tab_Foreground}" />
+    <SolidColorBrush x:Key="Tab_HeaderBorder_Brush" Color="{StaticResource Tab_HeaderBorder}" />
+    <SolidColorBrush x:Key="Tab_HeaderBackground_Brush" Color="{StaticResource Tab_HeaderBackground}" />
+    <SolidColorBrush x:Key="Tab_HeaderForeground_Brush" Color="{StaticResource Tab_HeaderForeground}" />
+    <SolidColorBrush x:Key="Tab_HeaderBorderHovered_Brush" Color="{StaticResource Tab_HeaderBorderHovered}" />
+    <SolidColorBrush x:Key="Tab_HeaderBorderDisabled_Brush" Color="{StaticResource Tab_HeaderBorderDisabled}" />
+    <SolidColorBrush x:Key="Tab_HeaderBorderSelected_Brush" Color="{StaticResource Tab_HeaderBorderSelected}" />
+    <SolidColorBrush x:Key="Tab_HeaderBackgroundHovered_Brush" Color="{StaticResource Tab_HeaderBackgroundHovered}" />
+    <SolidColorBrush x:Key="Tab_HeaderForegroundHovered_Brush" Color="{StaticResource Tab_HeaderForegroundHovered}" />
+    <SolidColorBrush x:Key="Tab_HeaderBackgroundSelected_Brush" Color="{StaticResource Tab_HeaderBackgroundSelected}" />
+    <SolidColorBrush x:Key="Tab_HeaderForegroundSelected_Brush" Color="{StaticResource Tab_HeaderForegroundSelected}" />
+    <SolidColorBrush x:Key="Tab_HeaderBackgroundDisabled_Brush" Color="{StaticResource Tab_HeaderBackgroundDisabled}" />
+    <SolidColorBrush x:Key="Tab_HeaderForegroundDisabled_Brush" Color="{StaticResource Tab_HeaderForegroundDisabled}" />
+
+    <SolidColorBrush x:Key="TreeView_Border_Brush" Color="{StaticResource TreeView_Border}" />
+    <SolidColorBrush x:Key="TreeView_Background_Brush" Color="{StaticResource TreeView_Background}" />
+    <SolidColorBrush x:Key="TreeView_Foreground_Brush" Color="{StaticResource TreeView_Foreground}" />
+    <SolidColorBrush x:Key="TreeView_ItemBackground_Brush" Color="{StaticResource TreeView_ItemBackground}" />
+    <SolidColorBrush x:Key="TreeView_ItemForegroundDisabled_Brush" Color="{StaticResource TreeView_ItemForegroundDisabled}" />
+    <SolidColorBrush x:Key="TreeView_ItemBackgroundDisabled_Brush" Color="{StaticResource TreeView_ItemBackgroundDisabled}" />
+    <SolidColorBrush x:Key="TreeView_ItemBackgroundSelected_Brush" Color="{StaticResource TreeView_ItemBackgroundSelected}" />
+    <SolidColorBrush x:Key="TreeView_ItemForegroundSelected_Brush" Color="{StaticResource TreeView_ItemForegroundSelected}" />
+    <SolidColorBrush x:Key="TreeView_ItemBackgroundSelectedInactive_Brush" Color="{StaticResource TreeView_ItemBackgroundSelectedInactive}" />
+    <SolidColorBrush x:Key="TreeView_ItemForegroundSelectedInactive_Brush" Color="{StaticResource TreeView_ItemForegroundSelectedInactive}" />
+    
+    <SolidColorBrush x:Key="Toggle_Background_Brush" Color="{StaticResource Toggle_Background}" />
+    <SolidColorBrush x:Key="Toggle_BackgroundOpened_Brush" Color="{StaticResource Toggle_BackgroundOpened}" />
+    <SolidColorBrush x:Key="Toggle_BorderHovered_Brush" Color="{StaticResource Toggle_BorderHovered}" />
+    <SolidColorBrush x:Key="Toggle_Border_Brush" Color="{StaticResource Toggle_Border}" />
+    <SolidColorBrush x:Key="Toggle_BorderOpened_Brush" Color="{StaticResource Toggle_BorderOpened}" />
+    <SolidColorBrush x:Key="Toggle_BackgroundHovered_Brush" Color="{StaticResource Toggle_BackgroundHovered}" />
+    
+    <SolidColorBrush x:Key="ScrollBar_Background_Brush" Color="{StaticResource ScrollBar_Background}" />
+    <SolidColorBrush x:Key="ScrollBar_Bar_Brush" Color="{StaticResource ScrollBar_Bar}" />
+    <SolidColorBrush x:Key="ScrollBar_Thumb_Brush" Color="{StaticResource ScrollBar_Thumb}" />
+    <SolidColorBrush x:Key="Scrollbar_BarHovered_Brush" Color="{StaticResource Scrollbar_BarHovered}" />
+    <SolidColorBrush x:Key="Scrollbar_BarDisabled_Brush" Color="{StaticResource Scrollbar_BarDisabled}" />
+    
+    <SolidColorBrush x:Key="StatusBar_Backgound_Brush" Color="{StaticResource StatusBar_Backgound}" />
+    <SolidColorBrush x:Key="StatusBar_Foreground_Brush" Color="{StaticResource StatusBar_Foreground}" />
+    
+    <SolidColorBrush x:Key="ProgressBar_Backgound_Brush" Color="{StaticResource ProgressBar_Backgound}" />
+    <SolidColorBrush x:Key="ProgressBar_Foreground_Brush" Color="{StaticResource ProgressBar_Foreground}" />
+    <!--BRUSHES-->
+    
 </ResourceDictionary>

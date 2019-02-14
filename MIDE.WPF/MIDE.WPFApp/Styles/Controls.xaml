@@ -187,7 +187,7 @@
         </TreeView>
     </DataTemplate>
     <DataTemplate DataType="{x:Type api:ActionTextBox}">
-        <Border BorderThickness="1" BorderBrush="{StaticResource BackgroundLightBrush}"
+        <Border BorderThickness="1" BorderBrush="{StaticResource Textbox_Border_Brush}"
                 Width="{Binding Width, Converter={c:MeasurementsConverter}}"
                 Height="{Binding Height, Converter={c:MeasurementsConverter}}"
                 Margin="{Binding Margin, Converter={c:MeasurementsConverter}}"
@@ -195,7 +195,7 @@
                 IsEnabled="{Binding IsEnabled}"
                 Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
                 Name="border">
-            <Grid Background="{StaticResource BackgroundNormalBrush}">
+            <Grid Background="{StaticResource Textbox_Background_Brush}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="auto"/>
@@ -211,7 +211,7 @@
                 <EventTrigger RoutedEvent="MouseEnter">
                     <BeginStoryboard>
                         <Storyboard>
-                            <ColorAnimation To="{StaticResource BackgroundBlueLight}" Duration="0:0:0.3" 
+                            <ColorAnimation To="{StaticResource Textbox_BorderHovered}" Duration="0:0:0.3" 
                                             Storyboard.TargetName="border" Storyboard.TargetProperty="BorderBrush.Color" />
                         </Storyboard>
                     </BeginStoryboard>
@@ -219,7 +219,7 @@
                 <EventTrigger RoutedEvent="MouseLeave">
                     <BeginStoryboard>
                         <Storyboard>
-                            <ColorAnimation From="{StaticResource BackgroundLight}" Duration="0:0:0.3" 
+                            <ColorAnimation From="{StaticResource Textbox_Border}" Duration="0:0:0.3" 
                                             Storyboard.TargetName="border" Storyboard.TargetProperty="BorderBrush.Color" />
                         </Storyboard>
                     </BeginStoryboard>

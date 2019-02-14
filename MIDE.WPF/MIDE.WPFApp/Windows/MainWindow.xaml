@@ -29,7 +29,7 @@
                       ResizeBorderThickness="{Binding ResizeBorderThickness}"/>
     </WindowChrome.WindowChrome>
 
-    <Grid Background="{StaticResource BackgroundDarkBrush}">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
             <RowDefinition Height="30" />
@@ -55,6 +55,8 @@
                                   Converter={conv:TabSectionExtractor}, 
                                   ConverterParameter=browsers}"
                     Grid.Row="2" Grid.RowSpan="3">
+            <!--<TabItem Header="Foo"/>
+            <TabItem Header="Bar"/>-->
         </TabControl>
         <GridSplitter Grid.Column="1" Grid.Row="2" Grid.RowSpan="3"
                       Width="2" ResizeDirection="Columns"
