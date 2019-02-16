@@ -76,6 +76,9 @@
     <Compile Include="Controls\API\Grid.xaml.cs">
       <DependentUpon>Grid.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\TestControl.xaml.cs">
+      <DependentUpon>TestControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Converters\Base\BaseValueConverter.cs" />
     <Compile Include="Converters\Boolean\BooleanToHorizontalAlignment.cs" />
     <Compile Include="Converters\Boolean\BooleanToVisibility.cs" />
@@ -83,6 +86,7 @@
     <Compile Include="Converters\Boolean\IntegerToBoolean.cs" />
     <Compile Include="Converters\Boolean\InvertBoolean.cs" />
     <Compile Include="Converters\Boolean\NullableToBoolean.cs" />
+    <Compile Include="Converters\Visibility\BooleanVisibilityConverter.cs" />
     <Compile Include="Converters\Visibility\NullableToVisibility.cs" />
     <Compile Include="Converters\ColorConverter.cs" />
     <Compile Include="Converters\EnumToInteger.cs" />
@@ -99,6 +103,10 @@
     <Compile Include="Initializers\WPFMenuInitializer.cs" />
     <Compile Include="RelayCommands\WindowsRelayParameterizedCommand.cs" />
     <Compile Include="RelayCommands\WindowsRelayCommand.cs" />
+    <Page Include="Controls\TestControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Styles\DefaultControls.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

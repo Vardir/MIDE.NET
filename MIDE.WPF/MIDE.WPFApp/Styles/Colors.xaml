@@ -75,7 +75,7 @@
     <Color x:Key="Textbox_ForegroundSelected">#FFFFFF</Color>
     <Color x:Key="Textbox_BackgroundSelected">#007ACC</Color>
     <Color x:Key="Textbox_ForegroundHovered">#FFFFFF</Color>
-    <Color x:Key="Textbox_BackgoundDisabled">#2D2D30</Color>
+    <Color x:Key="Textbox_BackgroundDisabled">#2D2D30</Color>
     <Color x:Key="Textbox_ForegroundDisabled">#656565</Color>
     <Color x:Key="Textbox_BorderDisabled">#6A6A75</Color>
     <Color x:Key="Textbox_BorderHovered">#007ACC</Color>
@@ -122,6 +122,21 @@
     <Color x:Key="TreeView_ItemBackgroundSelectedInactive">#3F3F46</Color>
     <Color x:Key="TreeView_ItemForegroundSelectedInactive">#FFFFFF</Color>
 
+    <Color x:Key="DataGrid_Background">#252526</Color>
+    <Color x:Key="DataGrid_Foreground">#FFFFFF</Color>
+    <Color x:Key="DataGrid_Border">#6A6A75</Color>
+    <Color x:Key="DataGrid_CellBorder">#00000000</Color>
+    <Color x:Key="DataGrid_CellForegroundDisabled">#656565</Color>
+    <Color x:Key="DataGrid_RowBackground">#00000000</Color>
+    <Color x:Key="DataGrid_CellBackgroundSelected">#3E3E40</Color>
+    <Color x:Key="DataGrid_CellForegroundSelected">#FFFFFF</Color>
+    <Color x:Key="DataGrid_CellBorderSelected">#007ACC</Color>
+    <Color x:Key="DataGrid_CellBackgroundSelectedInactive">#3F3F46</Color>
+    <Color x:Key="DataGrid_CellForegroundSelectedInactive">#FFFFFF</Color>
+    <Color x:Key="DataGrid_CellBorderSelectedInactive">#333334</Color>
+    <Color x:Key="DataGrid_ColumnHeaderBorder">#007ACC</Color>
+    <Color x:Key="DataGrid_ColumnHeaderSeparator">#FFFFFF</Color>    
+    
     <Color x:Key="ScrollBar_Background">#3E3E42</Color>
     <Color x:Key="ScrollBar_Bar">#686868</Color>
     <Color x:Key="ScrollBar_Thumb">#686868</Color>
@@ -207,7 +222,7 @@
     <SolidColorBrush x:Key="Textbox_ForegroundSelected_Brush" Color="{StaticResource Textbox_ForegroundSelected}" />
     <SolidColorBrush x:Key="Textbox_BackgroundSelected_Brush" Color="{StaticResource Textbox_BackgroundSelected}" />
     <SolidColorBrush x:Key="Textbox_ForegroundHovered_Brush" Color="{StaticResource Textbox_ForegroundHovered}" />
-    <SolidColorBrush x:Key="Textbox_BackgoundDisabled_Brush" Color="{StaticResource Textbox_BackgoundDisabled}" />
+    <SolidColorBrush x:Key="Textbox_BackgroundDisabled_Brush" Color="{StaticResource Textbox_BackgroundDisabled}" />
     <SolidColorBrush x:Key="Textbox_ForegroundDisabled_Brush" Color="{StaticResource Textbox_ForegroundDisabled}" />
     <SolidColorBrush x:Key="Textbox_BorderDisabled_Brush" Color="{StaticResource Textbox_BorderDisabled}" />
     <SolidColorBrush x:Key="Textbox_BorderHovered_Brush" Color="{StaticResource Textbox_BorderHovered}" />
@@ -259,7 +274,22 @@
     <SolidColorBrush x:Key="ScrollBar_Thumb_Brush" Color="{StaticResource ScrollBar_Thumb}" />
     <SolidColorBrush x:Key="Scrollbar_BarHovered_Brush" Color="{StaticResource Scrollbar_BarHovered}" />
     <SolidColorBrush x:Key="Scrollbar_BarDisabled_Brush" Color="{StaticResource Scrollbar_BarDisabled}" />
-    
+
+    <SolidColorBrush x:Key="DataGrid_Background_Brush" Color="{StaticResource DataGrid_Background}" />
+    <SolidColorBrush x:Key="DataGrid_Foreground_Brush" Color="{StaticResource DataGrid_Foreground}" />
+    <SolidColorBrush x:Key="DataGrid_Border_Brush" Color="{StaticResource DataGrid_Border}" />
+    <SolidColorBrush x:Key="DataGrid_CellBorder_Brush" Color="{StaticResource DataGrid_CellBorder}" />
+    <SolidColorBrush x:Key="DataGrid_CellForegroundDisabled_Brush" Color="{StaticResource DataGrid_CellForegroundDisabled}" />
+    <SolidColorBrush x:Key="DataGrid_RowBackground_Brush" Color="{StaticResource DataGrid_RowBackground}" />
+    <SolidColorBrush x:Key="DataGrid_CellBackgroundSelected_Brush" Color="{StaticResource DataGrid_CellBackgroundSelected}" />
+    <SolidColorBrush x:Key="DataGrid_CellForegroundSelected_Brush" Color="{StaticResource DataGrid_CellForegroundSelected}" />
+    <SolidColorBrush x:Key="DataGrid_CellBorderSelected_Brush" Color="{StaticResource DataGrid_CellBorderSelected}" />
+    <SolidColorBrush x:Key="DataGrid_CellBackgroundSelectedInactive_Brush" Color="{StaticResource DataGrid_CellBackgroundSelectedInactive}" />
+    <SolidColorBrush x:Key="DataGrid_CellForegroundSelectedInactive_Brush" Color="{StaticResource DataGrid_CellForegroundSelectedInactive}" />
+    <SolidColorBrush x:Key="DataGrid_CellBorderSelectedInactive_Brush" Color="{StaticResource DataGrid_CellBorderSelectedInactive}" />
+    <SolidColorBrush x:Key="DataGrid_ColumnHeaderBorder_Brush" Color="{StaticResource DataGrid_ColumnHeaderBorder}" />
+    <SolidColorBrush x:Key="DataGrid_ColumnHeaderSeparator_Brush" Color="{StaticResource DataGrid_ColumnHeaderSeparator}" />
+
     <SolidColorBrush x:Key="StatusBar_Backgound_Brush" Color="{StaticResource StatusBar_Backgound}" />
     <SolidColorBrush x:Key="StatusBar_Foreground_Brush" Color="{StaticResource StatusBar_Foreground}" />
     
