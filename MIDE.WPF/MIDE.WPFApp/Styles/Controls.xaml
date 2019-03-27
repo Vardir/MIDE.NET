@@ -181,9 +181,9 @@
                     </StackPanel>
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
-            <!--<it:Interaction.Behaviors>
-                <ui:TreeViewMultipleSelectionBehavior/>
-            </it:Interaction.Behaviors>-->
+            <it:Interaction.Behaviors>
+                <ui:TreeViewMultipleSelectionBehavior SelectedItems="{Binding SelectedItems}"/>
+            </it:Interaction.Behaviors>
         </TreeView>
     </DataTemplate>
     <DataTemplate DataType="{x:Type api:ActionTextBox}">

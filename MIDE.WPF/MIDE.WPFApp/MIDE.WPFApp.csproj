@@ -76,6 +76,7 @@
     <Compile Include="Controls\API\Grid.xaml.cs">
       <DependentUpon>Grid.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\MultiSelectTreeView.cs" />
     <Compile Include="Controls\TestControl.xaml.cs">
       <DependentUpon>TestControl.xaml</DependentUpon>
     </Compile>

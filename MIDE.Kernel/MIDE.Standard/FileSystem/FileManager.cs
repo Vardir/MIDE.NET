@@ -79,11 +79,14 @@ namespace MIDE.FileSystem
             }
             return allPaths[key];
         }
-        
+
+        public abstract bool Exists(string path);
         public abstract string MapPath(string path);
         public abstract string TryRead(string filePath);
+        public abstract string ExtractName(string path);
         public abstract string ReadOrCreate(string filePath, string defaultContent = "");
         public abstract IEnumerable<string> EnumerateFiles(string directory, string filter = null);
+        public abstract IEnumerable<(string prop, string val)> ExtractProperties(string path);
     }
 
     public enum ApplicationPath

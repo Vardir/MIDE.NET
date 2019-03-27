@@ -71,23 +71,35 @@ namespace MIDE.API.Services
             }
         }
 
-        public Tab GetTab<T>()
+        public T GetTab<T>()
             where T: Tab
         {
             foreach (var kvp in tabs)
             {
                 if (kvp.Value is T)
-                    return kvp.Value;
+                    return kvp.Value as T;
             }
             return null;
         }
-        public IEnumerable<Tab> GetTabs<T>()
+        public T GetOrAddTab<T>(string section, Func<T> generator)
             where T: Tab
         {
             foreach (var kvp in tabs)
             {
                 if (kvp.Value is T)
-                    yield return kvp.Value;
+                    return kvp.Value as T;
+            }
+            var tab = generator();
+            this[section].AddChild(tab);
+            return tab;
+        }
+        public IEnumerable<T> GetTabs<T>()
+            where T: Tab
+        {
+            foreach (var kvp in tabs)
+            {
+                if (kvp.Value is T)
+                    yield return kvp.Value as T;
             }
         }
 

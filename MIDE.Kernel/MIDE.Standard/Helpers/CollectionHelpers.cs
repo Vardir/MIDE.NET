@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace MIDE.Helpers
@@ -18,6 +19,31 @@ namespace MIDE.Helpers
 
             foreach (var item in items)
                 collection.Add(item);
+        }
+        /// <summary>
+        /// Ensures the count of elements in collection is equals to the given count. 
+        /// Uses the generator to create new elements if collection needs to be enlarged
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="generator"></param>
+        /// <param name="count"></param>
+        public static void EnsureCount<T>(this IList<T> list, Func<T> generator, int count)
+        {
+            if (count < 0)
+                throw new ArgumentException("Expected count greater or equals to 0");
+            if (count < list.Count)
+            {
+                int diff = list.Count - count;
+                for (int i = 0; i < diff; i++)
+                    list.RemoveAt(list.Count - 1);
+            }
+            else if (count > list.Count)
+            {
+                int diff = count - list.Count;
+                for (int i = 0; i < diff; i++)
+                    list.Add(generator());
+            }
         }
 
         /// <summary>
@@ -86,6 +112,28 @@ namespace MIDE.Helpers
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
         public static TResult FirstWith<T, TResult>(this IEnumerable<T> collection, Func<T, bool> predicate, Func<T, TResult> extractor)
+        {
+            if (predicate == null)
+                throw new ArgumentNullException(nameof(predicate));
+            if (extractor == null)
+                throw new ArgumentNullException(nameof(extractor));
+            foreach (var item in collection)
+            {
+                if (predicate(item))
+                    return extractor(item);
+            }
+            return default;
+        }
+        /// <summary>
+        /// Searches for the first occurrence of the element by the given predicate and returns the value extracted from it
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="collection"></param>
+        /// <param name="predicate"></param>
+        /// <param name="extractor"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static TResult FirstWith<TResult>(this IList collection, Func<object, bool> predicate, Func<object, TResult> extractor)
         {
             if (predicate == null)
                 throw new ArgumentNullException(nameof(predicate));
@@ -174,6 +222,56 @@ namespace MIDE.Helpers
                 i++;
             }
             return last;
+        }
+        /// <summary>
+        /// Finds indexes of all the elements in collection that are match the predicate
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="collection"></param>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        public static int[] IndexesOf<T>(this IEnumerable<T> collection, Func<T, bool> predicate)
+        {
+            int count = 0;
+            var selected = select();
+            return selected.ToArray(count);
+
+            IEnumerable<int> select()
+            {
+                int index = 0;
+                foreach (var element in collection)
+                {
+                    if (predicate(element))
+                    {
+                        count++;
+                        yield return index;
+                    }
+                    index++;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Generates an array from IEnumerable of the known size. 
+        /// <para>
+        /// If count of elements in collection is bigger than given <paramref name="count"/> parameter, throws an exception.
+        /// </para>
+        /// <para>
+        /// If count of elements in collection is lesser than given <paramref name="count"/> parameter, not used space in array will hold defaults of <seealso cref="T"/>
+        /// </para>
+        /// </summary>
+        /// <typeparam name="T">Type of elements in collection</typeparam>
+        /// <param name="collection">The collection to transform into array</param>
+        /// <param name="count">Count of elements to be stored in the array</param>
+        /// <returns>Array of elements</returns>
+        /// <exception cref="IndexOutOfRangeException">Throws if count of elements in collection was bigger than array capacity</exception>
+        public static T[] ToArray<T>(this IEnumerable<T> collection, int count)
+        {
+            T[] array = new T[count];
+            int index = 0;
+            foreach (var element in collection)
+                array[index++] = element;
+            return array;
         }
 
         /// <summary>

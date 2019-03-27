@@ -8,7 +8,8 @@ namespace MIDE.API.Components
     public class Tab : LayoutContainer
     {
         private string header;
-        private LayoutContainer contentContainer;
+
+        protected LayoutContainer contentContainer;
 
         public bool AllowDuplicates { get; }
         public string Header
@@ -24,7 +25,7 @@ namespace MIDE.API.Components
         }
         public TabSection ParentSection { get; internal set; }
         public Toolbar TabToolbar { get; }
-        public LayoutContainer ContentContainer
+        public virtual LayoutContainer ContentContainer
         {
             get => contentContainer;
             set

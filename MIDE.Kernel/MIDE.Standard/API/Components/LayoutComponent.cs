@@ -94,17 +94,6 @@ namespace MIDE.API.Components
                 OnPropertyChanged(nameof(Parent));
             }
         }
-        public ContextMenu CurrentContextMenu
-        {
-            get => currentContextMenu;
-            protected set
-            {
-                if (value == currentContextMenu)
-                    return;
-                currentContextMenu = value;
-                OnPropertyChanged(nameof(CurrentContextMenu));
-            }
-        }
         
         public event PropertyChangedEventHandler PropertyChanged;
 

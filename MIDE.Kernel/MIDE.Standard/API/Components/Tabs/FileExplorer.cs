@@ -3,6 +3,7 @@ using System.Linq;
 using MIDE.Helpers;
 using System.Drawing;
 using MIDE.FileSystem;
+using MIDE.Application;
 using MIDE.API.Bindings;
 using MIDE.API.Commands;
 using MIDE.API.Validation;
@@ -10,6 +11,7 @@ using MIDE.API.Measurements;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using IO = System.IO;
+using System.Collections;
 
 namespace MIDE.API.Components
 {
@@ -34,6 +36,7 @@ namespace MIDE.API.Components
                 OnPropertyChanged(nameof(CurrentHistoryIndex));
             }
         }
+        public TreeView TreeView => treeView;
 
         public FileExplorer(string id) : base(id)
         {
@@ -312,13 +315,24 @@ namespace MIDE.API.Components
             var flscheme = contextMenuSchemes["file"];
             flscheme.AddItem(new MenuButton("open", -99));
             flscheme.AddItem(new MenuSplitter("splitter-1", -90));
-            flscheme.AddItem(new MenuButton("properties", 0));
+            flscheme.AddItem(new MenuButton("properties", 0)
+            {
+                PressCommand = new RelayCommand(FileProperties)
+            });
 
             var fdscheme = contextMenuSchemes["folder"];
             var addbtn = new MenuButton("add", -99);
             addbtn.Add(new MenuButton("new-empty-file", -99) { Caption = "New empty file..." }, null);
             addbtn.Add(new MenuButton("new-folder", -98), null);
             fdscheme.AddItem(addbtn);
+        }
+
+        public static void FileProperties()
+        {
+            var tab = AppKernel.Instance.UIManager.GetTab<FileExplorer>();
+            var fei = tab.TreeView
+                .SelectedItems.FirstWith(item => (item as FileExplorerItem).ItemClass != "folder", item => item as FileExplorerItem);
+
         }
     }
 }

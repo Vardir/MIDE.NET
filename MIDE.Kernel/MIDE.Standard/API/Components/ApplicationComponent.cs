@@ -1,4 +1,5 @@
 ﻿using System;
+using MIDE.Application;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
@@ -25,6 +26,7 @@ namespace MIDE.API.Components
         /// The ID of the component. It has uniform format for all the components in application
         /// </summary>
         public string Id { get; private set; }
+        public AppKernel Kernel => AppKernel.Instance;
 
         public ApplicationComponent(string id)
         {

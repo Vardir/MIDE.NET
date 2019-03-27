@@ -12,20 +12,20 @@ namespace MIDE.WPFApp.UI
 {
     /// <summary>
     /// A behavior that extends a <see cref="TreeView"/> with multiple selection capabilities.
-    /// </summary> 
+    /// </summary>
     /// <remarks>
     /// Largely based on http://chrigas.blogspot.com/2014/08/wpf-treeview-with-multiple-selection.html
     /// </remarks>
     public class TreeViewMultipleSelectionBehavior : Behavior<TreeView>
     {
         #region SelectedItems (Public Dependency Property)
- 
+
         /// <summary>
         /// The dependency property definition for the SelectedItems property.
-        /// </summary> 
+        /// </summary>
         public static readonly DependencyProperty SelectedItemsProperty = DependencyProperty.Register(
             "SelectedItems", typeof(IList), typeof(TreeViewMultipleSelectionBehavior));
- 
+
         /// <summary>
         /// Gets or sets the selected items.
         /// </summary>
@@ -34,16 +34,17 @@ namespace MIDE.WPFApp.UI
             get { return (IList)GetValue(SelectedItemsProperty); }
             set { SetValue(SelectedItemsProperty, value); }
         }
- 
+
         #endregion SelectedItems (Public Dependency Property)
- 
-        #region AnchorItem (Private Dependency Property) 
+
+        #region AnchorItem (Private Dependency Property)
+
         /// <summary>
         /// The dependency property definition for the AnchorItem property.
         /// </summary>
         private static readonly DependencyProperty AnchorItemProperty = DependencyProperty.Register(
             "AnchorItem", typeof(TreeViewItem), typeof(TreeViewMultipleSelectionBehavior));
- 
+
         /// <summary>
         /// Gets or sets the anchor item.
         /// </summary>
@@ -52,18 +53,18 @@ namespace MIDE.WPFApp.UI
             get { return (TreeViewItem)GetValue(AnchorItemProperty); }
             set { SetValue(AnchorItemProperty, value); }
         }
- 
+
         #endregion AnchorItem (Private Dependency Property)
- 
+
         #region IsItemSelected (TreeViewItem Attached Property)
- 
+
         /// <summary>
         /// The dependency property definition for the IsItemSelected attached property.
         /// </summary>
         public static readonly DependencyProperty IsItemSelectedProperty = DependencyProperty.RegisterAttached(
             "IsItemSelected", typeof(bool), typeof(TreeViewMultipleSelectionBehavior),
             new FrameworkPropertyMetadata(OnIsItemSelectedChanged));
- 
+
         /// <summary>
         /// Gets the IsItemSelected value from the specified target.
         /// </summary>
@@ -73,7 +74,7 @@ namespace MIDE.WPFApp.UI
         {
             return (bool)target.GetValue(IsItemSelectedProperty);
         }
- 
+
         /// <summary>
         /// Sets the IsItemSelected value on the specified target.
         /// </summary>
@@ -83,7 +84,7 @@ namespace MIDE.WPFApp.UI
         {
             target.SetValue(IsItemSelectedProperty, value);
         }
- 
+
         /// <summary>
         /// Called when the IsItemSelected dependency property has changed.
         /// </summary>
@@ -110,22 +111,21 @@ namespace MIDE.WPFApp.UI
                 }
             }
         }
- 
+
         #endregion IsItemSelected (TreeViewItem Attached Property)
- 
+
         #region Behavior
- 
+
         /// <summary>
         /// Called after the behavior is attached to an AssociatedObject.
         /// </summary>
         protected override void OnAttached()
         {
             base.OnAttached();
-
             AssociatedObject.AddHandler(UIElement.KeyDownEvent, new KeyEventHandler(OnTreeViewItemKeyDown), true);
             AssociatedObject.AddHandler(UIElement.MouseLeftButtonUpEvent, new MouseButtonEventHandler(OnTreeViewItemMouseUp), true);
         }
- 
+
         /// <summary>
         /// Called when the behavior is being detached from its AssociatedObject, but before it has
         /// actually occurred.
@@ -137,11 +137,11 @@ namespace MIDE.WPFApp.UI
             AssociatedObject.RemoveHandler(UIElement.KeyDownEvent, new KeyEventHandler(OnTreeViewItemKeyDown));
             AssociatedObject.RemoveHandler(UIElement.MouseLeftButtonUpEvent, new MouseButtonEventHandler(OnTreeViewItemMouseUp));
         }
- 
+
         #endregion Behavior
- 
+
         #region Event Handlers
- 
+
         /// <summary>
         /// Called when a TreeViewItem receives a key down event.
         /// </summary>
@@ -193,7 +193,7 @@ namespace MIDE.WPFApp.UI
                 }
             }
         }
- 
+
         /// <summary>
         /// Called when a TreeViewItem receives a mouse up event.
         /// </summary>
@@ -223,11 +223,11 @@ namespace MIDE.WPFApp.UI
                 }
             }
         }
- 
+
         #endregion Event Handlers
- 
+
         #region Methods
- 
+
         /// <summary>
         /// Selects a range of consecutive items from the specified tree view item to the anchor (if exists).
         /// </summary>
@@ -261,7 +261,7 @@ namespace MIDE.WPFApp.UI
                 }
             }
         }
- 
+
         /// <summary>
         /// Selects the specified tree view item, removing any other selections.
         /// </summary>
@@ -272,7 +272,7 @@ namespace MIDE.WPFApp.UI
             SetIsItemSelected(treeViewItem, true);
             AnchorItem = treeViewItem;
         }
- 
+
         /// <summary>
         /// Toggles the selection state of the specified tree view item.
         /// </summary>
@@ -293,7 +293,7 @@ namespace MIDE.WPFApp.UI
                 AnchorItem = null;
             }
         }
- 
+
         /// <summary>
         /// Clears all selections.
         /// </summary>
@@ -311,7 +311,7 @@ namespace MIDE.WPFApp.UI
 
             return items;
         }
- 
+
         /// <summary>
         /// Attempts to find the parent TreeViewItem from the specified event source.
         /// </summary>
@@ -325,7 +325,7 @@ namespace MIDE.WPFApp.UI
 
             return treeViewItem;
         }
- 
+
         /// <summary>
         /// Gets items of the specified type recursively from the specified parent item.
         /// </summary>
@@ -354,7 +354,7 @@ namespace MIDE.WPFApp.UI
 
             return items;
         }
- 
+
         /// <summary>
         /// Gets an item with a relative position (e.g. +1, -1) to the specified item.
         /// </summary>

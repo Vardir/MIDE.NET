@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using MIDE.FileSystem;
 using System.Collections.Generic;
-using System.Text;
 
 namespace MIDE.WPFApp.FileSystem
 {
@@ -15,6 +15,7 @@ namespace MIDE.WPFApp.FileSystem
                 Directory.CreateDirectory(directory);
         }
 
+        public override bool Exists(string path) => File.Exists(path) || Directory.Exists(path);
         public override string MapPath(string path)
         {
             throw new NotImplementedException();
@@ -24,6 +25,14 @@ namespace MIDE.WPFApp.FileSystem
             if (!File.Exists(filePath))
                 return null;
             return File.ReadAllText(filePath);
+        }
+        public override string ExtractName(string path)
+        {
+            if (File.Exists(path))
+                return Path.GetFileName(path);
+            else if (Directory.Exists(path))
+                return Path.GetDirectoryName(path);
+            return null;
         }
         public override string ReadOrCreate(string filePath, string defaultContent = "")
         {
@@ -43,6 +52,35 @@ namespace MIDE.WPFApp.FileSystem
             if (!Directory.Exists(directory))
                 throw new ArgumentException($"Directory not found [{directory}]");
             return Directory.EnumerateFiles(directory, filter);
+        }
+        public override IEnumerable<(string prop, string val)> ExtractProperties(string path)
+        {
+            var file = new FileInfo(path);
+            if (file.Exists)
+            {
+                yield return ("Attributes", file.Attributes.ToString());
+                yield return ("Creation time UTC", file.CreationTimeUtc.ToString());
+                yield return ("Parent directory", file.DirectoryName);
+                yield return ("Extension", file.Extension);
+                yield return ("Is readonly", file.IsReadOnly.ToString());
+                yield return ("Last access time UTC", file.LastAccessTimeUtc.ToString());
+                yield return ("Last write time UTC", file.LastWriteTimeUtc.ToString());
+                yield return ("Length", file.Length.ToString());
+                yield break;
+            }
+
+            var directory = new DirectoryInfo(path);
+            if (directory.Exists)
+            {
+                yield return ("Attributes", directory.Attributes.ToString());
+                yield return ("Creation time UTC", directory.CreationTimeUtc.ToString());
+                yield return ("Parent directory", directory.Parent.FullName);
+                yield return ("Last access time UTC", directory.LastAccessTimeUtc.ToString());
+                yield return ("Last write time UTC", directory.LastWriteTimeUtc.ToString());
+                yield break;
+            }
+
+            throw new ArgumentException("The given path is invalid", nameof(path));
         }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Linq;
 using MIDE.Helpers;
 using MIDE.API.Measurements;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 
@@ -11,6 +13,8 @@ namespace MIDE.API.Components
     {
         private GridLength rowMargin;
         private GridLength columnMargin;
+        private GridRow newRowTemplate;
+        private GridColumn newColumnTemplate;
 
         /// <summary>
         /// A space between rows
@@ -40,6 +44,16 @@ namespace MIDE.API.Components
                 OnPropertyChanged(nameof(ColumnMargin));
             }
         }
+        public GridRow NewRowTemplate
+        {
+            get => newRowTemplate?.Clone() ?? (newRowTemplate = new GridRow(new GridLength("auto")));
+            set => newRowTemplate = value;
+        }
+        public GridColumn NewColumnTemplate
+        {
+            get => newColumnTemplate?.Clone() ?? (newColumnTemplate = new GridColumn(new GridLength("*")));
+            set => newColumnTemplate = value;
+        }
         public ObservableCollection<GridRow> Rows { get; }
         public ObservableCollection<GridColumn> Columns { get; }
         public ObservableCollection<GridCell> Children { get; }
@@ -66,6 +80,57 @@ namespace MIDE.API.Components
             else
                 Children[index].Component = component;
         }
+        public void AddRow(IEnumerable<LayoutComponent> components)
+        {
+            if (IsSealed)
+                throw new InvalidOperationException("Can not add any child elements into a sealed control");
+            if (Columns.Count != components.Count())
+                throw new IndexOutOfRangeException("Not appropriate count of columns");
+
+            Rows.Add(NewRowTemplate);
+            int row = Rows.Count - 1;
+            int column = 0;
+            foreach (var component in components)
+            {
+                Children.Add(new GridCell(component, row, column++));
+            }
+        }
+        public void DropRow(int index)
+        {
+            if (Rows.OutOfRange(index))
+                throw new IndexOutOfRangeException("Row index was out of range");
+            ClearRow(index);
+            Rows.RemoveAt(index);
+        }
+        public void DropColumn(int index)
+        {
+            if (Columns.OutOfRange(index))
+                throw new IndexOutOfRangeException("Column index was out of range");
+            ClearColumn(index);
+            Columns.RemoveAt(index);
+        }
+        public void ClearRow(int index)
+        {
+            if (Rows.OutOfRange(index))
+                throw new IndexOutOfRangeException("Row index was out of range");
+
+            GridCell[] cells = Children.Where(cell => cell.Row == index).ToArray();
+            for (int i = 0; i < cells.Length; i++)
+            {
+                Children.Remove(cells[i]);
+            }
+        }
+        public void ClearColumn(int index)
+        {
+            if (Columns.OutOfRange(index))
+                throw new IndexOutOfRangeException("Column index was out of range");
+
+            GridCell[] cells = Children.Where(cell => cell.Column == index).ToArray();
+            for (int i = 0; i < cells.Length; i++)
+            {
+                Children.Remove(cells[i]);
+            }
+        }
         public void RemoveChild(int row, int column)
         {
             if (IsSealed)
@@ -80,6 +145,8 @@ namespace MIDE.API.Components
                 return;
             Children.RemoveAt(index);
         }
+        public void EnsureRowCount(int count) => Rows.EnsureCount(() => NewRowTemplate, count);
+        public void EnsureColumnCount(int count) => Columns.EnsureCount(() => NewColumnTemplate, count);
 
         public override bool Contains(string id)
         {
@@ -221,6 +288,14 @@ namespace MIDE.API.Components
             MaxWidth = new GridLength(double.MaxValue);
         }
 
+        public GridColumn Clone()
+        {
+            return new GridColumn(Width)
+            {
+                MinWidth = minWidth, MaxWidth = maxWidth
+            };
+        }
+
         protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
     public class GridRow : INotifyPropertyChanged
@@ -281,6 +356,14 @@ namespace MIDE.API.Components
             Height = heigth;
             MinHeight = new GridLength(0);
             MaxHeight = new GridLength(double.MaxValue);
+        }
+
+        public GridRow Clone()
+        {
+            return new GridRow(Height)
+            {
+                MinHeight = minHeight, MaxHeight = maxHeight
+            };
         }
         
         protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));

@@ -9,10 +9,12 @@ namespace MIDE.API.Components
 {
     public class TreeView : LayoutComponent
     {
+        public List<TreeViewItem> SelectedItems { get; }
         public ObservableCollection<TreeViewItem> Items { get; }
 
         public TreeView(string id) : base(id)
         {
+            SelectedItems = new List<TreeViewItem>();
             Items = new ObservableCollection<TreeViewItem>();
         }
     }
