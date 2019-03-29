@@ -3,7 +3,7 @@
                     xmlns:local="clr-namespace:MIDE.WPFApp">
 
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="Colors.xaml"/>
+        <ResourceDictionary Source="Brushes.xaml"/>
         <ResourceDictionary Source="Fonts.xaml"/>
         <ResourceDictionary Source="DefaultControls.xaml"/>
     </ResourceDictionary.MergedDictionaries>

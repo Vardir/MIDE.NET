@@ -8,7 +8,7 @@
                     xmlns:ui="clr-namespace:MIDE.WPFApp.UI">
 
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="Colors.xaml"/>
+        <ResourceDictionary Source="Brushes.xaml"/>
         <ResourceDictionary Source="Fonts.xaml"/>
         <ResourceDictionary Source="DefaultControls.xaml"/>
         <ResourceDictionary Source="Shared.xaml"/>

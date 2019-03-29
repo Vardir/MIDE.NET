@@ -76,7 +76,6 @@
     <Compile Include="Controls\API\Grid.xaml.cs">
       <DependentUpon>Grid.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\MultiSelectTreeView.cs" />
     <Compile Include="Controls\TestControl.xaml.cs">
       <DependentUpon>TestControl.xaml</DependentUpon>
     </Compile>
@@ -99,12 +98,17 @@
     <Compile Include="Converters\Visibility\IntegerToVisibility.cs" />
     <Compile Include="Converters\Visibility\VisibilityConverter.cs" />
     <Compile Include="Helpers\MeasurementsHelper.cs" />
+    <Compile Include="Helpers\ResourceDictionaryHelpers.cs" />
     <Compile Include="Helpers\UIHelpers.cs" />
     <Compile Include="Initializers\TabSectionInitializer.cs" />
     <Compile Include="Initializers\WPFMenuInitializer.cs" />
     <Compile Include="RelayCommands\WindowsRelayParameterizedCommand.cs" />
     <Compile Include="RelayCommands\WindowsRelayCommand.cs" />
     <Page Include="Controls\TestControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\Colors.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -144,7 +148,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Styles\Colors.xaml">
+    <Page Include="Styles\Brushes.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

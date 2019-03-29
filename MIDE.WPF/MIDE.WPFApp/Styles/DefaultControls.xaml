@@ -5,8 +5,9 @@
                     xmlns:ctrapi="clr-namespace:MIDE.API.Components;assembly=api"
                     xmlns:local="clr-namespace:MIDE.WPFApp.Styles">
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="Colors.xaml"/>
+        <ResourceDictionary Source="Brushes.xaml"/>
         <ResourceDictionary Source="Fonts.xaml"/>
+        <ResourceDictionary Source="Shared.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 
     <Style TargetType="{x:Type Control}" x:Key="BasePanel" BasedOn="{StaticResource BaseStyle}">
@@ -331,7 +332,7 @@
         <Setter Property="Control.Padding" Value="2"/>
         <Setter Property="Grid.IsSharedSizeScope" Value="true"/>
         <Setter Property="ContextMenu.HasDropShadow"
-                Value="{DynamicResource {x:Static SystemParameters.DropShadowKey}}"/>
+                Value="{StaticResource {x:Static SystemParameters.DropShadowKey}}"/>
         <Setter Property="ScrollViewer.PanningMode" Value="Both"/>
         <Setter Property="Stylus.IsFlicksEnabled" Value="false"/>
         <Setter Property="Control.Template">
@@ -352,7 +353,7 @@
                             BorderBrush="{TemplateBinding Control.BorderBrush}"
                             BorderThickness="{TemplateBinding Control.BorderThickness}">
                         <ScrollViewer Name="ContextMenuScrollViewer" Grid.ColumnSpan="2" Margin="1,0"
-                                      Style="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type FrameworkElement}, 
+                                      Style="{StaticResource {ComponentResourceKey TypeInTargetAssembly={x:Type FrameworkElement}, 
                                                                                     ResourceId=MenuScrollViewer}}">
                             <Grid RenderOptions.ClearTypeHint="Enabled">
                                 <Canvas Height="0" Width="0" HorizontalAlignment="Left" VerticalAlignment="Top">
@@ -767,7 +768,7 @@
                                                               RelativeSource={RelativeSource TemplatedParent}}"/>
                             <Popup x:Name="OverflowPopup" AllowsTransparency="true" Placement="Bottom" StaysOpen="false"
                                    Focusable="false"
-                                   PopupAnimation="{DynamicResource {x:Static SystemParameters.ComboBoxPopupAnimationKey}}"
+                                   PopupAnimation="{StaticResource {x:Static SystemParameters.ComboBoxPopupAnimationKey}}"
                                    IsOpen="{Binding Path=IsOverflowOpen, RelativeSource={RelativeSource TemplatedParent}}">
                                 <Border x:Name="ToolBarSubMenuBorder" 
                                         Background="{StaticResource Toolbar_Background_Brush}" 
@@ -830,7 +831,7 @@
                             <!--<Setter Value="{StaticResource Ǉ}" Property="Control.Background"/>-->
                         </Trigger>
                         <Trigger Property="UIElement.IsEnabled" Value="false">
-                            <Setter Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" Property="Control.Foreground"/>
+                            <Setter Value="{StaticResource {x:Static SystemColors.GrayTextBrushKey}}" Property="Control.Foreground"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -927,7 +928,7 @@
                         </Grid.RowDefinitions>
                         <Rectangle x:Name="Corner" 
                                    Grid.Column="1" Grid.Row="1"
-                                   Fill="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+                                   Fill="{StaticResource {x:Static SystemColors.ControlBrushKey}}" />
                         <ScrollContentPresenter x:Name="PART_ScrollContentPresenter"
                                                 CanContentScroll="{TemplateBinding CanContentScroll}"
                                                 CanHorizontallyScroll="False" CanVerticallyScroll="False"
@@ -1488,7 +1489,7 @@
                                         <Button Command="{x:Static DataGrid.SelectAllCommand}" Focusable="false"
                                                 Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, 
                                                                 Path=CellsPanelHorizontalOffset}"
-                                                Style="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type DataGrid}, 
+                                                Style="{StaticResource {ComponentResourceKey TypeInTargetAssembly={x:Type DataGrid}, 
                                                                         ResourceId=DataGridSelectAllButtonStyle}}"
                                                 Visibility="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, 
                                                                      Path=HeadersVisibility, 

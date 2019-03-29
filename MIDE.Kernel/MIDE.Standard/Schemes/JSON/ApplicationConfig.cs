@@ -8,6 +8,9 @@ namespace MIDE.Schemes.JSON
         [JsonRequired]
         [JsonProperty(PropertyName = "kernel_version")]
         public string KernelVersion { get; set; }
+        
+        [JsonProperty(PropertyName = "theme")]
+        public string Theme { get; set; }
 
         [JsonProperty(PropertyName = "paths")]
         public ApplicationPathItem[] Paths { get; set; }

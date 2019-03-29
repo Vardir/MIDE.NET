@@ -133,6 +133,7 @@ namespace MIDE.Application
             var appConfig = JsonConvert.DeserializeObject<ApplicationConfig>(configData);
             if (appConfig.KernelVersion != Version)
                 throw new ApplicationException($"Expected application kernel v{Version}, but got v{appConfig.KernelVersion}");
+            ConfigurationManager.Instance.AddOrUpdate(new Config("theme", appConfig.Theme));
             FileManager.LoadPaths(appConfig.Paths);
             yield break;
         }

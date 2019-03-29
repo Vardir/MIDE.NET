@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace MIDE.Helpers
 {
@@ -82,6 +83,24 @@ namespace MIDE.Helpers
                     return i;
             }
             return -1;
+        }
+        /// <summary>
+        /// Searches for item in collection that matches the given predicate
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="collection"></param>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        public static T Find<T>(this Collection<T> collection, Func<T, bool> predicate)
+        {
+            if (predicate == null)
+                throw new ArgumentNullException(nameof(predicate));
+            foreach (var item in collection)
+            {
+                if (predicate(item))
+                    return item;
+            }
+            return default;
         }
         /// <summary>
         /// LINQ Select implementation for collections to produce array with transformed items

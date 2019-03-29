@@ -16,6 +16,14 @@ namespace MIDE.Kernel.ConsoleTest
                 Directory.CreateDirectory(directory);
         }
 
+        public override bool Exists(string path)
+        {
+            throw new NotImplementedException();
+        }
+        public override string ExtractName(string path)
+        {
+            throw new NotImplementedException();
+        }
         public override string MapPath(string path)
         {
             throw new NotImplementedException();
@@ -40,6 +48,10 @@ namespace MIDE.Kernel.ConsoleTest
             if (!Directory.Exists(directory))
                 throw new ArgumentException($"Directory not found [{directory}]");
             return Directory.EnumerateFiles(directory, filter);
+        }
+        public override IEnumerable<(string prop, string val)> ExtractProperties(string path)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -24,6 +24,13 @@ namespace MIDE.Application.Configuration
             configs = new Dictionary<string, object>();
         }
 
+        public void AddOrUpdate(Config config)
+        {
+            if (!configs.ContainsKey(config.Key))
+                configs.Add(config.Key, config.Value);
+            else
+                configs[config.Key] = config.Value;
+        }
         public void AddRange(IEnumerable<Config> sequence)
         {
             foreach (var config in sequence)
