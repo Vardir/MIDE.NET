@@ -7,6 +7,7 @@ using MIDE.WPFApp.Services;
 using MIDE.WPFApp.FileSystem;
 using MIDE.WPFApp.Initializers;
 using MIDE.Application.Attrubites;
+using System.Windows.Media;
 
 [assembly: ApplicationProperties("wpftemplate")]
 
@@ -32,6 +33,13 @@ namespace MIDE.WPFApp
             MainWindow = window;
             window.ViewModel.Title = "WPFTemplate";
             MainWindow.Show();
+            
+            ResourceDictionary colors = UIManager.LoadTheme();
+            ResourceDictionary brushes = Resources.MergedDictionaries.Find(rd => rd.Source.AbsolutePath == "/Styles/Brushes.xaml");
+            Resources.MergedDictionaries.Remove(brushes);
+            brushes.MergedDictionaries[0].Update(colors);
+            Resources.MergedDictionaries.Add(brushes);
+            brushes["Window_HeaderBackground_Brush"] = Brushes.Red;
         }
 
         private void Setup()
@@ -55,41 +63,30 @@ namespace MIDE.WPFApp
         private ResourceDictionary GetResources()
         {
             ResourceDictionary generalResource = new ResourceDictionary();
-            ResourceDictionary colors = UIManager.LoadTheme();
-            //generalResource.MergedDictionaries.Add(colors);
-            //generalResource.Add(colors);
 
             ResourceDictionary brushes = new ResourceDictionary();
             brushes.Source = new Uri("pack://application:,,,/Styles/Brushes.xaml", UriKind.RelativeOrAbsolute);
-            brushes.MergedDictionaries.Clear();
-            brushes.MergedDictionaries.Add(colors);
             generalResource.MergedDictionaries.Add(brushes);
-            //generalResource.Add(brushes);
 
             ResourceDictionary fonts = new ResourceDictionary();
             fonts.Source = new Uri("pack://application:,,,/Styles/Fonts.xaml", UriKind.RelativeOrAbsolute);
             generalResource.MergedDictionaries.Add(fonts);
-            //generalResource.Add(fonts);
 
             ResourceDictionary shared = new ResourceDictionary();
             shared.Source = new Uri("pack://application:,,,/Styles/Shared.xaml", UriKind.RelativeOrAbsolute);
             generalResource.MergedDictionaries.Add(shared);
-            //generalResource.Add(shared);
 
             ResourceDictionary controls = new ResourceDictionary();
             controls.Source = new Uri("pack://application:,,,/Styles/Controls.xaml", UriKind.RelativeOrAbsolute);
             generalResource.MergedDictionaries.Add(controls);
-            //generalResource.Add(controls);
 
             ResourceDictionary defaultControls = new ResourceDictionary();
             defaultControls.Source = new Uri("pack://application:,,,/Styles/DefaultControls.xaml", UriKind.RelativeOrAbsolute);
             generalResource.MergedDictionaries.Add(defaultControls);
-            //generalResource.Add(defaultControls);
 
             ResourceDictionary windows = new ResourceDictionary();
             windows.Source = new Uri("pack://application:,,,/Styles/Windows.xaml", UriKind.RelativeOrAbsolute);
             generalResource.MergedDictionaries.Add(windows);
-            //generalResource.Add(windows);
 
             return generalResource;
         }

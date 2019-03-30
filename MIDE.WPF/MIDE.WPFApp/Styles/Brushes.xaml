@@ -39,7 +39,7 @@
     <SolidColorBrush x:Key="Toolbar_ItemBackgroundHovered_Brush" Color="{DynamicResource Toolbar_ItemBackgroundHovered}" />
     <SolidColorBrush x:Key="Toolbar_ItemForegroundHovered_Brush" Color="{DynamicResource Toolbar_ItemForegroundHovered}" />
 
-    <SolidColorBrush x:Key="Link_BackgroundBrush" Color="{DynamicResource Link_Background}" />
+    <SolidColorBrush x:Key="Link_Background_Brush" Color="{DynamicResource Link_Background}" />
     <SolidColorBrush x:Key="Link_Foreground_Brush" Color="{DynamicResource Link_Foreground}" />
     <SolidColorBrush x:Key="Link_BackgroundDisabled_Brush" Color="{DynamicResource Link_BackgroundDisabled}" />
     <SolidColorBrush x:Key="Link_ForegroundDisabled_Brush" Color="{DynamicResource Link_ForegroundDisabled}" />
