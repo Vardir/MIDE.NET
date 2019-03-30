@@ -22,26 +22,35 @@ namespace MIDE.WPFApp
 
         public AppKernel Kernel => AppKernel.Instance;
         public WpfUIManager UIManager { get; private set; }
-        
+
+        public void LoadTheme()
+        {
+            ResourceDictionary colors = UIManager.LoadTheme();
+            ResourceDictionary brushes = Resources.MergedDictionaries.Find(rd => rd.Source.OriginalString.Contains("Brushes.xaml"));
+            Resources.MergedDictionaries.Remove(brushes);
+            brushes.MergedDictionaries[0].Update(colors);
+            Resources.MergedDictionaries.Add(brushes);
+        }
+
         protected override void OnStartup(StartupEventArgs e)
         {
             Setup();
             Kernel.Start();
-            Resources = GetResources();
+            LoadTheme();
             base.OnStartup(e);
             MainWindow window = new MainWindow();
             MainWindow = window;
             window.ViewModel.Title = "WPFTemplate";
             MainWindow.Show();
-            
-            ResourceDictionary colors = UIManager.LoadTheme();
-            ResourceDictionary brushes = Resources.MergedDictionaries.Find(rd => rd.Source.AbsolutePath == "/Styles/Brushes.xaml");
-            Resources.MergedDictionaries.Remove(brushes);
-            brushes.MergedDictionaries[0].Update(colors);
-            Resources.MergedDictionaries.Add(brushes);
-            brushes["Window_HeaderBackground_Brush"] = Brushes.Red;
         }
-
+        protected override void OnExit(ExitEventArgs e)
+        {
+            if (!kernelStopped)
+                Kernel.Exit();
+            MainWindow?.Close();
+            base.OnExit(e);
+        }
+        
         private void Setup()
         {
             Kernel.ApplicationExit += Kernel_ApplicationExit;
@@ -52,51 +61,12 @@ namespace MIDE.WPFApp
             
             Kernel.Initializers.Add(new ApplicationMenuInitializer(Kernel));
             Kernel.Initializers.Add(new TabSectionInitializer());
-        }
+        }        
 
         private void Kernel_ApplicationExit()
         {
             MainWindow.Close();
             kernelStopped = true;
-        }
-
-        private ResourceDictionary GetResources()
-        {
-            ResourceDictionary generalResource = new ResourceDictionary();
-
-            ResourceDictionary brushes = new ResourceDictionary();
-            brushes.Source = new Uri("pack://application:,,,/Styles/Brushes.xaml", UriKind.RelativeOrAbsolute);
-            generalResource.MergedDictionaries.Add(brushes);
-
-            ResourceDictionary fonts = new ResourceDictionary();
-            fonts.Source = new Uri("pack://application:,,,/Styles/Fonts.xaml", UriKind.RelativeOrAbsolute);
-            generalResource.MergedDictionaries.Add(fonts);
-
-            ResourceDictionary shared = new ResourceDictionary();
-            shared.Source = new Uri("pack://application:,,,/Styles/Shared.xaml", UriKind.RelativeOrAbsolute);
-            generalResource.MergedDictionaries.Add(shared);
-
-            ResourceDictionary controls = new ResourceDictionary();
-            controls.Source = new Uri("pack://application:,,,/Styles/Controls.xaml", UriKind.RelativeOrAbsolute);
-            generalResource.MergedDictionaries.Add(controls);
-
-            ResourceDictionary defaultControls = new ResourceDictionary();
-            defaultControls.Source = new Uri("pack://application:,,,/Styles/DefaultControls.xaml", UriKind.RelativeOrAbsolute);
-            generalResource.MergedDictionaries.Add(defaultControls);
-
-            ResourceDictionary windows = new ResourceDictionary();
-            windows.Source = new Uri("pack://application:,,,/Styles/Windows.xaml", UriKind.RelativeOrAbsolute);
-            generalResource.MergedDictionaries.Add(windows);
-
-            return generalResource;
-        }
-
-        protected override void OnExit(ExitEventArgs e)
-        {
-            if (!kernelStopped)
-                Kernel.Exit();
-            MainWindow?.Close();
-            base.OnExit(e);
-        }
+        }        
     }
 }
