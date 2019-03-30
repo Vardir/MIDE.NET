@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 using Newtonsoft.Json;
 using MIDE.FileSystem;
 using System.Reflection;
 using MIDE.API.Services;
 using MIDE.Schemes.JSON;
 using MIDE.API.Extensibility;
+using MIDE.Application.Logging;
 using System.Collections.Generic;
 using MIDE.Application.Attrubites;
 using MIDE.Application.Initializers;
@@ -24,12 +26,41 @@ namespace MIDE.Application
         private Assembly callingAssembly;
         private readonly List<AppExtension> extensions;
 
+        /// <summary>
+        /// A time when application kernel was started
+        /// </summary>
+        public DateTime TimeStarted { get; private set; }
+        /// <summary>
+        /// Version of application kernel
+        /// </summary>
         public string Version { get; }
+        /// <summary>
+        /// Name of application kernel
+        /// </summary>
         public string ApplicationName { get; private set; }
-        public FileManager FileManager { get; set; }
-        public IClipboardProvider SystemClipboard { get; set; }
-        public IEnumerable<AppExtension> Extensions => extensions;
+        /// <summary>
+        /// Application-wide logger
+        /// </summary>
+        public Logger AppLogger { get; }
+        /// <summary>
+        /// Application UI manager
+        /// </summary>
         public UIManager UIManager { get; set; }
+        /// <summary>
+        /// File manager used by application to create/load files and folders
+        /// </summary>
+        public FileManager FileManager { get; set; }
+        /// <summary>
+        /// System clipboard interface that helps interact between application and system
+        /// </summary>
+        public IClipboardProvider SystemClipboard { get; set; }
+        /// <summary>
+        /// A set of extensions
+        /// </summary>
+        public IEnumerable<AppExtension> Extensions => extensions;
+        /// <summary>
+        /// List of application initializers used to configure kernel and it's parts
+        /// </summary>
         public List<IApplicationInitializer> Initializers { get; }
 
         public event Action ApplicationExit;
@@ -43,37 +74,101 @@ namespace MIDE.Application
             currentAssembly = Assembly.GetAssembly(typeof(AppKernel));
             var version = currentAssembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
             Version = version.InformationalVersion;
+
+            LoggingLevel levels;
+#if DEBUG
+            levels = LoggingLevel.ALL;
+#else
+            levels = LoggingLevel.INFO | LoggingLevel.WARN | LoggingLevel.ERROR | LoggingLevel.FATAL;
+#endif
+            AppLogger = new Logger(levels, useUtcTime: true, skipFatals: false);
+            AppLogger.FatalEventRegistered += AppLogger_FatalEventRegistered;
+
+            AppLogger.PushDebug(null, "Application Kernel created");
         }
 
         /// <summary>
         /// Starts the application kernel
         /// </summary>
-        /// <exception cref="ApplicationException"></exception>
-        /// <exception cref="NullReferenceException"></exception>
         public void Start()
         {
-            if (isRunning)
-                throw new ApplicationException("Application kernel is already loaded and running!");
-            if (FileManager == null)
-                throw new NullReferenceException("The FileManager expected to be assigned before application start");
-            if (SystemClipboard == null)
-                throw new NullReferenceException("The SystemBuffer expected to be assigned before application start");
-            if (UIManager == null)
-                throw new NullReferenceException("The UIHandler expected to be assigned before application start");
-            callingAssembly = Assembly.GetCallingAssembly();
-            string assemblyVertification = VerifyAssemblyAttributes();
-            if (assemblyVertification != null)
-                throw new ApplicationException(assemblyVertification);
+            AppLogger.PushDebug(null, "Application Kernel starting");
+            try
+            {
+                if (isRunning)
+                    throw new ApplicationException("Application kernel is already loaded and running!");
+                if (FileManager == null)
+                    throw new NullReferenceException("The FileManager expected to be assigned before application start");
+                if (SystemClipboard == null)
+                    throw new NullReferenceException("The SystemBuffer expected to be assigned before application start");
+                if (UIManager == null)
+                    throw new NullReferenceException("The UIHandler expected to be assigned before application start");
+                callingAssembly = Assembly.GetCallingAssembly();
+                string assemblyVertification = VerifyAssemblyAttributes();
+                if (assemblyVertification != null)
+                    throw new ApplicationException(assemblyVertification);
+            }
+            catch (Exception ex)
+            {
+                isRunning = true;
+                AppLogger.PushFatal(ex.Message);
+            }
 
+            AppLogger.PushDebug(null, "Application Kernel started");
+            TimeStarted = DateTime.UtcNow;
             isRunning = true;
-            //TODO: prepare URANUS
             foreach (var initializer in Initializers)
             {
                 initializer.Execute(this);
             }
-            var configs = LoadConfigurations();
-            ConfigurationManager.Instance.AddRange(configs);
-            LoadExtensions();
+            LoadConfigurations();
+            try
+            {
+                LoadExtensions();
+            }
+            catch (Exception ex)
+            {
+                AppLogger.PushError(ex, this);
+            }
+        }
+        /// <summary>
+        /// Saves current session's log entries
+        /// </summary>
+        public void SaveLog()
+        {
+            if (AppLogger.EventsCount == 0)
+                return;
+            string folder = $"{FileManager.GetPath(ApplicationPath.Logs)}\\{TimeStarted.ToString("dd-M-yyyy HH-mm-ss")}\\";
+            string filename = $"{folder}log.txt";
+            FileManager.MakeFolder(folder);
+            StringBuilder builder = new StringBuilder();
+            builder.Append(ApplicationName);
+            builder.Append(' ');
+            builder.Append(Version);
+            builder.AppendLine();
+            builder.Append("-------------------------");
+            builder.AppendLine();
+            foreach (var item in AppLogger.Pull())
+            {
+                builder.Append(item.ToString());
+                object[] serializationData = item.GetSerializationData();
+                if (serializationData != null)
+                {
+                    for (int i = 0; i < serializationData.Length; i++)
+                    {
+                        if (serializationData[i] == null)
+                            continue;
+                        builder.Append("  - [");
+                        builder.Append(i + 1);
+                        builder.Append(".bin] type - ");
+                        builder.Append(serializationData[i].GetType());
+                        builder.AppendLine();
+                        FileManager.Serialize(serializationData[i], $"{folder}{i + 1}.bin");
+                    }
+                }
+                builder.AppendLine();
+            }
+            FileManager.Write(builder.ToString(), filename);
         }
         /// <summary>
         /// Stops all the current threads, releases all resources and closes the application kernel
@@ -82,10 +177,16 @@ namespace MIDE.Application
         public void Exit()
         {
             if (!isRunning)
-                throw new ApplicationException("Can not exit application that is not started");
+            {
+                AppLogger.PushWarning("Attempt to terminate application while it is not started yet");
+                return;
+            }
+            AppLogger.PushDebug(null, "Application Kernel stopped");
             isRunning = false;
             ClearTemporaryFiles();
             Dispose();
+            AppLogger.PushDebug(null, "Application Kernel resources are disposed");
+            SaveLog();
             ApplicationExit?.Invoke();
         }
 
@@ -106,38 +207,66 @@ namespace MIDE.Application
         /// Registers the given extension in the internal storage and initializes it
         /// </summary>
         /// <param name="extension"></param>
-        /// <exception cref="ArgumentException"></exception>
-        /// <exception cref="ArgumentNullException"></exception>
         public void RegisterExtension(AppExtension extension)
         {
-            if (extension == null)
-                throw new ArgumentNullException("Extension parameter can not be null");
-            if (extensions.FirstOrDefault(e => e.Id == extension.Id) != null)
-                throw new ArgumentException("Duplicate extension ID");
-            var type = extension.GetType();
-            string error = VerifyExtensionAttributes(type, extension.Id);
-            if (error != null)
-                throw new InvalidOperationException($"Extension [{extension.GetType()} :: {extension.Id}] can not be registered due to error: {error}");
+            AppLogger.PushDebug(null, $"Registering extension {extension?.Id ?? "<null>"}");
+            try
+            {
+                if (extension == null)
+                    throw new ArgumentNullException("Extension parameter can not be null");
+                if (extensions.FirstOrDefault(e => e.Id == extension.Id) != null)
+                    throw new ArgumentException("Duplicate extension ID");
+                var type = extension.GetType();
+                string error = VerifyExtensionAttributes(type, extension.Id);
+                if (error != null)
+                    throw new InvalidOperationException($"Extension [{extension.GetType()} :: {extension.Id}] can not be registered due to error: {error}");
+            }
+            catch (Exception ex)
+            {
+                AppLogger.PushError(ex, extension);
+                return;
+            }
             extension.Kernel = this;
             extension.Initialize();
             extensions.Add(extension);
+            AppLogger.PushDebug(null, $"Registered extension {extension.Id}");
         }
-        
+
+        public void Dispose()
+        {
+            if (isRunning)
+            {
+                AppLogger.PushWarning("Attempt to dispose of resources while application still running");
+                return;
+            }
+            //TODO: dispose all the application resources
+            UnloadExtensions();
+        }
+
         /// <summary>
         /// Loads all the configurations that are set in config.json file located in the same folder with application itself
         /// </summary>
         /// <returns></returns>
-        private IEnumerable<Config> LoadConfigurations()
+        private void LoadConfigurations()
         {
-            string configData = FileManager.ReadOrCreate("config.json", $"{{ \"kernel_version\": \"{Version}\"}}");
-            var appConfig = JsonConvert.DeserializeObject<ApplicationConfig>(configData);
-            if (appConfig.KernelVersion != Version)
-                throw new ApplicationException($"Expected application kernel v{Version}, but got v{appConfig.KernelVersion}");
+            AppLogger.PushDebug(null, "Loading application configurations");
+            ApplicationConfig appConfig = null;
+            try
+            {
+                string configData = FileManager.ReadOrCreate("config.json", $"{{ \"kernel_version\": \"{Version}\"}}");
+                appConfig = JsonConvert.DeserializeObject<ApplicationConfig>(configData);
+                if (appConfig.KernelVersion != Version)
+                    throw new ApplicationException($"Expected application kernel v{Version}, but got v{appConfig.KernelVersion}");
+            }
+            catch (Exception ex)
+            {
+                AppLogger.PushFatal(ex.Message);
+            }
             ConfigurationManager.Instance.AddOrUpdate(new Config("theme", appConfig.Theme));
             FileManager.LoadPaths(appConfig.Paths);
-            yield break;
+            AppLogger.PushDebug(null, "Application configurations loaded");
         }
-        
+
         /// <summary>
         /// Loads all the extensions that are provided in attached assemblies
         /// </summary>
@@ -145,8 +274,10 @@ namespace MIDE.Application
         /// <exception cref="ApplicationException"></exception>
         private void LoadExtensions()
         {
+            AppLogger.PushDebug(null, "Loading extensions");
             var directory = FileManager.GetOrAddPath(ApplicationPath.Extensions, "extensions\\");
             var initData = FileManager.ReadOrCreate(directory + "init.json", "{ \"register\": [] }");
+           
             var init = JsonConvert.DeserializeObject<ExtensionsInit>(initData);
             foreach (var item in init.Items)
             {
@@ -155,7 +286,10 @@ namespace MIDE.Application
                 string extensionPath = FileManager.GetPath(ApplicationPath.Extensions) + "\\" + item.Path;
                 string configData = FileManager.TryRead(extensionPath + "config.json");
                 if (configData == null)
-                    throw new ApplicationException($"Extension '{item.Id}' does not have config.json file");
+                {
+                    AppLogger.PushWarning($"Extension '{item.Id}' does not have config.json file");
+                    continue;
+                }
                 var config = JsonConvert.DeserializeObject<ExtensionConfig>(configData);
                 Assembly assembly = Assembly.LoadFrom(extensionPath + config.DllPath);
                 var types = assembly.GetTypes();
@@ -181,29 +315,36 @@ namespace MIDE.Application
                     //TODO: load members
                 }
             }
+            AppLogger.PushDebug(null, "Extensions loaded");
         }
         /// <summary>
         /// Unload all the resources that are used by application extensions
         /// </summary>
         private void UnloadExtensions()
         {
+            AppLogger.PushDebug(null, "Unloading extensions");
             foreach (var extension in extensions)
             {
                 extension.Unload();
                 extension.Kernel = null;
             }
             extensions.Clear();
+            AppLogger.PushDebug(null, "Extensions unloaded");
         }
         /// <summary>
         /// Cleans off all the temporary files that was in use by the current application session
         /// </summary>
         private void ClearTemporaryFiles()
         {
+            AppLogger.PushDebug(null, "Clearing temporary files");
+            //TODO: implement cleaning temporary files
+            AppLogger.PushDebug(null, "Temporary files cleared");
 
         }
        
         private string VerifyAssemblyAttributes()
         {
+            AppLogger.PushDebug(null, "Verifying assembly attributes");
             bool hasAppPropsAttriburte = false;
             Attribute[] attributes = Attribute.GetCustomAttributes(callingAssembly);
             for (int i = 0; i < attributes.Length; i++)
@@ -219,12 +360,14 @@ namespace MIDE.Application
             }
 
             if (!hasAppPropsAttriburte)
-                throw new ApplicationException($"Missing application properties attribute [{typeof(ApplicationPropertiesAttribute)}]");
+                return "Missing application properties attribute in core assembly file";
+            AppLogger.PushDebug(null, "Assembly attributes verified");
 
             return null;
         }
         private string VerifyExtensionAttributes(Type type, string id)
         {
+            AppLogger.PushDebug(null, $"Verifying extension attributes for {id} of type {type}");
             bool kernelVerified = false;
             foreach (var attribute in type.GetCustomAttributes())
             {
@@ -250,15 +393,14 @@ namespace MIDE.Application
             }
             if (!kernelVerified)
                 return $"An expected DependencyAttribute of type ApplicationKernel not found on extension [{type} :: ID-{id}]";
+            AppLogger.PushDebug(null, "Extension attributes verified");
             return null;
         }
-
-        public void Dispose()
+        
+        private void AppLogger_FatalEventRegistered(object sender, FatalEvent e)
         {
-            if (isRunning)
-                throw new InvalidOperationException("Can not dispose application resources while it's running");
-            //TODO: dispose all the application resources
-            UnloadExtensions();
+            SaveLog();
+            throw new ApplicationException("Application stopped due to fatal error");
         }
     }
 }

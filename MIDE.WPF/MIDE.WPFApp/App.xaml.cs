@@ -61,6 +61,8 @@ namespace MIDE.WPFApp
             
             Kernel.Initializers.Add(new ApplicationMenuInitializer(Kernel));
             Kernel.Initializers.Add(new TabSectionInitializer());
+
+            Kernel.FileManager.AddOrUpdate(MIDE.FileSystem.ApplicationPath.Logs, "root\\logs");
         }        
 
         private void Kernel_ApplicationExit()

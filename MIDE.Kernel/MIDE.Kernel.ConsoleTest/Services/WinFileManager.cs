@@ -9,7 +9,7 @@ namespace MIDE.Kernel.ConsoleTest
 {
     public class WinFileManager : FileManager
     {
-        public void MakeFolder(string path)
+        public override void MakeFolder(string path)
         {
             string directory = Path.GetDirectoryName(path);
             if (!Directory.Exists(directory))
@@ -50,6 +50,16 @@ namespace MIDE.Kernel.ConsoleTest
             return Directory.EnumerateFiles(directory, filter);
         }
         public override IEnumerable<(string prop, string val)> ExtractProperties(string path)
+        {
+            throw new NotImplementedException();
+        }
+        
+        public override void Write(string data, string path)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Write(string[] data, string path)
         {
             throw new NotImplementedException();
         }

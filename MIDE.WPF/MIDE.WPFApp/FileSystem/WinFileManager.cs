@@ -3,16 +3,34 @@ using System.IO;
 using System.Text;
 using MIDE.FileSystem;
 using System.Collections.Generic;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace MIDE.WPFApp.FileSystem
 {
     public class WinFileManager : FileManager
     {
-        public void MakeFolder(string path)
+        public override void MakeFolder(string path)
         {
             string directory = Path.GetDirectoryName(path);
             if (!Directory.Exists(directory))
                 Directory.CreateDirectory(directory);
+        }
+        public override void Write(string data, string path) => File.WriteAllText(path, data);
+        public override void Write(string[] data, string path) => File.WriteAllLines(path, data);
+        public override void Serialize(object data, string path)
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            try
+            {
+                using (FileStream fs = new FileStream(path, FileMode.OpenOrCreate))
+                {
+                    formatter.Serialize(fs, data);
+                }
+            }
+            catch (Exception ex)
+            {
+                
+            }
         }
 
         public override bool Exists(string path) => File.Exists(path) || Directory.Exists(path);
@@ -81,6 +99,6 @@ namespace MIDE.WPFApp.FileSystem
             }
 
             throw new ArgumentException("The given path is invalid", nameof(path));
-        }
+        }        
     }
 }

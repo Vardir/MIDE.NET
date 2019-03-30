@@ -59,6 +59,11 @@ namespace MIDE.FileSystem
             }
         }
 
+        public abstract void MakeFolder(string path);
+        public abstract void Write(string data, string path);
+        public abstract void Write(string[] data, string path);
+        public abstract void Serialize(object data, string path);
+
         public string GetPath(ApplicationPath folder) => specialPaths[folder];
         public string GetOrAddPath(ApplicationPath path, string defaultValue = null)
         {
@@ -92,6 +97,6 @@ namespace MIDE.FileSystem
     public enum ApplicationPath
     {
         UserSettings, DefaultForSolutions,
-        AppAssets, Root, Installed, Themes, Extensions
+        AppAssets, Root, Installed, Themes, Extensions, Logs
     }
 }
