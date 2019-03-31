@@ -21,16 +21,22 @@ namespace MIDE.API.Components
 
     public abstract class TreeViewItem : BaseViewModel
     {
+        private bool isExpanded;
         private string caption;
         private string itemClass;
         private Glyph glyph;
         private ContextMenu contextMenu;
 
         public abstract bool CanExpand { get; }
-        public abstract bool IsExpanded
+        public virtual bool IsExpanded
         {
-            get;
-            set;
+            get => isExpanded;
+            set
+            {
+                if (value)
+                    Expand();
+                isExpanded = value;
+            }
         }
         /// <summary>
         /// Type of an item (e.g. 'drive', 'file' and 'directory' for file system objects)

@@ -19,7 +19,6 @@ namespace MIDE.API.Components
     {
         private bool _pushHistory;
         private int _currentHistoryIndex;
-        private TreeView treeView;
         private Label errorMessage;
         private ActionTextBox searchBox;
         private PathValidator pathValidator;
@@ -36,7 +35,7 @@ namespace MIDE.API.Components
                 OnPropertyChanged(nameof(CurrentHistoryIndex));
             }
         }
-        public TreeView TreeView => treeView;
+        public TreeView TreeView { get; private set; }
 
         public FileExplorer(string id) : base(id)
         {
@@ -69,7 +68,7 @@ namespace MIDE.API.Components
             searchBox.Margin = new BoundingBox(0, 0, 0, 5);
             pathValidator = new PathValidator(false);
             pathValidator.AttachTo(searchBox, "Text");
-            treeView = new TreeView("files-view");
+            TreeView = new TreeView("files-view");
             errorMessage = new Label("error-box", null);
             errorMessage.Visibility = Visibility.Collapsed;
             ToolbarButton homeButton = new ToolbarButton("home");
@@ -124,7 +123,7 @@ namespace MIDE.API.Components
             ContentContainer = grid;
             grid.AddChild(searchBox, 0, 0);
             grid.AddChild(errorMessage, 1, 0);
-            grid.AddChild(treeView, 2, 0);
+            grid.AddChild(TreeView, 2, 0);
         }
 
         private void GoHome()
@@ -155,14 +154,14 @@ namespace MIDE.API.Components
             if (pathValidator.HasErrors)
                 return;
 
-            treeView.Items.Clear();
+            TreeView.Items.Clear();
             var items = Enumerable.Empty<DirectoryItem>();
             if (searchBox.Text == @"\")
                 items = FileSystemInfo.GetLogicalDrives();
             else
                 items = FileSystemInfo.GetDirectoryContents(searchBox.Text);
             
-            treeView.Items.AddRange(items.Select(item => {
+            TreeView.Items.AddRange(items.Select(item => {
                 var fei = new FileExplorerItem(item.name, item.fullPath, item.itemClass);
                 fei.ContextMenu = FileExplorerContextMenu.Instance.Select(fei);
                 return fei;
@@ -193,21 +192,10 @@ namespace MIDE.API.Components
 
     public class FileExplorerItem : TreeViewItem
     {
-        private bool isExpanded;
         private string fullPath;
         private FSObjectClass fsObjectClass;
 
         public override bool CanExpand => !ObjectClass.IsFile;
-        public override bool IsExpanded
-        {
-            get => isExpanded;
-            set
-            {
-                if (value)
-                    Expand();
-                isExpanded = value;
-            }
-        }
         public FSObjectClass ObjectClass
         {
             get => fsObjectClass;

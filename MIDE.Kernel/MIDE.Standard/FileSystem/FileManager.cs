@@ -96,7 +96,7 @@ namespace MIDE.FileSystem
 
     public enum ApplicationPath
     {
-        UserSettings, DefaultForSolutions,
+        UserSettings, DefaultForProjects,
         AppAssets, Root, Installed, Themes, Extensions, Logs
     }
 }
