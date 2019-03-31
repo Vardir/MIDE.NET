@@ -9,7 +9,7 @@ namespace MIDE.Application.Logging
     public class Logger
     {
         private DateTime TimeNow => UseUtcTime ? DateTime.UtcNow : DateTime.Now;
-        private LinkedList<ApplicationEvent> events;
+        private LinkedList<LoggedEvent> events;
 
         /// <summary>
         /// A flag to indicate whether to use UTC time for registering events
@@ -35,14 +35,14 @@ namespace MIDE.Application.Logging
             Levels = levels;
             UseUtcTime = useUtcTime;
             SkipFatalEvents = skipFatals;
-            events = new LinkedList<ApplicationEvent>();
+            events = new LinkedList<LoggedEvent>();
         }
 
         /// <summary>
         /// Adds the given event into collection
         /// </summary>
         /// <param name="applicationEvent"></param>
-        public void PushEvent(ApplicationEvent applicationEvent)
+        public void PushEvent(LoggedEvent applicationEvent)
         {
             if (applicationEvent == null)
             {
@@ -139,9 +139,9 @@ namespace MIDE.Application.Logging
         /// </summary>
         /// <param name="levels"></param>
         /// <returns></returns>
-        public IEnumerable<ApplicationEvent> Pull(LoggingLevel levels = LoggingLevel.ALL)
+        public IEnumerable<LoggedEvent> Pull(LoggingLevel levels = LoggingLevel.ALL)
         {
-            foreach (ApplicationEvent appEvent in events)
+            foreach (LoggedEvent appEvent in events)
             {
                 if (levels.Has(appEvent.Level))
                     yield return appEvent;

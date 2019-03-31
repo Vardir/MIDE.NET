@@ -13,6 +13,7 @@ using MIDE.Application.Attrubites;
 using MIDE.Application.Initializers;
 using MIDE.Application.Configuration;
 using Module = MIDE.API.Extensibility.Module;
+using MIDE.Application.Events;
 
 namespace MIDE.Application
 {
@@ -50,6 +51,10 @@ namespace MIDE.Application
         /// File manager used by application to create/load files and folders
         /// </summary>
         public FileManager FileManager { get; set; }
+        /// <summary>
+        /// Application-wide event broadcaster to provide event-based interaction between application components
+        /// </summary>
+        public EventBroadcaster Broadcaster { get; }
         /// <summary>
         /// System clipboard interface that helps interact between application and system
         /// </summary>

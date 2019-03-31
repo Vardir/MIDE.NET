@@ -63,5 +63,10 @@ namespace MIDE.Kernel.ConsoleTest
         {
             throw new NotImplementedException();
         }
+
+        public override void Serialize(object data, string path)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

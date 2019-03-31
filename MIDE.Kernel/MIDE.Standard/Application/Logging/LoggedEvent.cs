@@ -5,7 +5,7 @@ namespace MIDE.Application.Logging
     /// <summary>
     /// Base class for all application events, provides basic information -- logging level, register time and message
     /// </summary>
-    public abstract class ApplicationEvent
+    public abstract class LoggedEvent
     {
         /// <summary>
         /// A level the event stands for
@@ -20,13 +20,13 @@ namespace MIDE.Application.Logging
         /// </summary>
         public string Message { get; }
 
-        public ApplicationEvent(LoggingLevel level, string message)
+        public LoggedEvent(LoggingLevel level, string message)
         {
             Time = DateTime.UtcNow;
             Level = level;
             Message = message;
         }
-        public ApplicationEvent(LoggingLevel level, string message, DateTime time)
+        public LoggedEvent(LoggingLevel level, string message, DateTime time)
         {
             Time = time;
             Level = level;
@@ -45,7 +45,7 @@ namespace MIDE.Application.Logging
     /// <summary>
     /// Represents application events for general purposes
     /// </summary>
-    public class InfoEvent : ApplicationEvent
+    public class InfoEvent : LoggedEvent
     {
         public InfoEvent(string message) : base(LoggingLevel.INFO, message)
         {
@@ -62,7 +62,7 @@ namespace MIDE.Application.Logging
     /// <summary>
     /// Represents additional information about application behavior for cases when that information is necessary to diagnose problems
     /// </summary>
-    public class DebugEvent : ApplicationEvent
+    public class DebugEvent : LoggedEvent
     {
         /// <summary>
         /// Context the event assigned to
@@ -89,7 +89,7 @@ namespace MIDE.Application.Logging
     /// <summary>
     /// Represents application events that may be an indication of a problem
     /// </summary>
-    public class WarnEvent : ApplicationEvent
+    public class WarnEvent : LoggedEvent
     {
         public WarnEvent(string message) : base(LoggingLevel.WARN, message)
         {
@@ -110,7 +110,7 @@ namespace MIDE.Application.Logging
     /// <summary>
     /// Typically includes the exception and contextual data when application exception occur
     /// </summary>
-    public class ErrorEvent : ApplicationEvent
+    public class ErrorEvent : LoggedEvent
     {
         /// <summary>
         /// Context the event assigned to
@@ -155,7 +155,7 @@ namespace MIDE.Application.Logging
     /// <summary>
     /// Represents a critical error that results in the termination of an application
     /// </summary>
-    public class FatalEvent : ApplicationEvent
+    public class FatalEvent : LoggedEvent
     {
         public FatalEvent(string message) : base(LoggingLevel.FATAL, message)
         {

@@ -1,6 +1,7 @@
 ﻿using System;
 using MIDE.Application;
 using System.Globalization;
+using MIDE.Application.Events;
 using System.Text.RegularExpressions;
 
 namespace MIDE.API.Components
@@ -9,7 +10,7 @@ namespace MIDE.API.Components
     /// The base class that should be implemented for all elements
     /// that are required to be identified and considered as the application components.
     /// </summary>
-    public abstract class ApplicationComponent
+    public abstract class ApplicationComponent : IEventListener
     {
         private static readonly TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
 
@@ -26,6 +27,9 @@ namespace MIDE.API.Components
         /// The ID of the component. It has uniform format for all the components in application
         /// </summary>
         public string Id { get; private set; }
+        /// <summary>
+        /// Shortcut to access application kernel
+        /// </summary>
         public AppKernel Kernel => AppKernel.Instance;
 
         public ApplicationComponent(string id)
@@ -37,7 +41,14 @@ namespace MIDE.API.Components
 
             Id = id;
         }
-        
+
+        /// <summary>
+        /// Receives and operates on events provided by broadcaster
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="message"></param>
+        public virtual void Receive(object sender, string message) { } 
+
         /// <summary>
         /// Formats the ID of the component. Replace all '-' symbols with spaces and make the resulting sentence title case.
         /// <para>The ID 'hello-world' transforms into 'Hello World'</para>
