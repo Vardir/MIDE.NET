@@ -43,6 +43,32 @@ namespace MIDE.WPFApp.Initializers
             context.AddItem(new MenuButton("view", -97));
             context.AddItem(new MenuButton("tools", 50));
             context.AddItem(new MenuButton("help", 99));
+#if DEBUG
+            context.AddItem("help", new MenuButton("about", -99)
+            {
+                PressCommand = new RelayCommand(() =>
+                {
+                    var res = DialogWindow.Show(new MessageDialogWindow("About", "WPF template application"));
+                })
+            });
+            context.AddItem("help", new MenuButton("my-question", 0)
+            {
+                PressCommand = new RelayCommand(() =>
+                {
+                    var res = DialogWindow.Show(new QuestionDialogWindow("Question", "Do you have a laptop?"));
+                    DialogWindow.Show(new MessageDialogWindow("Answer", $"Your answer: {res.result}"));
+                })
+            });
+            context.AddItem("help", new MenuButton("survey", 0)
+            {
+                PressCommand = new RelayCommand(() =>
+                {
+                    var res = DialogWindow.Show(new TextBoxDialogWindow("Write your answer", "Your name:"));
+                    if (res.result == DialogResult.Accept)
+                        DialogWindow.Show(new MessageDialogWindow("Answer", $"Your answer: {res.value}"));
+                })
+            });
+#endif
         }
     }
 }

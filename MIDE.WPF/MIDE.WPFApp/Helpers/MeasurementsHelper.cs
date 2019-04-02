@@ -14,7 +14,7 @@ namespace MIDE.WPFApp.Helpers
                     return new WIN.GridLength(0, WIN.GridUnitType.Auto);
                 default:
                     return new WIN.GridLength(gridLength.Value, gridLength.Type.ToWindows());
-            }            
+            }
         }
         public static WIN.Thickness ToWindows(this APIM.BoundingBox boundingBox)
         {

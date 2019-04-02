@@ -85,4 +85,66 @@
         </Setter>
     </Style>
 
+    <Style TargetType="{x:Type local:DialogWindow}" x:Key="DWindow">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Window}">
+                    <Border Padding="{Binding OuterMarginSize, FallbackValue=10}">
+                        <!--Window wrapper-->
+                        <Grid>
+                            <!--Opacity mask-->
+                            <Border x:Name="container"
+                                    Background="{DynamicResource Window_BodyBackground_Brush}"/>
+
+                            <!--Window corners-->
+                            <Border Background="{DynamicResource Window_BodyBackground_Brush}">
+                                <!--Window corners shadow-->
+                                <Border.Effect>
+                                    <DropShadowEffect ShadowDepth="0" Opacity="0.8"
+                                                      Direction="0"/>
+                                </Border.Effect>
+                            </Border>
+
+                            <!--Window header-->
+                            <Grid Background="{DynamicResource Window_HeaderBackground_Brush}">
+                                <Grid.OpacityMask>
+                                    <VisualBrush Visual="{Binding ElementName=container}"/>
+                                </Grid.OpacityMask>
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="{Binding TitleHeightGridLength, FallbackValue=30}" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+
+                                <Border BorderThickness="0 0 0 1" BorderBrush="{DynamicResource Window_Border_Brush}" />
+
+                                <!--Window header contents-->
+                                <Grid Panel.ZIndex="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!--Icon-->
+                                    <TextBlock Text="{Binding Title, FallbackValue=Dialog}"
+                                               Grid.Column="0" VerticalAlignment="Center" Margin="5 0 0 0"
+                                               Foreground="{DynamicResource Window_HeaderForeground_Brush}"
+                                               FontWeight="SemiBold" FontSize="{StaticResource FontSizeLarge}"/>
+                                </Grid>
+
+                                <!--Window contents-->
+                                <Border Grid.Row="1" Padding="{Binding InnerContentPadding}"
+                                        Background="{DynamicResource Window_BodyBackground_Brush}" ClipToBounds="True">
+
+                                    <ContentPresenter Content="{TemplateBinding Content}"/>
+                                </Border>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
 </ResourceDictionary>

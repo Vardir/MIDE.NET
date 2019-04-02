@@ -79,8 +79,9 @@
     <DataTemplate DataType="{x:Type api:Button}">
         <Button Margin="{Binding Margin, Converter={c:MeasurementsConverter}}" 
                 Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
-                Height="{Binding Height, Converter={c:MeasurementsConverter}}"
-                Width="{Binding Width, Converter={c:MeasurementsConverter}}"
+                Height="{Binding Height}" Width="{Binding Width}"
+                MinWidth="{Binding MinWidth}" MaxWidth="{Binding MaxWidth}"
+                MinHeight="{Binding MinHeight}" MaxHeight="{Binding MaxHeight}"
                 Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
                 IsEnabled="{Binding IsEnabled}"
                 Command="{Binding PressCommand, Converter={c:RelayCommandConverter}}"
@@ -89,8 +90,9 @@
     <DataTemplate DataType="{x:Type api:CheckBox}">
         <CheckBox Margin="{Binding Margin, Converter={c:MeasurementsConverter}}" 
                   Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
-                  Height="{Binding Height, Converter={c:MeasurementsConverter}}"
-                  Width="{Binding Width, Converter={c:MeasurementsConverter}}"
+                  Height="{Binding Height}" Width="{Binding Width}"
+                  MinWidth="{Binding MinWidth}" MaxWidth="{Binding MaxWidth}"
+                  MinHeight="{Binding MinHeight}" MaxHeight="{Binding MaxHeight}"
                   Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
                   IsChecked="{Binding IsChecked}"
                   IsEnabled="{Binding IsEnabled}"
@@ -102,8 +104,9 @@
     <DataTemplate DataType="{x:Type api:Label}">
         <TextBlock Margin="{Binding Margin, Converter={c:MeasurementsConverter}}" 
                    Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
-                   Height="{Binding Height, Converter={c:MeasurementsConverter}}"
-                   Width="{Binding Width, Converter={c:MeasurementsConverter}}"
+                   Height="{Binding Height}" Width="{Binding Width}"
+                   MinWidth="{Binding MinWidth}" MaxWidth="{Binding MaxWidth}"
+                   MinHeight="{Binding MinHeight}" MaxHeight="{Binding MaxHeight}"
                    Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
                    IsEnabled="{Binding IsEnabled}"
                    Text="{Binding Text}"
@@ -112,8 +115,9 @@
     <DataTemplate DataType="{x:Type api:RadioButton}">
         <RadioButton Margin="{Binding Margin, Converter={c:MeasurementsConverter}}" 
                      Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
-                     Height="{Binding Height, Converter={c:MeasurementsConverter}}"
-                     Width="{Binding Width, Converter={c:MeasurementsConverter}}"
+                     Height="{Binding Height}" Width="{Binding Width}"
+                     MinWidth="{Binding MinWidth}" MaxWidth="{Binding MaxWidth}"
+                     MinHeight="{Binding MinHeight}" MaxHeight="{Binding MaxHeight}"
                      Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
                      IsEnabled="{Binding IsEnabled}"
                      IsChecked="{Binding IsChecked}"
@@ -122,8 +126,9 @@
     <DataTemplate DataType="{x:Type api:TextBox}">
         <TextBox Margin="{Binding Margin, Converter={c:MeasurementsConverter}}" 
                  Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
-                 Height="{Binding Height, Converter={c:MeasurementsConverter}}"
-                 Width="{Binding Width, Converter={c:MeasurementsConverter}}"
+                 Height="{Binding Height}" Width="{Binding Width}"
+                 MinWidth="{Binding MinWidth}" MaxWidth="{Binding MaxWidth}"
+                 MinHeight="{Binding MinHeight}" MaxHeight="{Binding MaxHeight}"
                  Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
                  IsEnabled="{Binding IsEnabled}"
                  IsReadOnly="{Binding IsReadonly}"
@@ -133,8 +138,9 @@
         <ItemsControl ItemsSource="{Binding Children}"
                       Margin="{Binding Margin, Converter={c:MeasurementsConverter}}" 
                       Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
-                      Height="{Binding Height, Converter={c:MeasurementsConverter}}"
-                      Width="{Binding Width, Converter={c:MeasurementsConverter}}"
+                      Height="{Binding Height}" Width="{Binding Width}"
+                      MinWidth="{Binding MinWidth}" MaxWidth="{Binding MaxWidth}"
+                      MinHeight="{Binding MinHeight}" MaxHeight="{Binding MaxHeight}"
                       Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
                       IsEnabled="{Binding IsEnabled}">
             <ItemsControl.ItemsPanel>
@@ -148,8 +154,9 @@
         <ItemsControl ItemsSource="{Binding Children}"
                       Margin="{Binding Margin, Converter={c:MeasurementsConverter}}" 
                       Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
-                      Height="{Binding Height, Converter={c:MeasurementsConverter}}"
-                      Width="{Binding Width, Converter={c:MeasurementsConverter}}"
+                      Height="{Binding Height}" Width="{Binding Width}"
+                      MinWidth="{Binding MinWidth}" MaxWidth="{Binding MaxWidth}"
+                      MinHeight="{Binding MinHeight}" MaxHeight="{Binding MaxHeight}"
                       Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
                       IsEnabled="{Binding IsEnabled}">
             <ItemsControl.ItemsPanel>
@@ -188,8 +195,9 @@
     </DataTemplate>
     <DataTemplate DataType="{x:Type api:ActionTextBox}">
         <Border BorderThickness="1" BorderBrush="{DynamicResource Textbox_Border_Brush}"
-                Width="{Binding Width, Converter={c:MeasurementsConverter}}"
-                Height="{Binding Height, Converter={c:MeasurementsConverter}}"
+                Height="{Binding Height}" Width="{Binding Width}"
+                MinWidth="{Binding MinWidth}" MaxWidth="{Binding MaxWidth}"
+                MinHeight="{Binding MinHeight}" MaxHeight="{Binding MaxHeight}"
                 Margin="{Binding Margin, Converter={c:MeasurementsConverter}}"
                 Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
                 IsEnabled="{Binding IsEnabled}"

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using MIDE.API.DataModels;
 using Newtonsoft.Json.Converters;
 
 namespace MIDE.Schemes.JSON

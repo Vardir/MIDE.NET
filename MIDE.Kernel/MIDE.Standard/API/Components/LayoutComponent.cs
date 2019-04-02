@@ -10,8 +10,12 @@ namespace MIDE.API.Components
     {
         private bool isEnabled = true;
         private Visibility visibility;
-        private GridLength width;
-        private GridLength height;
+        private double width;
+        private double height;
+        private double minWidth;
+        private double minHeight;
+        private double maxWidth;
+        private double maxHeight;
         private BoundingBox margin;
         private BoundingBox padding;
         private LayoutComponent parent;
@@ -39,7 +43,7 @@ namespace MIDE.API.Components
                 OnPropertyChanged(nameof(Visibility));
             }
         }
-        public virtual GridLength Width
+        public virtual double Width
         {
             get => width;
             set
@@ -50,7 +54,7 @@ namespace MIDE.API.Components
                 OnPropertyChanged(nameof(Width));
             }
         }
-        public virtual GridLength Height
+        public virtual double Height
         {
             get => height;
             set
@@ -59,6 +63,50 @@ namespace MIDE.API.Components
                     return;
                 height = value;
                 OnPropertyChanged(nameof(Height));
+            }
+        }
+        public virtual double MinWidth
+        {
+            get => minWidth;
+            set
+            {
+                if (value == minWidth)
+                    return;
+                minWidth = value;
+                OnPropertyChanged(nameof(MinWidth));
+            }
+        }
+        public virtual double MinHeight
+        {
+            get => minHeight;
+            set
+            {
+                if (value == minHeight)
+                    return;
+                minHeight = value;
+                OnPropertyChanged(nameof(MinHeight));
+            }
+        }
+        public virtual double MaxHeight
+        {
+            get => maxHeight;
+            set
+            {
+                if (value == maxHeight)
+                    return;
+                maxHeight = value;
+                OnPropertyChanged(nameof(MaxHeight));
+            }
+        }
+        public virtual double MaxWidth
+        {
+            get => maxWidth;
+            set
+            {
+                if (value == maxWidth)
+                    return;
+                maxWidth = value;
+                OnPropertyChanged(nameof(MaxWidth));
             }
         }
         public virtual BoundingBox Margin
@@ -98,9 +146,11 @@ namespace MIDE.API.Components
         public event PropertyChangedEventHandler PropertyChanged;
 
         public LayoutComponent(string id) : base(id)
-        {            
-            width = GridLength.Auto;
-            height = GridLength.Auto;
+        {
+            width = double.NaN;
+            height = double.NaN;
+            maxWidth = double.NaN;
+            maxHeight = double.NaN;
         }
 
         protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));

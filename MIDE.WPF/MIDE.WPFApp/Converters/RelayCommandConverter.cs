@@ -1,7 +1,7 @@
 ﻿using System;
+using MIDE.API.Commands;
 using System.Globalization;
 using MIDE.WPFApp.RelayCommands;
-using MIDE.API.Commands;
 
 namespace MIDE.WPFApp.ValueConverters
 {

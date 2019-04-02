@@ -1,4 +1,9 @@
-﻿namespace MIDE.API.Components
+﻿using System.Linq;
+using MIDE.FileSystem;
+using MIDE.API.Commands;
+using System.Collections.Generic;
+
+namespace MIDE.API.Components
 {
     public class ProjectExplorer : Tab
     {
@@ -47,7 +52,7 @@
             }
         }
 
-        public FileExplorerItem(string caption, string fullPath, FSObjectClass fsObjectClass) : base()
+        public ProjectItem(string caption, string fullPath, FSObjectClass fsObjectClass) : base()
         {
             ExpandCommand = new RelayCommand(Expand);
 
