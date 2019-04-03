@@ -13,7 +13,7 @@
     <RepositoryType>Git</RepositoryType>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <NeutralLanguage>en</NeutralLanguage>
-    <LangVersion>7.1</LangVersion>
+    <LangVersion>preview</LangVersion>
     <RootNamespace>MIDE</RootNamespace>
     <Version>0.3.1</Version>
     <FileUpgradeFlags>40</FileUpgradeFlags>

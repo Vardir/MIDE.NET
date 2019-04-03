@@ -18,24 +18,24 @@ namespace MIDE.WPFApp
             DataContext = ViewModel;
         }
         
-        public static (DialogResult result, T value) Show<T>(BaseDialogWindow<T> dialogWindow)
+        public static (DialogResult result, T value) Show<T>(BaseDialogBox<T> dialogWindow)
         {
             DialogWindow window = new DialogWindow();
             window.ViewModel.Title = dialogWindow.Title;
-            window.ViewModel.Body = dialogWindow.Body;
-            window.ViewModel.Buttons = dialogWindow.DialogButtons;
-            window.ViewModel.ValidationErrors = dialogWindow.ValidationErrors;
+            window.body.Content = dialogWindow;
+            window.buttons.ItemsSource = dialogWindow.DialogButtons;
+            window.validationErrors.ItemsSource = dialogWindow.ValidationErrors;
             dialogWindow.ResultSelected += window.Close;
             bool? _ = window.ShowDialog();
             dialogWindow.ResultSelected -= window.Close;
             return (dialogWindow.SelectedResult, dialogWindow.GetData());
         }
 
-        private void Window_Deactivated(object sender, System.EventArgs e)
+        private void Window_Deactivated(object sender, EventArgs e)
         {
             ViewModel.DimmableOverlayVisible = true;
         }
-        private void Window_Activated(object sender, System.EventArgs e)
+        private void Window_Activated(object sender, EventArgs e)
         {
             ViewModel.DimmableOverlayVisible = false;
         }

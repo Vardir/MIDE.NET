@@ -32,10 +32,10 @@
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
-        <ContentControl Content="{Binding Body}"
+        <ContentControl Name="body"
                         VerticalAlignment="Center"/>
         <ItemsControl Grid.Row="2" Margin="0 0 0 10"
-                      ItemsSource="{Binding ValidationErrors}">
+                      Name="validationErrors">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel/>
@@ -55,7 +55,7 @@
         </ItemsControl>
         
         <ItemsControl Grid.Row="3"
-                      ItemsSource="{Binding Buttons}">
+                      Name="buttons">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"

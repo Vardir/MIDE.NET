@@ -5,7 +5,7 @@ namespace MIDE.API.Measurements
 {
     /// <summary>
     /// <para>A class to represent the size-measurement properties of the layout components</para>
-    /// <para>Expected formats: x% -- percentage, x* -- relative, x -- points</para>
+    /// <para>Expected formats: x% -- percentage, x* -- relative, x -- points, auto -- automatically set size to content</para>
     /// </summary>
     public struct GridLength : IEquatable<GridLength>, IComparable<GridLength>
     {

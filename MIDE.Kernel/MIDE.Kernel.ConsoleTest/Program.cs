@@ -22,7 +22,7 @@ namespace MIDE.Kernel.ConsoleTest
             //program.Kernel.SystemClipboard = WindowsClipboard.Instance;
             //program.Kernel.Start();
 
-            MessageDialogWindow messageDialog = new MessageDialogWindow("title", "message");
+            MessageDialogBox messageDialog = new MessageDialogBox("title", "message");
             
 
             Console.WriteLine("Press any key to continue...");

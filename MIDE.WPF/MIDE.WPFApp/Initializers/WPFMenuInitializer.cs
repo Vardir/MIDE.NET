@@ -48,24 +48,24 @@ namespace MIDE.WPFApp.Initializers
             {
                 PressCommand = new RelayCommand(() =>
                 {
-                    var res = DialogWindow.Show(new MessageDialogWindow("About", "WPF template application"));
+                    var res = DialogWindow.Show(new MessageDialogBox("About", "WPF template application"));
                 })
             });
             context.AddItem("help", new MenuButton("my-question", 0)
             {
                 PressCommand = new RelayCommand(() =>
                 {
-                    var res = DialogWindow.Show(new QuestionDialogWindow("Question", "Do you have a laptop?"));
-                    DialogWindow.Show(new MessageDialogWindow("Answer", $"Your answer: {res.result}"));
+                    var res = DialogWindow.Show(new QuestionDialogBox("Question", "Do you have a laptop?"));
+                    DialogWindow.Show(new MessageDialogBox("Answer", $"Your answer: {res.result}"));
                 })
             });
             context.AddItem("help", new MenuButton("survey", 0)
             {
                 PressCommand = new RelayCommand(() =>
                 {
-                    var res = DialogWindow.Show(new TextBoxDialogWindow("Write your answer", "Your name:"));
+                    var res = DialogWindow.Show(new TextBoxDialogBox("Write your answer", "Your name:"));
                     if (res.result == DialogResult.Accept)
-                        DialogWindow.Show(new MessageDialogWindow("Answer", $"Your answer: {res.value}"));
+                        DialogWindow.Show(new MessageDialogBox("Answer", $"Your answer: {res.value}"));
                 })
             });
 #endif

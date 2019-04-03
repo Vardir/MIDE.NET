@@ -11,6 +11,7 @@ namespace MIDE.WPFApp.ValueConverters
         {
             switch (value)
             {
+                case double d: return d;
                 case GridLength len: return len.ToWindows();
                 case BoundingBox box: return box.ToWindows();
                 default:
