@@ -23,6 +23,13 @@ namespace MIDE.API.Components
             return item as LayoutComponent;
         }
 
+        protected override LayoutComponent CloneInternal(string id)
+        {
+            Toolbar clone = new Toolbar(id);
+            clone.Items.AddRange(Items.Select(item => item.Clone() as IToolBarItem));
+            return clone;
+        }
+
         protected override void AddChild_Impl(LayoutComponent component)
         {
             if (!(component is IToolBarItem item))

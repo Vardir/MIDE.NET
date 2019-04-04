@@ -17,9 +17,16 @@ namespace MIDE.API.Components
             SelectedItems = new List<TreeViewItem>();
             Items = new ObservableCollection<TreeViewItem>();
         }
+
+        protected override LayoutComponent CloneInternal(string id)
+        {
+            TreeView clone = new TreeView(id);
+            clone.Items.AddRange(Items.Select(item => item.Clone()));
+            return clone;
+        }
     }
 
-    public abstract class TreeViewItem : BaseViewModel
+    public abstract class TreeViewItem : BaseViewModel, ICloneable<TreeViewItem>
     {
         private bool isExpanded;
         private string caption;
@@ -96,6 +103,18 @@ namespace MIDE.API.Components
 
         public override string ToString() => $"tree-view-item :: {Caption} [{ItemClass}]";
 
+        public TreeViewItem Clone()
+        {
+            TreeViewItem clone = CloneInternal();
+            clone.Children.AddRange(Children.Select(item => item.Clone()));
+            clone.caption = caption;
+            clone.itemClass = itemClass;
+            clone.glyph = glyph;
+            clone.contextMenu = contextMenu;
+            return clone;
+        }
+        public TreeViewItem Clone(string _) => Clone();
+
         protected virtual void OnChildrenCleared() { }
 
         protected void ClearChildren()
@@ -115,6 +134,7 @@ namespace MIDE.API.Components
             Children.AddRange(childItems);
         }
 
+        protected abstract TreeViewItem CloneInternal();
         protected abstract IEnumerable<TreeViewItem> GetChildItems();
     }
 }

@@ -6,5 +6,11 @@
         {
             Text = text;
         }
+
+        protected override LayoutComponent CloneInternal(string id)
+        {
+            Label clone = new Label(id, text);
+            return clone;
+        }
     }
 }

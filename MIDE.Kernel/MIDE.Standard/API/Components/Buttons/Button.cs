@@ -42,5 +42,15 @@ namespace MIDE.API.Components
             if (PressCommand.CanExecute(parameter))
                 PressCommand.Execute(parameter);
         }
+
+        protected override LayoutComponent CloneInternal(string id)
+        {
+            Button clone = Create(id);
+            clone.caption = caption;
+            clone.glyph = glyph;
+            clone.PressCommand = null;
+            return clone;
+        }
+        protected virtual Button Create(string id) => new Button(id);
     }
 }

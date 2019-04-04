@@ -1,4 +1,5 @@
-﻿using MIDE.API.Validation;
+﻿using MIDE.Helpers;
+using MIDE.API.Validation;
 using System.Collections.ObjectModel;
 
 namespace MIDE.API.Components
@@ -44,5 +45,16 @@ namespace MIDE.API.Components
                 return;
             Text = Default;
         }
+
+        protected override LayoutComponent CloneInternal(string id)
+        {
+            TextBox clone = new TextBox(id, Default);
+            clone.isReadonly = isReadonly;
+            clone.text = text;
+            clone.Validators.AddRange(Validators);
+            return clone;
+        }
+
+        protected virtual TextBox Create(string id) => new TextBox(id, Default);
     }
 }

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using MIDE.Helpers;
 
 namespace MIDE.API.Components
 {
@@ -31,6 +32,14 @@ namespace MIDE.API.Components
         /// <param name="id"></param>
         /// <returns></returns>
         public override LayoutComponent Find(string id) => Children.FirstOrDefault(c => c.Id == id);
+
+        protected override LayoutComponent CloneInternal(string id)
+        {
+            Panel clone = Create(id);
+            clone.Children.AddRange(Children.Select(item => item.Clone()));
+            return clone;
+        }
+        protected virtual Panel Create(string id) => new Panel(id);
 
         protected override void AddChild_Impl(LayoutComponent component)
         {

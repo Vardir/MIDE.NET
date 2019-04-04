@@ -63,6 +63,11 @@ namespace MIDE.API.Components
             ClearChildren();
         }
 
+        protected override TreeViewItem CloneInternal()
+        {
+            ProjectItem clone = new ProjectItem(Caption, fullPath, fsObjectClass);
+            return clone;
+        }
         protected override IEnumerable<TreeViewItem> GetChildItems()
         {
             return FileSystemInfo.GetDirectoryContents(FullPath)

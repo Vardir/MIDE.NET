@@ -1,6 +1,6 @@
 ﻿namespace MIDE.API.Components
 {
-    public interface IToolBarItem
+    public interface IToolBarItem : ICloneable<LayoutComponent>
     {
         int Order { get; }
         string Id { get; }

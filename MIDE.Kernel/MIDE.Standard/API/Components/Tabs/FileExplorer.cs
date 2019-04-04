@@ -11,7 +11,6 @@ using MIDE.API.Measurements;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using IO = System.IO;
-using System.Collections;
 
 namespace MIDE.API.Components
 {
@@ -173,7 +172,7 @@ namespace MIDE.API.Components
                 CurrentHistoryIndex = browseHistory.Count - 1;
             }
         }
-                
+        
         protected class PathValidator : PropertyValidator<string>
         {
             public PathValidator(bool raiseExceptionOnError) : base(raiseExceptionOnError) { }
@@ -232,6 +231,11 @@ namespace MIDE.API.Components
             ClearChildren();
         }
 
+        protected override TreeViewItem CloneInternal()
+        {
+            FileExplorerItem clone = new FileExplorerItem(Caption, fullPath, fsObjectClass);
+            return clone;
+        }
         protected override IEnumerable<TreeViewItem> GetChildItems()
         {
             return FileSystemInfo.GetDirectoryContents(FullPath)

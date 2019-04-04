@@ -31,6 +31,14 @@ namespace MIDE.API.Components
         }
 
         public StackPanel(string id) : base(id) {}
+
+        protected override Panel Create(string id)
+        {
+            StackPanel clone = new StackPanel(id);
+            clone.orientation = orientation;
+            clone.childMargin = childMargin;
+            return clone;
+        }
     }
 
     public enum StackOrientation

@@ -6,7 +6,7 @@ namespace MIDE.API.Components
     /// <summary>
     /// The base class for all the application components that are required to be visually represented
     /// </summary>
-    public abstract class LayoutComponent : ApplicationComponent, INotifyPropertyChanged
+    public abstract class LayoutComponent : ApplicationComponent, INotifyPropertyChanged, ICloneable<LayoutComponent>
     {
         #region Backing fields
         private bool isEnabled = true;
@@ -178,6 +178,28 @@ namespace MIDE.API.Components
             MaxHeight = double.PositiveInfinity;
             MaxWidth = double.PositiveInfinity;
         }
+
+        public LayoutComponent Clone(string id)
+        {
+            LayoutComponent clone = CloneInternal(id);
+            clone.width = height;
+            clone.height = height;
+            clone.minWidth = minWidth;
+            clone.maxWidth = maxWidth;
+            clone.minHeight = minHeight;
+            clone.maxHeight = maxHeight;
+            clone.isEnabled = isEnabled;
+            clone.visibility = visibility;
+            clone.verticalAlignment = verticalAlignment;
+            clone.horizontalAlignment = horizontalAlignment;
+            clone.margin = margin;
+            clone.padding = padding;
+            clone.parent = null;
+            clone.currentContextMenu = currentContextMenu;
+            return clone;
+        }
+        public LayoutComponent Clone() => Clone(Id);
+        protected abstract LayoutComponent CloneInternal(string id);
 
         protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }

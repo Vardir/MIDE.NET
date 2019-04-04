@@ -6,5 +6,13 @@
         public string Group { get; set; }
 
         public ToolbarButton(string id) : base(id) {}
+
+        protected override Button Create(string id)
+        {
+            ToolbarButton clone = new ToolbarButton(id);
+            clone.Order = Order;
+            clone.Group = Group;
+            return clone;
+        }
     }
 }

@@ -36,6 +36,13 @@ namespace MIDE.API.Components
 
         public CheckBox(string id) : base(id) {}
 
+        protected override LayoutComponent CloneInternal(string id)
+        {
+            CheckBox clone = new CheckBox(id);
+            clone.caption = caption;
+            return clone;
+        }
+
         protected virtual void OnCheckedChanged() {}
     }
 }

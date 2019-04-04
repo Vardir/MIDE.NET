@@ -167,6 +167,17 @@ namespace MIDE.API.Components
             throw new System.NotImplementedException();
         }
 
+        protected override LayoutComponent CloneInternal(string id)
+        {
+            GridLayout clone = new GridLayout(id);
+            clone.columnMargin = columnMargin;
+            clone.rowMargin = rowMargin;
+            clone.newRowTemplate = newRowTemplate.Clone();
+            clone.newColumnTemplate = newColumnTemplate.Clone();
+            clone.Children.AddRange(Children.Select(item => item.Clone()));
+            return clone;
+        }
+
         protected override void AddChild_Impl(LayoutComponent component)
         {
             AddChild(component, 0, 0);
@@ -185,10 +196,9 @@ namespace MIDE.API.Components
                 return;
             Children.RemoveAt(index);
         }
-
     }
 
-    public class GridCell : INotifyPropertyChanged
+    public class GridCell : INotifyPropertyChanged, ICloneable<GridCell>
     {
         private int row;
         private int column;
@@ -260,6 +270,15 @@ namespace MIDE.API.Components
             Column = column;
             Component = component;
         }
+
+        public GridCell Clone()
+        {
+            GridCell clone = new GridCell(component.Clone(), row, column);
+            clone.columnSpan = columnSpan;
+            clone.rowSpan = rowSpan;
+            return clone;
+        }
+        public GridCell Clone(string id) => Clone();
 
         protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }

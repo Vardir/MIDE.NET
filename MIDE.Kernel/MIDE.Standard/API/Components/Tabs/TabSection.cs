@@ -72,6 +72,13 @@ namespace MIDE.API.Components
             return Tabs[index];
         }
 
+        protected override LayoutComponent CloneInternal(string id)
+        {
+            TabSection clone = new TabSection(id);
+            clone.Tabs.AddRange(Tabs.Select(tab => tab.Clone() as Tab));
+            return clone;
+        }
+
         protected override void AddChild_Impl(LayoutComponent component)
         {
             if (component == null)

@@ -52,7 +52,14 @@ namespace MIDE.API.Components
         }
         public override (string, short)[] GetItemsOrdinals() => Children.Select(mi => (mi.Id, mi.OrdinalIndex));
         public override string[] GetAllItemsIDs() => Children.Select(mi => mi.Id);
-        
+
+        protected override Button Create(string id)
+        {
+            MenuGroup clone = new MenuGroup(id, OrdinalIndex, AllowIdDuplicates);
+            clone.Children.AddRange(Children.Select(item => item.Clone() as MenuItem));
+            return clone;
+        }
+
         private void Children_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             switch (e.Action)

@@ -5,8 +5,6 @@ namespace MIDE.API.Components
 {
     public class ListBox : LayoutContainer
     {
-
-
         public ListBox(string id) : base(id)
         {
 
@@ -33,6 +31,14 @@ namespace MIDE.API.Components
         {
             throw new NotImplementedException();
         }
+
+        protected override LayoutComponent CloneInternal(string id)
+        {
+            ListBox clone = Create(id);
+
+            return clone;
+        }
+        protected virtual ListBox Create(string id) => new ListBox(id);
 
         protected override void AddChild_Impl(LayoutComponent component)
         {

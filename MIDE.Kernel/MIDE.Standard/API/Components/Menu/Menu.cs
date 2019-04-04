@@ -190,6 +190,13 @@ namespace MIDE.API.Components
             return root.GetAllItemsIDs();
         }
 
+        protected override LayoutComponent CloneInternal(string id)
+        {
+            Menu clone = new Menu(id);
+            clone.Items.AddRange(Items.Select(item => item.Clone() as MenuItem));
+            return clone;
+        }
+
         protected override void RemoveChild_Impl(string id)
         {
             var item = Items.FirstOrDefault(i => i.Id == id);

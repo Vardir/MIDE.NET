@@ -37,18 +37,30 @@ namespace MIDE.API.Components
                 OnPropertyChanged(nameof(ContentContainer));
             }
         }
-        public ICommand CloseCommand { get; }
+        public ICommand CloseCommand { get; set; }
 
-        public Tab(string id, bool allowDuplicates = false) : base(id)
+        private Tab(string id, Toolbar toolbar, bool allowDuplicates) : base(id)
         {
-            Header = FormatId();
-            AllowDuplicates = allowDuplicates;
-            TabToolbar = new Toolbar("toolbar");
+            TabToolbar = toolbar ?? new Toolbar("toolbar");
             TabToolbar.Parent = this;
+            AllowDuplicates = allowDuplicates;
+            Header = FormatId();
         }
+
+        public Tab(string id, bool allowDuplicates = false) : this(id, null, allowDuplicates) { }
 
         public override bool Contains(string id) => contentContainer?.Contains(id) ?? false;
         public override LayoutComponent Find(string id) => contentContainer?.Find(id);
+
+        protected override LayoutComponent CloneInternal(string id)
+        {
+            Tab clone = new Tab(id, (Toolbar)TabToolbar.Clone(), AllowDuplicates);
+            clone.header = header;
+            clone.ParentSection = null;
+            clone.CloseCommand = null;
+            clone.contentContainer = (LayoutContainer)contentContainer.Clone();
+            return clone;
+        }
 
         protected override void AddChild_Impl(LayoutComponent component) => contentContainer?.AddChild(component);
         protected override void RemoveChild_Impl(string id) => contentContainer?.RemoveChild(id);

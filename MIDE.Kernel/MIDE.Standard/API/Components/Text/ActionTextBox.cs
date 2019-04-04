@@ -1,4 +1,6 @@
-﻿namespace MIDE.API.Components
+﻿using MIDE.Helpers;
+
+namespace MIDE.API.Components
 {
     public class ActionTextBox : TextBox
     {
@@ -19,6 +21,13 @@
         public ActionTextBox(string id, string defaultValue = null) : base(id, defaultValue)
         {
             ActionButton = new Button("action");
+        }
+
+        protected override TextBox Create(string id)
+        {
+            ActionTextBox clone = new ActionTextBox(id, Default);
+            clone.actionButton = actionButton.Clone() as Button;
+            return clone;
         }
     }
 }
