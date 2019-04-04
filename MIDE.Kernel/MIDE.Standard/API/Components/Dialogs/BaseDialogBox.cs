@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using MIDE.API.Measurements;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,15 +14,15 @@ namespace MIDE.API.Components
         public DialogResult SelectedResult { get; set; }
         public string Title { get; }
         public DialogResult[] Results { get; private set; }
-        public DialogButton[] DialogButtons { get; private set; }
+        public LayoutContainer DialogButtons { get; private set; }
         public ObservableCollection<string> ValidationErrors { get; }
 
         public event Action ResultSelected;
 
         public BaseDialogBox(string title) : base("dialog-box")
         {
-            MinWidth = 290;
-            MinHeight = 180;
+            MinWidth = 300;
+            MinHeight = 200;
             MaxWidth = 1024;
             MaxHeight = 1024;
 
@@ -42,6 +43,7 @@ namespace MIDE.API.Components
         }
 
         protected abstract void Validate();
+        protected abstract GridLayout GenerateGrid(string id, IEnumerable<DialogButton> buttons);
 
         protected void SetDialogResults(params DialogResult[] dialogResults)
         {
@@ -54,12 +56,25 @@ namespace MIDE.API.Components
                     continue;
                 buttons.Add(new DialogButton(this, result)
                 {
-                    Padding = new BoundingBox(40, 3)
+                    Padding = new BoundingBox(40, 3),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center
                 });
                 results.Add(result);
             }
             Results = results.ToArray();
-            DialogButtons = buttons.ToArray();
+            DialogButtons = GenerateGrid("buttons", buttons);
+        }
+
+        protected static GridLayout GetGridButtonsCentered(string id, IEnumerable<DialogButton> buttons)
+        {
+            GridLayout grid = new GridLayout(id);
+            for (int i = 0; i < buttons.Count(); i++)
+            {
+                grid.Columns.Add(new GridColumn(new GridLength("*")));
+                grid.AddChild(buttons.ElementAt(i), 0, i);
+            }            
+            return grid;
         }
     }
 

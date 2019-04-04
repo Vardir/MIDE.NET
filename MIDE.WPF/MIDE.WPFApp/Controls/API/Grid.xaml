@@ -23,7 +23,8 @@
             <Style TargetType="ContentPresenter">
                 <Setter Property="Grid.Row" Value="{Binding Row, Converter={c:GridIndexConverter}}"/>
                 <Setter Property="Grid.Column" Value="{Binding Column, Converter={c:GridIndexConverter}}"/>
-                <!--<Setter Property="Content" Value="{Binding Component}"/>-->
+                <Setter Property="Grid.RowSpan" Value="{Binding RowSpan}"/>
+                <Setter Property="Grid.ColumnSpan" Value="{Binding ColumnSpan}"/>
             </Style>
         </ItemsControl.ItemContainerStyle>
         <ItemsControl.ItemTemplate>

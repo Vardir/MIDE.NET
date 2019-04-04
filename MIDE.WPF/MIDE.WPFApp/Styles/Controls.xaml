@@ -83,6 +83,8 @@
                 MinWidth="{Binding MinWidth}" MaxWidth="{Binding MaxWidth}"
                 MinHeight="{Binding MinHeight}" MaxHeight="{Binding MaxHeight}"
                 Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
+                VerticalAlignment="{Binding VerticalAlignment, Converter={c:AlignmentConverter}}"
+                HorizontalAlignment="{Binding HorizontalAlignment, Converter={c:AlignmentConverter}}"
                 IsEnabled="{Binding IsEnabled}"
                 Command="{Binding PressCommand, Converter={c:RelayCommandConverter}}"
                 Style="{StaticResource ActionButton}"/>
@@ -94,6 +96,8 @@
                   MinWidth="{Binding MinWidth}" MaxWidth="{Binding MaxWidth}"
                   MinHeight="{Binding MinHeight}" MaxHeight="{Binding MaxHeight}"
                   Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
+                  VerticalAlignment="{Binding VerticalAlignment, Converter={c:AlignmentConverter}}"
+                  HorizontalAlignment="{Binding HorizontalAlignment, Converter={c:AlignmentConverter}}"
                   IsChecked="{Binding IsChecked}"
                   IsEnabled="{Binding IsEnabled}"
                   Content="{Binding Caption}"/>
@@ -108,6 +112,8 @@
                    MinWidth="{Binding MinWidth}" MaxWidth="{Binding MaxWidth}"
                    MinHeight="{Binding MinHeight}" MaxHeight="{Binding MaxHeight}"
                    Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
+                   VerticalAlignment="{Binding VerticalAlignment, Converter={c:AlignmentConverter}}"
+                   HorizontalAlignment="{Binding HorizontalAlignment, Converter={c:AlignmentConverter}}"
                    IsEnabled="{Binding IsEnabled}"
                    Text="{Binding Text}"
                    Style="{StaticResource DefaultTextBlock}"/>
@@ -119,6 +125,8 @@
                      MinWidth="{Binding MinWidth}" MaxWidth="{Binding MaxWidth}"
                      MinHeight="{Binding MinHeight}" MaxHeight="{Binding MaxHeight}"
                      Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
+                     VerticalAlignment="{Binding VerticalAlignment, Converter={c:AlignmentConverter}}"
+                     HorizontalAlignment="{Binding HorizontalAlignment, Converter={c:AlignmentConverter}}"
                      IsEnabled="{Binding IsEnabled}"
                      IsChecked="{Binding IsChecked}"
                      Content="{Binding Caption}"/>
@@ -130,6 +138,8 @@
                  MinWidth="{Binding MinWidth}" MaxWidth="{Binding MaxWidth}"
                  MinHeight="{Binding MinHeight}" MaxHeight="{Binding MaxHeight}"
                  Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
+                 VerticalAlignment="{Binding VerticalAlignment, Converter={c:AlignmentConverter}}"
+                 HorizontalAlignment="{Binding HorizontalAlignment, Converter={c:AlignmentConverter}}"
                  IsEnabled="{Binding IsEnabled}"
                  IsReadOnly="{Binding IsReadonly}"
                  Text="{Binding Text}"/>
@@ -142,6 +152,8 @@
                       MinWidth="{Binding MinWidth}" MaxWidth="{Binding MaxWidth}"
                       MinHeight="{Binding MinHeight}" MaxHeight="{Binding MaxHeight}"
                       Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
+                      VerticalAlignment="{Binding VerticalAlignment, Converter={c:AlignmentConverter}}"
+                      HorizontalAlignment="{Binding HorizontalAlignment, Converter={c:AlignmentConverter}}"
                       IsEnabled="{Binding IsEnabled}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -158,6 +170,8 @@
                       MinWidth="{Binding MinWidth}" MaxWidth="{Binding MaxWidth}"
                       MinHeight="{Binding MinHeight}" MaxHeight="{Binding MaxHeight}"
                       Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
+                      VerticalAlignment="{Binding VerticalAlignment, Converter={c:AlignmentConverter}}"
+                      HorizontalAlignment="{Binding HorizontalAlignment, Converter={c:AlignmentConverter}}"
                       IsEnabled="{Binding IsEnabled}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -202,6 +216,8 @@
                 Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
                 IsEnabled="{Binding IsEnabled}"
                 Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
+                VerticalAlignment="{Binding VerticalAlignment, Converter={c:AlignmentConverter}}"
+                HorizontalAlignment="{Binding HorizontalAlignment, Converter={c:AlignmentConverter}}"
                 Name="border">
             <Grid Background="{DynamicResource Textbox_Background_Brush}">
                 <Grid.ColumnDefinitions>

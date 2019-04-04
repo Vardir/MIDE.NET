@@ -6,10 +6,10 @@
         xmlns:local="clr-namespace:MIDE.WPFApp.Windows"
         mc:Ignorable="d"
         WindowStyle="None"
+        MinWidth="300"
+        MaxHeight="200"
         Style="{StaticResource DWindow}"
         AllowsTransparency="True"
-        MinWidth="{Binding WindowMinimumWidth}"
-        MinHeight="{Binding WindowMinimumHeight}"
         WindowStartupLocation="CenterScreen"
         Activated="Window_Activated"
         Deactivated="Window_Deactivated"
@@ -21,7 +21,7 @@
         <WindowChrome CaptionHeight="{Binding TitleHight}"
                       GlassFrameThickness="0"
                       CornerRadius="0"
-                      ResizeBorderThickness="{Binding ResizeBorderThickness}"/>
+                      ResizeBorderThickness="0"/>
     </WindowChrome.WindowChrome>
 
     <Grid Margin="5 10 5 5">
@@ -53,20 +53,8 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        
-        <ItemsControl Grid.Row="3"
-                      Name="buttons">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
-                                Orientation="Horizontal"/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemContainerStyle>
-                <Style>
-                    <Setter Property="Control.Margin" Value="10 0"/>
-                </Style>
-            </ItemsControl.ItemContainerStyle>
-        </ItemsControl>
+
+        <ContentControl Name="buttons"
+                        Grid.Row="3"/>
     </Grid>
 </Window>

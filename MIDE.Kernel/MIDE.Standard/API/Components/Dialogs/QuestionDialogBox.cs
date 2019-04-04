@@ -1,4 +1,6 @@
-﻿namespace MIDE.API.Components
+﻿using System.Collections.Generic;
+
+namespace MIDE.API.Components
 {
     /// <summary>
     /// Asks user a question and returns Yes or No
@@ -9,11 +11,15 @@
         {
             AddChild(new Label("question", question));
 
-            SetDialogResults(DialogResult.Ok, DialogResult.No);
+            SetDialogResults(DialogResult.Yes, DialogResult.No);
         }
 
         public override bool GetData() => true;
 
         protected override void Validate() {}
+        protected override GridLayout GenerateGrid(string id, IEnumerable<DialogButton> buttons)
+        {
+            return GetGridButtonsCentered(id, buttons);
+        }
     }
 }

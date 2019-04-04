@@ -14,6 +14,9 @@
             }
         }
 
-        public TextComponent(string id) : base(id) { }
+        public TextComponent(string id) : base(id)
+        {
+            HorizontalAlignment = HorizontalAlignment.Stretch;
+        }
     }
 }

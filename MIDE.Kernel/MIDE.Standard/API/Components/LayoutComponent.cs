@@ -8,8 +8,11 @@ namespace MIDE.API.Components
     /// </summary>
     public abstract class LayoutComponent : ApplicationComponent, INotifyPropertyChanged
     {
+        #region Backing fields
         private bool isEnabled = true;
         private Visibility visibility;
+        private VerticalAlignment verticalAlignment;
+        private HorizontalAlignment horizontalAlignment;
         private double width;
         private double height;
         private double minWidth;
@@ -19,7 +22,8 @@ namespace MIDE.API.Components
         private BoundingBox margin;
         private BoundingBox padding;
         private LayoutComponent parent;
-        private ContextMenu currentContextMenu;
+        private ContextMenu currentContextMenu; 
+        #endregion
 
         public bool IsEnabled
         {
@@ -41,6 +45,28 @@ namespace MIDE.API.Components
                     return;
                 visibility = value;
                 OnPropertyChanged(nameof(Visibility));
+            }
+        }
+        public VerticalAlignment VerticalAlignment
+        {
+            get => verticalAlignment;
+            set
+            {
+                if (verticalAlignment == value)
+                    return;
+                verticalAlignment = value;
+                OnPropertyChanged(nameof(VerticalAlignment));
+            }
+        }
+        public HorizontalAlignment HorizontalAlignment
+        {
+            get => horizontalAlignment;
+            set
+            {
+                if (horizontalAlignment == value)
+                    return;
+                horizontalAlignment = value;
+                OnPropertyChanged(nameof(HorizontalAlignment));
             }
         }
         public virtual double Width
@@ -147,10 +173,10 @@ namespace MIDE.API.Components
 
         public LayoutComponent(string id) : base(id)
         {
-            width = double.NaN;
-            height = double.NaN;
-            maxWidth = double.NaN;
-            maxHeight = double.NaN;
+            Width = double.NaN;
+            Height = double.NaN;
+            MaxHeight = double.PositiveInfinity;
+            MaxWidth = double.PositiveInfinity;
         }
 
         protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));

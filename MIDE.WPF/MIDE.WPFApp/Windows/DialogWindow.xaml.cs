@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Windows;
+using MIDE.WPFApp.Helpers;
 using MIDE.API.Components;
+using System.Windows.Controls;
 
 namespace MIDE.WPFApp
 {
@@ -18,17 +20,17 @@ namespace MIDE.WPFApp
             DataContext = ViewModel;
         }
         
-        public static (DialogResult result, T value) Show<T>(BaseDialogBox<T> dialogWindow)
+        public static (DialogResult result, T value) Show<T>(BaseDialogBox<T> dialogBox)
         {
             DialogWindow window = new DialogWindow();
-            window.ViewModel.Title = dialogWindow.Title;
-            window.body.Content = dialogWindow;
-            window.buttons.ItemsSource = dialogWindow.DialogButtons;
-            window.validationErrors.ItemsSource = dialogWindow.ValidationErrors;
-            dialogWindow.ResultSelected += window.Close;
+            window.ViewModel.Title = dialogBox.Title;
+            window.body.Content = dialogBox;
+            window.buttons.Content = dialogBox.DialogButtons;
+            window.validationErrors.ItemsSource = dialogBox.ValidationErrors;
+            dialogBox.ResultSelected += window.Close;
             bool? _ = window.ShowDialog();
-            dialogWindow.ResultSelected -= window.Close;
-            return (dialogWindow.SelectedResult, dialogWindow.GetData());
+            dialogBox.ResultSelected -= window.Close;
+            return (dialogBox.SelectedResult, dialogBox.GetData());
         }
 
         private void Window_Deactivated(object sender, EventArgs e)

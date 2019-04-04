@@ -1,4 +1,6 @@
-﻿namespace MIDE.API.Components
+﻿using System.Collections.Generic;
+
+namespace MIDE.API.Components
 {
     /// <summary>
     /// Displays text information for user
@@ -15,5 +17,9 @@
         public override bool GetData() => true;
 
         protected override void Validate() { }
+        protected override GridLayout GenerateGrid(string id, IEnumerable<DialogButton> buttons)
+        {
+            return GetGridButtonsCentered(id, buttons);
+        }
     }
 }

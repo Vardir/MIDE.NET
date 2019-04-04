@@ -1,4 +1,5 @@
 ﻿using MIDE.API.Measurements;
+using System.Collections.Generic;
 
 namespace MIDE.API.Components
 {
@@ -34,6 +35,10 @@ namespace MIDE.API.Components
                 return;
             if (string.IsNullOrWhiteSpace(textBox.Text))
                 ValidationErrors.Add("Text is empty!");
+        }
+        protected override GridLayout GenerateGrid(string id, IEnumerable<DialogButton> buttons)
+        {
+            return GetGridButtonsCentered(id, buttons);
         }
     }
 }

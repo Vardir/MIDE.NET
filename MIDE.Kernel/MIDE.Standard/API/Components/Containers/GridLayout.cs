@@ -65,7 +65,7 @@ namespace MIDE.API.Components
             Children = new ObservableCollection<GridCell>();
         }
 
-        public void AddChild(LayoutComponent component, int row, int column)
+        public void AddChild(LayoutComponent component, int row, int column, int rowSpan = 1, int colSpan = 1)
         {
             if (IsSealed)
                 throw new InvalidOperationException("Can not add any child elements into a sealed control");
@@ -73,10 +73,20 @@ namespace MIDE.API.Components
                 throw new IndexOutOfRangeException("Row index is out of range");
             if (Columns.OutOfRange(column))
                 throw new IndexOutOfRangeException("Column index is out of range");
+            if (rowSpan < 1)
+                throw new ArgumentException("Row span can not be lower than 1");
+            if (colSpan < 1)
+                throw new ArgumentException("Column span can not be loser than 1");
 
             int index = Children.FirstIndexWith(cell => cell.Row == row && cell.Column == column);
             if (index == -1)
-                Children.Add(new GridCell(component, row, column));
+            {
+                Children.Add(new GridCell(component, row, column)
+                {
+                    RowSpan = rowSpan,
+                    ColumnSpan = colSpan
+                });
+            }
             else
                 Children[index].Component = component;
         }
@@ -182,8 +192,10 @@ namespace MIDE.API.Components
     {
         private int row;
         private int column;
+        private int rowSpan;
+        private int columnSpan;
         private LayoutComponent component;
-
+        
         public int Row
         {
             get => row;
@@ -204,6 +216,28 @@ namespace MIDE.API.Components
                     return;
                 column = value;
                 OnPropertyChanged(nameof(Column));
+            }
+        }
+        public int RowSpan
+        {
+            get => rowSpan;
+            set
+            {
+                if (value == rowSpan)
+                    return;
+                rowSpan = value > 0 ? value : 1;
+                OnPropertyChanged(nameof(RowSpan));
+            }
+        }
+        public int ColumnSpan
+        {
+            get => columnSpan;
+            set
+            {
+                if (value == columnSpan)
+                    return;
+                columnSpan = value > 0 ? value : 1;
+                OnPropertyChanged(nameof(ColumnSpan));
             }
         }
         public LayoutComponent Component
