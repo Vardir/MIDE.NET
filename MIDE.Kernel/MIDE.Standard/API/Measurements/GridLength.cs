@@ -111,6 +111,8 @@ namespace MIDE.API.Measurements
         {
             return left.Type == right.Type && left.Value > right.Value;
         }
+        public static implicit operator GridLength(double value) => new GridLength(value);
+        public static implicit operator GridLength(string value) => new GridLength(value);
 
         /// <summary>
         /// Parses the given string and returns the parsed value

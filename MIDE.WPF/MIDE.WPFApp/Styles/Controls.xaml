@@ -207,6 +207,27 @@
             </it:Interaction.Behaviors>
         </TreeView>
     </DataTemplate>
+    <DataTemplate DataType="{x:Type api:ListBox}">
+        <ListBox ItemsSource="{Binding Items}"
+                 Width="{Binding Width}" Height="{Binding Height}"
+                 MaxHeight="{Binding MaxHeight}" MaxWidth="{Binding MaxWidth}"
+                 MinHeight="{Binding MinHeight}" MinWidth="{Binding MinWidth}"
+                 Margin="{Binding Margin, Converter={c:MeasurementsConverter}}"
+                 Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
+                 Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
+                 VerticalAlignment="{Binding VerticalAlignment, Converter={c:AlignmentConverter}}"
+                 HorizontalAlignment="{Binding HorizontalAlignment, Converter={c:AlignmentConverter}}"
+                 IsEnabled="{Binding IsEnabled}">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="{x:Type ListBoxItem}">
+                    <Setter Property="IsSelected" Value="{Binding IsSelected}"/>
+                </Style>
+            </ListBox.ItemContainerStyle>
+        </ListBox>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type api:ListBoxItem}">
+        <ListBoxItem />
+    </DataTemplate>
     <DataTemplate DataType="{x:Type api:ActionTextBox}">
         <Border BorderThickness="1" BorderBrush="{DynamicResource Textbox_Border_Brush}"
                 Height="{Binding Height}" Width="{Binding Width}"

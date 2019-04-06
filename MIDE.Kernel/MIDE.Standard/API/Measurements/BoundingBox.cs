@@ -106,5 +106,8 @@ namespace MIDE.API.Measurements
             }
             return (true, result);
         }
+
+        public static implicit operator BoundingBox(double all)   => new BoundingBox(all);
+        public static implicit operator BoundingBox(string value) => new BoundingBox(value);
     }
 }

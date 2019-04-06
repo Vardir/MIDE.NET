@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
+using MIDE.Helpers;
 using MIDE.API.Measurements;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace MIDE.API.Components
 {
@@ -11,23 +11,23 @@ namespace MIDE.API.Components
     /// </summary>
     public abstract class BaseDialogBox : GridLayout
     {
+        private readonly HashSet<DialogResult> validationIgnoredResults;
+
+        protected readonly GridLayout body;
+
         public DialogResult SelectedResult { get; set; }
         public string Title { get; }
-        public DialogResult[] Results { get; private set; }
-        public LayoutContainer DialogButtons { get; private set; }
-        public ObservableCollection<string> ValidationErrors { get; }
+        public abstract IEnumerable<DialogResult> Results { get; }
 
         public event Action ResultSelected;
 
         public BaseDialogBox(string title) : base("dialog-box")
         {
-            MinWidth = 300;
-            MinHeight = 200;
-            MaxWidth = 1024;
-            MaxHeight = 1024;
-
             Title = title;
-            ValidationErrors = new ObservableCollection<string>();
+            validationIgnoredResults = new HashSet<DialogResult>();
+
+            body = new GridLayout("body");
+            InitializeComponents();
         }
 
         /// <summary>
@@ -35,23 +35,47 @@ namespace MIDE.API.Components
         /// </summary>
         public void ValidateAndAccept()
         {
-            Validate();
-            if (ValidationErrors.Count == 0)
+            if (SelectedResult == DialogResult.None)
+                return;
+            bool close = true;
+            if(!validationIgnoredResults.Contains(SelectedResult))
+                close = Validate();
+            if (close)
             {
                 ResultSelected?.Invoke();
             }
         }
 
-        protected abstract void Validate();
-        protected abstract GridLayout GenerateGrid(string id, IEnumerable<DialogButton> buttons);
+        protected abstract bool Validate();
+        protected abstract GridLayout GenerateButtonsGrid(string id, IEnumerable<DialogButton> buttons);
+        protected abstract IEnumerable<DialogResult> GetValidationIgnoredResults();
 
-        protected void SetDialogResults(params DialogResult[] dialogResults)
+        protected override void InitializeComponents()
         {
-            List<DialogResult> results = new List<DialogResult>(dialogResults.Length);
-            List<DialogButton> buttons = new List<DialogButton>(dialogResults.Length);
-            for (int i = 0; i < dialogResults.Length; i++)
+            MinWidth = 300;
+            MinHeight = 200;
+            MaxWidth = 640;
+            MaxHeight = 640;
+            VerticalAlignment = VerticalAlignment.Stretch;
+            HorizontalAlignment = HorizontalAlignment.Stretch;
+
+            RowMargin = 10;
+            Rows.Add(new GridRow("*"));
+            Rows.Add(new GridRow("auto"));
+            AddChild(body, 0, 0);
+
+            SetDialogResults(Results);
+            validationIgnoredResults.AddRange(GetValidationIgnoredResults());
+            IsSealed = true;
+        }
+
+        private void SetDialogResults(IEnumerable<DialogResult> dialogResults)
+        {
+            int count = dialogResults.Count();
+            List<DialogResult> results = new List<DialogResult>(count);
+            List<DialogButton> buttons = new List<DialogButton>(count);
+            foreach (var result in dialogResults)
             {
-                DialogResult result = dialogResults[i];
                 if (results.Contains(result))
                     continue;
                 buttons.Add(new DialogButton(this, result)
@@ -61,14 +85,14 @@ namespace MIDE.API.Components
                     HorizontalAlignment = HorizontalAlignment.Center
                 });
                 results.Add(result);
-            }
-            Results = results.ToArray();
-            DialogButtons = GenerateGrid("buttons", buttons);
+            }            
+            AddChild(GenerateButtonsGrid("buttons", buttons), 1, 0);
         }
 
         protected static GridLayout GetGridButtonsCentered(string id, IEnumerable<DialogButton> buttons)
         {
             GridLayout grid = new GridLayout(id);
+            grid.ColumnMargin = new GridLength(10);
             for (int i = 0; i < buttons.Count(); i++)
             {
                 grid.Columns.Add(new GridColumn(new GridLength("*")));
@@ -91,11 +115,6 @@ namespace MIDE.API.Components
         /// </summary>
         /// <returns></returns>
         public abstract TData GetData();
-
-        /// <summary>
-        /// Validates dialog box data model and adds validation errors to collection
-        /// </summary>
-        protected abstract override void Validate();
     }
 
     public enum DialogResult

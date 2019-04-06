@@ -38,6 +38,13 @@ namespace MIDE.WPFApp.Initializers
             context.AddItem("file", new MenuButton("new", -99));
             context.AddItem("file/new", new MenuButton("file", -99));
             context.AddItem("file/new", new MenuButton("folder", -98));
+            context.AddItem("file/new", new MenuButton("project", -97)
+            {
+                PressCommand = new RelayCommand(() =>
+                {
+                    var res = DialogWindow.Show(new CreateProjectDialogBox("Create project..."));
+                })
+            });
 #endif
             context.AddItem(new MenuButton("edit", -98));
             context.AddItem(new MenuButton("view", -97));

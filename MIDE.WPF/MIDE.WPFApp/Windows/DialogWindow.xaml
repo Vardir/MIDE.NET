@@ -6,15 +6,14 @@
         xmlns:local="clr-namespace:MIDE.WPFApp.Windows"
         mc:Ignorable="d"
         WindowStyle="None"
-        MinWidth="300"
-        MaxHeight="200"
+        MaxHeight="640" Width="640"
         Style="{StaticResource DWindow}"
         AllowsTransparency="True"
         WindowStartupLocation="CenterScreen"
         Activated="Window_Activated"
         Deactivated="Window_Deactivated"
         SizeToContent="WidthAndHeight" ResizeMode="CanResize"
-        Height="180" Width="290">
+        d:DesignWidth="290" >
     <!--Window Chrome-based style-->
     <!--Allows for resizing and dragging the window without standard windows's borders and header-->
     <WindowChrome.WindowChrome>
@@ -24,18 +23,20 @@
                       ResizeBorderThickness="0"/>
     </WindowChrome.WindowChrome>
 
-    <Grid Margin="5 10 5 5">
+    <ContentPresenter x:Name="box" Margin="5 10 5 5"/>
+    <!--<Grid Margin="5 10 5 5" Name="grid">
         <Grid.RowDefinitions>
-            <RowDefinition/>
+            <RowDefinition Height="*"/>
             <RowDefinition Height="15"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
-        <ContentControl Name="body"
-                        VerticalAlignment="Center"/>
+        <ContentPresenter Name="body" Content="{Binding}"
+                          VerticalAlignment="Stretch"/>
         <ItemsControl Grid.Row="2" Margin="0 0 0 10"
-                      Name="validationErrors">
+                      Name="validationErrors"
+                      ItemsSource="{Binding ValidationErrors}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel/>
@@ -54,7 +55,7 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
 
-        <ContentControl Name="buttons"
-                        Grid.Row="3"/>
-    </Grid>
+        <ContentPresenter Name="buttons" Grid.Row="3"
+                          Content="{Binding DialogButtons}"/>
+    </Grid>-->
 </Window>

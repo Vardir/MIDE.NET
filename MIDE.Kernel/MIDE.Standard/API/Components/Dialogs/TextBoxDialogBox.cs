@@ -1,44 +1,51 @@
-﻿using MIDE.API.Measurements;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace MIDE.API.Components
 {
     /// <summary>
     /// Basic dialog box with text input and simple validation if user didn't entered anything
     /// </summary>
-    public class TextBoxDialogBox : BaseDialogBox<string>
+    public sealed class TextBoxDialogBox : BaseDialogBox<string>
     {
-        private readonly TextBox textBox;
+        private string message;
+        private TextBox textBox;
+        private DialogResult[] results           = new[] { DialogResult.Accept, DialogResult.Cancel };
+        private DialogResult[] validationIgnored = new[] { DialogResult.Cancel };
+
+        public override IEnumerable<DialogResult> Results => results;
 
         public TextBoxDialogBox(string title, string message) : base(title)
         {
-            Columns.Add(new GridColumn(new GridLength("auto")));
-            Columns.Add(new GridColumn(new GridLength("10")));
-            Columns.Add(new GridColumn(new GridLength("*")));
-            Rows.Add(new GridRow(new GridLength("auto")));
-
-            AddChild(new Label("message", message), 0, 0);
-            textBox = new TextBox("value");
-            textBox.MinWidth = 150;
-            textBox.MaxWidth = 300;
-            AddChild(textBox, 0, 2);
-
-            SetDialogResults(DialogResult.Accept, DialogResult.Cancel);
+            this.message = message;
+            InitializeComponents();
         }
 
         public override string GetData() => textBox.Text;
 
-        protected override void Validate()
+        protected override void InitializeComponents()
         {
-            ValidationErrors.Clear();
-            if (SelectedResult == DialogResult.Cancel)
-                return;
-            if (string.IsNullOrWhiteSpace(textBox.Text))
-                ValidationErrors.Add("Text is empty!");
+            body.ColumnMargin = 10;
+            body.Columns.Add(new GridColumn("auto"));
+            body.Columns.Add(new GridColumn("*"));
+            body.Rows.Add(new GridRow("auto"));
+
+            body.AddChild(new Label("message", message));
+            textBox = new TextBox("value");
+            textBox.MinWidth = 150;
+            textBox.MaxWidth = 300;
+            body.AddChild(textBox, 0, 2);
         }
-        protected override GridLayout GenerateGrid(string id, IEnumerable<DialogButton> buttons)
+
+        protected override bool Validate()
+        {
+            if (string.IsNullOrWhiteSpace(textBox.Text))
+                return false;
+            return true;
+        }
+        protected override GridLayout GenerateButtonsGrid(string id, IEnumerable<DialogButton> buttons)
         {
             return GetGridButtonsCentered(id, buttons);
         }
+        protected override IEnumerable<DialogResult> GetValidationIgnoredResults() => validationIgnored;
     }
 }

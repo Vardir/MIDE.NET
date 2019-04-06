@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using MIDE.API.Measurements;
 
 namespace MIDE.API.Components
@@ -77,6 +78,7 @@ namespace MIDE.API.Components
                 if (width == value)
                     return;
                 width = value;
+                UpdateWidth();
                 OnPropertyChanged(nameof(Width));
             }
         }
@@ -88,6 +90,7 @@ namespace MIDE.API.Components
                 if (height == value)
                     return;
                 height = value;
+                UpdateHeight();
                 OnPropertyChanged(nameof(Height));
             }
         }
@@ -99,6 +102,8 @@ namespace MIDE.API.Components
                 if (value == minWidth)
                     return;
                 minWidth = value;
+                UpdateMins();
+                UpdateWidth();
                 OnPropertyChanged(nameof(MinWidth));
             }
         }
@@ -110,6 +115,8 @@ namespace MIDE.API.Components
                 if (value == minHeight)
                     return;
                 minHeight = value;
+                UpdateMins();
+                UpdateHeight();
                 OnPropertyChanged(nameof(MinHeight));
             }
         }
@@ -121,6 +128,8 @@ namespace MIDE.API.Components
                 if (value == maxHeight)
                     return;
                 maxHeight = value;
+                UpdateMins();
+                UpdateHeight();
                 OnPropertyChanged(nameof(MaxHeight));
             }
         }
@@ -132,6 +141,8 @@ namespace MIDE.API.Components
                 if (value == maxWidth)
                     return;
                 maxWidth = value;
+                UpdateMins();
+                UpdateWidth();
                 OnPropertyChanged(nameof(MaxWidth));
             }
         }
@@ -202,5 +213,30 @@ namespace MIDE.API.Components
         protected abstract LayoutComponent CloneInternal(string id);
 
         protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void UpdateMins()
+        {
+            if (minWidth > maxWidth)
+                minWidth = maxWidth;
+            if (minHeight > maxHeight)
+                minHeight = maxHeight;
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void UpdateWidth()
+        {
+            if (width < minWidth)
+                width = minWidth;
+            if (width > maxWidth)
+                width = minWidth;
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void UpdateHeight()
+        {
+            if (height < minHeight)
+                height = minHeight;
+            if (height > maxHeight)
+                height = maxHeight;
+        }
     }
 }
