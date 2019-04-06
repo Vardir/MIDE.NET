@@ -5,6 +5,7 @@ using MIDE.Application;
 using MIDE.API.Commands;
 using MIDE.API.Components;
 using MIDE.Application.Initializers;
+using MIDE.API.Validations;
 
 namespace MIDE.WPFApp.Initializers
 {
@@ -70,7 +71,10 @@ namespace MIDE.WPFApp.Initializers
             {
                 PressCommand = new RelayCommand(() =>
                 {
-                    var res = DialogWindow.Show(new TextBoxDialogBox("Write your answer", "Your name:"));
+                    var box = new TextBoxDialogBox("Write your answer", "Your name:");
+                    var validation = new DefaultStringPropertyValidation(false, false, "^[a-zA-Zа-яА-Я]*$");
+                    validation.AttachTo(box.Input);
+                    var res = DialogWindow.Show(box);
                     if (res.result == DialogResult.Accept)
                         DialogWindow.Show(new MessageDialogBox("Answer", $"Your answer: {res.value}"));
                 })

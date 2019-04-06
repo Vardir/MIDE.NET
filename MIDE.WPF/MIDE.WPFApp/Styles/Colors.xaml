@@ -70,6 +70,7 @@
 
     <Color x:Key="Textbox_Border">#6A6A75</Color>
     <Color x:Key="Textbox_Background">#333337</Color>
+    <Color x:Key="Textbox_BackgroundInvalidated">#F13132</Color>
     <Color x:Key="Textbox_BackgroundHovered">#3F3F46</Color>
     <Color x:Key="Textbox_Foreground">#FFFFFF</Color>
     <Color x:Key="Textbox_ForegroundSelected">#FFFFFF</Color>

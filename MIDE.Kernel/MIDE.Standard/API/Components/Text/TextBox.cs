@@ -1,4 +1,6 @@
-﻿using MIDE.API.Validations;
+﻿using System.Linq;
+using MIDE.API.Validations;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace MIDE.API.Components
@@ -6,7 +8,8 @@ namespace MIDE.API.Components
     public class TextBox : TextComponent, IValidate
     {
         private bool isReadonly;
-        
+
+        public bool HasErrors => Validations.Any(v => v.HasErrors);
         public bool IsReadonly
         {
             get => isReadonly;
@@ -30,6 +33,7 @@ namespace MIDE.API.Components
             }
         }
         public string Default { get; }
+        public IEnumerable<string> Errors => GetErrors();
         public ObservableCollection<Validation> Validations { get; }
 
         public TextBox(string id, string defaultValue = null) : base(id)
@@ -44,6 +48,7 @@ namespace MIDE.API.Components
                 return;
             Text = Default;
         }
+        public void NotifyError() => OnPropertyChanged(nameof(HasErrors));
 
         protected override LayoutComponent CloneInternal(string id)
         {
@@ -54,5 +59,19 @@ namespace MIDE.API.Components
         }
 
         protected virtual TextBox Create(string id) => new TextBox(id, Default);
+
+        private IEnumerable<string> GetErrors()
+        {
+            foreach (var validation in Validations)
+            {
+                if (validation.HasErrors)
+                {
+                    foreach (var entry in validation.GetErrors(null))
+                    {
+                        yield return entry.ToString();
+                    }
+                }
+            }
+        }
     }
 }

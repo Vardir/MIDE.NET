@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using MIDE.Helpers;
 using System.Collections.Generic;
 
@@ -14,8 +13,6 @@ namespace MIDE.API.Components
 
         public DialogResult SelectedResult { get; set; }
         public string Title { get; }
-        public abstract IEnumerable<DialogResult> Results { get; }
-        public DialogButton[] DialogButtons { get; private set; }
 
         public event Action ResultSelected;
 
@@ -23,7 +20,6 @@ namespace MIDE.API.Components
         {
             Title = title;
             validationIgnoredResults = new HashSet<DialogResult>();
-            SetDialogResults(Results);
             validationIgnoredResults.AddRange(GetValidationIgnoredResults());
         }
 
@@ -45,21 +41,6 @@ namespace MIDE.API.Components
 
         protected abstract bool Validate();
         protected abstract IEnumerable<DialogResult> GetValidationIgnoredResults();
-
-        private void SetDialogResults(IEnumerable<DialogResult> dialogResults)
-        {
-            int count = dialogResults.Count();
-            List<DialogResult> results = new List<DialogResult>(count);
-            List<DialogButton> buttons = new List<DialogButton>(count);
-            foreach (var result in dialogResults)
-            {
-                if (results.Contains(result))
-                    continue;
-                buttons.Add(new DialogButton(this, result));
-                results.Add(result);
-            }
-            DialogButtons = buttons.ToArray();
-        }
     }
 
     /// <summary>

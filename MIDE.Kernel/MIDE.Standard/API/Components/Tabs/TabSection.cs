@@ -81,6 +81,7 @@ namespace MIDE.API.Components
                 throw new ArgumentException($"Argument was expected to be a Tab, but {component.GetType()} given");
             
             Tabs.Add(tab);
+            SelectedIndex = Tabs.Count - 1;
         }
         protected override void RemoveChild_Impl(string id)
         {

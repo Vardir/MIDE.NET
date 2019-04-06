@@ -8,19 +8,22 @@ namespace MIDE.API.Components
     /// </summary>
     public sealed class TextBoxDialogBox : BaseDialogBox<string>
     {
-        private DialogResult[] results           = new[] { DialogResult.Accept, DialogResult.Cancel };
         private DialogResult[] validationIgnored = new[] { DialogResult.Cancel };
 
         public string Message { get; }
         public TextBox Input { get; }
-        public override IEnumerable<DialogResult> Results => results;
+        public DialogButton AcceptButton { get; }
+        public DialogButton CancelButton { get; }
 
         public TextBoxDialogBox(string title, string message, string defaultValue = null) : base(title)
         {
             Message = message;
+            Input = new TextBox("input", defaultValue);
+            AcceptButton = new DialogButton(this, DialogResult.Accept);
+            CancelButton = new DialogButton(this, DialogResult.Cancel);
         }
 
-        public override string GetData() => Message;
+        public override string GetData() => Input.Text;
 
         protected override bool Validate() => Input.Validations.All(v => !v.HasErrors);
         protected override IEnumerable<DialogResult> GetValidationIgnoredResults() => validationIgnored;

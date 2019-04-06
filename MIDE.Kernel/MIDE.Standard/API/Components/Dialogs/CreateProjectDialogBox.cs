@@ -5,8 +5,7 @@ using System.Collections.Generic;
 namespace MIDE.API.Components
 {
     public sealed class CreateProjectDialogBox : BaseDialogBox<(string template, string path)>
-    {        
-        private DialogResult[] results = new[] { DialogResult.Accept, DialogResult.Cancel };
+    {
         private DialogResult[] validationIgnored = new[] { DialogResult.Cancel };
 
         public Button BrowseButton { get; private set; }
@@ -16,9 +15,9 @@ namespace MIDE.API.Components
         public TextBox ProjectName { get; private set; }
         public TextBox ProjectPath { get; private set; }
         public ListBox TemplatesList { get; private set; }
-
-        public override IEnumerable<DialogResult> Results => results;
-
+        public DialogButton AcceptButton { get; private set; }
+        public DialogButton CancelButton { get; private set; }
+        
         public CreateProjectDialogBox(string title) : base(title)
         {
             InitializeComponents();
@@ -78,6 +77,8 @@ namespace MIDE.API.Components
             TemplatesList    = new ListBox("templates-list");
             ProjectNameLabel = new Label("project-name-label", "Project name:");
             ProjectPathLabel = new Label("project-path-label", "Project location:");
+            AcceptButton     = new DialogButton(this, DialogResult.Accept);
+            CancelButton     = new DialogButton(this, DialogResult.Cancel);
 
             var nameValidation = new DefaultStringPropertyValidation(false, false, @"^[a-zA-Z0-9_]+[a-zA-Z0-9\.]*$");
             var pathValidation1 = new DefaultStringPropertyValidation(false, false);

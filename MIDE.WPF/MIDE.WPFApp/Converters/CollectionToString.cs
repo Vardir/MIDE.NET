@@ -1,22 +1,19 @@
 ﻿using System;
+using System.Collections;
 using MIDE.WPFApp.Helpers;
 using System.Globalization;
-using MIDE.API.Measurements;
 
 namespace MIDE.WPFApp.ValueConverters
 {
-    public class MeasurementsConverter : BaseValueConverter<MeasurementsConverter>
+    public class CollectionToString : BaseValueConverter<CollectionToString>
     {
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            switch (value)
+            if (value is IEnumerable collection)
             {
-                case double d: return d;
-                case GridLength len: return len.ToWindows();
-                case BoundingBox box: return box.ToWindows();
-                default:
-                    throw new InvalidCastException();
+                return string.Join("\n", collection.Transform(obj => obj.ToString()));
             }
+            throw new ArgumentException("Not a collection value given");
         }
 
         public override object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

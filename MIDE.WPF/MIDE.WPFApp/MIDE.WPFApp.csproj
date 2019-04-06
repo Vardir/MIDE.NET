@@ -74,13 +74,9 @@
     </ApplicationDefinition>
     <Compile Include="Behavior\TreeViewMultipleSelectionBehavior.cs" />
     <Compile Include="Controls\ActionableContentPresenter.cs" />
-    <Compile Include="Controls\API\Grid.xaml.cs">
-      <DependentUpon>Grid.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\TestControl.xaml.cs">
       <DependentUpon>TestControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Converters\AlignmentConverter.cs" />
     <Compile Include="Converters\Base\BaseValueConverter.cs" />
     <Compile Include="Converters\Boolean\BooleanToHorizontalAlignment.cs" />
     <Compile Include="Converters\Boolean\BooleanToVisibility.cs" />
@@ -88,18 +84,17 @@
     <Compile Include="Converters\Boolean\IntegerToBoolean.cs" />
     <Compile Include="Converters\Boolean\InvertBoolean.cs" />
     <Compile Include="Converters\Boolean\NullableToBoolean.cs" />
+    <Compile Include="Converters\CollectionToString.cs" />
     <Compile Include="Converters\Visibility\BooleanVisibilityConverter.cs" />
     <Compile Include="Converters\Visibility\NullableToVisibility.cs" />
     <Compile Include="Converters\ColorConverter.cs" />
     <Compile Include="Converters\EnumToInteger.cs" />
     <Compile Include="Converters\GridIndexConverter.cs" />
-    <Compile Include="Converters\MeasurementsConverter.cs" />
-    <Compile Include="Converters\OrientationConverter.cs" />
     <Compile Include="Converters\RelayCommandConverter.cs" />
     <Compile Include="Converters\TabSectionExtractor.cs" />
     <Compile Include="Converters\Visibility\IntegerToVisibility.cs" />
     <Compile Include="Converters\Visibility\VisibilityConverter.cs" />
-    <Compile Include="Helpers\MeasurementsHelper.cs" />
+    <Compile Include="Helpers\CollectionHelpers.cs" />
     <Compile Include="Helpers\ResourceDictionaryHelpers.cs" />
     <Compile Include="Helpers\UIHelpers.cs" />
     <Compile Include="Initializers\TabSectionInitializer.cs" />
@@ -128,10 +123,6 @@
     <Compile Include="Windows\ViewModels\DialogWindowViewModel.cs" />
     <Compile Include="Windows\WindowResizer.cs" />
     <Compile Include="Windows\ViewModels\WindowViewModel.cs" />
-    <Page Include="Controls\API\Grid.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Styles\Shared.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

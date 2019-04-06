@@ -54,9 +54,8 @@
         <TabControl DataContext="{Binding Kernel.UIManager, 
                                   Converter={conv:TabSectionExtractor}, 
                                   ConverterParameter=browsers}"
+                    Style="{StaticResource TabSection}"
                     Grid.Row="2" Grid.RowSpan="3">
-            <!--<TabItem Header="Foo"/>
-            <TabItem Header="Bar"/>-->
         </TabControl>
         <GridSplitter Grid.Column="1" Grid.Row="2" Grid.RowSpan="3"
                       Width="2" ResizeDirection="Columns"
@@ -64,6 +63,7 @@
         <TabControl DataContext="{Binding Kernel.UIManager, 
                                   Converter={conv:TabSectionExtractor}, 
                                   ConverterParameter=editors}"
+                    Style="{StaticResource TabSection}"
                     Grid.Row="2" Grid.Column="2"
                     Name="EditorSection"/>
 
@@ -74,6 +74,7 @@
                                   Converter={conv:TabSectionExtractor}, 
                                   ConverterParameter=properties}"
                     Grid.Row="2" Grid.Column="4" Grid.RowSpan="3"
+                    Style="{StaticResource TabSection}"
                     Name="PropertyViewSection"/>
         <GridSplitter Grid.Column="2" Grid.Row="3"
                       Height="2" ResizeDirection="Rows"
@@ -84,6 +85,7 @@
                                   Converter={conv:TabSectionExtractor}, 
                                   ConverterParameter=loggers}"
                     Grid.Row="4" Grid.Column="2"
+                    Style="{StaticResource TabSection}"
                     Name="LogSection"/>
 
         <StatusBar Grid.Row="5" Grid.ColumnSpan="5"

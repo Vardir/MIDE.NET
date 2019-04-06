@@ -73,6 +73,7 @@
     
     <SolidColorBrush x:Key="Textbox_Border_Brush" Color="{DynamicResource Textbox_Border}" />
     <SolidColorBrush x:Key="Textbox_Background_Brush" Color="{DynamicResource Textbox_Background}" />
+    <SolidColorBrush x:Key="Textbox_BackgroundInvalidated_Brush" Color="{DynamicResource Textbox_BackgroundInvalidated}" />
     <SolidColorBrush x:Key="Textbox_BackgroundHovered_Brush" Color="{DynamicResource Textbox_BackgroundHovered}" />
     <SolidColorBrush x:Key="Textbox_Foreground_Brush" Color="{DynamicResource Textbox_Foreground}" />
     <SolidColorBrush x:Key="Textbox_ForegroundSelected_Brush" Color="{DynamicResource Textbox_ForegroundSelected}" />

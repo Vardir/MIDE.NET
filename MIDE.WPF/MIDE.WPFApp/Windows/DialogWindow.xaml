@@ -5,15 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MIDE.WPFApp.Windows"
         mc:Ignorable="d"
-        WindowStyle="None"
-        MaxHeight="640" Width="640"
+        WindowStyle="None" ShowInTaskbar="False"
+        MaxHeight="640" MaxWidth="640"
+        MinWidth="230" MinHeight="120"
         Style="{StaticResource DWindow}"
         AllowsTransparency="True"
         WindowStartupLocation="CenterScreen"
         Activated="Window_Activated"
         Deactivated="Window_Deactivated"
-        SizeToContent="WidthAndHeight" ResizeMode="CanResize"
-        d:DesignWidth="290" >
+        SizeToContent="WidthAndHeight" ResizeMode="CanResize">
     <!--Window Chrome-based style-->
     <!--Allows for resizing and dragging the window without standard windows's borders and header-->
     <WindowChrome.WindowChrome>
@@ -23,39 +23,11 @@
                       ResizeBorderThickness="0"/>
     </WindowChrome.WindowChrome>
 
-    <ContentPresenter x:Name="box" Margin="5 10 5 5"/>
-    <!--<Grid Margin="5 10 5 5" Name="grid">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="15"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-
-        <ContentPresenter Name="body" Content="{Binding}"
-                          VerticalAlignment="Stretch"/>
-        <ItemsControl Grid.Row="2" Margin="0 0 0 10"
-                      Name="validationErrors"
-                      ItemsSource="{Binding ValidationErrors}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemContainerStyle>
-                <Style>
-                    <Setter Property="Control.Margin" Value="0 3"/>
-                </Style>
-            </ItemsControl.ItemContainerStyle>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding}" FontSize="{StaticResource FontSizeRegular}"
-                               Foreground="{StaticResource Textbox_Foreground_Brush}"/>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-
-        <ContentPresenter Name="buttons" Grid.Row="3"
-                          Content="{Binding DialogButtons}"/>
-    </Grid>-->
+        
+        <ContentPresenter x:Name="box" Margin="5 10 5 5"/>
+    </Grid>
 </Window>

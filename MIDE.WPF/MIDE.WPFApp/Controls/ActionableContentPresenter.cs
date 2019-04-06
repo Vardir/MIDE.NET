@@ -3,7 +3,7 @@ using System.Windows.Controls;
 
 namespace MIDE.WPFApp.Controls
 {
-    public class ActionableContentPresenter : System.Windows.Controls.Grid
+    public class ActionableContentPresenter : Grid
     {
         protected ContentPresenter ChildPresenter
         {

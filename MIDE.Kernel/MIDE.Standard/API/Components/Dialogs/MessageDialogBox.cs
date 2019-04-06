@@ -7,15 +7,15 @@ namespace MIDE.API.Components
     /// </summary>
     public sealed class MessageDialogBox : BaseDialogBox<bool>
     {
-        private DialogResult[] results           = new[] { DialogResult.Ok };
         private DialogResult[] validationIgnored = new[] { DialogResult.Ok };
 
         public string Message { get; }
-        public override IEnumerable<DialogResult> Results => results;
+        public DialogButton OkButton { get; }
 
         public MessageDialogBox(string title, string message) : base(title)
         {
             Message = message;
+            OkButton = new DialogButton(this, DialogResult.Ok);
         }
 
         public override bool GetData() => true;

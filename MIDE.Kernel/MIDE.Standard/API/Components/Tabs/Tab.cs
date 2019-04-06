@@ -33,8 +33,8 @@ namespace MIDE.API.Components
         {
             AllowDuplicates = allowDuplicates;
             Header = FormatId();
-            TabToolbar.Parent = this;
             TabToolbar = toolbar ?? new Toolbar("toolbar");
+            TabToolbar.Parent = this;
             registeredComponents = new LinkedList<LayoutComponent>();
             registeredComponents.AddLast(TabToolbar);
         }

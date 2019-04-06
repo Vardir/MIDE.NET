@@ -36,11 +36,11 @@ namespace MIDE.API.Components
 
         public FileExplorer(string id) : base(id)
         {
-            IsSealed = true;
             _pushHistory = true;
             BrowseHistory = new ObservableCollection<string>();
             
             InitializeComponents();
+            IsSealed = true;
         }
 
         public void Show(string path)

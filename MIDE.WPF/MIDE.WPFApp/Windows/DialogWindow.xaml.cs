@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Windows;
-using MIDE.WPFApp.Helpers;
 using MIDE.API.Components;
-using System.Windows.Controls;
 
 namespace MIDE.WPFApp
 {
@@ -26,10 +24,6 @@ namespace MIDE.WPFApp
             window.ViewModel.Title = dialogBox.Title;
             window.box.Content = dialogBox;
             window.box.DataContext = dialogBox;
-            //window.grid.DataContext = dialogBox;
-            //window.body.Content = dialogBox;
-            //window.buttons.Content = dialogBox.DialogButtons;
-            //window.validationErrors.ItemsSource = dialogBox.ValidationErrors;
             dialogBox.ResultSelected += window.Close;
             bool? _ = window.ShowDialog();
             dialogBox.ResultSelected -= window.Close;

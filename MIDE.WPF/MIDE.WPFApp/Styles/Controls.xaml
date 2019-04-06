@@ -77,108 +77,90 @@
         
     <!--API Controls-->
     <DataTemplate DataType="{x:Type api:Button}">
-        <Button Margin="{Binding Margin, Converter={c:MeasurementsConverter}}" 
-                Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
-                Height="{Binding Height}" Width="{Binding Width}"
-                MinWidth="{Binding MinWidth}" MaxWidth="{Binding MaxWidth}"
-                MinHeight="{Binding MinHeight}" MaxHeight="{Binding MaxHeight}"
-                Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
-                VerticalAlignment="{Binding VerticalAlignment, Converter={c:AlignmentConverter}}"
-                HorizontalAlignment="{Binding HorizontalAlignment, Converter={c:AlignmentConverter}}"
+        <Button Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
                 IsEnabled="{Binding IsEnabled}"
                 Command="{Binding PressCommand, Converter={c:RelayCommandConverter}}"
-                Style="{StaticResource ActionButton}"/>
+                Style="{StaticResource ActionButton}"
+                Padding="40 8"/>
     </DataTemplate>
     <DataTemplate DataType="{x:Type api:CheckBox}">
-        <CheckBox Margin="{Binding Margin, Converter={c:MeasurementsConverter}}" 
-                  Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
-                  Height="{Binding Height}" Width="{Binding Width}"
-                  MinWidth="{Binding MinWidth}" MaxWidth="{Binding MaxWidth}"
-                  MinHeight="{Binding MinHeight}" MaxHeight="{Binding MaxHeight}"
-                  Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
-                  VerticalAlignment="{Binding VerticalAlignment, Converter={c:AlignmentConverter}}"
-                  HorizontalAlignment="{Binding HorizontalAlignment, Converter={c:AlignmentConverter}}"
+        <CheckBox Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
                   IsChecked="{Binding IsChecked}"
                   IsEnabled="{Binding IsEnabled}"
                   Content="{Binding Caption}"/>
     </DataTemplate>
-    <DataTemplate DataType="{x:Type api:GridLayout}">
-        <ctr:Grid Layout="{Binding}"></ctr:Grid>
-    </DataTemplate>
     <DataTemplate DataType="{x:Type api:Label}">
-        <TextBlock Margin="{Binding Margin, Converter={c:MeasurementsConverter}}" 
-                   Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
-                   Height="{Binding Height}" Width="{Binding Width}"
-                   MinWidth="{Binding MinWidth}" MaxWidth="{Binding MaxWidth}"
-                   MinHeight="{Binding MinHeight}" MaxHeight="{Binding MaxHeight}"
-                   Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
-                   VerticalAlignment="{Binding VerticalAlignment, Converter={c:AlignmentConverter}}"
-                   HorizontalAlignment="{Binding HorizontalAlignment, Converter={c:AlignmentConverter}}"
+        <TextBlock Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
                    IsEnabled="{Binding IsEnabled}"
                    Text="{Binding Text}"
                    Style="{StaticResource DefaultTextBlock}"/>
     </DataTemplate>
     <DataTemplate DataType="{x:Type api:RadioButton}">
-        <RadioButton Margin="{Binding Margin, Converter={c:MeasurementsConverter}}" 
-                     Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
-                     Height="{Binding Height}" Width="{Binding Width}"
-                     MinWidth="{Binding MinWidth}" MaxWidth="{Binding MaxWidth}"
-                     MinHeight="{Binding MinHeight}" MaxHeight="{Binding MaxHeight}"
-                     Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
-                     VerticalAlignment="{Binding VerticalAlignment, Converter={c:AlignmentConverter}}"
-                     HorizontalAlignment="{Binding HorizontalAlignment, Converter={c:AlignmentConverter}}"
+        <RadioButton Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
                      IsEnabled="{Binding IsEnabled}"
                      IsChecked="{Binding IsChecked}"
                      Content="{Binding Caption}"/>
     </DataTemplate>
     <DataTemplate DataType="{x:Type api:TextBox}">
-        <TextBox Margin="{Binding Margin, Converter={c:MeasurementsConverter}}" 
-                 Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
-                 Height="{Binding Height}" Width="{Binding Width}"
-                 MinWidth="{Binding MinWidth}" MaxWidth="{Binding MaxWidth}"
-                 MinHeight="{Binding MinHeight}" MaxHeight="{Binding MaxHeight}"
-                 Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
-                 VerticalAlignment="{Binding VerticalAlignment, Converter={c:AlignmentConverter}}"
-                 HorizontalAlignment="{Binding HorizontalAlignment, Converter={c:AlignmentConverter}}"
+        <TextBox Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
                  IsEnabled="{Binding IsEnabled}"
                  IsReadOnly="{Binding IsReadonly}"
-                 Text="{Binding Text}"/>
+                 DataContext="{Binding}"
+                 VerticalContentAlignment="Center"
+                 Text="{Binding Text, Delay=500, UpdateSourceTrigger=PropertyChanged}">
+            <TextBox.Style>
+                <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding HasErrors}" Value="True">
+                            <Setter Property="ToolTip"
+                                    Value="{Binding DataContext.Errors, RelativeSource={RelativeSource Self},
+                                                    Converter={c:CollectionToString}}" />
+                            <Setter Property="Background" Value="{StaticResource Textbox_BackgroundInvalidated_Brush}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBox.Style>
+        </TextBox>
     </DataTemplate>
-    <DataTemplate DataType="{x:Type api:Panel}">
-        <ItemsControl ItemsSource="{Binding Children}"
-                      Margin="{Binding Margin, Converter={c:MeasurementsConverter}}" 
-                      Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
-                      Height="{Binding Height}" Width="{Binding Width}"
-                      MinWidth="{Binding MinWidth}" MaxWidth="{Binding MaxWidth}"
-                      MinHeight="{Binding MinHeight}" MaxHeight="{Binding MaxHeight}"
-                      Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
-                      VerticalAlignment="{Binding VerticalAlignment, Converter={c:AlignmentConverter}}"
-                      HorizontalAlignment="{Binding HorizontalAlignment, Converter={c:AlignmentConverter}}"
-                      IsEnabled="{Binding IsEnabled}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <Grid/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-        </ItemsControl>
-    </DataTemplate>
-    <DataTemplate DataType="{x:Type api:StackPanel}">
-        <ItemsControl ItemsSource="{Binding Children}"
-                      Margin="{Binding Margin, Converter={c:MeasurementsConverter}}" 
-                      Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
-                      Height="{Binding Height}" Width="{Binding Width}"
-                      MinWidth="{Binding MinWidth}" MaxWidth="{Binding MaxWidth}"
-                      MinHeight="{Binding MinHeight}" MaxHeight="{Binding MaxHeight}"
-                      Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
-                      VerticalAlignment="{Binding VerticalAlignment, Converter={c:AlignmentConverter}}"
-                      HorizontalAlignment="{Binding HorizontalAlignment, Converter={c:AlignmentConverter}}"
-                      IsEnabled="{Binding IsEnabled}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="{Binding Orientation, Converter={c:OrientationConverter}}"/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-        </ItemsControl>
+    <DataTemplate DataType="{x:Type api:ActionTextBox}">
+        <Border BorderThickness="1" 
+                BorderBrush="{DynamicResource Textbox_Border_Brush}"
+                IsEnabled="{Binding IsEnabled}"
+                Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
+                Background="{DynamicResource Textbox_Background_Brush}"
+                Name="border">
+            <Grid Name="grid">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBox Text="{Binding Text, Delay=500, UpdateSourceTrigger=PropertyChanged}"
+                         BorderThickness="0"
+                         Background="Transparent"
+                         VerticalContentAlignment="Center"
+                         IsReadOnly="{Binding IsReadonly}">
+                    <TextBox.Style>
+                        <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding HasErrors}" Value="True">
+                                    <Setter Property="ToolTip"
+                                            Value="{Binding DataContext.Errors, RelativeSource={RelativeSource Self},
+                                                            Converter={c:CollectionToString}}" />
+                                    <Setter Property="TextBox.Background"
+                                            Value="{StaticResource Textbox_BackgroundInvalidated_Brush}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
+                <ContentPresenter Content="{Binding ActionButton}"
+                                  Grid.Column="1" Margin="0"/>
+            </Grid>
+        </Border>
     </DataTemplate>
     <DataTemplate DataType="{x:Type api:TreeView}">
         <TreeView ItemsSource="{Binding Items}">
@@ -209,14 +191,7 @@
     </DataTemplate>
     <DataTemplate DataType="{x:Type api:ListBox}">
         <ListBox ItemsSource="{Binding Items}"
-                 Width="{Binding Width}" Height="{Binding Height}"
-                 MaxHeight="{Binding MaxHeight}" MaxWidth="{Binding MaxWidth}"
-                 MinHeight="{Binding MinHeight}" MinWidth="{Binding MinWidth}"
-                 Margin="{Binding Margin, Converter={c:MeasurementsConverter}}"
-                 Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
                  Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
-                 VerticalAlignment="{Binding VerticalAlignment, Converter={c:AlignmentConverter}}"
-                 HorizontalAlignment="{Binding HorizontalAlignment, Converter={c:AlignmentConverter}}"
                  IsEnabled="{Binding IsEnabled}">
             <ListBox.ItemContainerStyle>
                 <Style TargetType="{x:Type ListBoxItem}">
@@ -228,50 +203,6 @@
     <DataTemplate DataType="{x:Type api:ListBoxItem}">
         <ListBoxItem />
     </DataTemplate>
-    <DataTemplate DataType="{x:Type api:ActionTextBox}">
-        <Border BorderThickness="1" BorderBrush="{DynamicResource Textbox_Border_Brush}"
-                Height="{Binding Height}" Width="{Binding Width}"
-                MinWidth="{Binding MinWidth}" MaxWidth="{Binding MaxWidth}"
-                MinHeight="{Binding MinHeight}" MaxHeight="{Binding MaxHeight}"
-                Margin="{Binding Margin, Converter={c:MeasurementsConverter}}"
-                Padding="{Binding Padding, Converter={c:MeasurementsConverter}}"
-                IsEnabled="{Binding IsEnabled}"
-                Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
-                VerticalAlignment="{Binding VerticalAlignment, Converter={c:AlignmentConverter}}"
-                HorizontalAlignment="{Binding HorizontalAlignment, Converter={c:AlignmentConverter}}"
-                Name="border">
-            <Grid Background="{DynamicResource Textbox_Background_Brush}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="auto"/>
-                </Grid.ColumnDefinitions>
-                <TextBox Text="{Binding Text}"
-                         BorderThickness="0"
-                         Background="Transparent"
-                         IsReadOnly="{Binding IsReadonly}"/>
-                <ContentPresenter Content="{Binding ActionButton}"
-                                  Grid.Column="1"/>
-            </Grid>
-            <Border.Triggers>
-                <EventTrigger RoutedEvent="MouseEnter">
-                    <BeginStoryboard>
-                        <Storyboard>
-                            <ColorAnimation To="{StaticResource Textbox_BorderHovered}" Duration="0:0:0.3" 
-                                            Storyboard.TargetName="border" Storyboard.TargetProperty="BorderBrush.Color" />
-                        </Storyboard>
-                    </BeginStoryboard>
-                </EventTrigger>
-                <EventTrigger RoutedEvent="MouseLeave">
-                    <BeginStoryboard>
-                        <Storyboard>
-                            <ColorAnimation From="{StaticResource Textbox_Border}" Duration="0:0:0.3" 
-                                            Storyboard.TargetName="border" Storyboard.TargetProperty="BorderBrush.Color" />
-                        </Storyboard>
-                    </BeginStoryboard>
-                </EventTrigger>
-            </Border.Triggers>
-        </Border>
-    </DataTemplate>
 
     <DataTemplate DataType="{x:Type api:ToolbarButton}">
         <Button IsEnabled="{Binding IsEnabled}"
@@ -279,4 +210,100 @@
                 Style="{StaticResource ActionButton}"/>
     </DataTemplate>
     <!--API Control-->
+    
+    <!--API Tabs-->
+    <DataTemplate DataType="{x:Type api:FileExplorer}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="5"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <ContentPresenter Content="{Binding SearchBox}"/>
+            <ContentPresenter Content="{Binding TreeView}" Grid.Row="2"/>
+        </Grid>
+    </DataTemplate>
+    <!--API Tabs-->
+
+    <!--API Dialog Boxes-->
+    <DataTemplate DataType="{x:Type api:MessageDialogBox}">
+        <Grid MinHeight="80" MinWidth="140">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Text="{Binding Message}" TextWrapping="Wrap"
+                       VerticalAlignment="Center"/>
+            <ContentPresenter Content="{Binding OkButton}"
+                              HorizontalAlignment="Center"
+                              Grid.Row="2"/>
+        </Grid>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type api:QuestionDialogBox}">
+        <Grid MinHeight="80" MinWidth="140">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Text="{Binding Question}" TextWrapping="Wrap"
+                       VerticalAlignment="Center"/>
+            <ContentPresenter Content="{Binding YesButton}"
+                              HorizontalAlignment="Center"
+                              Grid.Row="2" Grid.Column="1"/>
+            <ContentPresenter Content="{Binding NoButton}"
+                              HorizontalAlignment="Center"
+                              Grid.Row="2" Grid.Column="3"/>
+        </Grid>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type api:TextBoxDialogBox}">
+        <Grid MinHeight="80" MinWidth="140">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Text="{Binding Message}" TextWrapping="Wrap"
+                       VerticalAlignment="Center"/>
+            <ContentPresenter Content="{Binding Input}"
+                              Grid.Column="2" VerticalAlignment="Center"/>
+            <Grid Grid.ColumnSpan="3" Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <ContentPresenter Content="{Binding AcceptButton}"
+                              HorizontalAlignment="Center"
+                              Grid.Column="1"/>
+                <ContentPresenter Content="{Binding CancelButton}"
+                              HorizontalAlignment="Center"
+                              Grid.Column="3"/>
+            </Grid>
+        </Grid>
+    </DataTemplate>
+    <!--API Dialog Boxes-->
 </ResourceDictionary>

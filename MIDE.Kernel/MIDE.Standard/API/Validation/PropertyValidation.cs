@@ -74,11 +74,13 @@ namespace MIDE.API.Validations
         protected void AddError(string property, string message, object value)
         {
             validationMessages.Add(new ValidationError(property, message, value));
+            attachedObject.NotifyError();
             OnPropertyChanged(nameof(HasErrors));
         }
         protected void ClearErrors()
         {
             validationMessages.Clear();
+            attachedObject.NotifyError();
             OnPropertyChanged(nameof(HasErrors));
         }
         protected void OnPropertyChanged(string name)
