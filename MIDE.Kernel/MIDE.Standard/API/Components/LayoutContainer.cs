@@ -9,7 +9,10 @@ namespace MIDE.API.Components
         /// </summary>
         public bool IsSealed { get; protected set; }
 
-        public LayoutContainer(string id) : base(id) { }
+        public LayoutContainer(string id) : base(id)
+        {
+            
+        }
 
         public void AddChild(LayoutComponent component)
         {
@@ -30,12 +33,12 @@ namespace MIDE.API.Components
             RemoveChild_Impl(component);
         }
 
+        public abstract bool Contains(string id);
+        public abstract LayoutComponent Find(string id);
+
         protected abstract void AddChild_Impl(LayoutComponent component);
         protected abstract void RemoveChild_Impl(string id);
         protected abstract void RemoveChild_Impl(LayoutComponent component);
-
-        public abstract bool Contains(string id);
-        public abstract LayoutComponent Find(string id);
 
         protected virtual void InitializeComponents() { }
     }

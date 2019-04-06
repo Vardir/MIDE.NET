@@ -16,7 +16,7 @@
 
         public TextComponent(string id) : base(id)
         {
-            HorizontalAlignment = HorizontalAlignment.Stretch;
+            
         }
     }
 }

@@ -103,6 +103,26 @@ namespace MIDE.Helpers
             return default;
         }
         /// <summary>
+        /// Searches for node in linked list which value matches the given predicate
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        public static LinkedListNode<T> Find<T>(this LinkedList<T> list, Func<T, bool> predicate)
+        {
+            if (predicate == null)
+                throw new ArgumentNullException(nameof(predicate));
+            var node = list.First;
+            while (node != null)
+            {
+                if (predicate(node.Value))
+                    return node;
+                node = node.Next;
+            }
+            return null;
+        }
+        /// <summary>
         /// LINQ Select implementation for collections to produce array with transformed items
         /// </summary>
         /// <typeparam name="T"></typeparam>

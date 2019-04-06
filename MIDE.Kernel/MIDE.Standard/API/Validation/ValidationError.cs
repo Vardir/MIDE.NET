@@ -1,4 +1,4 @@
-﻿namespace MIDE.API.Validation
+﻿namespace MIDE.API.Validations
 {
     public struct ValidationError
     {

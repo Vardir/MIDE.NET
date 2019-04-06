@@ -62,15 +62,9 @@ namespace MIDE.API.Components
             Tabs.Insert(index, tab);
             SelectedIndex = index;
         }
-        
-        public override bool Contains(string id) => Tabs.IndexOf(t => t.Id == id) > -1;
-        public override LayoutComponent Find(string id)
-        {
-            int index = Tabs.IndexOf(t => t.Id == id);
-            if (index == -1)
-                return null;
-            return Tabs[index];
-        }
+
+        public override bool Contains(string id) => Tabs.Find(t => t.Id == id) != null;
+        public override LayoutComponent Find(string id) => Tabs.Find(t => t.Id == id);
 
         protected override LayoutComponent CloneInternal(string id)
         {

@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel;
 using System.Collections.ObjectModel;
 
-namespace MIDE.API.Validation
+namespace MIDE.API.Validations
 {
     public interface IValidate : INotifyPropertyChanged
     {
-        ObservableCollection<Validator> Validators { get; }
+        ObservableCollection<Validation> Validations { get; }
     }
 }

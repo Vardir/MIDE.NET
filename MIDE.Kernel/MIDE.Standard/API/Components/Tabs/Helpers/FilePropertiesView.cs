@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using MIDE.FileSystem;
-using MIDE.API.Measurements;
 
 namespace MIDE.API.Components
 {    
@@ -30,25 +29,55 @@ namespace MIDE.API.Components
             if (!FileManager.Exists(path))
                 throw new ArgumentException("Invalid path given", nameof(path));
 
-            var array = FileManager.ExtractProperties(path).ToArray();
-            EnsureRowCount(array.Length + 1);
-            for (int i = 0; i < array.Length; i++)
-            {
-                int index = i + 1;
-                AddChild(new Label($"lb-prop{index}-caption", array[i].prop), index, 0);
-                AddChild(new Label($"lb-prop{index}", array[i].val), index, 1);
-            }
-            (Children[1].Component as Label).Text = FileManager.ExtractName(path);
+            //var array = FileManager.ExtractProperties(path).ToArray();
+            //EnsureRowCount(array.Length + 1);
+            //for (int i = 0; i < array.Length; i++)
+            //{
+            //    int index = i + 1;
+            //    AddChild(new Label($"lb-prop{index}-caption", array[i].prop), index, 0);
+            //    AddChild(new Label($"lb-prop{index}", array[i].val), index, 1);
+            //}
+            //(Children[1].Component as Label).Text = FileManager.ExtractName(path);
         }
 
         protected override void InitializeComponents()
         {
-            NewRowTemplate = new GridRow(new GridLength("auto"));
+            //NewRowTemplate = new GridRow(new GridLength("auto"));
 
-            Columns.Add(new GridColumn(new GridLength("auto")));
-            Columns.Add(new GridColumn(new GridLength("*")));
+            //Columns.Add(new GridColumn(new GridLength("auto")));
+            //Columns.Add(new GridColumn(new GridLength("*")));
 
-            AddRow(new LayoutComponent[] { new Label("prop-capt", "File properties"), new Label("file-name", "") });
+            //AddRow(new LayoutComponent[] { new Label("prop-capt", "File properties"), new Label("file-name", "") });
+        }
+
+        public override bool Contains(string id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override LayoutComponent Find(string id)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void AddChild_Impl(LayoutComponent component)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void RemoveChild_Impl(string id)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void RemoveChild_Impl(LayoutComponent component)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override LayoutComponent CloneInternal(string id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

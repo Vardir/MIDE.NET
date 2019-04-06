@@ -1,5 +1,4 @@
-﻿using MIDE.Helpers;
-using MIDE.API.Validation;
+﻿using MIDE.API.Validations;
 using System.Collections.ObjectModel;
 
 namespace MIDE.API.Components
@@ -31,12 +30,12 @@ namespace MIDE.API.Components
             }
         }
         public string Default { get; }
-        public ObservableCollection<Validator> Validators { get; }
+        public ObservableCollection<Validation> Validations { get; }
 
         public TextBox(string id, string defaultValue = null) : base(id)
         {
             Default = defaultValue;
-            Validators = new ObservableCollection<Validator>();
+            Validations = new ObservableCollection<Validation>();
         }
 
         public void Clear()
@@ -51,7 +50,6 @@ namespace MIDE.API.Components
             TextBox clone = new TextBox(id, Default);
             clone.isReadonly = isReadonly;
             clone.text = text;
-            clone.Validators.AddRange(Validators);
             return clone;
         }
 

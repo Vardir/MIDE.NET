@@ -1,34 +1,35 @@
-﻿using System;
-
-namespace MIDE.API.Components
+﻿namespace MIDE.API.Components
 {
     public class PropertiesViewer : Tab
     {
-        public override LayoutContainer ContentContainer
+        protected PropertiesView view;
+
+        public PropertiesView View
         {
-            get => contentContainer;
+            get => view;
             set
             {
                 if (value == null)
                     return;
-                if (!(value is PropertiesView))
-                    throw new ArgumentException($"[PropertiesView] excepted but got [{value.GetType()}]");
-                contentContainer = value;
-                contentContainer.Parent = this;
-                OnPropertyChanged(nameof(ContentContainer));
+                if (view != null)
+                    RemoveChild(view);
+                view = value;
+                view.Parent = this;
+                AddChild(view);
+                OnPropertyChanged(nameof(View));
             }
         }
 
-        public PropertiesViewer() : base("properties", false)
+        public PropertiesViewer(string id) : base(id, false)
         {
-            IsSealed = true;
+            
         }
 
-        public void SetView(PropertiesView view)
+        protected override Tab Create(string id, Toolbar toolbar, bool allowDuplicates)
         {
-            if (view == null)
-                throw new ArgumentNullException(nameof(view));
-            ContentContainer = view;
+            PropertiesViewer clone = new PropertiesViewer(id);
+            view = view.Clone() as PropertiesView;
+            return clone;
         }
     }
 }

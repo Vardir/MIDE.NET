@@ -10,21 +10,17 @@ namespace MIDE.API.Components
         private DialogResult[] results           = new[] { DialogResult.Yes, DialogResult.No };
         private DialogResult[] validationIgnored = new[] { DialogResult.Yes, DialogResult.No };
 
+        public string Question { get; }
         public override IEnumerable<DialogResult> Results => results;
 
         public QuestionDialogBox(string title, string question) : base(title)
         {
-            body.Rows.Add(new GridRow("*"));
-            body.AddChild(new Label("question", question) { HorizontalAlignment = HorizontalAlignment.Center });
+            Question = question;
         }
 
         public override bool GetData() => true;
 
         protected override bool Validate() => true;
-        protected override GridLayout GenerateButtonsGrid(string id, IEnumerable<DialogButton> buttons)
-        {
-            return GetGridButtonsCentered(id, buttons);
-        }
         protected override IEnumerable<DialogResult> GetValidationIgnoredResults() => validationIgnored;
     }
 }

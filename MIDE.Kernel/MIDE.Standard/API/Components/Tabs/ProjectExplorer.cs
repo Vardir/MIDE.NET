@@ -13,6 +13,14 @@ namespace MIDE.API.Components
             : base(id, allowDuplicates)
         {
             ProjectTree = tree;
+            AddChild(tree);
+        }
+
+        protected override Tab Create(string id, Toolbar toolbar, bool allowDuplicates)
+        {
+            ProjectExplorer clone = new ProjectExplorer(id, ProjectTree.Clone() as ProjectTree, allowDuplicates);
+
+            return clone;
         }
     }
 

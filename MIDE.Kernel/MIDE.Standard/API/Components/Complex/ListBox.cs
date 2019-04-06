@@ -1,6 +1,5 @@
 ﻿using System;
 using MIDE.Helpers;
-using MIDE.API.Commands;
 using MIDE.API.ViewModels;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -88,7 +87,7 @@ namespace MIDE.API.Components
                 if (this.value == value)
                     return;
                 this.value = value;
-                OnPropertyChanged(nameof(Validation));
+                OnPropertyChanged(nameof(Value));
             }
         }
 

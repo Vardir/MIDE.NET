@@ -6,9 +6,9 @@ using System.Collections;
 using System.ComponentModel;
 using System.Collections.Generic;
 
-namespace MIDE.API.Validation
+namespace MIDE.API.Validations
 {
-    public abstract class PropertyValidator<T> : Validator, INotifyPropertyChanged
+    public abstract class PropertyValidation<T> : Validation, INotifyPropertyChanged
     {
         protected const BindingFlags PROP_FLAGS = BindingFlags.GetProperty | BindingFlags.SetProperty | 
                                                   BindingFlags.Public | BindingFlags.Instance;
@@ -23,7 +23,7 @@ namespace MIDE.API.Validation
 
         public event PropertyChangedEventHandler PropertyChanged;
         
-        public PropertyValidator(bool raiseExceptionOnError)
+        public PropertyValidation(bool raiseExceptionOnError)
         {
             validationMessages = new List<ValidationError>();
             RaiseExceptionOnError = raiseExceptionOnError;
@@ -31,7 +31,7 @@ namespace MIDE.API.Validation
         }
 
         /// <summary>
-        /// Attaches validator to an object. All properties of the required type will be validated on change
+        /// Attaches validation to an object. All properties of the required type will be validated on change
         /// <para>If property names to observe are supplied, only those will be validated</para>
         /// </summary>
         /// <param name="obj"></param>
@@ -40,18 +40,18 @@ namespace MIDE.API.Validation
         {
             if (attachedObject != null)
             {
-                attachedObject.Validators.Remove(this);
+                attachedObject.Validations.Remove(this);
                 attachedObject.PropertyChanged -= Obj_PropertyChanging;
             }
 
             attachedObject = obj ?? throw new ArgumentNullException(nameof(obj));
             LoadSupportedProperties(obj.GetType(), propertiesToObserve);
             obj.PropertyChanged += Obj_PropertyChanging;
-            obj.Validators.Add(this);
+            obj.Validations.Add(this);
         }
 
         /// <summary>
-        /// Receive all the validation errors for the current validator instance.
+        /// Receive all the validation errors for the current validation instance.
         /// <para>If property name supplied, returns errors only for the specified property</para>
         /// </summary>
         /// <param name="propertyName"></param>

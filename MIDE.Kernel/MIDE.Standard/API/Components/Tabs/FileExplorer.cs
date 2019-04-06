@@ -6,8 +6,7 @@ using MIDE.FileSystem;
 using MIDE.Application;
 using MIDE.API.Bindings;
 using MIDE.API.Commands;
-using MIDE.API.Validation;
-using MIDE.API.Measurements;
+using MIDE.API.Validations;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using IO = System.IO;
@@ -18,10 +17,7 @@ namespace MIDE.API.Components
     {
         private bool _pushHistory;
         private int _currentHistoryIndex;
-        private Label errorMessage;
-        private ActionTextBox searchBox;
-        private PathValidator pathValidator;
-        private ObservableCollection<string> browseHistory;
+        protected PathValidation pathValidator;
 
         public int CurrentHistoryIndex
         {
@@ -34,42 +30,35 @@ namespace MIDE.API.Components
                 OnPropertyChanged(nameof(CurrentHistoryIndex));
             }
         }
+        public ActionTextBox SearchBox { get; private set; }
         public TreeView TreeView { get; private set; }
+        public ObservableCollection<string> BrowseHistory { get; }
 
         public FileExplorer(string id) : base(id)
         {
             IsSealed = true;
             _pushHistory = true;
-            browseHistory = new ObservableCollection<string>();
+            BrowseHistory = new ObservableCollection<string>();
             
             InitializeComponents();
         }
 
         public void Show(string path)
         {
-            searchBox.Text = path;
+            SearchBox.Text = path;
             ShowCurrent();
         }
 
         protected override void InitializeComponents()
-        {
-            GridLayout grid = new GridLayout("container");
-            grid.Rows.AddRange(new[]{
-                new GridRow(new GridLength("auto")),
-                new GridRow(new GridLength("auto")),
-                new GridRow(new GridLength("*"))
-                });
-            grid.Columns.Add(new GridColumn(new GridLength("*")));
-            searchBox = new ActionTextBox("search");
-            searchBox.ActionButton.Caption = null;
-            searchBox.ActionButton.ButtonGlyph = new Visuals.Glyph("\uf002") { AlternateColor = Color.White };
-            searchBox.ActionButton.PressCommand = new RelayCommand(ShowCurrent);
-            searchBox.Margin = new BoundingBox(0, 0, 0, 5);
-            pathValidator = new PathValidator(false);
-            pathValidator.AttachTo(searchBox, "Text");
+        {            
+            SearchBox = new ActionTextBox("search");
+            SearchBox.ActionButton.Caption = null;
+            SearchBox.ActionButton.ButtonGlyph = new Visuals.Glyph("\uf002") { AlternateColor = Color.White };
+            SearchBox.ActionButton.PressCommand = new RelayCommand(ShowCurrent);
+            pathValidator = new PathValidation(false);
+            pathValidator.AttachTo(SearchBox, "Text");
+
             TreeView = new TreeView("files-view");
-            errorMessage = new Label("error-box", null);
-            errorMessage.Visibility = Visibility.Collapsed;
             ToolbarButton homeButton = new ToolbarButton("home");
             homeButton.Caption = null;
             homeButton.Order = 99;
@@ -86,7 +75,7 @@ namespace MIDE.API.Components
             forwardButton.ButtonGlyph = new Visuals.Glyph("\uf051") { AlternateColor = Color.White };
             forwardButton.PressCommand = new RelayCommand(GoForward);
 
-            var backButtonBinding1 = new ObjectBinding<ObservableCollection<string>, ToolbarButton>(browseHistory, backButton);
+            var backButtonBinding1 = new ObjectBinding<ObservableCollection<string>, ToolbarButton>(BrowseHistory, backButton);
             backButtonBinding1.BindingKind = BindingKind.OneWay;
             backButtonBinding1.Bind(items => items.Count, button => button.IsEnabled,
                                     count => count > 0, null);
@@ -96,56 +85,53 @@ namespace MIDE.API.Components
                                     index => index > 0, null,
                                     new Defaults<int, bool>(false));
 
-            var forwardButtonBinding1 = new ObjectBinding<ObservableCollection<string>, ToolbarButton>(browseHistory, forwardButton);
+            var forwardButtonBinding1 = new ObjectBinding<ObservableCollection<string>, ToolbarButton>(BrowseHistory, forwardButton);
             forwardButtonBinding1.BindingKind = BindingKind.OneWay;
             forwardButtonBinding1.Bind(coll => coll.Count, button => button.IsEnabled,
                                        count => count > 0, null);
             var forwardButtonBinding2 = new ObjectBinding<FileExplorer, ToolbarButton>(this, forwardButton);
             forwardButtonBinding2.BindingKind = BindingKind.OneWay;
             forwardButtonBinding2.Bind(ex => ex.CurrentHistoryIndex, button => button.IsEnabled,
-                                       index => index < browseHistory.Count - 1, null,
+                                       index => index < BrowseHistory.Count - 1, null,
                                        new Defaults<int, bool>(false));
-
-            var errorBinding = new ObjectBinding<PathValidator, Label>(pathValidator, errorMessage);
-            errorBinding.BindingKind = BindingKind.OneWay;
-            errorBinding.Bind(pv => pv.HasErrors, em => em.Visibility,
-                              hasErrors =>
-                              {
-                                  errorMessage.Text = string.Join("\n", pathValidator.GetAllErrors().Select(e => e.ValidationMessage));
-                                  return hasErrors ? Visibility.Visible : Visibility.Collapsed;
-                              }, null,
-                              new Defaults<bool, Visibility>(Visibility.Collapsed));
 
             TabToolbar.AddChild(backButton);
             TabToolbar.AddChild(forwardButton);
             TabToolbar.AddChild(homeButton);
-            ContentContainer = grid;
-            grid.AddChild(searchBox, 0, 0);
-            grid.AddChild(errorMessage, 1, 0);
-            grid.AddChild(TreeView, 2, 0);
+
+            AddChild(SearchBox);
+            AddChild(TreeView);
+        }
+
+        protected override Tab Create(string id, Toolbar toolbar, bool allowDuplicates)
+        {
+            FileExplorer clone = new FileExplorer(id);
+            clone.SearchBox = SearchBox.Clone() as ActionTextBox;
+            clone.TreeView = TreeView.Clone() as TreeView;
+            return clone;
         }
 
         private void GoHome()
         {
-            searchBox.Text = @"\";
+            SearchBox.Text = @"\";
             ShowCurrent();
         }
         private void GoBack()
         {
-            if (browseHistory.Count == 0)
+            if (BrowseHistory.Count == 0)
                 return;
             _pushHistory = false;
             CurrentHistoryIndex = _currentHistoryIndex < 1 ? 0 : _currentHistoryIndex - 1;            
-            Show(browseHistory[_currentHistoryIndex]);
+            Show(BrowseHistory[_currentHistoryIndex]);
             _pushHistory = true;
         }
         private void GoForward()
         {
-            if (browseHistory.Count == 0)
+            if (BrowseHistory.Count == 0)
                 return;
             _pushHistory = false;
-            CurrentHistoryIndex = _currentHistoryIndex > browseHistory.Count - 2 ? browseHistory.Count - 1 : _currentHistoryIndex + 1;
-            Show(browseHistory[_currentHistoryIndex]);
+            CurrentHistoryIndex = _currentHistoryIndex > BrowseHistory.Count - 2 ? BrowseHistory.Count - 1 : _currentHistoryIndex + 1;
+            Show(BrowseHistory[_currentHistoryIndex]);
             _pushHistory = true;
         }
         private void ShowCurrent()
@@ -155,10 +141,10 @@ namespace MIDE.API.Components
 
             TreeView.Items.Clear();
             var items = Enumerable.Empty<DirectoryItem>();
-            if (searchBox.Text == @"\")
+            if (SearchBox.Text == @"\")
                 items = FileSystemInfo.GetLogicalDrives();
             else
-                items = FileSystemInfo.GetDirectoryContents(searchBox.Text);
+                items = FileSystemInfo.GetDirectoryContents(SearchBox.Text);
             
             TreeView.Items.AddRange(items.Select(item => {
                 var fei = new FileExplorerItem(item.name, item.fullPath, item.itemClass);
@@ -168,14 +154,14 @@ namespace MIDE.API.Components
 
             if (_pushHistory)
             {
-                browseHistory.Add(searchBox.Text);
-                CurrentHistoryIndex = browseHistory.Count - 1;
+                BrowseHistory.Add(SearchBox.Text);
+                CurrentHistoryIndex = BrowseHistory.Count - 1;
             }
         }
         
-        protected class PathValidator : PropertyValidator<string>
+        protected class PathValidation : PropertyValidation<string>
         {
-            public PathValidator(bool raiseExceptionOnError) : base(raiseExceptionOnError) { }
+            public PathValidation(bool raiseExceptionOnError) : base(raiseExceptionOnError) { }
 
             protected override void Validate(string property, string value)
             {

@@ -1,8 +1,8 @@
-﻿namespace MIDE.API.Validation
+﻿namespace MIDE.API.Validations
 {
-    public class TestValidator : PropertyValidator<string>
+    public class TestValidation : PropertyValidation<string>
     {
-        public TestValidator(bool raiseExceptionOnError) : base(raiseExceptionOnError) {}
+        public TestValidation(bool raiseExceptionOnError) : base(raiseExceptionOnError) {}
 
         protected override void Validate(string propertyName, string value)
         {
