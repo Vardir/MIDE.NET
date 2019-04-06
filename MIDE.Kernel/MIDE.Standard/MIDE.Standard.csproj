@@ -15,7 +15,7 @@
     <NeutralLanguage>en</NeutralLanguage>
     <LangVersion>preview</LangVersion>
     <RootNamespace>MIDE</RootNamespace>
-    <Version>0.3.1</Version>
+    <Version>0.6.2</Version>
     <FileUpgradeFlags>40</FileUpgradeFlags>
     <UpgradeBackupLocation>E:\Projects\C#\Libs\MIDE.NET\MIDE.Kernel\Backup\MIDE.Standard\</UpgradeBackupLocation>
     <OldToolsVersion>2.0</OldToolsVersion>
