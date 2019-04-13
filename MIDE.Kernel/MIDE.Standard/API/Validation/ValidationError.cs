@@ -13,6 +13,6 @@
             ValidationMessage = validationMessage;
         }
 
-        public override string ToString() => $"[{PropertyName}]: {ValidationMessage}";
+        public override string ToString() => ValidationMessage;
     }
 }

@@ -11,8 +11,8 @@ namespace MIDE.FileSystem
 
         public FileManager()
         {
-            specialPaths = new Dictionary<ApplicationPath, string>();
             allPaths = new Dictionary<string, string>();
+            specialPaths = new Dictionary<ApplicationPath, string>();
         }
 
         public void AddOrUpdate(ApplicationPath path, string value)
@@ -64,7 +64,29 @@ namespace MIDE.FileSystem
         public abstract void Write(string[] data, string path);
         public abstract void Serialize(object data, string path);
 
-        public string GetPath(ApplicationPath folder) => specialPaths[folder];
+        public string GetPath(ApplicationPath folder)
+        {
+            if (specialPaths.TryGetValue(folder, out string path))
+                return path;
+            return GetOrAddPath(folder, folder switch
+            {
+                ApplicationPath.DefaultForProjects => "root\\projects\\",
+                ApplicationPath.UserSettings => "root\\settings\\",
+                ApplicationPath.Extensions => "root\\extensions\\",
+                ApplicationPath.Templates => "root\\templates\\",
+                ApplicationPath.AppAssets => "root\\assets\\",
+                ApplicationPath.Themes => "root\\themes\\",
+                ApplicationPath.Logs => "root\\logs\\",
+                ApplicationPath.Root => "root\\",
+                ApplicationPath.Installed => "",
+                _ => ""
+            });
+        }
+        public string GetPath(ApplicationPath path, string file)
+        {
+            string folder = GetPath(path);
+            return Combine(folder, file);
+        }
         public string GetOrAddPath(ApplicationPath path, string defaultValue = null)
         {
             if (!specialPaths.ContainsKey(path))
@@ -90,13 +112,21 @@ namespace MIDE.FileSystem
         public abstract string TryRead(string filePath);
         public abstract string ExtractName(string path);
         public abstract string ReadOrCreate(string filePath, string defaultContent = "");
+        public abstract string Combine(params string[] paths);
         public abstract IEnumerable<string> EnumerateFiles(string directory, string filter = null);
         public abstract IEnumerable<(string prop, string val)> ExtractProperties(string path);
     }
 
     public enum ApplicationPath
     {
-        UserSettings, DefaultForProjects,
-        AppAssets, Root, Installed, Themes, Extensions, Logs
+        Root,
+        Logs,
+        Themes,
+        AppAssets,
+        Installed,
+        Templates,
+        Extensions,
+        UserSettings,
+        DefaultForProjects
     }
 }

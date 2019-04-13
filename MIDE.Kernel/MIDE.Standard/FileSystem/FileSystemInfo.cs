@@ -3,7 +3,10 @@ using System.IO;
 using System.Linq;
 using MIDE.Helpers;
 using System.Drawing;
+using Newtonsoft.Json;
+using MIDE.Application;
 using MIDE.API.Visuals;
+using MIDE.Schemes.JSON;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -14,6 +17,7 @@ namespace MIDE.FileSystem
         private static FileSystemInfo instance;
         public static FileSystemInfo Instance => instance ?? (instance = new FileSystemInfo());
 
+        private FileManager fileManager;
         private Dictionary<string, FSObjectClass> fsObjectClasses;
 
         public const string FILE_EXTENSION_PATTERN = @"^\.[A-z0-9]+$";
@@ -24,22 +28,24 @@ namespace MIDE.FileSystem
         /// <summary>
         /// Special file system object class that is used to indicate a folder
         /// </summary>
-        public const string FOLDER_EXTENSION = "f";
+        public const string FOLDER_EXTENSION = "@f";
         /// <summary>
         /// Special file system object class that is used to indicate a drive
         /// </summary>
-        public const string DRIVE_EXTENSION = "d";
+        public const string DRIVE_EXTENSION = "@d";
 
         public FSObjectClass this[string id] => fsObjectClasses[id];
-
+        
         private FileSystemInfo ()
         {
+            fileManager = AppKernel.Instance.FileManager;
             fsObjectClasses = new Dictionary<string, FSObjectClass>()
             {
-                ["drive"] = new FSObjectClass("drive", DRIVE_EXTENSION, new Glyph("\uf0a0") { AlternateColor = Color.Orange }),
-                ["folder"] = new FSObjectClass("folder", FOLDER_EXTENSION, new Glyph("\uf07b") { AlternateColor = Color.Orange }),
-                ["file"] = new FSObjectClass("file", ANY_FILE_EXTENSION, new Glyph("\uf15b") { AlternateColor = Color.Silver })
+                ["drive"]  = new FSObjectClass("drive", DRIVE_EXTENSION),
+                ["folder"] = new FSObjectClass("folder", FOLDER_EXTENSION),
+                ["file"]   = new FSObjectClass("file", ANY_FILE_EXTENSION)
             };
+            Initialize();
         }
         
         public bool IsRegistered(FSObjectClass fsoClass) => fsObjectClasses.ContainsKey(fsoClass.Id);
@@ -72,7 +78,7 @@ namespace MIDE.FileSystem
 
             foreach (var kvp in fsObjectClasses)
             {
-                if (kvp.Key == extension)
+                if (kvp.Value.Extension == extension)
                     return kvp.Value;
             }
             return fsObjectClasses["file"];
@@ -113,7 +119,7 @@ namespace MIDE.FileSystem
             }
             catch (UnauthorizedAccessException ex)
             {
-                Console.WriteLine(ex.Message);
+                AppKernel.Instance.AppLogger.PushWarning(ex.Message);
             }
             try
             {
@@ -132,6 +138,48 @@ namespace MIDE.FileSystem
                 Console.WriteLine(ex.Message);
             }
             return items;
+        }
+
+        private void Initialize()
+        {
+            string fileData = fileManager.ReadOrCreate(fileManager.GetPath(ApplicationPath.AppAssets, "file-system-items.json"),
+                                                       "{ \"icons\": null, \"file-extensions\": null, \"file-editors\": null }");
+            FileSystemItemParameters parameters = JsonConvert.DeserializeObject<FileSystemItemParameters>(fileData);
+            if (parameters.FileExtensions != null)
+                LoadFileExtensions(parameters);
+            if (parameters.Icons != null)
+                LoadItemIcons(parameters);
+            if (parameters.FileEditors != null)
+                LoadFileEditors(parameters);
+        }
+        private void LoadItemIcons(FileSystemItemParameters parameters)
+        {
+            foreach (var kvp in parameters.Icons)
+            {
+                Glyph glyph = Glyph.From(kvp.Value);
+                Update(kvp.Key, null, null, glyph ?? new Glyph('X'));
+            }
+        }
+        private void LoadFileExtensions(FileSystemItemParameters parameters)
+        {
+            foreach (var kvp in parameters.FileExtensions)
+            {
+                Update(kvp.Key, kvp.Value, null, null);
+            }
+        }
+        private void LoadFileEditors(FileSystemItemParameters parameters)
+        {
+            foreach (var kvp in parameters.FileEditors)
+            {
+                Update(kvp.Key, null, kvp.Value, null);
+            }
+        }
+        private void Update(string key, string extension, string editor, Glyph glyph)
+        {
+            if (fsObjectClasses.TryGetValue(key, out FSObjectClass objectClass))
+                fsObjectClasses[key] = objectClass.With(extension, editor, glyph);
+            else
+                fsObjectClasses.Add(key, new FSObjectClass(key, extension, editor, glyph));
         }
     }
 }

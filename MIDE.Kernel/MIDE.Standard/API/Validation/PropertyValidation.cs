@@ -48,6 +48,7 @@ namespace MIDE.API.Validations
             LoadSupportedProperties(obj.GetType(), propertiesToObserve);
             obj.PropertyChanged += Obj_PropertyChanging;
             obj.Validations.Add(this);
+            InvalidateAll();
         }
 
         /// <summary>
@@ -88,6 +89,13 @@ namespace MIDE.API.Validations
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
+        private void InvalidateAll()
+        {
+            foreach (var prop in supportedProps)
+            {
+                Obj_PropertyChanging(attachedObject, new PropertyChangedEventArgs(prop.Name));
+            }
+        }
         private void LoadSupportedProperties(Type type, string[] propsToObserve)
         {
             var selected = type.GetProperties(PROP_FLAGS).Where(p => p.PropertyType == supportedPropertyType);

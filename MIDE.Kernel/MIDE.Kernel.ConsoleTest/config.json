@@ -35,6 +35,11 @@
       "key": "extensions",
       "path": "root\\extensions\\",
       "type": "folder"
+    },
+    {
+      "key": "templates",
+      "path": "root\\templates\\",
+      "type": "folder"
     }
   ]
 }

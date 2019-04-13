@@ -40,7 +40,7 @@
   <ItemGroup>
     <Reference Include="api, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\MIDE.Kernel\MIDE.Standard\bin\Release\netstandard2.0\api.dll</HintPath>
+      <HintPath>..\..\MIDE.Kernel\MIDE.Standard\bin\Debug\netstandard2.0\api.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Expression.Interactions, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Blend.Interactivity.Wpf.1.0.1340.0\lib\net\Microsoft.Expression.Interactions.dll</HintPath>
@@ -84,7 +84,9 @@
     <Compile Include="Converters\Boolean\IntegerToBoolean.cs" />
     <Compile Include="Converters\Boolean\InvertBoolean.cs" />
     <Compile Include="Converters\Boolean\NullableToBoolean.cs" />
+    <Compile Include="Converters\Boolean\BoolToMultipleSelectionMode.cs" />
     <Compile Include="Converters\CollectionToString.cs" />
+    <Compile Include="Converters\PathToBitmap.cs" />
     <Compile Include="Converters\Visibility\BooleanVisibilityConverter.cs" />
     <Compile Include="Converters\Visibility\NullableToVisibility.cs" />
     <Compile Include="Converters\ColorConverter.cs" />

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using MIDE.FileSystem;
+using MIDE.Application;
 using System.Collections.Generic;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -29,7 +30,7 @@ namespace MIDE.WPFApp.FileSystem
             }
             catch (Exception ex)
             {
-                
+                AppKernel.Instance.AppLogger.PushError(ex, this, "Can not serialize data");
             }
         }
 
@@ -52,6 +53,7 @@ namespace MIDE.WPFApp.FileSystem
                 return Path.GetDirectoryName(path);
             return null;
         }
+        public override string Combine(params string[] paths) => Path.Combine(paths);
         public override string ReadOrCreate(string filePath, string defaultContent = "")
         {
             if (!File.Exists(filePath))
@@ -99,6 +101,6 @@ namespace MIDE.WPFApp.FileSystem
             }
 
             throw new ArgumentException("The given path is invalid", nameof(path));
-        }        
+        }
     }
 }

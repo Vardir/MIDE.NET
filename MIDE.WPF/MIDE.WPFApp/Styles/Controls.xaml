@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:api="clr-namespace:MIDE.API.Components;assembly=api"
+                    xmlns:json="clr-namespace:MIDE.Schemes.JSON;assembly=api"
                     xmlns:c="clr-namespace:MIDE.WPFApp.ValueConverters"
                     xmlns:local="clr-namespace:MIDE.WPFApp.Styles"
                     xmlns:ctr="clr-namespace:MIDE.WPFApp.Controls"
@@ -192,6 +193,7 @@
     <DataTemplate DataType="{x:Type api:ListBox}">
         <ListBox ItemsSource="{Binding Items}"
                  Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
+                 SelectionMode="{Binding IsMultiselect, Converter={c:BoolToMultipleSelectionMode}}"
                  IsEnabled="{Binding IsEnabled}">
             <ListBox.ItemContainerStyle>
                 <Style TargetType="{x:Type ListBoxItem}">
@@ -201,7 +203,7 @@
         </ListBox>
     </DataTemplate>
     <DataTemplate DataType="{x:Type api:ListBoxItem}">
-        <ListBoxItem />
+        <ContentPresenter Content="{Binding Value}" />
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type api:ToolbarButton}">
@@ -303,6 +305,87 @@
                               HorizontalAlignment="Center"
                               Grid.Column="3"/>
             </Grid>
+        </Grid>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type api:CreateProjectDialogBox}">
+        <Grid MinHeight="200" MinWidth="520"
+              MaxHeight="640" MaxWidth="520">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="5"/>
+                    <RowDefinition/>
+                    <RowDefinition Height="5"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="5"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="5"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="5"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+
+                <ContentPresenter Content="{Binding SearchBox}"
+                                  Grid.ColumnSpan="5"/>
+                <ContentPresenter Content="{Binding TemplatesList}"
+                                  Grid.Row="2" Grid.ColumnSpan="5"/>
+                <ContentPresenter Content="{Binding ProjectNameLabel}"
+                                  Grid.Row="4"/>
+                <ContentPresenter Content="{Binding ProjectName}"
+                                  Grid.Row="4" Grid.Column="2"/>
+                <ContentPresenter Content="{Binding ProjectPathLabel}"
+                                  Grid.Row="6"/>
+                <ContentPresenter Content="{Binding ProjectPath}"
+                                  Grid.Row="6" Grid.Column="2"/>
+                <ContentPresenter Content="{Binding BrowseButton}"
+                                  Grid.Row="6" Grid.Column="4"/>
+            </Grid>
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+
+                <ContentPresenter Content="{Binding AcceptButton}"
+                              HorizontalAlignment="Center"/>
+                <ContentPresenter Content="{Binding CancelButton}"
+                              HorizontalAlignment="Center"
+                              Grid.Column="2"/>
+            </Grid>
+        </Grid>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type json:ProjectScheme}">
+        <Grid Margin="0 2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="15"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <Image Source="{Binding Icon, Converter={c:PathToBitmap}}" Grid.RowSpan="3" Width="48"/>
+            <TextBlock Text="{Binding Name}" Foreground="White"
+                             FontSize="18"  Grid.Column="2"/>
+            <TextBlock Text="{Binding Description}"
+                               Foreground="Silver" FontSize="16"
+                               Grid.Column="2" Grid.Row="2"/>
         </Grid>
     </DataTemplate>
     <!--API Dialog Boxes-->

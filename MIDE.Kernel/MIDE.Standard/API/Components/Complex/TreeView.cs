@@ -18,6 +18,12 @@ namespace MIDE.API.Components
             Items = new ObservableCollection<TreeViewItem>();
         }
 
+        public void Clear()
+        {
+            Items.Clear();
+            SelectedItems.Clear();
+        }
+
         protected override LayoutComponent CloneInternal(string id)
         {
             TreeView clone = new TreeView(id);

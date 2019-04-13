@@ -19,7 +19,7 @@ namespace MIDE.API.Components
         }
 
         public override bool GetData() => true;
-
+        
         protected override bool Validate() => true;
         protected override IEnumerable<DialogResult> GetValidationIgnoredResults() => validationIgnored;
     }

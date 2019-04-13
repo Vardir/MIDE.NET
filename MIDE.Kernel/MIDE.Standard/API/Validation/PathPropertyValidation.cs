@@ -10,6 +10,7 @@
 
         protected override void Validate(string propertyName, string value)
         {
+            ClearErrors();
             if (string.IsNullOrEmpty(value))
             {
                 AddError(propertyName, "Path can not be null or empty", value);

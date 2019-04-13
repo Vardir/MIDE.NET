@@ -12,7 +12,6 @@ namespace MIDE.API.Extensibility
 
         public bool IsInitialized { get; private set; }
         public string Version { get; internal set; }
-        public AppKernel Kernel { get; internal set; }
         public IEnumerable<Module> Modules => modules;
 
         public AppExtension(string id) : base(id)

@@ -8,7 +8,7 @@ using System.Collections.Specialized;
 
 namespace MIDE.API.Services
 {
-    public class UIManager
+    public abstract class UIManager
     {
         private List<TabSection> tabSections;
         private Dictionary<string, Tab> tabs;
@@ -47,28 +47,15 @@ namespace MIDE.API.Services
             tabSections.Add(section);
             section.Tabs.CollectionChanged += SectionTabs_CollectionChanged;
         }
-        public virtual void RegisterUIExtension(object obj) { }
-        public virtual void RegisterUIExtension(string path) { }
-        public virtual void RegisterUIExtension(Type type) { }
-        public virtual void RegisterUIExtension(Assembly assembly) { }
+        public abstract void RegisterUIExtension(object obj);
+        public abstract void RegisterUIExtension(string path);
+        public abstract void RegisterUIExtension(Type type);
+        public abstract void RegisterUIExtension(Assembly assembly);
 
-        private void SectionTabs_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        public (DialogResult dialogResult, T data) OpenDialog<T>(BaseDialogBox<T> dialogBox)
         {
-            switch (e.Action)
-            {
-                case NotifyCollectionChangedAction.Add:
-                    OnSectionAddTabs(e.NewItems);
-                    break;
-                case NotifyCollectionChangedAction.Remove:
-                    OnSectionRemoveTabs(e.OldItems);
-                    break;
-                case NotifyCollectionChangedAction.Replace:
-                    OnSectionReplaceTabs(e.NewItems, e.OldItems);
-                    break;
-                case NotifyCollectionChangedAction.Reset:
-                    tabs.Clear();
-                    break;
-            }
+            OpenDialog_Impl(dialogBox);
+            return (dialogBox.SelectedResult, dialogBox.GetData());
         }
 
         public T GetTab<T>()
@@ -103,6 +90,8 @@ namespace MIDE.API.Services
             }
         }
 
+        protected abstract void OpenDialog_Impl<T>(BaseDialogBox<T> dialogBox);
+
         private void OnSectionAddTabs(IList items)
         {
             foreach (var item in items)
@@ -130,6 +119,24 @@ namespace MIDE.API.Services
         {
             OnSectionRemoveTabs(oldItems);
             OnSectionAddTabs(newItems);
+        }
+        private void SectionTabs_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    OnSectionAddTabs(e.NewItems);
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    OnSectionRemoveTabs(e.OldItems);
+                    break;
+                case NotifyCollectionChangedAction.Replace:
+                    OnSectionReplaceTabs(e.NewItems, e.OldItems);
+                    break;
+                case NotifyCollectionChangedAction.Reset:
+                    tabs.Clear();
+                    break;
+            }
         }
     }
 

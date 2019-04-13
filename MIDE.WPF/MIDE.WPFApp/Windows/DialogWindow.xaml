@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MIDE.WPFApp.Windows"
         mc:Ignorable="d"
-        WindowStyle="None" ShowInTaskbar="False"
-        MaxHeight="640" MaxWidth="640"
+        WindowStyle="None"
+        MaxHeight="660" MaxWidth="660"
         MinWidth="230" MinHeight="120"
         Style="{StaticResource DWindow}"
         AllowsTransparency="True"
@@ -28,6 +28,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         
-        <ContentPresenter x:Name="box" Margin="5 10 5 5"/>
+        <ContentPresenter x:Name="box" Margin="5 10 5 5"
+                          HorizontalAlignment="Stretch"/>
     </Grid>
 </Window>

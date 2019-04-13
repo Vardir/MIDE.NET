@@ -72,7 +72,6 @@ namespace MIDE.Application
 
         private AppKernel()
         {
-            UIManager = new UIManager();
             extensions = new List<AppExtension>();
             Initializers = new List<IApplicationInitializer>();
 
@@ -231,7 +230,6 @@ namespace MIDE.Application
                 AppLogger.PushError(ex, extension);
                 return;
             }
-            extension.Kernel = this;
             extension.Initialize();
             extensions.Add(extension);
             AppLogger.PushDebug(null, $"Registered extension {extension.Id}");
@@ -331,7 +329,6 @@ namespace MIDE.Application
             foreach (var extension in extensions)
             {
                 extension.Unload();
-                extension.Kernel = null;
             }
             extensions.Clear();
             AppLogger.PushDebug(null, "Extensions unloaded");

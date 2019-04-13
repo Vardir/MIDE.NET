@@ -1,11 +1,17 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using Newtonsoft.Json;
+using MIDE.FileSystem;
+using MIDE.Application;
+using MIDE.Schemes.JSON;
 using MIDE.API.Validations;
 using System.Collections.Generic;
 
 namespace MIDE.API.Components
 {
-    public sealed class CreateProjectDialogBox : BaseDialogBox<(string template, string path)>
+    public sealed class CreateProjectDialogBox : BaseDialogBox<ProjectCreationArgs>
     {
+        private FileManager fileManager;
         private DialogResult[] validationIgnored = new[] { DialogResult.Cancel };
 
         public Button BrowseButton { get; private set; }
@@ -20,81 +26,86 @@ namespace MIDE.API.Components
         
         public CreateProjectDialogBox(string title) : base(title)
         {
+            fileManager = AppKernel.Instance.FileManager;
             InitializeComponents();
-            #region test
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item");
-            TemplatesList.Add("item"); 
-            #endregion
+            LoadTemplates();
         }
 
-        public override (string template, string path) GetData() => (ProjectName.Text, ProjectPath.Text);
-
-        private void InitializeComponents()
+        public override ProjectCreationArgs GetData()
         {
-            BrowseButton     = new Button("browse");            
-            SearchBox        = new TextBox("search-box");
-            ProjectName      = new TextBox("project-name");
-            ProjectPath      = new TextBox("project-path");
-            TemplatesList    = new ListBox("templates-list");
-            ProjectNameLabel = new Label("project-name-label", "Project name:");
-            ProjectPathLabel = new Label("project-path-label", "Project location:");
-            AcceptButton     = new DialogButton(this, DialogResult.Accept);
-            CancelButton     = new DialogButton(this, DialogResult.Cancel);
-
-            var nameValidation = new DefaultStringPropertyValidation(false, false, @"^[a-zA-Z0-9_]+[a-zA-Z0-9\.]*$");
-            var pathValidation1 = new DefaultStringPropertyValidation(false, false);
-            var pathValidation2 = new PathPropertyValidation(false);
-            nameValidation.AttachTo(ProjectName, "Text");
-            pathValidation1.AttachTo(ProjectPath, "Text");
-            pathValidation2.AttachTo(ProjectPath, "Text");
+            string path = ProjectPath.Text;
+            string name = ProjectName.Text;
+            ProjectScheme scheme = TemplatesList.SelectedItems[0].Value as ProjectScheme;
+            return new ProjectCreationArgs(path, name, scheme);
         }
 
         protected override bool Validate()
         {
             bool result = true;
+            result &= TemplatesList.SelectedItems.Count == 1;
             result &= ProjectName.Validations.All(v => !v.HasErrors);
             result &= ProjectPath.Validations.All(v => !v.HasErrors);
             return result;
         }
         protected override IEnumerable<DialogResult> GetValidationIgnoredResults() => validationIgnored;
+
+        private void LoadTemplates()
+        {
+            string folder = fileManager.GetPath(ApplicationPath.Templates);
+            folder = $"{folder}\\projects\\";
+            if (!fileManager.Exists(folder))
+                return;
+            IEnumerable<string> files = fileManager.EnumerateFiles(folder, "*-proj.json");
+            foreach (var def in files)
+            {
+                ProjectScheme scheme = null;
+                try
+                {
+                    scheme = JsonConvert.DeserializeObject<ProjectScheme>(fileManager.ReadOrCreate(def));
+                }
+                catch (Exception ex)
+                {
+                    AppKernel.Instance.AppLogger.PushError(ex, this, "Can not read project template");
+                    continue;
+                }
+                if (scheme.Icon == null)
+                    scheme.Icon = $"{folder}icon.png";
+                scheme.SchemePath = $"{folder}\\{def}";
+                TemplatesList.Add(scheme);
+            }
+        }
+        private void InitializeComponents()
+        {
+            BrowseButton = new Button("browse");
+            SearchBox = new TextBox("search-box");
+            ProjectName = new TextBox("project-name", "MyProject");
+            ProjectPath = new TextBox("project-path", fileManager.GetPath(ApplicationPath.DefaultForProjects));
+            TemplatesList = new ListBox("templates-list");
+            ProjectNameLabel = new Label("project-name-label", "Project name:");
+            ProjectPathLabel = new Label("project-path-label", "Project location:");
+            AcceptButton = new DialogButton(this, DialogResult.Accept);
+            CancelButton = new DialogButton(this, DialogResult.Cancel);
+
+            TemplatesList.IsMultiselect = false;
+
+            var nameValidation = new DefaultStringPropertyValidation(false, false, @"^[a-zA-Z0-9_]+[a-zA-Z0-9\.]*$");
+            var pathValidation2 = new PathPropertyValidation(false);
+            nameValidation.AttachTo(ProjectName, "Text");
+            pathValidation2.AttachTo(ProjectPath, "Text");
+        }
+    }
+
+    public struct ProjectCreationArgs
+    {
+        public readonly string path;
+        public readonly string name;
+        public readonly ProjectScheme projectScheme;
+
+        public ProjectCreationArgs(string path, string name, ProjectScheme scheme)
+        {
+            this.path = path;
+            this.name = name;
+            projectScheme = scheme;
+        }
     }
 }

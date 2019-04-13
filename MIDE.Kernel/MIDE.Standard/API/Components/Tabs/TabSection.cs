@@ -36,7 +36,8 @@ namespace MIDE.API.Components
                 if (Tabs.OutOfRange(value))
                     return;
                 selectedIndex = value;
-                SelectedTab = Tabs[value];
+                if (selectedIndex >= 0)
+                    SelectedTab = Tabs[value];
                 OnPropertyChanged(nameof(SelectedIndex));
             }
         }

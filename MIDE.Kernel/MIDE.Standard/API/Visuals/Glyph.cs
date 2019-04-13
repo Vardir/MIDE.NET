@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.ComponentModel;
+using System.Globalization;
 
 namespace MIDE.API.Visuals
 {
@@ -57,6 +58,30 @@ namespace MIDE.API.Visuals
         {
             Kind = kind;
             Value = value;
+        }
+
+        public static Glyph From(string format)
+        {
+            Glyph glyph = null;
+            if (format == null)
+                return null;
+            if (format.Length > 4 && format.StartsWith("@fa-")) // @fa-f07c:0000ff -- blue folder icon
+            {
+                int delim = format.IndexOf(':');
+                if (delim != -1 && format.Length > 8)
+                {
+                    char icon = (char)int.Parse(format.Substring(4, delim - 4), NumberStyles.AllowHexSpecifier);
+                    string colorHex = format.Substring(delim + 1);
+                    Color color = Color.FromArgb(int.Parse(colorHex, NumberStyles.AllowHexSpecifier));
+                    glyph = new Glyph(icon, GlyphKind.FontAwesome)
+                    {
+                        AlternateColor = color
+                    };
+                }
+                else
+                    glyph = new Glyph(format.Substring(4));
+            }
+            return glyph;
         }
 
         protected void OnPropertyChanged(string propertyName)

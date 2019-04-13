@@ -1,6 +1,7 @@
 ﻿using System.Linq;
-using MIDE.FileSystem;
+using MIDE.Application;
 using MIDE.API.Commands;
+using MIDE.API.DataModels;
 using System.Collections.Generic;
 
 namespace MIDE.API.Components
@@ -14,6 +15,15 @@ namespace MIDE.API.Components
         {
             ProjectTree = tree;
             AddChild(tree);
+        }
+
+        public void LoadProject(Project project)
+        {
+            ProjectTree.Clear();
+        }
+        public void AttachProject(Project project)
+        {
+
         }
 
         protected override Tab Create(string id, Toolbar toolbar, bool allowDuplicates)
@@ -32,19 +42,19 @@ namespace MIDE.API.Components
     public class ProjectItem : TreeViewItem
     {
         private string fullPath;
-        private FSObjectClass fsObjectClass;
+        private ProjectObjectClass pjObjectClass;
 
-        public override bool CanExpand => !ObjectClass.IsFile;
-        public FSObjectClass ObjectClass
+        public override bool CanExpand => ObjectClass.IsFolder;
+        public ProjectObjectClass ObjectClass
         {
-            get => fsObjectClass;
+            get => pjObjectClass;
             set
             {
-                if (fsObjectClass == value)
+                if (pjObjectClass == value)
                     return;
-                fsObjectClass = value;
-                ItemClass = fsObjectClass.Id;
-                ItemGlyph = fsObjectClass.ObjectGlyph;
+                pjObjectClass = value;
+                ItemClass = pjObjectClass.Id;
+                ItemGlyph = pjObjectClass.ObjectGlyph;
                 OnPropertyChanged(nameof(ObjectClass));
             }
         }
@@ -60,26 +70,27 @@ namespace MIDE.API.Components
             }
         }
 
-        public ProjectItem(string caption, string fullPath, FSObjectClass fsObjectClass) : base()
+        public ProjectItem(string caption, string fullPath, ProjectObjectClass pjObjectClass) : base()
         {
             ExpandCommand = new RelayCommand(Expand);
 
             Caption = caption;
             FullPath = fullPath;
-            ObjectClass = fsObjectClass;
+            ObjectClass = pjObjectClass;
 
             ClearChildren();
         }
 
         protected override TreeViewItem CloneInternal()
         {
-            ProjectItem clone = new ProjectItem(Caption, fullPath, fsObjectClass);
+            ProjectItem clone = new ProjectItem(Caption, fullPath, pjObjectClass);
             return clone;
         }
         protected override IEnumerable<TreeViewItem> GetChildItems()
         {
-            return FileSystemInfo.GetDirectoryContents(FullPath)
-                   .Select(item => new FileExplorerItem(item.name, item.fullPath, item.itemClass));
+            return null;
+            //return FileSystemInfo.GetDirectoryContents(FullPath)
+            //       .Select(item => new FileExplorerItem(item.name, item.fullPath, item.itemClass));
         }
 
         protected override void OnChildrenCleared()

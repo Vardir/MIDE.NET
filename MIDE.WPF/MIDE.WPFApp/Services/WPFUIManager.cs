@@ -7,6 +7,9 @@ using System.Windows.Media;
 using System.Collections.Generic;
 using MIDE.Application.Configuration;
 using static System.Windows.Application;
+using MIDE.API.Components;
+using System;
+using System.Reflection;
 
 namespace MIDE.WPFApp.Services
 {
@@ -31,6 +34,23 @@ namespace MIDE.WPFApp.Services
                 colors[kvp.Key] = brush;
             }
             return colors;
+        }
+
+        public override void RegisterUIExtension(object obj)
+        {
+            throw new NotImplementedException();
+        }
+        public override void RegisterUIExtension(Type type)
+        {
+            throw new NotImplementedException();
+        }
+        public override void RegisterUIExtension(Assembly assembly)
+        {
+            throw new NotImplementedException();
+        }
+        protected override void OpenDialog_Impl<T>(BaseDialogBox<T> dialogBox)
+        {
+            throw new NotImplementedException();
         }
     }
 }
