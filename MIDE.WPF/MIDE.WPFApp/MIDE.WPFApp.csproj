@@ -25,7 +25,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NullableReferenceTypes>true</NullableReferenceTypes>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -98,6 +98,7 @@
     <Compile Include="Converters\Visibility\VisibilityConverter.cs" />
     <Compile Include="Helpers\CollectionHelpers.cs" />
     <Compile Include="Helpers\ResourceDictionaryHelpers.cs" />
+    <Compile Include="Helpers\TreeViewHelpers.cs" />
     <Compile Include="Helpers\UIHelpers.cs" />
     <Compile Include="Initializers\TabSectionInitializer.cs" />
     <Compile Include="Initializers\WPFMenuInitializer.cs" />

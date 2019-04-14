@@ -25,17 +25,20 @@ namespace MIDE.API.Components
             ParentBox.ValidateAndAccept();
         }
 
-        public static string ToId(DialogResult result) => result switch
+        public static string ToId(DialogResult result)
         {
-            DialogResult.Ok => "ok",
-            DialogResult.Yes => "yes",
-            DialogResult.No => "no",
-            DialogResult.Accept => "accept",
-            DialogResult.Cancel => "cancel",
-            DialogResult.Skip => "skip",
-            DialogResult.Retry => "retry",
-            DialogResult.Abort => "abort",
-            _ => throw new ArgumentException("Not supported dialog result")
-        };
+            switch (result)
+            {
+                case DialogResult.Ok: return "ok";
+                case DialogResult.Yes: return "yes";
+                case DialogResult.No: return "no";
+                case DialogResult.Accept: return "accept";
+                case DialogResult.Cancel: return "cancel";
+                case DialogResult.Skip: return "skip";
+                case DialogResult.Retry: return "retry";
+                case DialogResult.Abort: return "abort";
+                default: throw new ArgumentException("Not supported dialog result");
+            }
+        }
     }
 }

@@ -16,6 +16,17 @@ namespace MIDE.Kernel.ConsoleTest
             if (!Directory.Exists(directory))
                 Directory.CreateDirectory(directory);
         }
+        public override void MakeFile(string path, string templatePath)
+        {
+            if (templatePath != null)
+            {
+                File.Copy(templatePath, path);
+            }
+            else
+            {
+                File.Create(path);
+            }
+        }
         public override void Write(string data, string path) => File.WriteAllText(path, data);
         public override void Write(string[] data, string path) => File.WriteAllLines(path, data);
         public override void Serialize(object data, string path)

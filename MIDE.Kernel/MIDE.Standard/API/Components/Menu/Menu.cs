@@ -26,8 +26,20 @@ namespace MIDE.API.Components
         {
             Items = new ObservableCollection<MenuItem>();
             Items.CollectionChanged += Items_CollectionChanged;
-        }        
-        
+        }
+
+        /// <summary>
+        /// Makes copy of items from source and adds them to destination
+        /// </summary>
+        /// <param name="fdscheme"></param>
+        public void MergeWith(Menu source)
+        {
+            foreach (var item in source.Items)
+            {
+                var copy = item.Clone() as MenuItem;
+                AddItem(copy);
+            }
+        }
         public void AddItem(MenuItem item) => Items.Insert(item, MenuItem.MIN_ORDINAL, MenuItem.MAX_ORDINAL);
         /// <summary>
         /// Puts the specified element to the last one element in path. Each non-existing element in path will be created.

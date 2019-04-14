@@ -59,7 +59,6 @@ namespace MIDE.FileSystem
             }
         }
 
-        public abstract void MakeFolder(string path);
         public abstract void Write(string data, string path);
         public abstract void Write(string[] data, string path);
         public abstract void Serialize(object data, string path);
@@ -68,19 +67,29 @@ namespace MIDE.FileSystem
         {
             if (specialPaths.TryGetValue(folder, out string path))
                 return path;
-            return GetOrAddPath(folder, folder switch
+            string folderPath = "";
+            switch (folder)
             {
-                ApplicationPath.DefaultForProjects => "root\\projects\\",
-                ApplicationPath.UserSettings => "root\\settings\\",
-                ApplicationPath.Extensions => "root\\extensions\\",
-                ApplicationPath.Templates => "root\\templates\\",
-                ApplicationPath.AppAssets => "root\\assets\\",
-                ApplicationPath.Themes => "root\\themes\\",
-                ApplicationPath.Logs => "root\\logs\\",
-                ApplicationPath.Root => "root\\",
-                ApplicationPath.Installed => "",
-                _ => ""
-            });
+                case ApplicationPath.DefaultForProjects:
+                    folderPath = "root\\projects\\"; break;
+                case ApplicationPath.UserSettings:
+                    folderPath = "root\\settings\\"; break;
+                case ApplicationPath.Extensions:
+                    folderPath = "root\\extensions\\"; break;
+                case ApplicationPath.Templates:
+                    folderPath = "root\\templates\\"; break;
+                case ApplicationPath.AppAssets:
+                    folderPath = "root\\assets\\"; break;
+                case ApplicationPath.Themes:
+                    folderPath = "root\\themes\\"; break;
+                case ApplicationPath.Logs:
+                    folderPath = "root\\logs\\"; break;
+                case ApplicationPath.Root:
+                    folderPath = "root\\"; break;
+                case ApplicationPath.Installed:
+                    folderPath = ""; break;
+            }
+            return GetOrAddPath(folder, folderPath);
         }
         public string GetPath(ApplicationPath path, string file)
         {
@@ -111,6 +120,9 @@ namespace MIDE.FileSystem
         public abstract string MapPath(string path);
         public abstract string TryRead(string filePath);
         public abstract string ExtractName(string path);
+        public abstract string Delete(string path);
+        public abstract string MakeFolder(string path);
+        public abstract string MakeFile(string path, string templatePath);
         public abstract string ReadOrCreate(string filePath, string defaultContent = "");
         public abstract string Combine(params string[] paths);
         public abstract IEnumerable<string> EnumerateFiles(string directory, string filter = null);

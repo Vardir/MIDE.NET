@@ -1,4 +1,6 @@
-﻿namespace MIDE.API.Components
+﻿using MIDE.Helpers;
+
+namespace MIDE.API.Components
 {
     public class MenuButton : MenuGroup
     {
@@ -10,6 +12,19 @@
                 return;
             if (PressCommand.CanExecute(parameter))
                 PressCommand.Execute(parameter);
+        }
+
+        protected override Button Create(string id)
+        {
+            MenuButton clone = new MenuButton(id, OrdinalIndex, AllowIdDuplicates);
+            clone.Children.AddRange(Children.Select(item => item.Clone() as MenuItem));
+            return clone;
+        }
+        protected override MenuItem Create(string id, short ordinalIndex)
+        {
+            MenuButton clone = new MenuButton(id, ordinalIndex, AllowIdDuplicates);
+            clone.Children.AddRange(Children.Select(item => item.Clone() as MenuItem));
+            return clone;
         }
     }
 }

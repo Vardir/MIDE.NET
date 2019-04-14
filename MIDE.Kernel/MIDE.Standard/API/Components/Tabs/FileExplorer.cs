@@ -146,11 +146,7 @@ namespace MIDE.API.Components
             else
                 items = FileSystemInfo.GetDirectoryContents(SearchBox.Text);
             
-            TreeView.Items.AddRange(items.Select(item => {
-                var fei = new FileExplorerItem(item.name, item.fullPath, item.itemClass);
-                fei.ContextMenu = FileExplorerContextMenu.Instance.Select(fei);
-                return fei;
-            }));
+            TreeView.Items.AddRange(items.Select(item => new FileExplorerItem(item)));
 
             if (_pushHistory)
             {
@@ -158,7 +154,7 @@ namespace MIDE.API.Components
                 CurrentHistoryIndex = BrowseHistory.Count - 1;
             }
         }
-        
+
         protected class PathValidation : PropertyValidation<string>
         {
             public PathValidation(bool raiseExceptionOnError) : base(raiseExceptionOnError) { }
@@ -206,6 +202,11 @@ namespace MIDE.API.Components
             }
         }
 
+        public FileExplorerItem(DirectoryItem directoryItem)
+            : this(directoryItem.name, directoryItem.fullPath, directoryItem.itemClass)
+        {
+            ContextMenu = FileExplorerContextMenu.Instance.Select(this);
+        }
         public FileExplorerItem(string caption, string fullPath, FSObjectClass fsObjectClass) : base()
         {
             ExpandCommand = new RelayCommand(Expand);
@@ -213,10 +214,12 @@ namespace MIDE.API.Components
             Caption = caption;
             FullPath = fullPath;
             ObjectClass = fsObjectClass;
-            
+
+            ContextMenu = FileExplorerContextMenu.Instance.Select(this);
+
             ClearChildren();
         }
-
+        
         protected override TreeViewItem CloneInternal()
         {
             FileExplorerItem clone = new FileExplorerItem(Caption, fullPath, fsObjectClass);
@@ -225,7 +228,7 @@ namespace MIDE.API.Components
         protected override IEnumerable<TreeViewItem> GetChildItems()
         {
             return FileSystemInfo.GetDirectoryContents(FullPath)
-                   .Select(item => new FileExplorerItem(item.name, item.fullPath, item.itemClass));
+                   .Select(item => new FileExplorerItem(item));
         }
 
         protected override void OnChildrenCleared()
@@ -248,7 +251,8 @@ namespace MIDE.API.Components
             {
                 ["__default"] = new ContextMenu("default-contextmenu"),
                 ["file"] = new ContextMenu("file-contextmenu"),
-                ["folder"] = new ContextMenu("folder-contextmenu")
+                ["folder"] = new ContextMenu("folder-contextmenu"),
+                ["drive"] = new ContextMenu("drive-contextmenu")
             };
             InitializeSchemes();
         }
@@ -283,14 +287,40 @@ namespace MIDE.API.Components
         }
         public ContextMenu Select(FileExplorerItem item)
         {
-            if (contextMenuSchemes.TryGetValue(item.ItemClass, out ContextMenu scheme)) { }
-
+            contextMenuSchemes.TryGetValue(item.ItemClass, out ContextMenu scheme);
+            if (scheme == null)
+            {
+                if (item.ObjectClass.IsFile)
+                    scheme = contextMenuSchemes["file"];
+                else if (item.ObjectClass.IsFolder)
+                    scheme = contextMenuSchemes["folder"];
+            }
             return scheme ?? contextMenuSchemes["__default"];
         }
 
         private void InitializeSchemes()
         {
             var flscheme = contextMenuSchemes["file"];
+            flscheme.AddItem(new MenuButton("delete", -98)
+            {
+                PressCommand = new RelayCommand(Delete)
+            });
+
+            var fdscheme = contextMenuSchemes["folder"];
+            var addbtn = new MenuButton("add", -99);
+            addbtn.Add(new MenuButton("new-empty-file", -99)
+            {
+                Caption = "New empty file...",
+                PressCommand = new RelayCommand(NewEmptyFile)
+            }, null);
+            addbtn.Add(new MenuButton("new-folder", -98)
+            {
+                Caption = "New empty folder...",
+                PressCommand = new RelayCommand(NewFolder)
+            }, null);
+            fdscheme.AddItem(addbtn);
+            fdscheme.MergeWith(flscheme);
+
             flscheme.AddItem(new MenuButton("open", -99));
             flscheme.AddItem(new MenuSplitter("splitter-1", -90));
             flscheme.AddItem(new MenuButton("properties", 0)
@@ -298,13 +328,76 @@ namespace MIDE.API.Components
                 PressCommand = new RelayCommand(FileProperties)
             });
 
-            var fdscheme = contextMenuSchemes["folder"];
-            var addbtn = new MenuButton("add", -99);
-            addbtn.Add(new MenuButton("new-empty-file", -99) { Caption = "New empty file..." }, null);
-            addbtn.Add(new MenuButton("new-folder", -98), null);
-            fdscheme.AddItem(addbtn);
+            var dvscheme = contextMenuSchemes["drive"];
+            dvscheme.MergeWith(fdscheme);
         }
 
+        public static void NewEmptyFile()
+        {
+            var dialogBox = new TextBoxDialogBox("New file", "File name");
+            var (dialogResult, name) = AppKernel.Instance.UIManager.OpenDialog(dialogBox);
+            if (dialogResult == DialogResult.Cancel)
+                return;
+
+            var tab = AppKernel.Instance.UIManager.GetTab<FileExplorer>();
+            var fei = tab.TreeView
+                .SelectedItems.FirstWith(item => (item as FileExplorerItem).ItemClass == "folder", item => item as FileExplorerItem);
+            if (fei == null)
+                return;
+            string file = AppKernel.Instance.FileManager.Combine(fei.FullPath, name);
+            string template = ProjectManager.Instance.FindBy(IO.Path.GetExtension(name))?.ObjectTemplate;
+            string message = AppKernel.Instance.FileManager.MakeFile(file, template);
+            if (message != null)
+            {
+                var messageBox = new MessageDialogBox("Error", message);
+                AppKernel.Instance.UIManager.OpenDialog(messageBox);
+            }
+            fei.IsExpanded = false;
+            fei.IsExpanded = true;
+        }
+        public static void NewFolder()
+        {
+            var dialogBox = new TextBoxDialogBox("New folder", "Folder name");
+            var (dialogResult, name) = AppKernel.Instance.UIManager.OpenDialog(dialogBox);
+            if (dialogResult == DialogResult.Cancel)
+                return;
+
+            var tab = AppKernel.Instance.UIManager.GetTab<FileExplorer>();
+            var fei = tab.TreeView
+                .SelectedItems.FirstWith(item => (item as FileExplorerItem).ItemClass != "file", item => item as FileExplorerItem);
+            if (fei == null)
+                return;
+            string folder = AppKernel.Instance.FileManager.Combine(fei.FullPath, name);
+            string message = AppKernel.Instance.FileManager.MakeFolder(folder);
+            if (message != null)
+            {
+                var messageBox = new MessageDialogBox("Error", message);
+                AppKernel.Instance.UIManager.OpenDialog(messageBox);
+            }
+            fei.IsExpanded = false;
+            fei.IsExpanded = true;
+        }
+        public static void Delete()
+        {
+            var tab = AppKernel.Instance.UIManager.GetTab<FileExplorer>();
+            foreach (var item in tab.TreeView.SelectedItems)
+            {
+                if (!(item is FileExplorerItem fileExplorerItem))
+                    continue;
+                var parent = fileExplorerItem.Parent;
+                string message = AppKernel.Instance.FileManager.Delete(fileExplorerItem.FullPath);
+                if (message != null)
+                {
+                    var messageBox = new MessageDialogBox("Error", message);
+                    AppKernel.Instance.UIManager.OpenDialog(messageBox);
+                    return;
+                }
+                if (parent != null)
+                    parent.Children.Remove(fileExplorerItem);
+                else
+                    tab.TreeView.Items.Remove(fileExplorerItem);
+            }
+        }
         public static void FileProperties()
         {
             var tab = AppKernel.Instance.UIManager.GetTab<FileExplorer>();

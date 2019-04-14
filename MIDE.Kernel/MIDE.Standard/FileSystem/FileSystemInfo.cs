@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using MIDE.Helpers;
-using System.Drawing;
 using Newtonsoft.Json;
 using MIDE.Application;
 using MIDE.API.Visuals;
@@ -36,7 +35,7 @@ namespace MIDE.FileSystem
 
         public FSObjectClass this[string id] => fsObjectClasses[id];
         
-        private FileSystemInfo ()
+        private FileSystemInfo()
         {
             fileManager = AppKernel.Instance.FileManager;
             fsObjectClasses = new Dictionary<string, FSObjectClass>()

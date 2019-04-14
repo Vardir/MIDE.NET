@@ -6,6 +6,7 @@
                     xmlns:local="clr-namespace:MIDE.WPFApp.Styles"
                     xmlns:ctr="clr-namespace:MIDE.WPFApp.Controls"
                     xmlns:it="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+                    xmlns:h="clr-namespace:MIDE.WPFApp.Helpers"
                     xmlns:ui="clr-namespace:MIDE.WPFApp.UI">
 
     <ResourceDictionary.MergedDictionaries>
@@ -164,14 +165,13 @@
         </Border>
     </DataTemplate>
     <DataTemplate DataType="{x:Type api:TreeView}">
-        <TreeView ItemsSource="{Binding Items}">
+        <TreeView ItemsSource="{Binding Items}" h:TreeViewHelpers.SelectItemOnRightClick="True">
             <TreeView.ItemContainerStyle>
                 <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource DefaultTreeViewItem}">
                     <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
                     <Setter Property="ContextMenu">
                         <Setter.Value>
-                            <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}"
-                                         ItemsSource="{Binding ContextMenu.Items}"/>
+                            <ContextMenu ItemsSource="{Binding ContextMenu.Items}"/>
                         </Setter.Value>
                     </Setter>
                 </Style>

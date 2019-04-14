@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using MIDE.FileSystem;
 using MIDE.Application;
@@ -10,12 +11,6 @@ namespace MIDE.WPFApp.FileSystem
 {
     public class WinFileManager : FileManager
     {
-        public override void MakeFolder(string path)
-        {
-            string directory = Path.GetDirectoryName(path);
-            if (!Directory.Exists(directory))
-                Directory.CreateDirectory(directory);
-        }
         public override void Write(string data, string path) => File.WriteAllText(path, data);
         public override void Write(string[] data, string path) => File.WriteAllLines(path, data);
         public override void Serialize(object data, string path)
@@ -51,6 +46,45 @@ namespace MIDE.WPFApp.FileSystem
                 return Path.GetFileName(path);
             else if (Directory.Exists(path))
                 return Path.GetDirectoryName(path);
+            return null;
+        }
+        public override string Delete(string path)
+        {
+            if (File.Exists(path))
+                File.Delete(path);
+            else if (Directory.Exists(path))
+            {
+                if (Directory.EnumerateFileSystemEntries(path).Any())
+                    return "Can not delete directory - it is not empty";
+                Directory.Delete(path);
+            }
+            return null;
+        }
+        public override string MakeFolder(string path)
+        {
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+                return null;
+            }
+            else
+                return "Duplicate folder name";
+        }
+        public override string MakeFile(string path, string templatePath)
+        {
+            if (File.Exists(path))
+                return "Duplicate file name";
+            try
+            {
+                if (templatePath != null)
+                    File.Copy(templatePath, path);
+                else
+                    File.Create(path);
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
             return null;
         }
         public override string Combine(params string[] paths) => Path.Combine(paths);

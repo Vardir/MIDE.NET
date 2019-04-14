@@ -1,4 +1,5 @@
-﻿using MIDE.Helpers;
+﻿using System;
+using MIDE.Helpers;
 using MIDE.API.Visuals;
 using MIDE.API.Commands;
 using MIDE.API.ViewModels;
@@ -87,6 +88,7 @@ namespace MIDE.API.Components
                 OnPropertyChanged(nameof(ItemGlyph));
             }
         }
+        public TreeViewItem Parent { get; set; }
         public ContextMenu ContextMenu
         {
             get => contextMenu;
@@ -121,10 +123,20 @@ namespace MIDE.API.Components
         }
         public TreeViewItem Clone(string _) => Clone();
 
+        protected virtual void OnChildrenClearing()
+        {
+            if (Children.Count == 0 || Children[0] == null)
+                return;
+            foreach (var child in Children)
+            {
+                child.ClearChildren();
+            }
+        }
         protected virtual void OnChildrenCleared() { }
 
         protected void ClearChildren()
         {
+            OnChildrenClearing();
             Children.Clear();
             OnChildrenCleared();
         }
@@ -132,12 +144,17 @@ namespace MIDE.API.Components
         {
             if (!CanExpand)
                 return;
-            if (Children.Count > 0 && Children[0] != null)
-                return;
+            //if (Children.Count > 0 && Children[0] != null)
+            //    return;
 
             var childItems = GetChildItems();
+            ClearChildren();
             Children.Clear();
             Children.AddRange(childItems);
+            foreach (var child in Children)
+            {
+                child.Parent = this;
+            }
         }
 
         protected abstract TreeViewItem CloneInternal();

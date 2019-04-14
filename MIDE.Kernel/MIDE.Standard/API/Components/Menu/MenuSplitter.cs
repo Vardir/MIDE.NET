@@ -14,6 +14,12 @@ namespace MIDE.API.Components
         public override (string, short)[] GetItemsOrdinals() => null;
         public override string[] GetAllItemsIDs() => null;
 
+        protected override MenuItem Create(string id, short ordinalIndex)
+        {
+            MenuSplitter clone = new MenuSplitter(id, ordinalIndex);
+            return clone;
+        }
+
         private void RaiseAddChildException() => throw new InvalidOperationException("Can not add child item into splitter");
     }
 }

@@ -50,5 +50,12 @@ namespace MIDE.API.Components
         /// <param name="path"></param>
         /// <returns></returns>
         public abstract string[] GetAllItemsIDs();
+
+        protected override Button Create(string id)
+        {
+            MenuItem clone = Create(id, OrdinalIndex);
+            return clone;
+        }
+        protected abstract MenuItem Create(string id, short ordinalIndex);
     }
 }

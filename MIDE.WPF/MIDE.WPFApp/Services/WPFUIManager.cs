@@ -48,9 +48,15 @@ namespace MIDE.WPFApp.Services
         {
             throw new NotImplementedException();
         }
-        protected override void OpenDialog_Impl<T>(BaseDialogBox<T> dialogBox)
+
+        protected override (DialogResult result, T value) OpenDialog_Impl<T>(BaseDialogBox<T> dialogBox)
         {
-            throw new NotImplementedException();
+            if (dialogBox == null)
+            {
+                AppKernel.Instance.AppLogger.PushWarning("Attempting to open empty dialog box");
+                return default;
+            }
+            return DialogWindow.Show(dialogBox);
         }
     }
 }

@@ -59,6 +59,12 @@ namespace MIDE.API.Components
             clone.Children.AddRange(Children.Select(item => item.Clone() as MenuItem));
             return clone;
         }
+        protected override MenuItem Create(string id, short ordinalIndex)
+        {
+            MenuGroup clone = new MenuGroup(id, ordinalIndex, AllowIdDuplicates);
+            clone.Children.AddRange(Children.Select(item => item.Clone() as MenuItem));
+            return clone;
+        }
 
         private void Children_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {

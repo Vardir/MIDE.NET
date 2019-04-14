@@ -90,7 +90,7 @@ namespace MIDE.API.Services
             }
         }
 
-        protected abstract void OpenDialog_Impl<T>(BaseDialogBox<T> dialogBox);
+        protected abstract (DialogResult result, T value) OpenDialog_Impl<T>(BaseDialogBox<T> dialogBox);
 
         private void OnSectionAddTabs(IList items)
         {

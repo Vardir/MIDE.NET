@@ -100,10 +100,10 @@ namespace MIDE.Application
             string fileData = fileManager.ReadOrCreate(fileManager.GetPath(ApplicationPath.AppAssets, "project-items.json"), 
                                                        "{ \"icons\": null, \"extensions\": null, \"templates\": null }");
             ProjectItemParameters parameters = JsonConvert.DeserializeObject<ProjectItemParameters>(fileData);
-            if (parameters.Icons != null)
-                LoadItemIcons(parameters);
             if (parameters.FileExtensions != null)
                 LoadFileExtensions(parameters);
+            if (parameters.Icons != null)
+                LoadItemIcons(parameters);
             if (parameters.FileTemplates != null)
                 LoadFileTemplates(parameters);
         }

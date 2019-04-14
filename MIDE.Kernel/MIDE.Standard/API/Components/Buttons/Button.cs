@@ -48,7 +48,7 @@ namespace MIDE.API.Components
             Button clone = Create(id);
             clone.caption = caption;
             clone.glyph = glyph;
-            clone.PressCommand = null;
+            clone.PressCommand = PressCommand;
             return clone;
         }
         protected virtual Button Create(string id) => new Button(id);
