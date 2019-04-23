@@ -321,8 +321,8 @@ namespace MIDE.API.Components
             fdscheme.AddItem(addbtn);
             fdscheme.MergeWith(flscheme);
 
-            flscheme.AddItem(new MenuButton("open", -99));
-            flscheme.AddItem(new MenuSplitter("splitter-1", -90));
+            flscheme.AddItem(new MenuGroup("common", -99));
+            flscheme.AddItem("common", new MenuButton("open", -99));
             flscheme.AddItem(new MenuButton("properties", 0)
             {
                 PressCommand = new RelayCommand(FileProperties)

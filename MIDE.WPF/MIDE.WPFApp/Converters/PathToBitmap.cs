@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Globalization;
 using System.IO;
+using System.Globalization;
 using System.Windows.Media.Imaging;
 
 namespace MIDE.WPFApp.ValueConverters

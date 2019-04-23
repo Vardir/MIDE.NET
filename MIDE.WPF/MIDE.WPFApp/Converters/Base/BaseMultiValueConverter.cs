@@ -5,7 +5,7 @@ using System.Windows.Markup;
 
 namespace MIDE.WPFApp.ValueConverters
 {
-    public abstract class BaseValueConverter<T> : MarkupExtension, IValueConverter
+    public abstract class BaseMultiValueConverter<T> : MarkupExtension, IMultiValueConverter
         where T: class, new()
     {
         static T converter = null;
@@ -15,7 +15,7 @@ namespace MIDE.WPFApp.ValueConverters
             return converter ?? (converter = new T());
         }
 
-        public abstract object Convert(object value, Type targetType, object parameter, CultureInfo culture);
-        public abstract object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture);
+        public abstract object Convert(object[] values, Type targetType, object parameter, CultureInfo culture);
+        public abstract object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture);
     }
 }

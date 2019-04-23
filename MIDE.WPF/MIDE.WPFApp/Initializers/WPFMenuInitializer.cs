@@ -1,11 +1,8 @@
-﻿//#define USE_BLOCKS
-#define DONT_USE_BLOCKS
-
-using MIDE.Application;
+﻿using MIDE.Application;
 using MIDE.API.Commands;
 using MIDE.API.Components;
-using MIDE.Application.Initializers;
 using MIDE.API.Validations;
+using MIDE.Application.Initializers;
 
 namespace MIDE.WPFApp.Initializers
 {
@@ -16,37 +13,23 @@ namespace MIDE.WPFApp.Initializers
         protected override void PopulateMenu(IMenuConstructionContext context)
         {
             context.AddItem(new MenuButton("file", -99));
+            context.AddItem("file", new MenuGroup("file-basic", -99));
+            context.AddItem("file", new MenuGroup("file-exit", 99));
 
-#if USE_BLOCKS
-            MenuGroup groupBasic = new MenuGroup("gr-file-file", -99);
-            groupBasic.Add(new MenuButton("new", -99), null);
-            groupBasic.Add(new MenuButton("file", -99), "new");
-            groupBasic.Add(new MenuButton("folder", -98), "new");
+            context.AddItem("file/file-basic", new MenuButton("new", -99));
+            context.AddItem("file/file-basic/new", new MenuButton("file", -99));
+            context.AddItem("file/file-basic/new", new MenuButton("folder", -98));
+            context.AddItem("file/file-basic/new", new MenuButton("project", -97));
+            context.AddItem("file/file-basic", new MenuButton("open", -98));
+            context.AddItem("file/file-basic/open", new MenuButton("file", -99));
+            context.AddItem("file/file-basic/open", new MenuButton("folder", -98));
+            context.AddItem("file/file-basic/open", new MenuButton("project", -97));
 
-            context.AddItem("file", groupBasic);
-            context.AddItem("file", new MenuButton("exit", 99)
+            context.AddItem("file/file-exit", new MenuButton("exit", 99)
             {
                 PressCommand = new RelayCommand(appKernel.Exit)
             });
-#endif
 
-#if DONT_USE_BLOCKS
-            context.AddItem("file", new MenuSplitter("split-exit", 98));
-            context.AddItem("file", new MenuButton("exit", 99)
-            {
-                PressCommand = new RelayCommand(appKernel.Exit)
-            });
-            context.AddItem("file", new MenuButton("new", -99));
-            context.AddItem("file/new", new MenuButton("file", -99));
-            context.AddItem("file/new", new MenuButton("folder", -98));
-            context.AddItem("file/new", new MenuButton("project", -97)
-            {
-                PressCommand = new RelayCommand(() =>
-                {
-                    var res = DialogWindow.Show(new CreateProjectDialogBox("Create project..."));
-                })
-            });
-#endif
             context.AddItem(new MenuButton("edit", -98));
             context.AddItem(new MenuButton("view", -97));
             context.AddItem(new MenuButton("tools", 50));

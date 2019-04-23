@@ -21,6 +21,7 @@ namespace MIDE.API.Components
             Children.CollectionChanged += Children_CollectionChanged;
         }
 
+        public override void Press(object _) { }
         public override void Add(MenuItem item, string parentId, bool searchRecursively = false)
         {
             if (parentId == null)
