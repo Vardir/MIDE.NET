@@ -3,7 +3,8 @@ using MIDE.API.Commands;
 
 namespace MIDE.API.Components
 {
-    public class Button : LayoutComponent
+
+    public class Button : LayoutComponent, IButton
     {
         private string caption;
         private Glyph glyph;

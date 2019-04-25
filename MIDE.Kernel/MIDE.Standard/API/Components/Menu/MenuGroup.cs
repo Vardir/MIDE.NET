@@ -1,142 +1,61 @@
-﻿using System;
-using System.Linq;
-using MIDE.Helpers;
-using System.Collections;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
+﻿using MIDE.Helpers;
+using System;
+using System.Collections.Generic;
 
 namespace MIDE.API.Components
 {
-    public class MenuGroup : MenuItem
+    public class MenuGroup : ApplicationComponent
     {
-        public bool AllowIdDuplicates { get; }
-        public ObservableCollection<MenuItem> Children { get; }
+        private int firstItemIndex;
+        private int lastItemIndex;
 
-        public override MenuItem this[string id] => Children.FirstOrDefault(i => i.Id == id);
-
-        public MenuGroup(string id, short ordinalIndex, bool allowDuplicates = false) : base(id, ordinalIndex)
+        public short OrdinalIndex { get; }
+        public int FirstItemIndex
         {
-            AllowIdDuplicates = allowDuplicates;
-            Children = new ObservableCollection<MenuItem>();
-            Children.CollectionChanged += Children_CollectionChanged;
-        }
-
-        public override void Press(object _) { }
-        public override void Add(MenuItem item, string parentId, bool searchRecursively = false)
-        {
-            if (parentId == null)
+            get => firstItemIndex;
+            set
             {
-                Children.Insert(item, MIN_ORDINAL, MAX_ORDINAL);
-                return;
-            }
-
-            var parent = Find(parentId, searchRecursively);
-            if (parent == null)
-                throw new ArgumentException($"The menu item with ID {parentId} not found");
-            parent.Add(item, null);
-        }
+                if (value < 0)
+                    throw new ArgumentException("Index cat not be lesser than 0");
+                if (value > lastItemIndex)
+                    throw new ArgumentException("First index cannot be greater than last index");
                 
-        public override MenuItem Find(string id, bool searchRecursively = false)
-        {
-            foreach (var item in Children)
-            {
-                if (item.Id == id)
-                    return item;
-                if (searchRecursively)
-                {
-                    var inter = item.Find(id);
-                    if (inter != null)
-                        return inter;
-                }
+                firstItemIndex = value;
             }
-            return null;
         }
-        public override (string, short)[] GetItemsOrdinals() => Children.Select(mi => (mi.Id, mi.OrdinalIndex));
-        public override string[] GetAllItemsIDs() => Children.Select(mi => mi.Id);
+        public int LastItemIndex
+        {
+            get => lastItemIndex;
+            set
+            {
+                if (value < 0)
+                    throw new ArgumentException("Index cat not be lesser than 0");
+                if (value < firstItemIndex)
+                    throw new ArgumentException("Last index cannot be lesser than first index");
+                lastItemIndex = value;
+            }
+        }
+        public int ItemsCount => LastItemIndex - FirstItemIndex + 1;
+        public MenuItem Container { get; }
 
-        protected override Button Create(string id)
+        public MenuGroup(string id, short ordinal, MenuItem container) : base(id)
         {
-            MenuGroup clone = new MenuGroup(id, OrdinalIndex, AllowIdDuplicates);
-            clone.Children.AddRange(Children.Select(item => item.Clone() as MenuItem));
-            return clone;
-        }
-        protected override MenuItem Create(string id, short ordinalIndex)
-        {
-            MenuGroup clone = new MenuGroup(id, ordinalIndex, AllowIdDuplicates);
-            clone.Children.AddRange(Children.Select(item => item.Clone() as MenuItem));
-            return clone;
+            OrdinalIndex = ordinal;
+            Container = container ?? throw new ArgumentNullException(nameof(container));
         }
 
-        private void Children_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        public IEnumerable<MenuItem> GetItems()
         {
-            switch (e.Action)
+            if (ItemsCount == 0)
+                yield break;
+            for (int i = FirstItemIndex; i <= LastItemIndex; i++)
             {
-                case NotifyCollectionChangedAction.Add:
-                    OnElementsAdd(e.NewItems);
-                    break;
-                case NotifyCollectionChangedAction.Remove:
-                    OnElementsRemove(e.OldItems);
-                    break;
-                case NotifyCollectionChangedAction.Replace:
-                    OnElementsReplace(e.NewItems, e.OldItems);
-                    break;
-                case NotifyCollectionChangedAction.Reset:
-                    OnElementsRemove(e.OldItems);
-                    break;
+                yield return Container.Children[i];
             }
         }
-
-        private void OnElementsAdd(IList items)
+        public (int index, short ordinal)[] GetOrdinals()
         {
-            foreach (var item in items)
-            {
-                var menuItem = item as MenuItem;
-                OnElementAdd(menuItem);
-            }
-        }
-        private void OnElementsRemove(IList items)
-        {
-            foreach (var item in items)
-            {
-                var menuItem = item as MenuItem;
-                OnElementRemove(menuItem);
-            }
-        }
-        private void OnElementsReplace(IList newItems, IList oldItems)
-        {
-            foreach (var item in oldItems)
-            {
-                var menuItem = item as MenuItem;
-                OnElementRemove(menuItem);
-            }
-            foreach (var item in newItems)
-            {
-                var menuItem = item as MenuItem;
-                OnElementAdd(menuItem);
-            }
-        }
-        private void OnCollectionReset(IList oldItems)
-        {
-            foreach (var item in oldItems)
-            {
-                var menuItem = item as MenuItem;
-                OnElementRemove(menuItem);
-            }
-        }
-
-        private void OnElementAdd(MenuItem menuItem)
-        {
-            if (Children.Count(i => i.Id == menuItem.Id) > 1)
-                throw new InvalidOperationException("Collection can not contain duplicate entries");
-            menuItem.Parent = this;
-            menuItem.ParentMenu = ParentMenu;
-            menuItem.ParentItem = null;
-        }
-        private void OnElementRemove(MenuItem menuItem)
-        {
-            menuItem.Parent = null;
-            menuItem.ParentMenu = null;
-            menuItem.ParentItem = null;
+            return Container.Children.Select((index, item) => (index, item.OrdinalIndex));
         }
     }
 }

@@ -141,6 +141,24 @@ namespace MIDE.Helpers
             return result;
         }
         /// <summary>
+        /// LINQ Select implementation for collections to produce array with transformed items
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="collection"></param>
+        /// <param name="transform">A transformation function that provides item itself and it's index</param>
+        /// <returns></returns>
+        public static TResult[] Select<T, TResult>(this ICollection<T> collection, Func<int, T, TResult> transform)
+        {
+            if (transform == null)
+                throw new ArgumentNullException(nameof(transform));
+            TResult[] result = new TResult[collection.Count];
+            int i = 0;
+            foreach (var item in collection)
+                result[i++] = transform(i, item);
+            return result;
+        }
+        /// <summary>
         /// Searches for the first occurrence of the element by the given predicate and returns the value extracted from it
         /// </summary>
         /// <typeparam name="T"></typeparam>
