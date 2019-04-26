@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Reflection;
+using MIDE.API.Validations;
 using System.ComponentModel;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace MIDE.API.Components.PropertyEditors
 {
@@ -10,6 +13,7 @@ namespace MIDE.API.Components.PropertyEditors
     /// <typeparam name="T"></typeparam>
     public abstract class BasePropertyEditor<T> : LayoutComponent
     {
+        private bool hasErrors;
         private bool isReadonly;
         private string propName;
         private object attachedObject;
@@ -17,6 +21,17 @@ namespace MIDE.API.Components.PropertyEditors
         private readonly Type expectedValueType = typeof(T);
         private INotifyPropertyChanged attachedNotifyObject;
 
+        public bool HasErrors
+        {
+            get => hasErrors;
+            private set
+            {
+                if (value == hasErrors)
+                    return;
+                hasErrors = value;
+                OnPropertyChanged(nameof(HasErrors));
+            }
+        }
         public bool IsReadonly
         {
             get => isReadonly;
@@ -46,13 +61,25 @@ namespace MIDE.API.Components.PropertyEditors
             {
                 if (IsReadonly)
                     return;
+                HasErrors = false;
+                ValidationErrors.Clear();
+                Validations.ForEach(v => v.Validate(value, nameof(Value), ValidationErrors));
+                if (ValidationErrors.Count != 0)
+                {
+                    HasErrors = true;
+                    return;
+                }
                 property.SetValue(attachedObject, value);
             }
         }
+        public List<ValueValidation<T>> Validations { get; }
+        public ObservableCollection<ValidationError> ValidationErrors { get; }
 
         public BasePropertyEditor(string id, bool isReadonly = false) : base(id)
         {
             IsReadonly = isReadonly;
+            Validations = new List<ValueValidation<T>>();
+            ValidationErrors = new ObservableCollection<ValidationError>();
         }
 
         public void AttachTo(object obj, string propertyName)
@@ -66,9 +93,9 @@ namespace MIDE.API.Components.PropertyEditors
             PropertyName = propertyName;
             attachedNotifyObject = null;
             Type type = attachedObject.GetType();
-            property = type.GetProperty(propertyName, BindingFlags.GetProperty | BindingFlags.Public);
+            property = type.GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public);
             if (property == null)
-                throw new ArgumentException($"Can not find public property '{property}' on type [{type}] with accessible get method");
+                throw new ArgumentException($"Can not find public property '{propertyName}' on type [{type}] with accessible get method");
             if (!property.PropertyType.Equals(expectedValueType))
                 throw new ArgumentException($"Can not attach editor of type [{expectedValueType}] to property of type [{property.PropertyType}]");
             if (property.SetMethod == null || !property.SetMethod.IsPublic)
@@ -95,6 +122,15 @@ namespace MIDE.API.Components.PropertyEditors
                 IsReadonly = true;
             attachedNotifyObject.PropertyChanged += AttachedNotifyObject_PropertyChanged;
         }
+
+        protected override LayoutComponent CloneInternal(string id)
+        {
+            BasePropertyEditor<T> clone = Create(id, isReadonly);
+            clone.Validations.AddRange(Validations);
+            return clone;
+        }
+
+        protected abstract BasePropertyEditor<T> Create(string id, bool isReadonly);
 
         private void AttachedNotifyObject_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {

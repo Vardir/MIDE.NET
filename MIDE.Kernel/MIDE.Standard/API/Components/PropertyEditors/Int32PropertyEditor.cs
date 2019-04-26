@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MIDE.API.Components.PropertyEditors
+﻿namespace MIDE.API.Components.PropertyEditors
 {
     /// <summary>
     /// A basic int32 property editor
@@ -12,9 +10,10 @@ namespace MIDE.API.Components.PropertyEditors
 
         }
 
-        protected override LayoutComponent CloneInternal(string id)
+        protected override BasePropertyEditor<int> Create(string id, bool isReadonly)
         {
-            throw new NotImplementedException();
+            Int32PropertyEditor clone = new Int32PropertyEditor(id, isReadonly);
+            return clone;
         }
     }
 }

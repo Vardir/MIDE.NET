@@ -1,5 +1,6 @@
 ﻿using System;
 using MIDE.API.Components;
+using MIDE.API.Components.PropertyEditors;
 using MIDE.Application;
 using MIDE.Application.Attrubites;
 using MIDE.Schemes.JSON;
@@ -20,15 +21,20 @@ namespace MIDE.Kernel.ConsoleTest
         {
             Program program = new Program();
 
-            program.Kernel.FileManager = new WinFileManager();
-            FileExplorer explorer = new FileExplorer("expl");
-            explorer.Show("E:\\Temp");
+            TestClass test = new TestClass();
+            ConsoleColorPropertyEditor editor = new ConsoleColorPropertyEditor("editor");
+            editor.AttachTo(test, "Color");
             
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
             Console.WriteLine(program.Kernel.SystemClipboard.Pop(API.Services.DataFormat.FileDrop));
             Console.ReadKey();
             program.Kernel.Exit();
+        }
+
+        class TestClass
+        {
+            public ConsoleColor Color { get; set; }
         }
     }
 }

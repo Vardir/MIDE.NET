@@ -10,13 +10,14 @@ namespace MIDE.Kernel.ConsoleTest
 {
     public class WinFileManager : FileManager
     {
-        public override void MakeFolder(string path)
+        public override string MakeFolder(string path)
         {
             string directory = Path.GetDirectoryName(path);
             if (!Directory.Exists(directory))
                 Directory.CreateDirectory(directory);
+            return null;
         }
-        public override void MakeFile(string path, string templatePath)
+        public override string MakeFile(string path, string templatePath)
         {
             if (templatePath != null)
             {
@@ -26,6 +27,7 @@ namespace MIDE.Kernel.ConsoleTest
             {
                 File.Create(path);
             }
+            return null;
         }
         public override void Write(string data, string path) => File.WriteAllText(path, data);
         public override void Write(string[] data, string path) => File.WriteAllLines(path, data);
@@ -112,6 +114,11 @@ namespace MIDE.Kernel.ConsoleTest
             }
 
             throw new ArgumentException("The given path is invalid", nameof(path));
+        }
+
+        public override string Delete(string path)
+        {
+            throw new NotImplementedException();
         }
     }
 }

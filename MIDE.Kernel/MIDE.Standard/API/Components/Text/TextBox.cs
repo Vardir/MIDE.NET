@@ -6,9 +6,20 @@ namespace MIDE.API.Components
 {
     public class TextBox : TextComponent
     {
+        private bool hasErrors;
         private bool isReadonly;
 
-        public bool HasErrors { get; private set; }
+        public bool HasErrors
+        {
+            get => hasErrors;
+            private set
+            {
+                if (value == hasErrors)
+                    return;
+                hasErrors = value;
+                OnPropertyChanged(nameof(HasErrors));
+            }
+        }
         public bool IsReadonly
         {
             get => isReadonly;
@@ -29,7 +40,7 @@ namespace MIDE.API.Components
                     return;
                 HasErrors = false;
                 ValidationErrors.Clear();
-                Validations.ForEach(v => v.Validate(nameof(Text), value, ValidationErrors));
+                Validations.ForEach(v => v.Validate(value, nameof(Text), ValidationErrors));
                 if (ValidationErrors.Count != 0)
                 {
                     HasErrors = true;
