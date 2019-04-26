@@ -2,12 +2,12 @@
 
 namespace MIDE.API.Validations
 {
-    public class DefaultStringPropertyValidation : PropertyValidation<string>
+    public class DefaultStringAttachedValidation : PropertyAttachedValidation<string>
     {
         public bool AllowNullOrEmpty { get; }
         public string RegexPattern { get; }
 
-        public DefaultStringPropertyValidation(bool raiseExceptionOnError, bool allowNullOrEmpty, string regex = null) 
+        public DefaultStringAttachedValidation(bool raiseExceptionOnError, bool allowNullOrEmpty, string regex = null) 
             : base(raiseExceptionOnError)
         {
             RegexPattern = regex;

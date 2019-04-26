@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace MIDE.API.Validations
 {
-    public abstract class PropertyValidation<T> : Validation, INotifyPropertyChanged
+    public abstract class PropertyAttachedValidation<T> : Validation, INotifyPropertyChanged
     {
         protected const BindingFlags PROP_FLAGS = BindingFlags.GetProperty | BindingFlags.SetProperty | 
                                                   BindingFlags.Public | BindingFlags.Instance;
@@ -23,7 +23,7 @@ namespace MIDE.API.Validations
 
         public event PropertyChangedEventHandler PropertyChanged;
         
-        public PropertyValidation(bool raiseExceptionOnError)
+        public PropertyAttachedValidation(bool raiseExceptionOnError)
         {
             validationMessages = new List<ValidationError>();
             RaiseExceptionOnError = raiseExceptionOnError;

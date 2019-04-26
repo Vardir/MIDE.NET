@@ -88,10 +88,10 @@ namespace MIDE.API.Components
 
             TemplatesList.IsMultiselect = false;
 
-            var nameValidation = new DefaultStringPropertyValidation(false, false, @"^[a-zA-Z0-9_]+[a-zA-Z0-9\.]*$");
-            var pathValidation2 = new PathPropertyValidation(false);
-            nameValidation.AttachTo(ProjectName, "Text");
-            pathValidation2.AttachTo(ProjectPath, "Text");
+            var pathValidation = new DefaultPathValidation();
+            var nameValidation = new DefaultStringValidation(false, @"^[a-zA-Z0-9_]+[a-zA-Z0-9\.]*$");
+            ProjectName.Validations.Add(nameValidation);
+            ProjectPath.Validations.Add(pathValidation);
         }
     }
 

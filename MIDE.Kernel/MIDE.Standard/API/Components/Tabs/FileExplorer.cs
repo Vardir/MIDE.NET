@@ -55,8 +55,8 @@ namespace MIDE.API.Components
             SearchBox.ActionButton.Caption = null;
             SearchBox.ActionButton.ButtonGlyph = new Visuals.Glyph("\uf002") { AlternateColor = Color.White };
             SearchBox.ActionButton.PressCommand = new RelayCommand(ShowCurrent);
-            pathValidator = new PathValidation(false);
-            pathValidator.AttachTo(SearchBox, "Text");
+            pathValidator = new PathValidation();
+            SearchBox.Validations.Add(pathValidator);
 
             TreeView = new TreeView("files-view");
             ToolbarButton homeButton = new ToolbarButton("home");
@@ -155,18 +155,16 @@ namespace MIDE.API.Components
             }
         }
 
-        protected class PathValidation : PropertyValidation<string>
+        protected class PathValidation : ValueValidation<string>
         {
-            public PathValidation(bool raiseExceptionOnError) : base(raiseExceptionOnError) { }
+            public PathValidation() { }
 
-            protected override void Validate(string property, string value)
+            protected override IEnumerable<(string, object)> Validate(string value)
             {
                 if (!IO.Directory.Exists(value) && !IO.File.Exists(value) && value != @"\")
                 {
-                    AddError(property, "The specified path does not exist", value);
-                    return;
+                    yield return("The specified path does not exist", value);
                 }
-                ClearErrors();
             }
         }
     }

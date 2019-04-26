@@ -1,8 +1,8 @@
 ﻿namespace MIDE.API.Validations
 {
-    public class PathPropertyValidation : PropertyValidation<string>
+    public class PathAttachedValidation : PropertyAttachedValidation<string>
     {
-        public PathPropertyValidation(bool raiseExceptionOnError)
+        public PathAttachedValidation(bool raiseExceptionOnError)
             : base(raiseExceptionOnError)
         {
             
