@@ -20,21 +20,12 @@ namespace MIDE.Kernel.ConsoleTest
         public static void Main(string[] args)
         {
             Program program = new Program();
-
-            TestClass test = new TestClass();
-            ConsoleColorPropertyEditor editor = new ConsoleColorPropertyEditor("editor");
-            editor.AttachTo(test, "Color");
             
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
             Console.WriteLine(program.Kernel.SystemClipboard.Pop(API.Services.DataFormat.FileDrop));
             Console.ReadKey();
             program.Kernel.Exit();
-        }
-
-        class TestClass
-        {
-            public ConsoleColor Color { get; set; }
         }
     }
 }

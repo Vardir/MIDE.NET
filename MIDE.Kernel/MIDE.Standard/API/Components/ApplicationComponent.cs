@@ -3,6 +3,7 @@ using MIDE.Application;
 using System.Globalization;
 using MIDE.Application.Events;
 using System.Text.RegularExpressions;
+using MIDE.Helpers;
 
 namespace MIDE.API.Components
 {
@@ -61,6 +62,24 @@ namespace MIDE.API.Components
         /// <returns></returns>
         public string GetSpec() => $"[{GetType().Name}] ID:{Id}";
         public override string ToString() => GetSpec();
+
+        /// <summary>
+        /// Transforms the given string to valid ID
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static string ToSafeId(string str)
+        {
+            if (string.IsNullOrWhiteSpace(str))
+                return "id";
+            string s = str.ToLower();
+            s = s.Replace('_', '-');
+            s = Regex.Replace(s, @"[^a-z0-9\-]", string.Empty);
+            s = s.Trim();
+            s = s.TrimStart('0'.To('9'));
+            s = s.Trim('-');
+            return s;
+        }
 
         protected internal void GenerateNextId()
         {

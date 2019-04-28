@@ -8,13 +8,13 @@ namespace MIDE.API.Components.PropertyEditors
     public abstract class EnumPropertyEditor<TEnum> : BasePropertyEditor<TEnum>
         where TEnum : Enum
     {
-        public Array EnumFields { get; }
+        public TEnum[] EnumFields { get; }
 
         public EnumPropertyEditor(string id, bool isReadonly = false) : base(id, isReadonly)
         {
             EnumFields = GetValues();
         }
 
-        protected abstract Array GetValues();
+        protected abstract TEnum[] GetValues();
     }
 }
