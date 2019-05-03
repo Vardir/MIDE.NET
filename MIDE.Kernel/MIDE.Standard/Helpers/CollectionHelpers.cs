@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MIDE.API.Components;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -44,6 +45,36 @@ namespace MIDE.Helpers
                 int diff = count - list.Count;
                 for (int i = 0; i < diff; i++)
                     list.Add(generator());
+            }
+        }
+        /// <summary>
+        /// Inserts an item into collection based on it's ordinal index
+        /// </summary>
+        /// <param name="items"></param>
+        /// <param name="item"></param>
+        /// <param name="minOrdinal"></param>
+        /// <param name="maxOrdinal"></param>
+        public static void Insert<T>(this IList<T> items, T item)
+            where T: IOrderable
+        {
+            if (item == null)
+                throw new ArgumentNullException(nameof(item));
+
+            if (item.OrdinalIndex <= 0)
+            {
+                int firstIndex = items.FirstIndexWith(i => i.OrdinalIndex >= item.OrdinalIndex);
+                if (firstIndex == -1)
+                    items.Insert(0, item);
+                else
+                    items.Insert(firstIndex + 1, item);
+            }
+            else
+            {
+                int firstIndex = items.FirstIndexWith(i => i.OrdinalIndex <= item.OrdinalIndex);
+                if (firstIndex == -1)
+                    items.Add(item);
+                else
+                    items.Insert(firstIndex, item);
             }
         }
 

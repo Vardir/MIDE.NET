@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using MIDE.API.Commands;
-using MIDE.Helpers;
+﻿using MIDE.API.Commands;
 
 namespace MIDE.API.Components
 {
@@ -8,14 +6,18 @@ namespace MIDE.API.Components
     {
         public ICommand PressCommand { get; set; }
         
-        public MenuButton(string id, short ordinalIndex, bool allowDuplicates = false) : base(id, ordinalIndex, allowDuplicates)
+        public MenuButton(string id, short ordinalIndex) : base(id, ordinalIndex)
         {
 
+        }
+        public MenuButton(string id, string group, short ordinalIndex) : base(id, group, ordinalIndex)
+        {
+            
         }
 
         public void Press(object parameter)
         {
-            if (Children.Count > 0)
+            if (ChildCount > 0)
                 return;
             if (PressCommand.CanExecute(parameter))
                 PressCommand.Execute(parameter);
@@ -23,7 +25,7 @@ namespace MIDE.API.Components
         
         protected override MenuItem Create(string id, short ordinalIndex, string group)
         {
-            MenuButton clone = new MenuButton(id, ordinalIndex, AllowIdDuplicates);
+            MenuButton clone = new MenuButton(id, ordinalIndex);
             clone.PressCommand = PressCommand;
             return clone;
         }
