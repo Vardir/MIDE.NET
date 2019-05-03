@@ -299,10 +299,10 @@ namespace MIDE.API.Components
         private void InitializeSchemes()
         {
             var flscheme = contextMenuSchemes["file"];
-            flscheme.AddItem(new MenuButton("delete", -98)
+            flscheme.Add(new MenuButton("delete", -98)
             {
                 PressCommand = new RelayCommand(Delete)
-            });
+            }, null);
 
             var fdscheme = contextMenuSchemes["folder"];
             var addbtn = new MenuButton("add", -99);
@@ -316,15 +316,14 @@ namespace MIDE.API.Components
                 Caption = "New empty folder...",
                 PressCommand = new RelayCommand(NewFolder)
             }, null);
-            fdscheme.AddItem(addbtn);
+            fdscheme.Add(addbtn, null);
             fdscheme.MergeWith(flscheme);
-
-            flscheme.AddItem(new MenuGroup("common", -99));
-            flscheme.AddItem("common", new MenuButton("open", -99));
-            flscheme.AddItem(new MenuButton("properties", 0)
+            
+            flscheme.Add(new MenuButton("open", "common", -99), null);
+            flscheme.Add(new MenuButton("properties", 0)
             {
                 PressCommand = new RelayCommand(FileProperties)
-            });
+            }, null);
 
             var dvscheme = contextMenuSchemes["drive"];
             dvscheme.MergeWith(fdscheme);

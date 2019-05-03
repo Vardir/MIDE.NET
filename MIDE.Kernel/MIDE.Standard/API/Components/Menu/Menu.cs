@@ -1,31 +1,24 @@
 ﻿using System;
 using System.Linq;
 using MIDE.Helpers;
-using System.Collections;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace MIDE.API.Components
 {
-    /// <summary>
-    /// The main application menu
-    /// </summary>
     public class Menu : LayoutContainer, IMenuConstructionContext
     {
-        /// <summary>
-        /// The RegEx pattern used to match string to path pattern that can contain single item or sequential items representing path
-        /// </summary>
+        private List<MenuItem> items;
+
         public const string PATH_PATTERN = "^(" + ID_PATTERN_INL + ")(?:/(" + ID_PATTERN_INL + "))*$";
 
-        public ObservableCollection<MenuItem> Items { get; }
+        public IEnumerable<MenuItem> Items => items;
 
-        public MenuItem this[string id] => Items.FirstOrDefault(i => i.Id == id);
+        public MenuItem this[string id] => items.FirstOrDefault(i => i.Id == id);
 
         public Menu(string id) : base(id)
         {
-            Items = new ObservableCollection<MenuItem>();
-            Items.CollectionChanged += Items_CollectionChanged;
+            items = new List<MenuItem>();
         }
 
         /// <summary>
@@ -40,7 +33,12 @@ namespace MIDE.API.Components
                 AddItem(copy);
             }
         }
-        public void AddItem(MenuItem item) => Items.Insert(item, MenuItem.MIN_ORDINAL, MenuItem.MAX_ORDINAL);
+        public void AddItem(MenuItem item)
+        {
+            if (IsSealed)
+                throw new InvalidOperationException("Attempt to add item to sealed collection");
+            items.Insert(item);
+        }
         /// <summary>
         /// Puts the specified element to the last one element in path. Each non-existing element in path will be created.
         /// </summary>
@@ -50,11 +48,13 @@ namespace MIDE.API.Components
         /// <exception cref="FormatException"></exception>
         public void AddItem(string path, MenuItem item)
         {
+            if (IsSealed)
+                throw new InvalidOperationException("Attempt to add item to sealed collection");
             if (string.IsNullOrWhiteSpace(path) || path.Length == 0)
                 throw new ArgumentException("The path can not be empty");
             if (path == "/")
             {
-                Items.Insert(item, MenuItem.MIN_ORDINAL, MenuItem.MAX_ORDINAL);
+                items.Insert(item);
                 return;
             }
             if (!Regex.IsMatch(path, PATH_PATTERN))
@@ -64,8 +64,8 @@ namespace MIDE.API.Components
             var root = this[rootId];
             if (root == null)
             {
-                root = new MenuButton(rootId, 0, false);
-                Items.Insert(item, MenuItem.MIN_ORDINAL, MenuItem.MAX_ORDINAL);
+                root = new MenuButton(rootId, 0);
+                items.Insert(item);
             }
             string segment = tail;
             while (!string.IsNullOrEmpty(segment))
@@ -74,7 +74,7 @@ namespace MIDE.API.Components
                 var element = root[elementId];
                 if (element == null)
                 {
-                    element = new MenuButton(elementId, 0, false);
+                    element = new MenuButton(elementId, 0);
                     root.Add(element, null);
                 }
                 root = element;
@@ -82,8 +82,7 @@ namespace MIDE.API.Components
             }
             root.Add(item, null);
         }
-       
-        public override bool Contains(string id) => Items.FirstOrDefault(i => i.Id == id) != null;
+
         /// <summary>
         /// Verifies if the given path is exist in the menu and it's sub-items
         /// </summary>
@@ -116,6 +115,7 @@ namespace MIDE.API.Components
             }
             return true;
         }
+        public override bool Contains(string id) => items.FirstOrDefault(i => i.Id == id) != null;
         /// <summary>
         /// Searches recursively for the menu item with specified ID. Returns null if nothing found
         /// </summary>
@@ -125,7 +125,7 @@ namespace MIDE.API.Components
         /// <exception cref="FormatException"></exception>
         public override LayoutComponent Find(string id)
         {
-            foreach (var item in Items)
+            foreach (var item in items)
             {
                 if (item.Id == id)
                     return item;
@@ -134,39 +134,6 @@ namespace MIDE.API.Components
                     return inter;
             }
             return null;
-        }
-        /// <summary>
-        /// Searches for the last item in the given path and produces it's child items ordinal indexes. Returns null if nothing found
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException"></exception>
-        /// <exception cref="FormatException"></exception>
-        public (string, short)[] GetItemsOrdinals(string path)
-        {
-            if (string.IsNullOrWhiteSpace(path) || path.Length == 0)
-                throw new ArgumentException("The path can not be empty");
-            if (path == "/")
-                return Items.Select(mi => (mi.Id, mi.OrdinalIndex));
-
-            if (!Regex.IsMatch(path, PATH_PATTERN))
-                throw new FormatException("Path has invalid format");
-
-            var (rootId, tail) = path.ExtractUntil(0, '/');
-            var root = this[rootId];
-            if (root == null)
-                return null;
-            string segment = tail;
-            while (!string.IsNullOrEmpty(segment))
-            {
-                var (elementId, tail2) = segment.ExtractUntil(0, '/');
-                var element = root[elementId];
-                if (element == null)
-                    return null;
-                root = element;
-                segment = tail2;
-            }
-            return root.GetItemsOrdinals();
         }
         /// <summary>
         /// Searches for the last item in the given path and produces out array of all child items ID. Returns null if nothing found
@@ -180,7 +147,7 @@ namespace MIDE.API.Components
             if (string.IsNullOrWhiteSpace(path) || path.Length == 0)
                 throw new ArgumentException("The path can not be empty");
             if (path == "/")
-                return Items.Select(mi => mi.Id);
+                return items.Select(mi => mi.Id);
 
             if (!Regex.IsMatch(path, PATH_PATTERN))
                 throw new FormatException("Path has invalid format");
@@ -201,105 +168,66 @@ namespace MIDE.API.Components
             }
             return root.GetAllItemsIDs();
         }
+        /// <summary>
+        /// Searches for the last item in the given path and produces it's child items ordinal indexes. Returns null if nothing found
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="FormatException"></exception>
+        public (string id, short ordinalIndex)[] GetItemsOrdinals(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path) || path.Length == 0)
+                throw new ArgumentException("The path can not be empty");
+            if (path == "/")
+                return items.Select(mi => (mi.Id, mi.OrdinalIndex));
+
+            if (!Regex.IsMatch(path, PATH_PATTERN))
+                throw new FormatException("Path has invalid format");
+
+            var (rootId, tail) = path.ExtractUntil(0, '/');
+            var root = this[rootId];
+            if (root == null)
+                return null;
+            string segment = tail;
+            while (!string.IsNullOrEmpty(segment))
+            {
+                var (elementId, tail2) = segment.ExtractUntil(0, '/');
+                var element = root[elementId];
+                if (element == null)
+                    return null;
+                root = element;
+                segment = tail2;
+            }
+            return root.GetItemsOrdinals();
+        }
+
+        protected override void AddChild_Impl(LayoutComponent component)
+        {
+            if (!(component is MenuItem item))
+                throw new ArgumentException($"Expected [MenuItem] but got [{component.GetType()}]");
+            items.Insert(item);
+        }
+        protected override void RemoveChild_Impl(string id)
+        {
+            int index = items.FirstIndexWith(i => i.Id == id);
+            if (index == -1)
+                return;
+            items.RemoveAt(index);
+        }
+        protected override void RemoveChild_Impl(LayoutComponent component)
+        {
+            int index = items.FirstIndexWith(i => i == component);
+            if (index == -1)
+                return;
+            items.RemoveAt(index);
+        }
 
         protected override LayoutComponent CloneInternal(string id)
         {
             Menu clone = new Menu(id);
-            clone.Items.AddRange(Items.Select(item => item.Clone() as MenuItem));
+            clone.items.AddRange(items.Select(item => item.Clone() as MenuItem));
             return clone;
-        }
-
-        protected override void RemoveChild_Impl(string id)
-        {
-            var item = Items.FirstOrDefault(i => i.Id == id);
-            Items.Remove(item);
-        }
-        protected override void AddChild_Impl(LayoutComponent component)
-        {
-            if (component == null)
-                throw new ArgumentNullException(nameof(component));
-            if (!(component is MenuItem menuItem))
-                throw new ArgumentException($"Menu can not contain elements of type {component.GetType()}");
-
-            Items.Insert(menuItem, MenuItem.MIN_ORDINAL, MenuItem.MAX_ORDINAL);
-        }
-        protected override void RemoveChild_Impl(LayoutComponent component)
-        {
-            if (!(component is MenuItem menuItem))
-                throw new ArgumentException($"Menu does not contain elements of type {component.GetType()}");
-            Items.Remove(menuItem);
-        }
-
-        private void Items_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            switch (e.Action)
-            {
-                case NotifyCollectionChangedAction.Add:
-                    OnElementsAdd(e.NewItems);
-                    break;
-                case NotifyCollectionChangedAction.Remove:
-                    OnElementsRemove(e.OldItems);
-                    break;
-                case NotifyCollectionChangedAction.Replace:
-                    OnElementsReplace(e.NewItems, e.OldItems);
-                    break;
-                case NotifyCollectionChangedAction.Reset:
-                    OnElementsRemove(e.OldItems);
-                    break;
-            }
-        }
-        
-        private void OnElementsAdd(IList items)
-        {
-            foreach (var item in items)
-            {
-                var menuItem = item as MenuItem;
-                OnElementAdd(menuItem);
-            }
-        }
-        private void OnElementsRemove(IList items)
-        {
-            foreach (var item in items)
-            {
-                var menuItem = item as MenuItem;
-                OnElementRemove(menuItem);
-            }
-        }
-        private void OnElementsReplace(IList newItems, IList oldItems)
-        {
-            foreach (var item in oldItems)
-            {
-                var menuItem = item as MenuItem;
-                OnElementRemove(menuItem);
-            }
-            foreach (var item in newItems)
-            {
-                var menuItem = item as MenuItem;
-                OnElementAdd(menuItem);
-            }
-        }
-        private void OnCollectionReset(IList oldItems)
-        {
-            foreach (var item in oldItems)
-            {
-                var menuItem = item as MenuItem;
-                OnElementRemove(menuItem);
-            }
-        }
-
-        private void OnElementAdd(MenuItem menuItem)
-        {
-            if (Items.Count(i => i.Id == menuItem.Id) > 1)
-                throw new InvalidOperationException("Collection can not contain duplicate entries");
-            menuItem.Parent = this;
-            menuItem.ParentMenu = this;
-            menuItem.ParentItem = null;
-        }
-        private void OnElementRemove(MenuItem menuItem)
-        {
-            menuItem.Parent = null;
-            menuItem.ParentMenu = null;
-            menuItem.ParentItem = null;
         }
     }
 }
