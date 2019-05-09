@@ -1,14 +1,43 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:MIDE.WPF">
+                    xmlns:c="clr-namespace:MIDE.WPF.ValueConverters"
+                    xmlns:wnd="clr-namespace:MIDE.WPF.Windows"
+                    xmlns:local="clr-namespace:MIDE.WPF.Styles">
 
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="/shared;component/Styles/Brushes.xaml"/>
-        <ResourceDictionary Source="/shared;component/Styles/Fonts.xaml"/>
-        <ResourceDictionary Source="/shared;component/Styles/DefaultControls.xaml"/>
+        <ResourceDictionary Source="Fonts.xaml"/>
     </ResourceDictionary.MergedDictionaries>
+    
+    <Style TargetType="{x:Type Control}" x:Key="BaseStyle">
+        <Setter Property="FontFamily" Value="Century Gothic"/>
+        <Setter Property="FontSize" Value="{StaticResource FontSizeRegular}"/>
+    </Style>
 
-    <Style TargetType="{x:Type local:MainWindow}" x:Key="MWindow">
+    <Style TargetType="{x:Type TextBlock}" x:Key="BaseTextBlockStyle">
+        <Setter Property="FontFamily" Value="Century Gothic"/>
+        <Setter Property="FontSize" Value="{StaticResource FontSizeRegular}"/>
+    </Style>
+
+    <Style TargetType="{x:Type ContentPresenter}" x:Key="GlyphPresenter">
+        <Setter Property="ContentTemplateSelector">
+            <Setter.Value>
+                <local:GlyphTemplateSelector>
+                    <local:GlyphTemplateSelector.FontAwesomeTemplate>
+                        <DataTemplate>
+                            <TextBlock FontFamily="{StaticResource FontAwesome}" Margin="0 0 5 0"
+                                       Text="{Binding Value}">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush Color="{Binding AlternateColor, Converter={c:ColorConverter}}"/>
+                                </TextBlock.Foreground>
+                            </TextBlock>
+                        </DataTemplate>
+                    </local:GlyphTemplateSelector.FontAwesomeTemplate>
+                </local:GlyphTemplateSelector>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type wnd:DialogWindow}" x:Key="DWindow">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Window}">
@@ -50,25 +79,10 @@
                                     </Grid.ColumnDefinitions>
 
                                     <!--Icon-->
-                                    <Button Grid.Column="0" Style="{StaticResource SystemIconButton}"
-                                            Command="{Binding MenuCommand}">
-                                        <TextBlock Text="{Binding Title, FallbackValue=WPFTemplate}" VerticalAlignment="Center"
-                                                   Foreground="{DynamicResource Window_HeaderForeground_Brush}"
-                                                   FontWeight="SemiBold" FontSize="{StaticResource FontSizeLarge}"/>
-                                    </Button>
-
-                                    <!--Menu buttons-->
-                                    <StackPanel Grid.Column="2" Orientation="Horizontal">
-                                        <Button Style="{StaticResource WindowControlButton}"
-                                                Content="_"
-                                                Command="{Binding MinimizeCommand}"/>
-                                        <Button Style="{StaticResource WindowControlButton}" 
-                                                Content="[ ]"
-                                                Command="{Binding MaximizeCommand}"/>
-                                        <Button Style="{StaticResource WindowControlButton}"
-                                                Content="X"
-                                                Command="{Binding CloseCommand}"/>
-                                    </StackPanel>
+                                    <TextBlock Text="{Binding Title, FallbackValue=Dialog}"
+                                               Grid.Column="0" VerticalAlignment="Center" Margin="5 0 0 0"
+                                               Foreground="{DynamicResource Window_HeaderForeground_Brush}"
+                                               FontWeight="SemiBold" FontSize="{StaticResource FontSizeLarge}"/>
                                 </Grid>
 
                                 <!--Window contents-->
@@ -84,5 +98,4 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
 </ResourceDictionary>

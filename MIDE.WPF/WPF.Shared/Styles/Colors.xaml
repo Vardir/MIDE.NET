@@ -1,0 +1,153 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:MIDE.WPF.Styles">
+
+    <Color x:Key="Window_Border">#007ACC</Color>
+    <Color x:Key="Window_BodyBackground">#1E1E1E</Color>
+    <Color x:Key="Window_HeaderBackground">#2D2D30</Color>
+    <Color x:Key="Window_HeaderForeground">#FFFFFF</Color>
+    <Color x:Key="Window_ControlButtonForeground">#FFFFFF</Color>
+    <Color x:Key="Window_ControlButtonBackground">#2D2D30</Color>
+    <Color x:Key="Window_ControlButtonForegroundHovered">#FFFFFF</Color>
+    <Color x:Key="Window_ControlButtonBackgroundHovered">#3F3F41</Color>
+
+    <Color x:Key="Panel_Background">#252526</Color>
+
+    <Color x:Key="Menu_Arrow">#FFFFFF</Color>
+    <Color x:Key="Menu_ArrowHovered">#007ACC</Color>
+    <Color x:Key="Menu_Border">#333334</Color>
+    <Color x:Key="Menu_Separator">#333334</Color>
+    <Color x:Key="Menu_Background">#2D2D30</Color>
+    <Color x:Key="Menu_Foreground">#FFFFFF</Color>
+    <Color x:Key="Menu_ItemBackground">#1E1E1E</Color>
+    <Color x:Key="Menu_ItemForegroundDisabled">#656565</Color>
+    <Color x:Key="Menu_ItemBackgroundDisabled">#333334</Color>
+    <Color x:Key="Menu_ItemBackgroundHovered">#3E3E40</Color>
+    <Color x:Key="Menu_ItemForegroundHovered">#FFFFFF</Color>
+
+    <Color x:Key="Thumb">#333334</Color>
+
+    <Color x:Key="Toolbar_Separator">#333334</Color>
+    <Color x:Key="Toolbar_Background">#2D2D30</Color>
+    <Color x:Key="Toolbar_Foreground">#FFFFFF</Color>
+    <Color x:Key="Toolbar_SubmenuBorder">#333334</Color>
+    <Color x:Key="Toolbar_ItemForegroundDisabled">#656565</Color>
+    <Color x:Key="Toolbar_ItemBackgroundDisabled">#2D2D30</Color>
+    <Color x:Key="Toolbar_ItemBackgroundHovered">#3E3E40</Color>
+    <Color x:Key="Toolbar_ItemForegroundHovered">#FFFFFF</Color>
+
+    <Color x:Key="Link_Background">#00000000</Color>
+    <Color x:Key="Link_Foreground">#3878C1</Color>
+    <Color x:Key="Link_BackgroundDisabled">#00000000</Color>
+    <Color x:Key="Link_ForegroundDisabled">#656565</Color>
+    <Color x:Key="Link_BackgroundHovered">#00000000</Color>
+    <Color x:Key="Link_ForegroundHovered">#2356A1</Color>
+
+    <Color x:Key="Button_Border">#6A6A75</Color>
+    <Color x:Key="Button_Background">#3F3F46</Color>
+    <Color x:Key="Button_Foreground">#FFFFFF</Color>
+    <Color x:Key="Button_BackgroundDisabled">#252526</Color>
+    <Color x:Key="Button_ForegroundDisabled">#656565</Color>
+    <Color x:Key="Button_BorderDisabled">#6A6A75</Color>
+    <Color x:Key="Button_BorderHovered">#6A6A75</Color>
+    <Color x:Key="Button_BackgroundHovered">#54545C</Color>
+    <Color x:Key="Button_ForegroundHovered">#FFFFFF</Color>
+
+    <Color x:Key="Label_Foreground">#FFFFFF</Color>
+    <Color x:Key="Label_ForegroundDisabled">#656565</Color>
+
+    <Color x:Key="Radiobutton_Outercircle">#6A6A75</Color>
+    <Color x:Key="Radiobutton_Innercircle">#00000000</Color>
+    <Color x:Key="Radiobutton_InnercircleChecked">#54545C</Color>
+    <Color x:Key="Radiobutton_OutercircleDisabled">#6A6A75</Color>
+    <Color x:Key="Radiobutton_InnercircleCheckedDisabled">#252526</Color>
+
+    <Color x:Key="Checkbox_Box">#6A6A75</Color>
+    <Color x:Key="Checkbox_BoxFill">#00000000</Color>
+    <Color x:Key="Checkbox_BoxFillChecked">#54545C</Color>
+    <Color x:Key="Checkbox_BoxDisabled">#6A6A75</Color>
+    <Color x:Key="Checkbox_BoxFillCheckedDisabled">#252526</Color>
+
+    <Color x:Key="Textbox_Border">#6A6A75</Color>
+    <Color x:Key="Textbox_Background">#333337</Color>
+    <Color x:Key="Textbox_BackgroundInvalidated">#F13132</Color>
+    <Color x:Key="Textbox_BackgroundHovered">#3F3F46</Color>
+    <Color x:Key="Textbox_Foreground">#FFFFFF</Color>
+    <Color x:Key="Textbox_ForegroundSelected">#FFFFFF</Color>
+    <Color x:Key="Textbox_BackgroundSelected">#007ACC</Color>
+    <Color x:Key="Textbox_ForegroundHovered">#FFFFFF</Color>
+    <Color x:Key="Textbox_BackgroundDisabled">#2D2D30</Color>
+    <Color x:Key="Textbox_ForegroundDisabled">#656565</Color>
+    <Color x:Key="Textbox_BorderDisabled">#6A6A75</Color>
+    <Color x:Key="Textbox_BorderHovered">#007ACC</Color>
+
+    <Color x:Key="ComboBox_Toggle">#6A6A75</Color>
+    <Color x:Key="ComboBox_DropdownBackground">#6A6A75</Color>
+    <Color x:Key="ComboBox_DropdownBorder">#6A6A75</Color>
+    <Color x:Key="ComboBox_DropdownForeground">#6A6A75</Color>
+    <Color x:Key="ComboBox_ToggleHovered">#007ACC</Color>
+    <Color x:Key="ComboBox_ToggleBackground">#333337</Color>
+    <Color x:Key="ComboBox_ToggleBackgroundHovered">#1F1F20</Color>
+
+    <Color x:Key="Tab_Border">#6A6A75</Color>
+    <Color x:Key="Tab_Background">#252526</Color>
+    <Color x:Key="Tab_Foreground">#FFFFFF</Color>
+    <Color x:Key="Tab_HeaderBorder">#8DA3C1</Color>
+    <Color x:Key="Tab_HeaderBackground">#8DA3C1</Color>
+    <Color x:Key="Tab_HeaderForeground">#000000</Color>
+    <Color x:Key="Tab_HeaderBorderHovered">#B0CBF1</Color>
+    <Color x:Key="Tab_HeaderBorderDisabled">#B0CBF1</Color>
+    <Color x:Key="Tab_HeaderBorderSelected">#B0CBF1</Color>
+    <Color x:Key="Tab_HeaderBackgroundHovered">#B0CBF1</Color>
+    <Color x:Key="Tab_HeaderForegroundHovered">#000000</Color>
+    <Color x:Key="Tab_HeaderBackgroundSelected">#B0CBF1</Color>
+    <Color x:Key="Tab_HeaderForegroundSelected">#000000</Color>
+    <Color x:Key="Tab_HeaderBackgroundDisabled">#2D2D30</Color>
+    <Color x:Key="Tab_HeaderForegroundDisabled">#656565</Color>
+
+    <Color x:Key="Toggle_Background">#00000000</Color>
+    <Color x:Key="Toggle_BackgroundOpened">#000000</Color>
+    <Color x:Key="Toggle_BorderHovered">#007ACC</Color>
+    <Color x:Key="Toggle_Border">#FFFFFF</Color>
+    <Color x:Key="Toggle_BorderOpened">#FFFFFF</Color>
+    <Color x:Key="Toggle_BackgroundHovered">#007ACC</Color>
+
+    <Color x:Key="TreeView_Border">#252526</Color>
+    <Color x:Key="TreeView_Background">#252526</Color>
+    <Color x:Key="TreeView_Foreground">#FFFFFF</Color>
+    <Color x:Key="TreeView_ItemBackground">#00000000</Color>
+    <Color x:Key="TreeView_ItemBackgroundDisabled">#00000000</Color>
+    <Color x:Key="TreeView_ItemForegroundDisabled">#656565</Color>
+    <Color x:Key="TreeView_ItemBackgroundSelected">#007ACC</Color>
+    <Color x:Key="TreeView_ItemForegroundSelected">#FFFFFF</Color>
+    <Color x:Key="TreeView_ItemBackgroundSelectedInactive">#3F3F46</Color>
+    <Color x:Key="TreeView_ItemForegroundSelectedInactive">#FFFFFF</Color>
+
+    <Color x:Key="DataGrid_Background">#252526</Color>
+    <Color x:Key="DataGrid_Foreground">#FFFFFF</Color>
+    <Color x:Key="DataGrid_Border">#6A6A75</Color>
+    <Color x:Key="DataGrid_CellBorder">#00000000</Color>
+    <Color x:Key="DataGrid_CellForegroundDisabled">#656565</Color>
+    <Color x:Key="DataGrid_RowBackground">#00000000</Color>
+    <Color x:Key="DataGrid_CellBackgroundSelected">#3E3E40</Color>
+    <Color x:Key="DataGrid_CellForegroundSelected">#FFFFFF</Color>
+    <Color x:Key="DataGrid_CellBorderSelected">#007ACC</Color>
+    <Color x:Key="DataGrid_CellBackgroundSelectedInactive">#3F3F46</Color>
+    <Color x:Key="DataGrid_CellForegroundSelectedInactive">#FFFFFF</Color>
+    <Color x:Key="DataGrid_CellBorderSelectedInactive">#333334</Color>
+    <Color x:Key="DataGrid_ColumnHeaderBorder">#007ACC</Color>
+    <Color x:Key="DataGrid_ColumnHeaderSeparator">#FFFFFF</Color>
+
+    <Color x:Key="ScrollBar_Background">#3E3E42</Color>
+    <Color x:Key="ScrollBar_Bar">#686868</Color>
+    <Color x:Key="ScrollBar_Thumb">#686868</Color>
+    <Color x:Key="Scrollbar_BarHovered">#9E9E9E</Color>
+    <Color x:Key="Scrollbar_BarDisabled">#6A6A75</Color>
+
+    <Color x:Key="StatusBar_Backgound">#007ACC</Color>
+    <Color x:Key="StatusBar_Foreground">#FFFFFF</Color>
+
+    <Color x:Key="ProgressBar_Backgound">#333337</Color>
+    <Color x:Key="ProgressBar_Foreground">#007ACC</Color>
+
+</ResourceDictionary>

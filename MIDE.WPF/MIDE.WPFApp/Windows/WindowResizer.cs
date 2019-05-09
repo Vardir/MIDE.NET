@@ -4,7 +4,7 @@ using System.Windows.Media;
 using System.Windows.Interop;
 using System.Runtime.InteropServices;
 
-namespace MIDE.WPFApp.Windows
+namespace MIDE.WPF.Windows
 {
     /// <summary>
     /// The dock position of the window

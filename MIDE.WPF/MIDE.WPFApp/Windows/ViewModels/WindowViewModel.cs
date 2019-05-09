@@ -1,10 +1,10 @@
 ﻿using System.Windows;
 using MIDE.Application;
-using MIDE.WPFApp.Windows;
-using MIDE.WPFApp.RelayCommands;
+using MIDE.WPF.Windows;
+using MIDE.WPF.RelayCommands;
 using ICommand = System.Windows.Input.ICommand;
 
-namespace MIDE.WPFApp
+namespace MIDE.WPF
 {
     public class WindowViewModel : BaseWindowViewModel
     {

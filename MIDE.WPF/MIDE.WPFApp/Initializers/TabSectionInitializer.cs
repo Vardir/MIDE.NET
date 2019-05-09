@@ -2,7 +2,7 @@
 using MIDE.API.Components;
 using MIDE.Application.Initializers;
 
-namespace MIDE.WPFApp.Initializers
+namespace MIDE.WPF.Initializers
 {
     public class TabSectionInitializer : IApplicationInitializer
     {

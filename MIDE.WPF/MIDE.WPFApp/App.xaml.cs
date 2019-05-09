@@ -2,16 +2,16 @@
 using MIDE.Helpers;
 using System.Windows;
 using MIDE.Application;
-using MIDE.WPFApp.Helpers;
-using MIDE.WPFApp.Services;
-using MIDE.WPFApp.FileSystem;
-using MIDE.WPFApp.Initializers;
+using MIDE.WPF.Helpers;
+using MIDE.WPF.Services;
+using MIDE.WPF.FileSystem;
+using MIDE.WPF.Initializers;
 using MIDE.Application.Attrubites;
 using System.Windows.Media;
 
 [assembly: ApplicationProperties("wpftemplate")]
 
-namespace MIDE.WPFApp
+namespace MIDE.WPF
 {
     /// <summary>
     /// Interaction logic for WPFApplication.xaml
