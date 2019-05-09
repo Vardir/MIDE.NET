@@ -10,9 +10,9 @@ using System.Windows;
 [assembly: AssemblyTitle("MIDE.WPF")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Vardir Products")]
 [assembly: AssemblyProduct("MIDE.WPF")]
-[assembly: AssemblyCopyright("Copyright ©  2018")]
+[assembly: AssemblyCopyright("Copyright © 2019 Andrew Satura")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
