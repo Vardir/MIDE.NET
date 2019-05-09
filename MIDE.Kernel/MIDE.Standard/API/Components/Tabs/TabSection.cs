@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using MIDE.Helpers;
+using MIDE.API.Commands;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -33,11 +34,13 @@ namespace MIDE.API.Components
             {
                 if (value == selectedIndex)
                     return;
-                if (Tabs.OutOfRange(value))
+                if (value >= Tabs.Count || value < -1)
                     return;
                 selectedIndex = value;
                 if (selectedIndex >= 0)
                     SelectedTab = Tabs[value];
+                else
+                    SelectedTab = null;
                 OnPropertyChanged(nameof(SelectedIndex));
             }
         }
@@ -82,7 +85,6 @@ namespace MIDE.API.Components
                 throw new ArgumentException($"Argument was expected to be a Tab, but {component.GetType()} given");
             
             Tabs.Add(tab);
-            SelectedIndex = Tabs.Count - 1;
         }
         protected override void RemoveChild_Impl(string id)
         {
@@ -97,12 +99,11 @@ namespace MIDE.API.Components
                 throw new ArgumentNullException(nameof(component));
             if (!(component is Tab tab))
                 throw new ArgumentException($"The tab section component does not contain elements of type {component.GetType()}");
+
             int index = Tabs.IndexOf(t => t.Id == tab.Id);
             if (index == -1)
                 return;
             Tabs.RemoveAt(index);
-            if (index == selectedIndex)
-                SelectedIndex = 0;
         }
 
         private void Tabs_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -139,7 +140,7 @@ namespace MIDE.API.Components
             {
                 var tab = item as Tab;
                 tab.ParentSection = null;
-                tab.Parent = this;
+                tab.Parent = null;
             }
             SelectedIndex = Tabs.Count - 1;
         }

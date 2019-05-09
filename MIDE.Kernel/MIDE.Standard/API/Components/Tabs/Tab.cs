@@ -35,10 +35,21 @@ namespace MIDE.API.Components
             Header = FormatId();
             TabToolbar = toolbar ?? new Toolbar("toolbar");
             TabToolbar.Parent = this;
+            CloseCommand = new RelayCommand(Close);
             registeredComponents = new LinkedList<LayoutComponent>();
             registeredComponents.AddLast(TabToolbar);
         }
         public Tab(string id, bool allowDuplicates = false) : this(id, null, allowDuplicates) { }
+
+        public void Close()
+        {
+            if (ParentSection == null)
+                return;
+            ParentSection.RemoveChild(Id);
+        }
+
+        public override bool Contains(string id) => registeredComponents.FirstOrDefault(component => component.Id == id) != null;
+        public override LayoutComponent Find(string id) => registeredComponents.FirstOrDefault(component => component.Id == id);
 
         protected override void AddChild_Impl(LayoutComponent component)
         {
@@ -56,15 +67,11 @@ namespace MIDE.API.Components
             registeredComponents.Remove(component);
         }
 
-        public override bool Contains(string id) => registeredComponents.FirstOrDefault(component => component.Id == id) != null;
-        public override LayoutComponent Find(string id) => registeredComponents.FirstOrDefault(component => component.Id == id);
-
         protected override LayoutComponent CloneInternal(string id)
         {
             Tab clone = Create(id, (Toolbar)TabToolbar.Clone(), AllowDuplicates);
             clone.header = header;
             clone.ParentSection = null;
-            clone.CloseCommand = null;
             return clone;
         }
 

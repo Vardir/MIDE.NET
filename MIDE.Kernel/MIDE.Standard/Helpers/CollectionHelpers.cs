@@ -62,7 +62,7 @@ namespace MIDE.Helpers
 
             if (item.OrdinalIndex <= 0)
             {
-                int firstIndex = items.FirstIndexWith(i => i.OrdinalIndex >= item.OrdinalIndex);
+                int firstIndex = items.LastIndexWith(i => i.OrdinalIndex <= item.OrdinalIndex);
                 if (firstIndex == -1)
                     items.Insert(0, item);
                 else
@@ -70,7 +70,7 @@ namespace MIDE.Helpers
             }
             else
             {
-                int firstIndex = items.FirstIndexWith(i => i.OrdinalIndex <= item.OrdinalIndex);
+                int firstIndex = items.FirstIndexWith(i => i.OrdinalIndex >= item.OrdinalIndex);
                 if (firstIndex == -1)
                     items.Add(item);
                 else
@@ -533,7 +533,7 @@ namespace MIDE.Helpers
         /// <param name="list"></param>
         /// <param name="index"></param>
         /// <returns></returns>
-        public static bool OutOfRange<T>(this IList<T> list, int index) => index < 0 && index >= list.Count;
+        public static bool OutOfRange<T>(this IList<T> list, int index) => index < 0 || index >= list.Count;
         /// <summary>
         /// Verifies if the given index is out of range for the current array
         /// </summary>

@@ -61,8 +61,9 @@ namespace MIDE.API.Components
                     {
                         yield return item;
                     }
-                    if (menuGroups[i].Items.Count > 0 && i < menuGroups.Count - 1)
-                        yield return null;
+                    if (menuGroups[i].Items.Count > 0 && i < menuGroups.Count - 1 
+                        && menuGroups[i + 1].Items.Count > 0)
+                        yield return new MenuSplitter("splitter", 0);
                 }
             }
         }
@@ -85,6 +86,7 @@ namespace MIDE.API.Components
 
         public MenuItem(string id, short ordinalIndex) : base(id)
         {
+            Caption = FormatId();
             OrdinalIndex = ordinalIndex.Clamp(MIN_ORDINAL, MAX_ORDINAL);
             menuGroups = new List<MenuGroup>(1)
             {
@@ -102,18 +104,22 @@ namespace MIDE.API.Components
         /// <param name="fdscheme"></param>
         public void MergeWith(MenuItem source)
         {
-            for (int i = 0; i < menuGroups.Count; i++)
+            for (int i = 0; i < source.menuGroups.Count; i++)
             {
-                MenuGroup group = menuGroups[i];
-                AddGroup(group.Id, group.OrdinalIndex);
+                MenuGroup group = source.menuGroups[i];
+                MenuGroup innerGroup = menuGroups.Find(mg => mg.Id == group.Id);
+                if (innerGroup == null)
+                    AddGroup(group.Id, group.OrdinalIndex);
                 foreach (var item in group.Items)
                 {
+                    if (innerGroup != null && innerGroup.Items.Contains(mi => mi.Id == item.Id))
+                        continue;
                     Add(item.Clone() as MenuItem, null);
                 }
             }
         }
         /// <summary>
-        /// Add the given item to child items. If the parent ID given, searches (recursively if the flag specified) an item with the specified ID
+        /// Add the given item to child items. If the parent ID given, firstly searches for group with that ID. If group not found than searches (recursively if the flag specified) an item with the specified ID
         /// </summary>
         /// <param name="item">The item to add</param>
         /// <param name="parentId">The parent to add this item to</param>
@@ -122,9 +128,10 @@ namespace MIDE.API.Components
         {
             if (item.Group == null)
                 item.Group = DEFAULT_GROUP;
+            MenuGroup group;
             if (parentId == null)
             {
-                MenuGroup group = menuGroups.Find(g => g.Id == item.Group);
+                group = menuGroups.Find(g => g.Id == item.Group);
                 if (group == null)
                 {
                     item.Group = DEFAULT_GROUP;
@@ -135,6 +142,14 @@ namespace MIDE.API.Components
                 return;
             }
 
+            group = menuGroups.Find(mg => mg.Id == parentId);
+            if (group !=  null)
+            {
+                item.Group = parentId;
+                group.Items.Insert(item);
+                ChildCount++;
+                return;
+            }
             var parent = Find(parentId, searchRecursively);
             if (parent == null)
                 throw new ArgumentException($"The menu item with ID {parentId} not found");
@@ -187,7 +202,8 @@ namespace MIDE.API.Components
                 ChildCount -= group.Items.Count;
             menuGroups.RemoveAt(index);
         }
-        
+
+        public bool ContainsGroup(string id) => menuGroups.Contains(mg => mg.Id == id);
         public MenuItem Find(string id, bool searchRecursively = false)
         {
             foreach (var item in Children)

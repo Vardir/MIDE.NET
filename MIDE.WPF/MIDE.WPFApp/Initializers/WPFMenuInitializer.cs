@@ -12,9 +12,10 @@ namespace MIDE.WPFApp.Initializers
 
         protected override void PopulateMenu(IMenuConstructionContext context)
         {
-            context.AddItem(new MenuButton("file", -99));
-            context.AddItem("file", new MenuGroup("file-basic", -99));
-            context.AddItem("file", new MenuGroup("file-exit", 99));
+            MenuButton fileButton = new MenuButton("file", -99);
+            fileButton.AddGroup("file-basic", -99);
+            fileButton.AddGroup("file-exit", 99);
+            context.AddItem(fileButton);
 
             context.AddItem("file/file-basic", new MenuButton("new", -99));
             context.AddItem("file/file-basic/new", new MenuButton("file", -99));
@@ -34,6 +35,15 @@ namespace MIDE.WPFApp.Initializers
             context.AddItem(new MenuButton("view", -97));
             context.AddItem(new MenuButton("tools", 50));
             context.AddItem(new MenuButton("help", 99));
+
+            context.AddItem("view", new MenuButton("file-explorer", 0)
+            {
+                PressCommand = new RelayCommand(() =>
+                {
+                    var expl = new FileExplorer("file-explorer");
+                    appKernel.UIManager.AddTab(expl, "browsers");
+                })
+            });
 #if DEBUG
             context.AddItem("help", new MenuButton("about", -99)
             {
@@ -54,9 +64,9 @@ namespace MIDE.WPFApp.Initializers
             {
                 PressCommand = new RelayCommand(() =>
                 {
-                    var box = new TextBoxDialogBox("Write your answer", "Your name:");
-                    var validation = new DefaultStringPropertyValidation(false, false, "^[a-zA-Zа-яА-Я]*$");
-                    validation.AttachTo(box.Input);
+                    var box = new TextBoxDialogBox("Write your answer", "Your name:");                    
+                    var validation = new DefaultStringValidation(false, "^[a-zA-Zа-яА-Я]*$");
+                    box.Input.Validations.Add(validation);
                     var res = DialogWindow.Show(box);
                     if (res.result == DialogResult.Accept)
                         DialogWindow.Show(new MessageDialogBox("Answer", $"Your answer: {res.value}"));

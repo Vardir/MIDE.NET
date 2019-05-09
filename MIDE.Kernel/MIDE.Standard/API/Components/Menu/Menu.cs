@@ -12,6 +12,7 @@ namespace MIDE.API.Components
 
         public const string PATH_PATTERN = "^(" + ID_PATTERN_INL + ")(?:/(" + ID_PATTERN_INL + "))*$";
 
+        public int ItemsCount => items.Count;
         public IEnumerable<MenuItem> Items => items;
 
         public MenuItem this[string id] => items.FirstOrDefault(i => i.Id == id);
@@ -67,20 +68,8 @@ namespace MIDE.API.Components
                 root = new MenuButton(rootId, 0);
                 items.Insert(item);
             }
-            string segment = tail;
-            while (!string.IsNullOrEmpty(segment))
-            {
-                var (elementId, tail2) = segment.ExtractUntil(0, '/');
-                var element = root[elementId];
-                if (element == null)
-                {
-                    element = new MenuButton(elementId, 0);
-                    root.Add(element, null);
-                }
-                root = element;
-                segment = tail2;
-            }
-            root.Add(item, null);
+            MenuItem last = GetItem(root, tail, true);
+            last.Add(item, null);
         }
 
         /// <summary>
@@ -103,17 +92,9 @@ namespace MIDE.API.Components
             var root = this[rootId];
             if (root == null)
                 return false;
-            string segment = tail;
-            while (!string.IsNullOrEmpty(segment))
-            {
-                var (elementId, tail2) = segment.ExtractUntil(0, '/');
-                var element = root[elementId];
-                if (element == null)
-                    return false;
-                root = element;
-                segment = tail2;
-            }
-            return true;
+            if (GetItem(root, tail, false) != null)
+                return true;
+            return false;
         }
         public override bool Contains(string id) => items.FirstOrDefault(i => i.Id == id) != null;
         /// <summary>
@@ -156,17 +137,11 @@ namespace MIDE.API.Components
             var root = this[rootId];
             if (root == null)
                 return null;
-            string segment = tail;
-            while (!string.IsNullOrEmpty(segment))
-            {
-                var (elementId, tail2) = segment.ExtractUntil(0, '/');
-                var element = root[elementId];
-                if (element == null)
-                    return null;
-                root = element;
-                segment = tail2;
-            }
-            return root.GetAllItemsIDs();
+
+            MenuItem item = GetItem(root, tail, false);
+            if (item == null)
+                return null;
+            return item.GetAllItemsIDs();
         }
         /// <summary>
         /// Searches for the last item in the given path and produces it's child items ordinal indexes. Returns null if nothing found
@@ -228,6 +203,26 @@ namespace MIDE.API.Components
             Menu clone = new Menu(id);
             clone.items.AddRange(items.Select(item => item.Clone() as MenuItem));
             return clone;
+        }
+        
+        private MenuItem GetItem(MenuItem root, string path, bool createIfNotExist)
+        {
+            if (string.IsNullOrEmpty(path))
+                return root;
+            var (segment, tail) = path.ExtractUntil(0, '/');
+            if (root.ContainsGroup(segment))
+                return GetItem(root, tail, createIfNotExist);
+            MenuItem item = root.Find(segment);
+            if (item == null && !createIfNotExist)
+                return null;
+            if (item == null)
+            {
+                item = new MenuButton(segment, 0);
+                root.Add(item, null);
+            }
+            if (tail == null)
+                return item;
+            return GetItem(item, tail, createIfNotExist);
         }
     }
 }

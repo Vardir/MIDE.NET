@@ -17,7 +17,6 @@ namespace MIDE.API.Components
     {
         private bool _pushHistory;
         private int _currentHistoryIndex;
-        protected PathValidation pathValidator;
 
         public int CurrentHistoryIndex
         {
@@ -55,8 +54,7 @@ namespace MIDE.API.Components
             SearchBox.ActionButton.Caption = null;
             SearchBox.ActionButton.ButtonGlyph = new Visuals.Glyph("\uf002") { AlternateColor = Color.White };
             SearchBox.ActionButton.PressCommand = new RelayCommand(ShowCurrent);
-            pathValidator = new PathValidation();
-            SearchBox.Validations.Add(pathValidator);
+            SearchBox.Validations.Add(new PathValidation());
 
             TreeView = new TreeView("files-view");
             ToolbarButton homeButton = new ToolbarButton("home");
@@ -136,7 +134,7 @@ namespace MIDE.API.Components
         }
         private void ShowCurrent()
         {
-            if (pathValidator.HasErrors)
+            if (SearchBox.ValidationErrors.Count > 0)
                 return;
 
             TreeView.Items.Clear();

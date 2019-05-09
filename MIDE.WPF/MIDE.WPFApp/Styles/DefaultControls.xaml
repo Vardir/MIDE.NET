@@ -61,18 +61,10 @@
     <Style TargetType="{x:Type Menu}" BasedOn="{StaticResource BasePanel}">
         <Setter Property="Foreground" Value="{DynamicResource Menu_Foreground_Brush}"/>
         <Setter Property="Background" Value="{DynamicResource Menu_Background_Brush}"/>
-        <Setter Property="AlternationCount" Value="{Binding RelativeSource={RelativeSource Self}, Path=Items.Count}"/>
         <Setter Property="ItemContainerStyle">
             <Setter.Value>
                 <Style TargetType="{x:Type MenuItem}">
                     <Setter Property="Command" Value="{Binding PressCommand, Converter={c:RelayCommandConverter}}" />
-                    <Setter Property="AlternationCount" Value="{Binding RelativeSource={RelativeSource Self}, Path=Items.Count}"/>
-
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding Converter={conv:ExtractType}}" Value="MenuGroup">
-                            <Setter Property="Tag" Value="Group"/>
-                        </DataTrigger>
-                    </Style.Triggers>
                 </Style>
             </Setter.Value>
         </Setter>
@@ -80,40 +72,13 @@
             <Setter.Value>
                 <ControlTemplate TargetType="Menu">
                     <ControlTemplate.Resources>
-                        <Style TargetType="{x:Type MenuItem}" x:Key="GroupStyle">
-                            <Style.Triggers>
-                                <DataTrigger Value="True">
-                                    <DataTrigger.Binding>
-                                        <MultiBinding Converter="{conv:CountEqualityConverter}">
-                                            <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}" Path="Items.Count" />
-                                            <Binding RelativeSource="{RelativeSource Self}" Path="(ItemsControl.AlternationIndex)" />
-                                        </MultiBinding>
-                                    </DataTrigger.Binding>
-                                    <Setter Property="Background" Value="Red"/>
-                                </DataTrigger>
-                                <DataTrigger Value="True">
-                                    <DataTrigger.Binding>
-                                        <MultiBinding Converter="{conv:IntegerEqualityConverter}">
-                                            <Binding RelativeSource="{RelativeSource Self}" Path="(ItemsControl.AlternationIndex)"/>
-                                            <Binding>
-                                                <Binding.Source>
-                                                    <sys:Int32>0</sys:Int32>
-                                                </Binding.Source>
-                                            </Binding>
-                                        </MultiBinding>
-                                    </DataTrigger.Binding>
-                                    <Setter Property="Background" Value="Blue"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                        
                         <HierarchicalDataTemplate DataType="{x:Type ctrapi:MenuButton}"
                                                   ItemsSource="{Binding Children}">
                             <TextBlock Text="{Binding Caption}"
                                        Foreground="{DynamicResource Menu_Foreground_Brush}"/>
                         </HierarchicalDataTemplate>
-                        <HierarchicalDataTemplate DataType="{x:Type ctrapi:MenuGroup}">
-                            <TextBlock Text="FFF"/>
+                        <HierarchicalDataTemplate DataType="{x:Type ctrapi:MenuSplitter}">
+                            <Separator/>
                         </HierarchicalDataTemplate>
                     </ControlTemplate.Resources>
 
@@ -224,7 +189,6 @@
                           Data="M 0 0 L 7 7 M 0 7 L 7 0"
                           Fill="{DynamicResource Menu_Arrow_Brush}"/>
                 </Border>
-                
                 <ContentPresenter x:Name="HeaderHost"
                                   Grid.Column="1"
                                   ContentSource="Header"
@@ -257,21 +221,6 @@
             <Trigger Property="IsEnabled" Value="false">
                 <Setter Property="Foreground" Value="{DynamicResource Menu_ItemBackgroundDisabled_Brush}"/>
             </Trigger>
-        </ControlTemplate.Triggers>
-    </ControlTemplate>
-    <ControlTemplate x:Key="SubmenuGroupItemTemplateKey" TargetType="{x:Type MenuItem}">
-        <Border x:Name="Border" BorderThickness="1" Background="Red"
-                Padding="0 0 50 0" HorizontalAlignment="Stretch">
-            <Grid HorizontalAlignment="Stretch">
-                <ContentPresenter x:Name="HeaderHost"
-                                  Grid.Column="1"
-                                  ContentSource="Header"
-                                  RecognizesAccessKey="True"
-                                  HorizontalAlignment="Stretch"/>
-            </Grid>
-        </Border>
-        <ControlTemplate.Triggers>
-            <Trigger Property="ButtonBase.Command" Value="{x:Null}" />
         </ControlTemplate.Triggers>
     </ControlTemplate>
     <ControlTemplate x:Key="{x:Static MenuItem.SubmenuHeaderTemplateKey}" TargetType="{x:Type MenuItem}">
@@ -332,21 +281,6 @@
                 <Setter Property="Foreground" Value="{DynamicResource Menu_ItemBackgroundDisabled_Brush}"/>
             </Trigger>
         </ControlTemplate.Triggers>
-    </ControlTemplate>
-    <ControlTemplate x:Key="SubmenuGroupHeaderTemplateKey" TargetType="{x:Type MenuItem}">
-        <Border x:Name="Border" BorderThickness="1">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition/>
-                    <RowDefinition Height="auto"/>
-                </Grid.RowDefinitions>
-
-                <Separator Name="topSeparator"/>
-                <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
-                <Separator Name="bottomSeparator" Grid.Row="2"/>
-            </Grid>
-        </Border>
     </ControlTemplate>
     <Style x:Key="{x:Type MenuItem}" TargetType="{x:Type MenuItem}">
         <Setter Property="OverridesDefaultStyle" Value="True" />
@@ -418,6 +352,9 @@
                             <TextBlock Text="{Binding Caption}"
                                        Foreground="{DynamicResource Menu_Foreground_Brush}"/>
                         </HierarchicalDataTemplate>
+                        <HierarchicalDataTemplate DataType="{x:Type ctrapi:MenuSplitter}">
+                            <Separator/>
+                        </HierarchicalDataTemplate>
                     </ControlTemplate.Resources>
                     
                     <Border Name="ContextMenuBorder" Background="{TemplateBinding Control.Background}"
@@ -462,8 +399,7 @@
                     <Setter Property="Command" Value="{Binding PressCommand, Converter={c:RelayCommandConverter}}" />
                 </Style>
             </Setter.Value>
-        </Setter>
-        
+        </Setter>        
     </Style>
     <!--Context Menu-->
             
@@ -812,10 +748,10 @@
                                    Foreground="{DynamicResource Tab_HeaderForeground_Brush}"
                                    Margin="0 0 15 0"/>
                         <Button Name="CloseButton"
-                                Grid.Column="1"
-                                FontFamily="Helvetica"
+                                Grid.Column="1" Command="{Binding CloseCommand, Converter={c:RelayCommandConverter}}"
+                                FontFamily="{StaticResource FontAwesome}"
                                 Style="{StaticResource XButton}"
-                                Content="X" FontWeight="Bold"/>
+                                Content="&#xf00d;" FontWeight="Bold"/>
                     </Grid>
                 </DataTemplate>
             </Setter.Value>
@@ -1910,7 +1846,7 @@
                                   RecognizesAccessKey="true"/>
                                 <Control SnapsToDevicePixels="false"
                                          Visibility="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}, 
-                                                              Path=(Validation.HasError), Converter={c:BooleanVisibilityConverter}}"
+                                                              Path=(Validation.HasErrors), Converter={c:BooleanVisibilityConverter}}"
                                          Template="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}, 
                                                             Path=ValidationErrorTemplate}"/>
                             </StackPanel>
