@@ -5,6 +5,19 @@ namespace NodeGraphs.Components
 {
     public abstract class GraphNode : GraphComponent
     {
+        private Point location;
+
+        public Point Location
+        {
+            get => location;
+            set
+            {
+                if (value == location)
+                    return;
+                location = value;
+                OnPropertyChanged(nameof(Location));
+            }
+        }
         public IGraphNodeContentProvider ContentProvider { get; }
         public ObservableCollection<ValidationError> ValidationErrors { get; }
 

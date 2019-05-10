@@ -1,0 +1,12 @@
+﻿<local:GraphNodeControl x:Class="NodeGraphs.WPF.Controls.LabelNodeControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:NodeGraphs.WPF.Controls"
+             mc:Ignorable="d" d:DesignWidth="200">
+    <Border MinHeight="20" Padding="10" Background="White">
+        <TextBox VerticalAlignment="Center" FontSize="14"
+                 Text="{Binding Text}"/>
+    </Border>
+</local:GraphNodeControl>
