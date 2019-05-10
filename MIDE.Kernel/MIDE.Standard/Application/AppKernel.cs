@@ -79,13 +79,7 @@ namespace MIDE.Application
             var version = currentAssembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
             Version = version.InformationalVersion;
 
-            LoggingLevel levels;
-#if DEBUG
-            levels = LoggingLevel.ALL;
-#else
-            levels = LoggingLevel.INFO | LoggingLevel.WARN | LoggingLevel.ERROR | LoggingLevel.FATAL;
-#endif
-            AppLogger = new Logger(levels, useUtcTime: true, skipFatals: false);
+            AppLogger = new Logger(LoggingLevel.ALL, useUtcTime: true, skipFatals: false);
             AppLogger.FatalEventRegistered += AppLogger_FatalEventRegistered;
 
             AppLogger.PushDebug(null, "Application Kernel created");
@@ -149,6 +143,8 @@ namespace MIDE.Application
             builder.Append(ApplicationName);
             builder.Append(' ');
             builder.Append(Version);
+            builder.AppendLine();
+            builder.Append("Is UTC time = " + AppLogger.UseUtcTime);
             builder.AppendLine();
             builder.Append("-------------------------");
             builder.AppendLine();
@@ -265,6 +261,11 @@ namespace MIDE.Application
             {
                 AppLogger.PushFatal(ex.Message);
             }
+            if (appConfig.LoggingLevels == null || appConfig.LoggingLevels.Length == 0)
+                AppLogger.Levels = LoggingLevel.ALL;
+            else
+                AppLogger.Levels = appConfig.LoggingLevels.Aggregate((l1, l2) => l1 | l2);
+            AppLogger.FilterEvents(AppLogger.Levels);
             ConfigurationManager.Instance.AddOrUpdate(new Config("theme", appConfig.Theme));
             FileManager.LoadPaths(appConfig.Paths);
             AppLogger.PushDebug(null, "Application configurations loaded");
@@ -401,8 +402,8 @@ namespace MIDE.Application
         
         private void AppLogger_FatalEventRegistered(object sender, FatalEvent e)
         {
-            SaveLog();
-            throw new ApplicationException("Application stopped due to fatal error");
+            AppLogger.PushInfo("Closing application due to fatal error");
+            Exit();
         }
     }
 }

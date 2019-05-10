@@ -104,6 +104,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <Content Include="config.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -114,6 +117,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\WPF.Extensibility\WPF.Extensibility.csproj">
+      <Project>{451b167b-2cc8-428c-b016-47e7172e37ef}</Project>
+      <Name>WPF.Extensibility</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WPF.Shared\WPF.Shared.csproj">
       <Project>{622a922f-d465-4fb3-b7f1-cda2423b0131}</Project>
       <Name>WPF.Shared</Name>

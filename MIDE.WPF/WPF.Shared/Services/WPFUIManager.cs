@@ -45,7 +45,7 @@ namespace MIDE.WPF.Services
         }
         public override void RegisterUIExtension(Assembly assembly)
         {
-            throw new NotImplementedException();
+            
         }
 
         protected override (DialogResult result, T value) OpenDialog_Impl<T>(BaseDialogBox<T> dialogBox)

@@ -1,4 +1,6 @@
 ﻿using Newtonsoft.Json;
+using MIDE.Application.Logging;
+using Newtonsoft.Json.Converters;
 
 namespace MIDE.Schemes.JSON
 {
@@ -11,6 +13,9 @@ namespace MIDE.Schemes.JSON
         
         [JsonProperty(PropertyName = "theme")]
         public string Theme { get; set; }
+
+        [JsonProperty(PropertyName = "log_levels", ItemConverterType = typeof(StringEnumConverter))]
+        public LoggingLevel[] LoggingLevels { get; set; }
 
         [JsonProperty(PropertyName = "paths")]
         public ApplicationPathItem[] Paths { get; set; }

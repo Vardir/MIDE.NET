@@ -22,7 +22,7 @@ namespace MIDE.Application.Logging
         /// <summary>
         /// A set of flags to filter out incoming events
         /// </summary>
-        public LoggingLevel Levels { get; }
+        public LoggingLevel Levels { get; internal set; }
         /// <summary>
         /// Count of all events stored in collection
         /// </summary>
@@ -122,16 +122,32 @@ namespace MIDE.Application.Logging
         /// <param name="message"></param>
         public void PushFatal(string message)
         {
+            if (SkipFatalEvents && !Levels.Has(LoggingLevel.FATAL))
+                return;
             if (string.IsNullOrEmpty(message))
             {
                 PushArgumentError(nameof(message), "Can't add fatal error event with empty message");
                 return;
             }
-            if (SkipFatalEvents && !Levels.Has(LoggingLevel.FATAL))
-                return;
+            
             FatalEvent fatalEvent = new FatalEvent(message, TimeNow);
             events.AddLast(fatalEvent);
             FatalEventRegistered?.Invoke(this, fatalEvent);
+        }
+        /// <summary>
+        /// Filters out all events that are not set to the given levels
+        /// </summary>
+        /// <param name="levels"></param>
+        public void FilterEvents(LoggingLevel levels)
+        {
+            var node = events.First;
+            while (node != null)
+            {
+                var next = node.Next;
+                if (!levels.HasFlag(node.Value.Level))
+                    events.Remove(node);
+                node = next;
+            }
         }
 
         /// <summary>
