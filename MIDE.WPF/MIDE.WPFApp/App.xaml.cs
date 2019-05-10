@@ -31,12 +31,17 @@ namespace MIDE.WPF
             brushes.MergedDictionaries[0].Update(colors);
             Resources.MergedDictionaries.Add(brushes);
         }
+        public void LoadUIExtensions()
+        {
+
+        }
 
         protected override void OnStartup(StartupEventArgs e)
         {
             Setup();
             Kernel.Start();
             LoadTheme();
+            LoadUIExtensions();
             base.OnStartup(e);
             MainWindow window = new MainWindow();
             MainWindow = window;

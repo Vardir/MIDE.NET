@@ -15,6 +15,29 @@ namespace MIDE.WPF.Services
 {
     public class WpfUIManager : UIManager
     {
+        private LinkedList<UIExtension> loadedUIExtensions;
+
+        public WpfUIManager()
+        {
+            loadedUIExtensions = new LinkedList<UIExtension>();
+        }
+
+        public void RegisterUIExtension(UIExtension extension)
+        {
+            if (extension == null)
+            {
+                AppKernel.Instance.AppLogger.PushWarning("Attempting to load empty UI extension");
+                return;
+            }
+            loadedUIExtensions.AddLast(extension);
+        }
+        public override void RegisterUIExtension(object obj)
+        {
+            if (obj is UIExtension extension)
+                RegisterUIExtension(extension);
+            else
+                AppKernel.Instance.AppLogger.PushWarning($"Expected [{typeof(UIExtension)}] but got [{obj?.GetType().FullName ?? "null"}]");
+        }
         public override void RegisterUIExtension(string path)
         {
             Assembly assembly = null;
@@ -28,46 +51,6 @@ namespace MIDE.WPF.Services
                 return;
             }
             RegisterUIExtension(assembly);
-        }
-        
-        public ResourceDictionary LoadTheme()
-        {
-            string id = null;
-            ResourceDictionary colors = new ResourceDictionary();
-            try
-            {
-                id = ConfigurationManager.Instance["theme"] as string ?? "default";
-                string data = AppKernel.Instance.FileManager.ReadOrCreate($"root\\themes\\{id}.json", "{}");
-                var items = JsonConvert.DeserializeObject<Dictionary<string, string>>(data);
-                colors = new ResourceDictionary();
-                foreach (var kvp in items)
-                {
-                    var brush = ColorConverter.ConvertFromString(kvp.Value);
-                    colors[kvp.Key] = brush;
-                }
-            }
-            catch (Exception ex)
-            {
-                AppKernel.Instance.AppLogger.PushError(ex, this, $"Failed to load UI theme: {id}");
-            }
-            return colors;
-        }
-
-        public void RegisterUIExtension(UIExtension extension)
-        {
-            if (extension == null)
-            {
-                AppKernel.Instance.AppLogger.PushWarning("Attempting to load empty UI extension");
-                return;
-            }
-
-        }
-        public override void RegisterUIExtension(object obj)
-        {
-            if (obj is UIExtension extension)
-                RegisterUIExtension(extension);
-            else
-                AppKernel.Instance.AppLogger.PushWarning($"Expected [{typeof(UIExtension)}] but got [{obj?.GetType().FullName ?? "null"}]");
         }
         public override void RegisterUIExtension(Type type)
         {
@@ -96,6 +79,30 @@ namespace MIDE.WPF.Services
                 RegisterUIExtension(extension);
             }
         }
+
+        public ResourceDictionary LoadTheme()
+        {
+            string id = null;
+            ResourceDictionary colors = new ResourceDictionary();
+            try
+            {
+                id = ConfigurationManager.Instance["theme"] as string ?? "default";
+                string data = AppKernel.Instance.FileManager.ReadOrCreate($"root\\themes\\{id}.json", "{}");
+                var items = JsonConvert.DeserializeObject<Dictionary<string, string>>(data);
+                colors = new ResourceDictionary();
+                foreach (var kvp in items)
+                {
+                    var brush = ColorConverter.ConvertFromString(kvp.Value);
+                    colors[kvp.Key] = brush;
+                }
+            }
+            catch (Exception ex)
+            {
+                AppKernel.Instance.AppLogger.PushError(ex, this, $"Failed to load UI theme: {id}");
+            }
+            return colors;
+        }
+        public IEnumerable<UIExtension> GetLoadedUIExtensions() => loadedUIExtensions;
 
         protected override (DialogResult result, T value) OpenDialog_Impl<T>(BaseDialogBox<T> dialogBox)
         {

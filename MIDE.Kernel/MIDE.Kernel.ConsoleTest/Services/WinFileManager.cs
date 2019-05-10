@@ -1,90 +1,15 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using MIDE.FileSystem;
-using MIDE.Application;
 using System.Collections.Generic;
-using System.Runtime.Serialization.Formatters.Binary;
 
 namespace MIDE.Kernel.ConsoleTest
 {
     public class WinFileManager : FileManager
     {
-        public override string MakeFolder(string path)
-        {
-            string directory = Path.GetDirectoryName(path);
-            if (!Directory.Exists(directory))
-                Directory.CreateDirectory(directory);
-            return null;
-        }
-        public override string MakeFile(string path, string templatePath)
-        {
-            if (templatePath != null)
-            {
-                File.Copy(templatePath, path);
-            }
-            else
-            {
-                File.Create(path);
-            }
-            return null;
-        }
-        public override void Write(string data, string path) => File.WriteAllText(path, data);
-        public override void Write(string[] data, string path) => File.WriteAllLines(path, data);
-        public override void Serialize(object data, string path)
-        {
-            BinaryFormatter formatter = new BinaryFormatter();
-            try
-            {
-                using (FileStream fs = new FileStream(path, FileMode.OpenOrCreate))
-                {
-                    formatter.Serialize(fs, data);
-                }
-            }
-            catch (Exception ex)
-            {
-                AppKernel.Instance.AppLogger.PushError(ex, this, "Can not serialize data");
-            }
-        }
-
-        public override bool Exists(string path) => File.Exists(path) || Directory.Exists(path);
         public override string MapPath(string path)
         {
             throw new NotImplementedException();
-        }
-        public override string TryRead(string filePath)
-        {
-            if (!File.Exists(filePath))
-                return null;
-            return File.ReadAllText(filePath);
-        }
-        public override string ExtractName(string path)
-        {
-            if (File.Exists(path))
-                return Path.GetFileName(path);
-            else if (Directory.Exists(path))
-                return Path.GetDirectoryName(path);
-            return null;
-        }
-        public override string Combine(params string[] paths) => Path.Combine(paths);
-        public override string ReadOrCreate(string filePath, string defaultContent = "")
-        {
-            if (!File.Exists(filePath))
-            {
-                using (FileStream fs = File.Create(filePath))
-                {
-                    byte[] bytes = Encoding.UTF8.GetBytes(defaultContent);
-                    fs.Write(bytes, 0, bytes.Length);
-                    return defaultContent;
-                }
-            }
-            return File.ReadAllText(filePath);
-        }
-        public override IEnumerable<string> EnumerateFiles(string directory, string filter = null)
-        {
-            if (!Directory.Exists(directory))
-                throw new ArgumentException($"Directory not found [{directory}]");
-            return Directory.EnumerateFiles(directory, filter);
         }
         public override IEnumerable<(string prop, string val)> ExtractProperties(string path)
         {
@@ -114,11 +39,6 @@ namespace MIDE.Kernel.ConsoleTest
             }
 
             throw new ArgumentException("The given path is invalid", nameof(path));
-        }
-
-        public override string Delete(string path)
-        {
-            throw new NotImplementedException();
         }
     }
 }
