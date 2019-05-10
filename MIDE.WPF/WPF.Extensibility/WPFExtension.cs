@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WPF.Extensibility
+﻿namespace WPF.Extensibility
 {
-    public abstract class WPFExtension
+    public abstract class UIExtension
     {
-        
+        public UIExtension()
+        {
+
+        }
     }
 }

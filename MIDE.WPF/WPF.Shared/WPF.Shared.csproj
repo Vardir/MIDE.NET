@@ -165,5 +165,11 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WPF.Extensibility\WPF.Extensibility.csproj">
+      <Project>{451B167B-2CC8-428C-B016-47E7172E37EF}</Project>
+      <Name>WPF.Extensibility</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

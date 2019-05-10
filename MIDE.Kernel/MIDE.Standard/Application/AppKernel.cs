@@ -308,15 +308,15 @@ namespace MIDE.Application
                 }
                 foreach (var member in config.ExtensionMembers)
                 {
-                    if (member.Target == MemberTarget.UI)
+                    if (member.Platform != UIManager.CurrentPlatform)
+                        continue;
+                    if (member.Target != MemberTarget.UI)
+                        continue;                    
+                    if (member.Role == MemberRole.Extension)
                     {
-                        if (member.Platform == UIManager.CurrentPlatform)
-                        {
-                            if (member.Role == MemberRole.Extension)
-                                UIManager.RegisterUIExtension(member.Path);
-                        }
+                        string path = FileManager.Combine(directory, item.Path, member.Path);
+                        UIManager.RegisterUIExtension(path);
                     }
-                    //TODO: load members
                 }
             }
             AppLogger.PushDebug(null, "Extensions loaded");
