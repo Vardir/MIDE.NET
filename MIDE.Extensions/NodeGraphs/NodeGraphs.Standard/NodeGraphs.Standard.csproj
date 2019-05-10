@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>nodegraphs</AssemblyName>
+    <RootNamespace>NodeGraphs</RootNamespace>
+    <Authors>Vardir</Authors>
+    <Company />
+    <Product>Node Graphs</Product>
+    <Copyright>Andrew Satura © 2019</Copyright>
+    <PackageTags>graph;nodes;standard</PackageTags>
+    <LangVersion>7.1</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="api">
+      <HintPath>..\..\..\MIDE.Kernel\MIDE.Standard\bin\Debug\netstandard2.0\api.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

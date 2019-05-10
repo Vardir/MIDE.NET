@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.572
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NodeGraphs.Standard", "NodeGraphs.Standard\NodeGraphs.Standard.csproj", "{2778CDDF-5511-4D3C-AE14-F3D52ECCEE8A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NodeGraphs.WPF", "NodeGraphs.WPF\NodeGraphs.WPF.csproj", "{2013B256-2852-4808-9F2C-0D4B6E3F2188}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2778CDDF-5511-4D3C-AE14-F3D52ECCEE8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2778CDDF-5511-4D3C-AE14-F3D52ECCEE8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2778CDDF-5511-4D3C-AE14-F3D52ECCEE8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2778CDDF-5511-4D3C-AE14-F3D52ECCEE8A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2013B256-2852-4808-9F2C-0D4B6E3F2188}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2013B256-2852-4808-9F2C-0D4B6E3F2188}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2013B256-2852-4808-9F2C-0D4B6E3F2188}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2013B256-2852-4808-9F2C-0D4B6E3F2188}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9ED4A51E-BE84-41F5-9736-DF73AE7393C9}
+	EndGlobalSection
+EndGlobal
