@@ -106,10 +106,10 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <!--Top level item with child items-->
     <ControlTemplate x:Key="{x:Static MenuItem.TopLevelHeaderTemplateKey}" TargetType="{x:Type MenuItem}">
-        <Border x:Name="Border" BorderThickness="1" 
-                BorderBrush="{DynamicResource Menu_Border_Brush}">
-            <Grid Background="{DynamicResource Menu_Background_Brush}">
+        <Border x:Name="Border" BorderThickness="1">
+            <Grid>
                 <ContentPresenter Margin="6,3,6,3"
                                   ContentSource="Header"
                                   RecognizesAccessKey="True" />
@@ -145,6 +145,7 @@
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
+    <!--Top level empty item-->
     <ControlTemplate x:Key="{x:Static MenuItem.TopLevelItemTemplateKey}" TargetType="{x:Type MenuItem}">
         <Border x:Name="Border">
             <ContentPresenter Margin="6,3,6,3" HorizontalAlignment="Stretch"
