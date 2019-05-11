@@ -7,13 +7,13 @@ using System.Reflection;
 using MIDE.API.Services;
 using MIDE.Schemes.JSON;
 using MIDE.API.Extensibility;
+using MIDE.Application.Events;
 using MIDE.Application.Logging;
 using System.Collections.Generic;
 using MIDE.Application.Attrubites;
 using MIDE.Application.Initializers;
 using MIDE.Application.Configuration;
 using Module = MIDE.API.Extensibility.Module;
-using MIDE.Application.Events;
 
 namespace MIDE.Application
 {
@@ -23,6 +23,7 @@ namespace MIDE.Application
         public static AppKernel Instance => instance ?? (instance = new AppKernel());
 
         private bool isRunning;
+        private FileManager fileManager;
         private Assembly currentAssembly;
         private Assembly callingAssembly;
         private readonly List<AppExtension> extensions;
@@ -48,10 +49,6 @@ namespace MIDE.Application
         /// </summary>
         public UIManager UIManager { get; set; }
         /// <summary>
-        /// File manager used by application to create/load files and folders
-        /// </summary>
-        public FileManager FileManager { get; set; }
-        /// <summary>
         /// Application-wide event broadcaster to provide event-based interaction between application components
         /// </summary>
         public EventBroadcaster Broadcaster { get; }
@@ -72,6 +69,7 @@ namespace MIDE.Application
 
         private AppKernel()
         {
+            fileManager = FileManager.Instance;
             extensions = new List<AppExtension>();
             Initializers = new List<IApplicationInitializer>();
 
@@ -95,7 +93,7 @@ namespace MIDE.Application
             {
                 if (isRunning)
                     throw new ApplicationException("Application kernel is already loaded and running!");
-                if (FileManager == null)
+                if (FileManager.Instance == null)
                     throw new NullReferenceException("The FileManager expected to be assigned before application start");
                 if (SystemClipboard == null)
                     throw new NullReferenceException("The SystemBuffer expected to be assigned before application start");
@@ -136,9 +134,9 @@ namespace MIDE.Application
         {
             if (AppLogger.EventsCount == 0)
                 return;
-            string folder = $"{FileManager.GetPath(ApplicationPath.Logs)}\\{TimeStarted.ToString("dd-M-yyyy HH-mm-ss")}\\";
+            string folder = $"{fileManager.GetPath(ApplicationPath.Logs)}\\{TimeStarted.ToString("dd-M-yyyy HH-mm-ss")}\\";
             string filename = $"{folder}log.txt";
-            FileManager.MakeFolder(folder);
+            fileManager.MakeFolder(folder);
             StringBuilder builder = new StringBuilder();
             builder.Append(ApplicationName);
             builder.Append(' ');
@@ -163,12 +161,12 @@ namespace MIDE.Application
                         builder.Append(".bin] type - ");
                         builder.Append(serializationData[i].GetType());
                         builder.AppendLine();
-                        FileManager.Serialize(serializationData[i], $"{folder}{i + 1}.bin");
+                        fileManager.Serialize(serializationData[i], $"{folder}{i + 1}.bin");
                     }
                 }
                 builder.AppendLine();
             }
-            FileManager.Write(builder.ToString(), filename);
+            fileManager.Write(builder.ToString(), filename);
         }
         /// <summary>
         /// Stops all the current threads, releases all resources and closes the application kernel
@@ -252,7 +250,7 @@ namespace MIDE.Application
             ApplicationConfig appConfig = null;
             try
             {
-                string configData = FileManager.ReadOrCreate("config.json", $"{{ \"kernel_version\": \"{Version}\"}}");
+                string configData = fileManager.ReadOrCreate("config.json", $"{{ \"kernel_version\": \"{Version}\"}}");
                 appConfig = JsonConvert.DeserializeObject<ApplicationConfig>(configData);
                 if (appConfig.KernelVersion != Version)
                     throw new ApplicationException($"Expected application kernel v{Version}, but got v{appConfig.KernelVersion}");
@@ -267,7 +265,7 @@ namespace MIDE.Application
                 AppLogger.Levels = appConfig.LoggingLevels.Aggregate((l1, l2) => l1 | l2);
             AppLogger.FilterEvents(AppLogger.Levels);
             ConfigurationManager.Instance.AddOrUpdate(new Config("theme", appConfig.Theme));
-            FileManager.LoadPaths(appConfig.Paths);
+            fileManager.LoadPaths(appConfig.Paths);
             AppLogger.PushDebug(null, "Application configurations loaded");
         }
 
@@ -279,16 +277,16 @@ namespace MIDE.Application
         private void LoadExtensions()
         {
             AppLogger.PushDebug(null, "Loading extensions");
-            var directory = FileManager.GetOrAddPath(ApplicationPath.Extensions, "extensions\\");
-            var initData = FileManager.ReadOrCreate(directory + "init.json", "{ \"register\": [] }");
+            var directory = fileManager.GetOrAddPath(ApplicationPath.Extensions, "extensions\\");
+            var initData = fileManager.ReadOrCreate(directory + "init.json", "{ \"register\": [] }");
            
             var init = JsonConvert.DeserializeObject<ExtensionsInit>(initData);
             foreach (var item in init.Items)
             {
                 if (!item.Enabled)
                     continue;
-                string extensionPath = FileManager.GetPath(ApplicationPath.Extensions) + "\\" + item.Path;
-                string configData = FileManager.TryRead(extensionPath + "config.json");
+                string extensionPath = fileManager.GetPath(ApplicationPath.Extensions) + "\\" + item.Path;
+                string configData = fileManager.TryRead(extensionPath + "config.json");
                 if (configData == null)
                 {
                     AppLogger.PushWarning($"Extension '{item.Id}' does not have config.json file");
@@ -314,7 +312,7 @@ namespace MIDE.Application
                         continue;                    
                     if (member.Role == MemberRole.Extension)
                     {
-                        string path = FileManager.Combine(directory, item.Path, member.Path);
+                        string path = fileManager.Combine(directory, item.Path, member.Path);
                         UIManager.RegisterUIExtension(path);
                     }
                 }

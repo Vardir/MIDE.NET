@@ -37,7 +37,7 @@ namespace MIDE.FileSystem
         
         private FileSystemInfo()
         {
-            fileManager = AppKernel.Instance.FileManager;
+            fileManager = FileManager.Instance;
             fsObjectClasses = new Dictionary<string, FSObjectClass>()
             {
                 ["drive"]  = new FSObjectClass("drive", DRIVE_EXTENSION),

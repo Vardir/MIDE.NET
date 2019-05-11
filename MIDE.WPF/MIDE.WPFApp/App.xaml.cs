@@ -1,13 +1,12 @@
-﻿using System;
-using MIDE.Helpers;
+﻿using MIDE.Helpers;
 using System.Windows;
+using MIDE.FileSystem;
 using MIDE.Application;
 using MIDE.WPF.Helpers;
 using MIDE.WPF.Services;
 using MIDE.WPF.FileSystem;
 using MIDE.WPF.Initializers;
 using MIDE.Application.Attrubites;
-using System.Windows.Media;
 
 [assembly: ApplicationProperties("wpftemplate")]
 
@@ -38,6 +37,7 @@ namespace MIDE.WPF
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            FileManager.Instance = new WinFileManager();
             Setup();
             Kernel.Start();
             LoadTheme();
@@ -59,7 +59,6 @@ namespace MIDE.WPF
         private void Setup()
         {
             Kernel.ApplicationExit += Kernel_ApplicationExit;
-            Kernel.FileManager = new WinFileManager();
             Kernel.SystemClipboard = WindowsClipboard.Instance;
             UIManager = new WpfUIManager();
             Kernel.UIManager = UIManager;
@@ -67,7 +66,7 @@ namespace MIDE.WPF
             Kernel.Initializers.Add(new ApplicationMenuInitializer(Kernel));
             Kernel.Initializers.Add(new TabSectionInitializer());
 
-            Kernel.FileManager.AddOrUpdate(MIDE.FileSystem.ApplicationPath.Logs, "root\\logs");
+            FileManager.Instance.AddOrUpdate(ApplicationPath.Logs, "root\\logs");
         }        
 
         private void Kernel_ApplicationExit()

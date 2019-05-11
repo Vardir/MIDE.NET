@@ -1,6 +1,9 @@
 ﻿using System.Drawing;
-using System.ComponentModel;
+using MIDE.FileSystem;
 using System.Globalization;
+using System.ComponentModel;
+using System.Text.RegularExpressions;
+
 
 namespace MIDE.API.Visuals
 {
@@ -81,6 +84,10 @@ namespace MIDE.API.Visuals
                 else
                     glyph = new Glyph(format.Substring(4));
             }
+            else if (format.Length > 4 && format.StartsWith("@p-")) // @p-root/assets/icons/file.png -- path to image
+            {
+                glyph = new Glyph(format.Substring(3), GlyphKind.ImagePath);
+            }
             return glyph;
         }
 
@@ -96,24 +103,23 @@ namespace MIDE.API.Visuals
                 case GlyphKind.UnicodeSymbol:
                     if (value is string code)
                     {
-                        //TODO: validate Unicode symbol format
+                        return !string.IsNullOrWhiteSpace(code) &&
+                               Regex.IsMatch(code, @"^\p{L}+$");
                     }
                     return value is char;
                 case GlyphKind.FontAwesome:
                     if (value is string str)
                     {
-                        //TODO: add format validation
-                        return !string.IsNullOrWhiteSpace(str);
+                        return !string.IsNullOrWhiteSpace(str) &&
+                               Regex.IsMatch(str, "^f[0-9a-fA-f]{3}$");
                     }
                     return value is char;
                 case GlyphKind.ImagePath:
                     if (value is string imgPath)
                     {
-                        //TODO: validate path of the glyph
+                        return !string.IsNullOrWhiteSpace(imgPath) &&
+                               FileManager.Instance.Exists(imgPath);
                     }
-                    break;
-                case GlyphKind.Bitmap:
-                    //TODO: validate reference to a bitmap
                     break;
             }
             return false;
@@ -133,10 +139,6 @@ namespace MIDE.API.Visuals
         /// <summary>
         /// The glyph is represented by a path to the existing image on device
         /// </summary>
-        ImagePath,
-        /// <summary>
-        /// The glyph is represented by an in-memory bitmap image
-        /// </summary>
-        Bitmap
+        ImagePath
     }
 }

@@ -2,6 +2,7 @@
 using MIDE.Application;
 using MIDE.API.Components;
 using MIDE.Application.Attrubites;
+using MIDE.FileSystem;
 
 [assembly: ApplicationProperties("consoletest")]
 
@@ -16,6 +17,7 @@ namespace MIDE.Kernel.ConsoleTest
         [STAThread]
         public static void Main(string[] args)
         {
+            FileManager.Instance = new WinFileManager();
             Program program = new Program();
 
             TabSection section = new TabSection("section");

@@ -6,8 +6,6 @@ namespace MIDE.API.Components
 {    
     public class FilePropertiesView : PropertiesView
     {
-        protected FileManager FileManager => Kernel.FileManager;
-
         public FilePropertiesView(string id) : base(id)
         {
             IsSealed = true;
@@ -26,7 +24,7 @@ namespace MIDE.API.Components
         }
         public void ShowProperties(string path)
         {
-            if (!FileManager.Exists(path))
+            if (!FileManager.Instance.Exists(path))
                 throw new ArgumentException("Invalid path given", nameof(path));
 
             //var array = FileManager.ExtractProperties(path).ToArray();

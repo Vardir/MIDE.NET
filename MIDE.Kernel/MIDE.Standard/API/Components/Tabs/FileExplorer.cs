@@ -339,9 +339,9 @@ namespace MIDE.API.Components
                 .SelectedItems.FirstWith(item => (item as FileExplorerItem).ItemClass == "folder", item => item as FileExplorerItem);
             if (fei == null)
                 return;
-            string file = AppKernel.Instance.FileManager.Combine(fei.FullPath, name);
+            string file = FileManager.Instance.Combine(fei.FullPath, name);
             string template = ProjectManager.Instance.FindBy(IO.Path.GetExtension(name))?.ObjectTemplate;
-            string message = AppKernel.Instance.FileManager.MakeFile(file, template);
+            string message = FileManager.Instance.MakeFile(file, template);
             if (message != null)
             {
                 var messageBox = new MessageDialogBox("Error", message);
@@ -362,8 +362,8 @@ namespace MIDE.API.Components
                 .SelectedItems.FirstWith(item => (item as FileExplorerItem).ItemClass != "file", item => item as FileExplorerItem);
             if (fei == null)
                 return;
-            string folder = AppKernel.Instance.FileManager.Combine(fei.FullPath, name);
-            string message = AppKernel.Instance.FileManager.MakeFolder(folder);
+            string folder = FileManager.Instance.Combine(fei.FullPath, name);
+            string message = FileManager.Instance.MakeFolder(folder);
             if (message != null)
             {
                 var messageBox = new MessageDialogBox("Error", message);
@@ -380,7 +380,7 @@ namespace MIDE.API.Components
                 if (!(item is FileExplorerItem fileExplorerItem))
                     continue;
                 var parent = fileExplorerItem.Parent;
-                string message = AppKernel.Instance.FileManager.Delete(fileExplorerItem.FullPath);
+                string message = FileManager.Instance.Delete(fileExplorerItem.FullPath);
                 if (message != null)
                 {
                     var messageBox = new MessageDialogBox("Error", message);

@@ -1,4 +1,6 @@
-﻿namespace MIDE.API.Validations
+﻿using MIDE.FileSystem;
+
+namespace MIDE.API.Validations
 {
     public class PathAttachedValidation : PropertyAttachedValidation<string>
     {
@@ -16,7 +18,7 @@
                 AddError(propertyName, "Path can not be null or empty", value);
                 return;
             }
-            if (!Application.AppKernel.Instance.FileManager.Exists(value))
+            if (!FileManager.Instance.Exists(value))
                 AddError(propertyName, "Path does not exist", value);
         }
     }

@@ -14,6 +14,8 @@ namespace MIDE.FileSystem
         protected Dictionary<ApplicationPath, string> specialPaths;
         protected Dictionary<string, string> allPaths;
 
+        public static FileManager Instance { get; set; }
+
         public FileManager()
         {
             allPaths = new Dictionary<string, string>();

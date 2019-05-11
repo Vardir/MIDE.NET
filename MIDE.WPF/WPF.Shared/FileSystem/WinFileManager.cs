@@ -7,6 +7,11 @@ namespace MIDE.WPF.FileSystem
 {
     public class WinFileManager : FileManager
     {
+        static WinFileManager()
+        {
+            Instance = new WinFileManager();
+        }
+
         public override string MapPath(string path)
         {
             throw new NotImplementedException();

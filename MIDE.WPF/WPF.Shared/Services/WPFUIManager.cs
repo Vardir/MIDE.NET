@@ -1,4 +1,5 @@
 ﻿using System;
+using MIDE.FileSystem;
 using System.Windows;
 using Newtonsoft.Json;
 using MIDE.WPF.Windows;
@@ -10,6 +11,7 @@ using MIDE.API.Components;
 using System.Windows.Media;
 using System.Collections.Generic;
 using MIDE.Application.Configuration;
+
 
 namespace MIDE.WPF.Services
 {
@@ -87,7 +89,7 @@ namespace MIDE.WPF.Services
             try
             {
                 id = ConfigurationManager.Instance["theme"] as string ?? "default";
-                string data = AppKernel.Instance.FileManager.ReadOrCreate($"root\\themes\\{id}.json", "{}");
+                string data = FileManager.Instance.ReadOrCreate($"root\\themes\\{id}.json", "{}");
                 var items = JsonConvert.DeserializeObject<Dictionary<string, string>>(data);
                 colors = new ResourceDictionary();
                 foreach (var kvp in items)
