@@ -39,7 +39,7 @@
                     </local:GlyphTemplateSelector.ImagePathTemplate>
                     <local:GlyphTemplateSelector.BytesMapTemplate>
                         <DataTemplate>
-                            <Image Source="{Binding Value, Converter={c:BytesToBitmapSource}}" Height="16"/>
+                            <Image Source="{Binding Value, Converter={c:BytesToBitmapSource}}" Height="16" Width="16"/>
                         </DataTemplate>
                     </local:GlyphTemplateSelector.BytesMapTemplate>
                 </local:GlyphTemplateSelector>

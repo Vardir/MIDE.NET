@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
 using MIDE.FileSystem;
+using MIDE.API.Visuals;
 using System.Reflection;
 using MIDE.API.Services;
 using MIDE.Schemes.JSON;
@@ -14,7 +15,6 @@ using MIDE.Application.Attrubites;
 using MIDE.Application.Initializers;
 using MIDE.Application.Configuration;
 using Module = MIDE.API.Extensibility.Module;
-using MIDE.API.Visuals;
 
 namespace MIDE.Application
 {

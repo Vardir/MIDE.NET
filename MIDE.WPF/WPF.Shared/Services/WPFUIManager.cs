@@ -12,7 +12,6 @@ using System.Windows.Media;
 using System.Collections.Generic;
 using MIDE.Application.Configuration;
 
-
 namespace MIDE.WPF.Services
 {
     public class WpfUIManager : UIManager
@@ -21,6 +20,7 @@ namespace MIDE.WPF.Services
 
         public WpfUIManager()
         {
+            CurrentPlatform = Platform.WPF;
             loadedUIExtensions = new LinkedList<UIExtension>();
         }
 

@@ -1,5 +1,6 @@
 ﻿using MIDE.API.Commands;
 using MIDE.API.Components;
+using NodeGraphs.Components;
 using MIDE.API.Extensibility;
 using MIDE.Application.Attrubites;
 
@@ -13,9 +14,14 @@ namespace NodeGraphs
 
         protected override void RegisterMenuItems(IMenuConstructionContext context)
         {
-            //var newFile = new MenuButton("new-file", -99);
-            //newFile.PressCommand = new RelayCommand(() => System.Console.WriteLine("Creating new file"));
-            //context.AddItem("file", newFile);
+            context.AddItem("view", new MenuButton("node-graph", 0)
+            {
+                PressCommand = new RelayCommand(() =>
+                {
+                    NodeGraphTab tab = new NodeGraphTab("nodes-graph");
+                    Kernel.UIManager.AddTab(tab, "editors");
+                })
+            });
         }
         protected override void RegisterModules()
         {

@@ -1,9 +1,9 @@
-﻿using MIDE.Application;
+﻿using MIDE.WPF.Windows;
+using MIDE.Application;
 using MIDE.API.Commands;
 using MIDE.API.Components;
 using MIDE.API.Validations;
 using MIDE.Application.Initializers;
-using MIDE.WPF.Windows;
 
 namespace MIDE.WPF.Initializers
 {

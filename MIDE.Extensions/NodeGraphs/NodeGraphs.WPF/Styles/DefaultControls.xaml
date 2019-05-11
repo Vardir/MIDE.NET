@@ -6,4 +6,23 @@
     <DataTemplate DataType="{x:Type c:LabelNode}">
         <ctr:LabelNodeControl DataContext="{Binding}"/>
     </DataTemplate>
+
+    <DataTemplate DataType="{x:Type c:NodeGraphTab}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <ScrollViewer MinWidth="400" MinHeight="400"
+                          MaxWidth="400" MaxHeight="400"
+                          HorizontalScrollBarVisibility="Visible"
+                          VerticalScrollBarVisibility="Visible"
+                          ScrollViewer.CanContentScroll="True">
+                <ctr:GraphCanvasControl BorderBrush="Black" BorderThickness="1"
+                                      XAxisBrush="Green" YAxisBrush="Blue"
+                                      GridBackground="White" Model="{Binding Canvas}"/>
+            </ScrollViewer>
+        </Grid>
+    </DataTemplate>
 </ResourceDictionary>

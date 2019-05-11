@@ -49,6 +49,9 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="wpfuix">
+      <HintPath>..\..\..\MIDE.WPF\WPF.Extensibility\bin\Debug\wpfuix.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Behaviors\Behavior.cs" />
@@ -59,6 +62,7 @@
       <DependentUpon>LabelNodeControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Helpers\GraphNodeHelpers.cs" />
+    <Compile Include="NodeGraphsUIExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

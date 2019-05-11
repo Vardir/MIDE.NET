@@ -7,7 +7,7 @@ using MIDE.WPF.Services;
 using MIDE.WPF.FileSystem;
 using MIDE.WPF.Initializers;
 using MIDE.Application.Attrubites;
-using MIDE.API.Visuals;
+using System;
 
 [assembly: ApplicationProperties("wpftemplate")]
 
@@ -33,7 +33,14 @@ namespace MIDE.WPF
         }
         public void LoadUIExtensions()
         {
-
+            foreach (var extension in UIManager.GetLoadedUIExtensions())
+            {
+                var dictionaries = extension.GetResourceDictionaries();
+                foreach (var dictionary in dictionaries)
+                {
+                    Resources.MergedDictionaries.Add(dictionary);
+                }
+            }
         }
 
         protected override void OnStartup(StartupEventArgs e)
