@@ -10,6 +10,7 @@ using MIDE.API.Validations;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using IO = System.IO;
+using MIDE.API.Visuals;
 
 namespace MIDE.API.Components
 {
@@ -52,7 +53,7 @@ namespace MIDE.API.Components
         {            
             SearchBox = new ActionTextBox("search");
             SearchBox.ActionButton.Caption = null;
-            SearchBox.ActionButton.ButtonGlyph = new Visuals.Glyph("\uf002") { AlternateColor = Color.White };
+            SearchBox.ActionButton.ButtonGlyph = GlyphPool.Instance["search"];
             SearchBox.ActionButton.PressCommand = new RelayCommand(ShowCurrent);
             SearchBox.Validations.Add(new PathValidation());
 
@@ -60,17 +61,17 @@ namespace MIDE.API.Components
             ToolbarButton homeButton = new ToolbarButton("home");
             homeButton.Caption = null;
             homeButton.Order = 99;
-            homeButton.ButtonGlyph = new Visuals.Glyph("\uf015") { AlternateColor = Color.White };
+            homeButton.ButtonGlyph = GlyphPool.Instance["home"];
             homeButton.PressCommand = new RelayCommand(GoHome);
             ToolbarButton backButton = new ToolbarButton("back");
             backButton.Caption = null;
             backButton.Order = 101;
-            backButton.ButtonGlyph = new Visuals.Glyph("\uf048") { AlternateColor = Color.White };
+            backButton.ButtonGlyph = GlyphPool.Instance["back"];
             backButton.PressCommand = new RelayCommand(GoBack);
             ToolbarButton forwardButton = new ToolbarButton("forward");
             forwardButton.Caption = null;
             forwardButton.Order = 100;
-            forwardButton.ButtonGlyph = new Visuals.Glyph("\uf051") { AlternateColor = Color.White };
+            forwardButton.ButtonGlyph = GlyphPool.Instance["forward"];
             forwardButton.PressCommand = new RelayCommand(GoForward);
 
             var backButtonBinding1 = new ObjectBinding<ObservableCollection<string>, ToolbarButton>(BrowseHistory, backButton);

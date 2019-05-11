@@ -14,6 +14,7 @@ using MIDE.Application.Attrubites;
 using MIDE.Application.Initializers;
 using MIDE.Application.Configuration;
 using Module = MIDE.API.Extensibility.Module;
+using MIDE.API.Visuals;
 
 namespace MIDE.Application
 {
@@ -266,9 +267,32 @@ namespace MIDE.Application
             AppLogger.FilterEvents(AppLogger.Levels);
             ConfigurationManager.Instance.AddOrUpdate(new Config("theme", appConfig.Theme));
             fileManager.LoadPaths(appConfig.Paths);
+            LoadAssets();
             AppLogger.PushDebug(null, "Application configurations loaded");
         }
 
+        private void LoadAssets()
+        {
+            AppLogger.PushDebug(null, "Loading assets");
+            try
+            {
+                string path = fileManager.Combine(fileManager[ApplicationPath.AppAssets], 
+                                                  "glyphs", 
+                                                  (string)ConfigurationManager.Instance["theme"],
+                                                  "config.json");
+                string glyphsData = fileManager.ReadOrCreate(path, "{}");
+                var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(glyphsData);
+                foreach (var kvp in dict)
+                {
+                    GlyphPool.Instance.AddOrUpdate(kvp.Key, Glyph.From(kvp.Value));
+                }
+            }
+            catch (Exception ex)
+            {
+                AppLogger.PushFatal(ex.Message);
+            }
+            AppLogger.PushDebug(null, "Application assets loaded");
+        }
         /// <summary>
         /// Loads all the extensions that are provided in attached assemblies
         /// </summary>

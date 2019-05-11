@@ -142,21 +142,19 @@ namespace MIDE.FileSystem
         private void Initialize()
         {
             string fileData = fileManager.ReadOrCreate(fileManager.GetPath(ApplicationPath.AppAssets, "file-system-items.json"),
-                                                       "{ \"icons\": null, \"file-extensions\": null, \"file-editors\": null }");
+                                                       "{ \"file-extensions\": null, \"file-editors\": null }");
             FileSystemItemParameters parameters = JsonConvert.DeserializeObject<FileSystemItemParameters>(fileData);
             if (parameters.FileExtensions != null)
                 LoadFileExtensions(parameters);
-            if (parameters.Icons != null)
-                LoadItemIcons(parameters);
             if (parameters.FileEditors != null)
                 LoadFileEditors(parameters);
+            LoadItemIcons();
         }
-        private void LoadItemIcons(FileSystemItemParameters parameters)
+        private void LoadItemIcons()
         {
-            foreach (var kvp in parameters.Icons)
+            foreach (var kvp in fsObjectClasses)
             {
-                Glyph glyph = Glyph.From(kvp.Value);
-                Update(kvp.Key, null, null, glyph ?? new Glyph('X'));
+                kvp.Value.ObjectGlyph = GlyphPool.Instance[kvp.Key];
             }
         }
         private void LoadFileExtensions(FileSystemItemParameters parameters)

@@ -6,9 +6,6 @@ namespace MIDE.Schemes.JSON
     [JsonObject(MemberSerialization.OptIn)]
     public class FileSystemItemParameters
     {
-        [JsonProperty(PropertyName = "icons")]
-        public Dictionary<string, string> Icons { get; set; }
-
         [JsonProperty(PropertyName = "file-editors")]
         public Dictionary<string, string> FileEditors { get; set; }
 

@@ -16,6 +16,16 @@ namespace MIDE.FileSystem
 
         public static FileManager Instance { get; set; }
 
+        public string this[ApplicationPath applicationPath]
+        {
+            get
+            {
+                if (specialPaths.TryGetValue(applicationPath, out string path))
+                    return path;
+                return null;
+            }
+        }
+
         public FileManager()
         {
             allPaths = new Dictionary<string, string>();
@@ -206,6 +216,17 @@ namespace MIDE.FileSystem
         /// <param name="path"></param>
         /// <returns></returns>
         public abstract string MapPath(string path);
+        /// <summary>
+        /// Tries to load bytes from the given file and returns null if file does not exist
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public virtual byte[] TryReadBytes(string path)
+        {
+            if (!File.Exists(path))
+                return null;
+            return File.ReadAllBytes(path);
+        }
         /// <summary>
         /// Tries to load data from the given file and returns null if file does not exist
         /// </summary>

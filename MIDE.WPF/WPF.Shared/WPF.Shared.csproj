@@ -74,6 +74,7 @@
     <Compile Include="Converters\Boolean\IntegerToBoolean.cs" />
     <Compile Include="Converters\Boolean\InvertBoolean.cs" />
     <Compile Include="Converters\Boolean\NullableToBoolean.cs" />
+    <Compile Include="Converters\BytesToBitmapSource.cs" />
     <Compile Include="Converters\CollectionToString.cs" />
     <Compile Include="Converters\ColorConverter.cs" />
     <Compile Include="Converters\EnumToInteger.cs" />

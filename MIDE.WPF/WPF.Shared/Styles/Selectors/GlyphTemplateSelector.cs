@@ -7,9 +7,8 @@ namespace MIDE.WPF.Styles
     public class GlyphTemplateSelector : DataTemplateSelector
     {
         public DataTemplate FontAwesomeTemplate { get; set; }
-        public DataTemplate BitmapTemplate { get; set; }
-        //public DataTemplate ImagePathTemplate { get; set; }
-        //public DataTemplate SymbolicTemplate { get; set; }
+        public DataTemplate ImagePathTemplate { get; set; }
+        public DataTemplate BytesMapTemplate { get; set; }
         public DataTemplate StringTemplate { get; set; }
 
         public GlyphTemplateSelector() { }
@@ -22,7 +21,10 @@ namespace MIDE.WPF.Styles
                 {
                     case GlyphKind.FontAwesome:
                         return FontAwesomeTemplate;
-                        //TODO: add cases
+                    case GlyphKind.ImagePath:
+                        return ImagePathTemplate;
+                    case GlyphKind.ByteArray:
+                        return BytesMapTemplate;
                 }
             }
             return base.SelectTemplate(item, container);

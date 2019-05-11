@@ -28,7 +28,7 @@ namespace MIDE.FileSystem
             }
         }
         public string Editor { get; private set; }
-        public Glyph ObjectGlyph { get; private set; }
+        public Glyph ObjectGlyph { get; internal set; }
 
         public FSObjectClass(string objectClass, string extension) 
             : this(objectClass, extension, null, null) { }

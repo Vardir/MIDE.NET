@@ -7,6 +7,7 @@ using MIDE.WPF.Services;
 using MIDE.WPF.FileSystem;
 using MIDE.WPF.Initializers;
 using MIDE.Application.Attrubites;
+using MIDE.API.Visuals;
 
 [assembly: ApplicationProperties("wpftemplate")]
 

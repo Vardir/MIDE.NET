@@ -32,6 +32,16 @@
                             </TextBlock>
                         </DataTemplate>
                     </local:GlyphTemplateSelector.FontAwesomeTemplate>
+                    <local:GlyphTemplateSelector.ImagePathTemplate>
+                        <DataTemplate>
+                            <Image Source="{Binding Value}"/>
+                        </DataTemplate>
+                    </local:GlyphTemplateSelector.ImagePathTemplate>
+                    <local:GlyphTemplateSelector.BytesMapTemplate>
+                        <DataTemplate>
+                            <Image Source="{Binding Value, Converter={c:BytesToBitmapSource}}" Height="16"/>
+                        </DataTemplate>
+                    </local:GlyphTemplateSelector.BytesMapTemplate>
                 </local:GlyphTemplateSelector>
             </Setter.Value>
         </Setter>

@@ -88,6 +88,13 @@ namespace MIDE.API.Visuals
             {
                 glyph = new Glyph(format.Substring(3), GlyphKind.ImagePath);
             }
+            else if (format.Length > 6 && format.StartsWith("@pba-")) // @pba-root/assets/icons/file.png -- path to image to load as byte array
+            {
+                string path = format.Substring(5);
+                byte[] array = FileManager.Instance.TryReadBytes(path);
+                if (array != null)
+                    glyph = new Glyph(array, GlyphKind.ByteArray);
+            }
             return glyph;
         }
 
@@ -121,6 +128,8 @@ namespace MIDE.API.Visuals
                                FileManager.Instance.Exists(imgPath);
                     }
                     break;
+                case GlyphKind.ByteArray:
+                    return value is byte[];
             }
             return false;
         }
@@ -139,6 +148,10 @@ namespace MIDE.API.Visuals
         /// <summary>
         /// The glyph is represented by a path to the existing image on device
         /// </summary>
-        ImagePath
+        ImagePath,
+        /// <summary>
+        /// The glyph is represented by a byte array
+        /// </summary>
+        ByteArray
     }
 }
