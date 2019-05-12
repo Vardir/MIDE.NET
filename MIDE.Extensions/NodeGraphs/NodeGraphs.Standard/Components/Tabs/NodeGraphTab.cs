@@ -4,7 +4,19 @@ namespace NodeGraphs.Components
 {
     public class NodeGraphTab : Tab
     {
-        public GraphCanvas Canvas { get; }
+        private GraphCanvas canvas;
+
+        public GraphCanvas Canvas
+        {
+            get => canvas;
+            set
+            {
+                if (value == canvas)
+                    return;
+                canvas = value;
+                OnPropertyChanged(nameof(Canvas));
+            }
+        }
 
         public NodeGraphTab(string id, bool allowDuplicates = false) : base(id, allowDuplicates)
         {

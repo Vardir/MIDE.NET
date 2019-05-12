@@ -4,8 +4,15 @@
                     xmlns:ctr="clr-namespace:NodeGraphs.WPF.Controls">
 
     <DataTemplate DataType="{x:Type c:LabelNode}">
-        <ctr:LabelNodeControl DataContext="{Binding}"/>
+        <ctr:LabelNodeControl DataContext="{Binding}" Model="{Binding}"/>
     </DataTemplate>
+
+    <Style TargetType="{x:Type ctr:GraphCanvasControl}">
+        <Setter Property="ctr:GraphNodeControl.Container" Value="{Binding RelativeSource={RelativeSource Self}}"/>
+        <Setter Property="TextBox.Background" Value="Red"/>
+        <Setter Property="XAxisBrush" Value="AliceBlue"/>
+        <Setter Property="YAxisBrush" Value="Red"/>
+    </Style>
 
     <DataTemplate DataType="{x:Type c:NodeGraphTab}">
         <Grid>

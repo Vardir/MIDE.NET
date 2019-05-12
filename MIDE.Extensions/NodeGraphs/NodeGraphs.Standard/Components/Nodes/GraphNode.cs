@@ -5,8 +5,20 @@ namespace NodeGraphs.Components
 {
     public abstract class GraphNode : GraphComponent
     {
+        private Point pivot;
         private Point location;
 
+        public Point Pivot
+        {
+            get => pivot;
+            set
+            {
+                if (value == pivot)
+                    return;
+                pivot = value;
+                OnPropertyChanged(nameof(Pivot));
+            }
+        }
         public Point Location
         {
             get => location;

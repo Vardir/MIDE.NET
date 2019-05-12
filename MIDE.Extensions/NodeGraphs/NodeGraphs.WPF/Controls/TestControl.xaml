@@ -26,6 +26,6 @@
         </ScrollViewer>
 
         <TextBlock Text="{Binding ItemsSource, ElementName=canvas}"
-                   Grid.Row="1"/>
+                   Grid.Row="1" Foreground="White"/>
     </Grid>
 </UserControl>

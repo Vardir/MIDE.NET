@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Windows;
+using MIDE.CustomImpl;
 using System.Windows.Media;
 using NodeGraphs.DataModels;
 using NodeGraphs.Components;
 using System.Windows.Controls;
 using System.Collections.Specialized;
+using System.Windows.Controls.Primitives;
 
 namespace NodeGraphs.WPF.Controls
 {
@@ -12,6 +14,7 @@ namespace NodeGraphs.WPF.Controls
     {
         private Pen xAxisPen;
         private Pen yAxisPen;
+        private Queue<GraphComponent> lastAddedGraphComponents;
 
         private int XAxisBase => Model.XAxis.Basis - Model.XAxis.Start;
         private int YAxisBase => Model.YAxis.End - Model.YAxis.Basis;
@@ -66,20 +69,50 @@ namespace NodeGraphs.WPF.Controls
         public GraphCanvasControl()
         {
             Model = new GraphCanvas("canvas");
+            lastAddedGraphComponents = new Queue<GraphComponent>();
             ItemsPanel = new ItemsPanelTemplate(new FrameworkElementFactory(typeof(Grid)));
 
             ((INotifyCollectionChanged)Items).CollectionChanged += GraphCanvasControl_CollectionChanged;
+            ItemContainerGenerator.StatusChanged += ItemContainerGenerator_StatusChanged;
 
             xAxisPen = new Pen(XAxisBrush, 1);
             yAxisPen = new Pen(YAxisBrush, 1);
+
         }
 
-        public void UpdateLocation(GraphNodeControl element)
+        private void ItemContainerGenerator_StatusChanged(object sender, EventArgs e)
         {
-            var overlapingSide = element.GetOverlapingSide(this, out int points);
+            if (ItemContainerGenerator.Status != GeneratorStatus.ContainersGenerated)
+                return;
+            lastAddedGraphComponents.ForEach((component) =>
+            {
+                var contentPresenter = ItemContainerGenerator.ContainerFromItem(component) as ContentPresenter;
+                if (contentPresenter == null)
+                    return;
+                contentPresenter.Loaded += ContentPresenter_Loaded;
+            });
+        }
+
+        private void ContentPresenter_Loaded(object sender, RoutedEventArgs e)
+        {
+            var contentPresenter = sender as ContentPresenter;
+            contentPresenter.Loaded -= ContentPresenter_Loaded;
+            int count = VisualTreeHelper.GetChildrenCount(contentPresenter);
+            if (count == 0)
+                return;
+            var child = VisualTreeHelper.GetChild(contentPresenter, 0);
+            if (child is GraphNodeControl nodeControl)
+            {
+                ResetChild(nodeControl);
+            }
+        }
+
+        public void UpdateLocation(GraphNodeControl control)
+        {
+            var overlapingSide = control.GetOverlapingSide(this, out int points);
             EnsureBorders(overlapingSide, points + 5);
 
-            InternalUpdateLocation(element);
+            InternalUpdateLocation(control);
         }
 
         protected override void OnRender(DrawingContext drawingContext)
@@ -100,8 +133,9 @@ namespace NodeGraphs.WPF.Controls
         private void InternalUpdateLocation(GraphNodeControl element)
         {
             var translate = element.TranslateTransform;
-            translate.X = XAxisBase + element.Location.x - element.Pivot.x;
-            translate.Y = YAxisBase - element.Location.x - element.Pivot.x;
+            var model = element.Model;
+            translate.X = XAxisBase + model.Location.x - model.Pivot.x;
+            translate.Y = YAxisBase - model.Location.y - model.Pivot.y;
         }
         private void UpdateLocations()
         {
@@ -137,20 +171,17 @@ namespace NodeGraphs.WPF.Controls
 
         private void OnChildAdd(object value)
         {
-            if (value == null || !(value is GraphNodeControl element))
-                throw new ArgumentException();
-
-            ResetChild(element);
+            if (value is GraphComponent component)
+                lastAddedGraphComponents.Enqueue(component);
         }
         private void OnChildRemove(object value)
         {
-            if (value == null || !(value is GraphNodeControl element))
-                throw new ArgumentException();
-
-            element.Container = null;
+            return;//TODO find exact control and clear it's properties as below
+            //element.Container = null;
         }
         private void OnReset()
         {
+            return;
             foreach (var item in Items)
             {
                 if (item is GraphNodeControl element)
@@ -184,10 +215,10 @@ namespace NodeGraphs.WPF.Controls
                 model.XAxis.LengthChanged -= control.XAxis_LengthChanged;
                 model.YAxis.LengthChanged -= control.YAxis_LengthChanged;
             }
+            model = e.NewValue as GraphCanvas;
             if (model == null)
                 return;
             control.ItemsSource = model.Components;
-            model = e.NewValue as GraphCanvas;
             model.XAxis.LengthChanged += control.XAxis_LengthChanged;
             model.YAxis.LengthChanged += control.YAxis_LengthChanged;
             control.UpdateSize();

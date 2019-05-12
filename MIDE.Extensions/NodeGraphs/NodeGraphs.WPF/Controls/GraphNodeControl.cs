@@ -1,35 +1,20 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Media;
+using NodeGraphs.Components;
 using NodeGraphs.DataModels;
+using System.ComponentModel;
 using System.Windows.Controls;
 using NodeGraphs.WPF.Behaviors;
-using NodeGraphs.WPF.Helpers;
 
 namespace NodeGraphs.WPF.Controls
 {
     public abstract class GraphNodeControl : ContentControl
     {
-        private Point pivot;
-        private Point location;
-
-        public bool IsFixedLocation { get; set; }
-        public Point Pivot
+        public GraphNode Model
         {
-            get => pivot;
-            set
-            {
-                pivot = value;
-                OnPivotChanged();
-            }
-        }
-        public Point Location
-        {
-            get => location;
-            set
-            {
-                location = value;
-                OnLocationChanged();
-            }
+            get => (GraphNode)GetValue(ModelProperty);
+            set => SetValue(ModelProperty, value);
         }
         public GraphCanvasControl Container
         {
@@ -37,14 +22,19 @@ namespace NodeGraphs.WPF.Controls
             set => SetValue(ContainerProperty, value);
         }
         public TranslateTransform TranslateTransform { get; }
+        
+        public static readonly DependencyProperty ModelProperty =
+            DependencyProperty.Register(nameof(Model), 
+                typeof(GraphNode), typeof(GraphNodeControl), 
+                new PropertyMetadata(null, ModelChanged));
 
         public static readonly DependencyProperty ContainerProperty =
             DependencyProperty.Register(nameof(Container),
                 typeof(GraphCanvasControl), typeof(GraphNodeControl),
-                new PropertyMetadata(null));
+                new PropertyMetadata(null, ContainerChanged));
 
         public GraphNodeControl()
-        {
+        {            
             TranslateTransform = new TranslateTransform();
             RenderTransform = TranslateTransform;
             Behavior.Attach(new GraphNodeTranslateBehavior(), this);
@@ -52,12 +42,10 @@ namespace NodeGraphs.WPF.Controls
 
         public void Move(int dx, int dy)
         {
-            if (IsFixedLocation)
+            var model = Model;
+            if (model == null)
                 return;
-
-            location = location.Translate(dx, -dy);
-
-            OnLocationChanged();
+            model.Location = model.Location.Translate(dx, -dy);
         }
 
         public abstract GridSide GetOverlapingSide(IBounds bounds, out int points);
@@ -73,6 +61,31 @@ namespace NodeGraphs.WPF.Controls
             if (Container == null) return;
 
             Container.UpdateLocation(this);
+        }
+        protected void Model_PropertyChanged(object sender, PropertyChangedEventArgs args)
+        {
+            if (args.PropertyName == nameof(GraphNode.Location))
+                OnLocationChanged();
+            else if (args.PropertyName == nameof(GraphNode.Pivot))
+                OnPivotChanged();
+        }
+
+        private static void ModelChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            GraphNodeControl control = d as GraphNodeControl;
+            GraphNode model = e.OldValue as GraphNode;
+            if (model != null)
+            {
+                model.PropertyChanged -= control.Model_PropertyChanged;
+            }
+            model = e.NewValue as GraphNode;
+            if (model == null)
+                return;
+            model.PropertyChanged += control.Model_PropertyChanged;
+        }
+        private static void ContainerChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            //throw new NotImplementedException();
         }
     }
 }

@@ -9,10 +9,10 @@ namespace NodeGraphs.WPF.Controls
     public partial class LabelNodeControl : GraphNodeControl, IRect
     {
         #region Rect Properties
-        public int LeftEdge => (int)(Location.x - Pivot.x);
-        public int RightEdge => (int)(Location.x + GetWidth() - Pivot.x);
-        public int TopEdge => (int)(Location.y + Pivot.y);
-        public int BottomEdge => (int)(Location.y - GetHeight() + Pivot.y);
+        public int LeftEdge => (Model.Location.x - Model.Pivot.x);
+        public int RightEdge => (Model.Location.x + GetWidth() - Model.Pivot.x);
+        public int TopEdge => (Model.Location.y + Model.Pivot.y);
+        public int BottomEdge => (Model.Location.y - GetHeight() + Model.Pivot.y);
         #endregion
 
         public LabelNodeControl()
