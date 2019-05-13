@@ -11,6 +11,9 @@ namespace MIDE.Schemes.JSON
         [JsonProperty(PropertyName = "self")]
         public string DllPath { get; set; }
 
+        [JsonProperty(PropertyName = "assembly_preload")]
+        public string[] PreloadedAssemblies { get; set; }
+
         [JsonProperty(PropertyName = "include")]
         public ExtensionMember[] ExtensionMembers { get; set; }
     }

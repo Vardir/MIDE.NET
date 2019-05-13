@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Terminal</RootNamespace>
+    <AssemblyName>terminal</AssemblyName>
+    <Authors>Vardir</Authors>
+    <Company>Vardir Products</Company>
+    <Product>MIDE Terminal</Product>
+    <Description>A simple terminal extension for MIDE .NET</Description>
+    <Copyright>Copyright 2019 © Andrew Satura</Copyright>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="api">
+      <HintPath>..\..\..\MIDE.Kernel\MIDE.Standard\bin\Debug\netstandard2.0\api.dll</HintPath>
+    </Reference>
+    <Reference Include="core">
+      <HintPath>..\..\..\..\..\Console\MyCMD\CMD.Standard\bin\Release\netstandard2.0\core.dll</HintPath>
+    </Reference>
+    <Reference Include="FSharp.Core">
+      <HintPath>..\..\..\..\..\Console\MyCMD\CMD.Standard\bin\Release\netstandard2.0\FSharp.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Parser">
+      <HintPath>..\..\..\..\..\Console\MyCMD\CMD.Standard\bin\Release\netstandard2.0\Parser.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

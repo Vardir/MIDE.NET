@@ -197,10 +197,19 @@ namespace MIDE.Application
         /// <returns></returns>
         public string VerifyModule(Module module)
         {
-            //TODO: verify if the module is valid
+            if (module == null)
+                return "Null module reference";
             return null;
         }
         public override string ToString() => $"KERNEL [{Version}] >> {callingAssembly?.FullName ?? "?"}";
+        public T GetExtension<T>(string id)
+            where T: AppExtension
+        {
+            var extension = extensions.Find(ext => ext.Id == id);
+            if (extension == null)
+                return null;
+            return extension as T;
+        }
 
         /// <summary>
         /// Registers the given extension in the internal storage and initializes it
@@ -208,7 +217,7 @@ namespace MIDE.Application
         /// <param name="extension"></param>
         public void RegisterExtension(AppExtension extension)
         {
-            AppLogger.PushDebug(null, $"Registering extension {extension?.Id ?? "<null>"}");
+            AppLogger.PushDebug(null, $"Registering extension '{extension.Id}'");
             try
             {
                 if (extension == null)
@@ -227,7 +236,7 @@ namespace MIDE.Application
             }
             extension.Initialize();
             extensions.Add(extension);
-            AppLogger.PushDebug(null, $"Registered extension {extension.Id}");
+            AppLogger.PushDebug(null, $"Extension '{extension.Id}' registered");
         }
 
         public void Dispose()
@@ -317,6 +326,14 @@ namespace MIDE.Application
                     continue;
                 }
                 var config = JsonConvert.DeserializeObject<ExtensionConfig>(configData);
+                if (config.PreloadedAssemblies != null)
+                {
+                    foreach (var preloaded in config.PreloadedAssemblies)
+                    {
+                        string path = extensionPath + preloaded;
+                        Assembly.LoadFrom(path);
+                    }
+                }
                 Assembly assembly = Assembly.LoadFrom(extensionPath + config.DllPath);
                 var types = assembly.GetTypes();
                 for (int i = 0; i < types.Length; i++)
