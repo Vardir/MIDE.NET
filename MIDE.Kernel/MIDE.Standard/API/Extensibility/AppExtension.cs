@@ -3,6 +3,7 @@ using System.Linq;
 using MIDE.Application;
 using MIDE.API.Components;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace MIDE.API.Extensibility
 {
@@ -21,22 +22,35 @@ namespace MIDE.API.Extensibility
 
         public void Initialize()
         {
+            Kernel.AppLogger.PushDebug(null, $"Extension {Id} :: begin initialization");
             RegisterMenuItems(Kernel.UIManager.ApplicationMenu);
+            Kernel.AppLogger.PushDebug(null, $"Extension {Id} :: menu items loaded");
             RegisterModules();
+            if (modules.Count > 0)
+                Kernel.AppLogger.PushDebug(null, $"Extension {Id} :: modules loaded");
+            Kernel.AppLogger.PushDebug(null, $"Extension {Id} :: initialization completed");
             IsInitialized = true;
         }
         public void Unload()
         {
             foreach (var module in modules)
             {
-                if (module.IsRunning)
-                    module.Stop();
+                //if (module.IsRunning)
+                //    module.Stop();
                 module.Unload();
             }
             modules.Clear();
             Dispose();
         }
 
+        public T GetModule<T>(string id)
+            where T: Module
+        {
+            var module = modules.Find(m => m.Id == id);
+            if (module == null)
+                return null;
+            return module as T;
+        }
         public override string ToString() => $"EXTENSION [{GetType().Name}] :: {Id}";
 
         /// <summary>
@@ -56,6 +70,8 @@ namespace MIDE.API.Extensibility
                 throw new ArgumentException($"The given module [{module.Id}] is invalid: {validation}");
             module.Extension = this;
             modules.Add(module);
+            module.Initialize();
+            Kernel.AppLogger.PushDebug(null, $"Extension {Id} :: module {module.Id} registered");
         }
 
         protected abstract void RegisterMenuItems(IMenuConstructionContext context);
@@ -65,10 +81,10 @@ namespace MIDE.API.Extensibility
         {
             foreach (var module in modules)
             {
-                if (module.IsRunning)
-                    module.Stop();
-                module.Dispose();
+                //if (module.IsRunning)
+                //    module.Stop();
                 module.Extension = null;
+                module.Dispose();
             }
             modules.Clear();
         }

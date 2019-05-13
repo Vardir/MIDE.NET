@@ -6,6 +6,7 @@ using MIDE.Application;
 using MIDE.Schemes.JSON;
 using System.Collections.Generic;
 using System.Runtime.Serialization.Formatters.Binary;
+using MIDE.Helpers;
 
 namespace MIDE.FileSystem
 {
@@ -109,6 +110,12 @@ namespace MIDE.FileSystem
         /// <param name="path"></param>
         public virtual void Serialize(object data, string path)
         {
+            if (data == null)
+                File.WriteAllText(path, "<null>");
+            var type = data.GetType();
+            if (!type.HasAttribute<SerializableAttribute>())
+                File.WriteAllText(data.ToString(), "<null>");
+
             BinaryFormatter formatter = new BinaryFormatter();
             try
             {
@@ -203,6 +210,7 @@ namespace MIDE.FileSystem
             }
             return allPaths[key];
         }
+        public string GetAbsolutePath(string path) => Path.GetFullPath(path);
 
         /// <summary>
         /// Verifies if the given path exists, it can be either file or directory

@@ -1,60 +1,90 @@
 ﻿using System;
+using MIDE.CustomImpl;
+using MIDE.API.Components;
 using System.Threading.Tasks;
 
 namespace MIDE.API.Extensibility
 {
-    public abstract class Module : IDisposable
+    /// <summary>
+    /// A base class for application components that are intended to execute some specific jobs on parallel thread
+    /// </summary>
+    public abstract class Module : ApplicationComponent, IDisposable
     {
         protected object _lock = new object();
-
-        public bool IsRunning { get; private set; }
-        public string Id { get; }
+        private Queue<ModuleJob> pendingJobs;
+        
+        public bool IsExecuting { get; private set; }
         public AppExtension Extension { get; internal set; }
 
-        public Module(string id)
+        public Module(string id) : base(id)
         {
-            Id = id;
+            pendingJobs = new Queue<ModuleJob>();
         }
 
-        public void Stop()
-        {
-            //TODO: send notification to suspend the thread
-        }
+        public abstract void Initialize();
         public virtual void Unload()
         {
-            //TODO: free up all the resources
+            Dispose();
         }
-
-        public async Task<ModuleExecutionResult> Run()
+        
+        /// <summary>
+        /// Executes module's routine on parallel thread
+        /// </summary>
+        /// <param name="parameter"></param>
+        public void Execute(object parameter, IModuleExecutionListener listener)
         {
-            IsRunning = true;
-            var result = await Execute();
-            IsRunning = false;
-            return result;
+            if (IsExecuting)
+            {
+                pendingJobs.Enqueue(new ModuleJob(parameter, listener));
+                return;
+            }
+            IsExecuting = true;
+            Task.Run(() => ExecuteCommand(parameter, listener)).ContinueWith(OnExecutionCompleted);
         }
 
         public override string ToString() => $"MODULE :: {Id}";
 
         public void Dispose()
         {
-            if (IsRunning)
-                Stop();
+            _lock = null;
+            pendingJobs.Clear();
+            pendingJobs = null;
         }
 
-        protected abstract Task<ModuleExecutionResult> Execute();
+        /// <summary>
+        /// An execution process that runs on parallel thread. 
+        /// Receives caller and parameter. 
+        /// Returns a job with the same caller and execution result context that have to be sent to listener
+        /// </summary>
+        protected abstract ModuleJob ExecuteCommand(object parameter, IModuleExecutionListener listener);
+
+        private void OnExecutionCompleted(Task<ModuleJob> task)
+        {
+            IsExecuting = false;
+            task.Result.listener.ReceiveResult(task.Result.parameter);
+            if (pendingJobs.Length > 0)
+            {
+                var job = pendingJobs.Dequeue();
+                Execute(job.parameter, job.listener);
+            }
+        }
     }
 
-    public struct ModuleExecutionResult
+    public struct ModuleJob
     {
-        public readonly bool IsSuccess;
-        public readonly string Message;
-        public readonly object ReturnValue;
+        public readonly object parameter;
+        public readonly IModuleExecutionListener listener;
 
-        public ModuleExecutionResult(object returnValue, string message = null)
+        public ModuleJob(object parameter, IModuleExecutionListener listener)
         {
-            Message = message;
-            IsSuccess = message != null;
-            ReturnValue = returnValue;
+            this.parameter = parameter;
+            this.listener = listener;
         }
+    }
+
+    public interface IModuleExecutionListener
+    {
+        void ReceiveStatus(int complition, object context);
+        void ReceiveResult(object context);
     }
 }
