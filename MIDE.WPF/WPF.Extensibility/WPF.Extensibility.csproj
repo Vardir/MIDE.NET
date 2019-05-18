@@ -31,8 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="api">
-      <HintPath>..\..\MIDE.Kernel\MIDE.Standard\bin\Debug\netstandard2.0\api.dll</HintPath>
+    <Reference Include="api, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Publish\MIDE.Kernel\api.dll</HintPath>
     </Reference>
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -49,4 +50,9 @@
     <Compile Include="WPFExtension.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>set path="E:\Projects\C#\Libs\MIDE.NET\Publish\$(SolutionName)\"
+if not exist %25path%25 mkdir %25path%25
+copy "$(TargetDir)$(TargetFileName)" %25path%25</PostBuildEvent>
+  </PropertyGroup>
 </Project>

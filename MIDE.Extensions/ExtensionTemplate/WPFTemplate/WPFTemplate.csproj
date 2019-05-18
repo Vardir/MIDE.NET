@@ -33,7 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="api">
-      <HintPath>..\..\..\MIDE.Kernel\MIDE.Standard\bin\Debug\netstandard2.0\api.dll</HintPath>
+      <HintPath>..\..\..\Publish\MIDE.Kernel\api.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -50,7 +50,7 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="wpfuix">
-      <HintPath>..\..\..\MIDE.WPF\WPF.Extensibility\bin\Debug\wpfuix.dll</HintPath>
+      <HintPath>..\..\..\Publish\MIDE.WPF\wpfuix.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -90,5 +90,19 @@
     <Folder Include="Controls\" />
     <Folder Include="Helpers\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\KernelTemplate\KernelTemplate.csproj">
+      <Project>{d9b9bb8a-00d8-43aa-b955-6dfd606fc21f}</Project>
+      <Name>KernelTemplate</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="descr.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>set path="E:\Projects\C#\Libs\MIDE.NET\Publish\$(SolutionName)\"
+if not exist %25path%25 mkdir %25path%25
+copy "$(TargetDir)$(TargetFileName)" %25path%25</PostBuildEvent>
+  </PropertyGroup>
 </Project>

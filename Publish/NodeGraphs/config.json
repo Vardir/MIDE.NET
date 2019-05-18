@@ -1,0 +1,11 @@
+{
+  "self": "nodegraphs.dll",
+  "include": [
+    {
+      "path": "NodeGraphs.WPF.dll",
+      "target": "ui",
+      "platform": "wpf",
+      "role": "extension"
+    }
+  ]
+}

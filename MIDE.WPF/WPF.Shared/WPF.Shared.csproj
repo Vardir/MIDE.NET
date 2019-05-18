@@ -36,7 +36,7 @@
   <ItemGroup>
     <Reference Include="api, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\MIDE.Kernel\MIDE.Standard\bin\Debug\netstandard2.0\api.dll</HintPath>
+      <HintPath>..\..\Publish\MIDE.Kernel\api.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Expression.Interactions, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL" />
@@ -173,4 +173,9 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>set path="E:\Projects\C#\Libs\MIDE.NET\Publish\$(SolutionName)\"
+if not exist %25path%25 mkdir %25path%25
+copy "$(TargetDir)$(TargetFileName)" %25path%25</PostBuildEvent>
+  </PropertyGroup>
 </Project>

@@ -1,0 +1,11 @@
+{
+  "self": "terminal.dll",
+  "include": [
+    {
+      "path": "Terminal.WPF.dll",
+      "target": "ui",
+      "platform": "wpf",
+      "role": "extension"
+    }
+  ]
+}

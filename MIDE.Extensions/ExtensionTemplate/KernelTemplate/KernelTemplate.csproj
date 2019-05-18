@@ -6,9 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="api">
-      <HintPath>..\..\..\MIDE.Kernel\MIDE.Standard\bin\Debug\netstandard2.0\api.dll</HintPath>
-    </Reference>
+    <None Remove="config.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="config.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -17,5 +21,15 @@
     <Folder Include="Helpers\" />
     <Folder Include="DataModels\" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="api">
+      <HintPath>..\..\..\Publish\MIDE.Kernel\api.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="set path=&quot;E:\Projects\C#\Libs\MIDE.NET\Publish\$(SolutionName)\&quot;&#xD;&#xA;if not exist %path% mkdir %path%&#xD;&#xA;copy &quot;$(TargetDir)$(TargetFileName)&quot; %path%&#xD;&#xA;copy &quot;$(TargetDir)config.json&quot; %path%" />
+  </Target>
 
 </Project>

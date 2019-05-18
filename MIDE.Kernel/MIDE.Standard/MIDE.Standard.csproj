@@ -21,7 +21,18 @@
     <OldToolsVersion>2.0</OldToolsVersion>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="config.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="config.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
     <PackageReference Include="System.Drawing.Common" Version="4.5.1" />
   </ItemGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="set path=&quot;E:\Projects\C#\Libs\MIDE.NET\Publish\$(SolutionName)\&quot;&#xD;&#xA;if not exist %path% mkdir %path%&#xD;&#xA;copy &quot;$(TargetDir)$(TargetFileName)&quot; %path%&#xD;&#xA;copy &quot;$(TargetDir)config.json&quot; %path%" />
+  </Target>
 </Project>

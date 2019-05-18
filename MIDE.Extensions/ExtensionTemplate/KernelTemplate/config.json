@@ -1,0 +1,15 @@
+{
+  "self": "xtemplate.dll",
+  "assembly_preload": [
+    "assembly.dll"
+  ],
+  "include": [
+    {
+      "path": "WPFTemplate.dll",
+      "target": "ui",
+      "platform": "wpf",
+      "role": "extension"
+    }
+  ],
+  "assets": "data\\assets"
+}
