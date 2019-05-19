@@ -10,7 +10,7 @@ namespace NodeGraphs
     [ExtensionProperties(Version = "1.0.0")]
     public class NodeGraphsExtension : AppExtension
     {
-        public NodeGraphsExtension(string id) : base(id) { }
+        public NodeGraphsExtension(string id, bool isEnabled) : base(id, isEnabled) { }
 
         protected override void RegisterMenuItems(IMenuConstructionContext context)
         {

@@ -226,6 +226,85 @@
             <ContentPresenter Content="{Binding TreeView}" Grid.Row="2"/>
         </Grid>
     </DataTemplate>
+    <DataTemplate DataType="{x:Type api:ExtensionItemViewModel}">
+        <Grid Margin="0 0 0 15">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="15"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="15"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="15"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="1" Grid.RowSpan="5" BorderThickness="1" BorderBrush="{StaticResource Button_Border_Brush}">
+                <Image Width="64" Source="{x:Null}"/>
+            </Border>
+            <TextBlock Text="{Binding Name}" Grid.Column="3" FontSize="{StaticResource FontSizeLarge}"/>
+            <CheckBox IsChecked="{Binding IsEnabled}" Grid.Column="5"/>
+            <TextBlock Text="{Binding Version}" Grid.Column="3" Grid.Row="1" Foreground="{StaticResource Textbox_ForegroundDisabled_Brush}"/>
+            <TextBlock Text="{Binding Description}" Grid.Column="3" Grid.Row="2"/>
+            <ItemsControl ItemsSource="{Binding Dependencies}" Grid.Column="3" Grid.Row="3">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderThickness="1" Background="{StaticResource Button_BackgroundHovered_Brush}"
+                                BorderBrush="{StaticResource Button_BorderHovered_Brush}"
+                                CornerRadius="5">
+                            <TextBlock Text="{Binding}" />
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <ItemsControl ItemsSource="{Binding Messages}" Grid.Column="3" Grid.Row="4">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Vertical"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" Foreground="{StaticResource Textbox_ForegroundDisabled_Brush}"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Grid>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type api:ExtensionsManagerTab}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <ContentPresenter Content="{Binding Extensions}"/>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="15"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="15"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="15"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+
+                <ContentPresenter Content="{Binding Install}" Grid.Column="1"/>
+                <ContentPresenter Content="{Binding UninstallSelected}" Grid.Column="3"/>
+                <ContentPresenter Content="{Binding RestoreSelected}" Grid.Column="5"/>
+            </Grid>
+        </Grid>
+    </DataTemplate>
     <!--API Tabs-->
 
     <!--API Dialog Boxes-->

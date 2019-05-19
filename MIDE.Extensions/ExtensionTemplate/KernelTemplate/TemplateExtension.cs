@@ -8,7 +8,7 @@ namespace KernelTemplate
     [ExtensionProperties(Version = "1.0.0")]
     public class TemplateExtension : AppExtension
     {
-        public TemplateExtension(string id) : base(id)
+        public TemplateExtension(string id, bool isEnabled) : base(id, isEnabled)
         {
 
         }

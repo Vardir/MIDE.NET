@@ -1,6 +1,6 @@
-﻿using MIDE.API.Components;
-using System;
+﻿using System;
 using System.Collections;
+using MIDE.API.Components;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -77,6 +77,58 @@ namespace MIDE.Helpers
                     items.Insert(firstIndex, item);
             }
         }
+        /// <summary>
+        /// Moves an item from the specified index to destination
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="origin"></param>
+        /// <param name="destination"></param>
+        public static void MoveTo<T>(this IList<T> list, int origin, int destination)
+        {
+            if (list.OutOfRange(origin) || list.OutOfRange(destination))
+                throw new IndexOutOfRangeException();
+            T item = list[origin];
+            for (int i = origin; i <= destination; i++)
+            {
+                list[i] = list[i + 1];
+            }
+            list[destination] = item;
+        }
+        /// <summary>
+        /// Iterates through collection and applies action to each item
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="collection"></param>
+        /// <param name="action"></param>
+        public static void ForEach<T>(this IEnumerable<T> collection, Action<T> action)
+        {
+            if (action == null)
+                throw new ArgumentNullException(nameof(action));
+            foreach (var item in collection)
+            {
+                action(item);
+            }
+        }
+        /// <summary>
+        /// Removes all the items that match predicate from the given collection
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="predicate"></param>
+        public static void Remove<T>(this LinkedList<T> list, Func<T, bool> predicate)
+        {
+            if (predicate == null)
+                throw new ArgumentNullException(nameof(predicate));
+            var node = list.First;
+            while (node != null)
+            {
+                var next = node.Next;
+                if (predicate(node.Value))
+                    list.Remove(node);
+                node = next;
+            }
+        }
 
         /// <summary>
         /// Checks whether the given collection contains an element that matches the predicate
@@ -109,6 +161,26 @@ namespace MIDE.Helpers
                 throw new ArgumentNullException(nameof(predicate));
 
             for (int i = 0; i < list.Count; i++)
+            {
+                if (predicate(list[i]))
+                    return i;
+            }
+            return -1;
+        }
+        /// <summary>
+        /// Finds the first occurrence of the item starting from the given index by the given predicate and gives out it's index. Returns -1 if none found
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        public static int IndexOf<T>(this IList<T> list, Func<T, bool> predicate, int startIndex)
+        {
+            if (predicate == null)
+                throw new ArgumentNullException(nameof(predicate));
+            if (list.OutOfRange(startIndex))
+                throw new IndexOutOfRangeException();
+            for (int i = startIndex; i < list.Count; i++)
             {
                 if (predicate(list[i]))
                     return i;

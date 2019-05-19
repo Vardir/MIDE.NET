@@ -2,11 +2,11 @@
 using System.IO;
 using System.Text;
 using System.Linq;
+using MIDE.Helpers;
 using MIDE.Application;
 using MIDE.Schemes.JSON;
 using System.Collections.Generic;
 using System.Runtime.Serialization.Formatters.Binary;
-using MIDE.Helpers;
 
 namespace MIDE.FileSystem
 {
@@ -33,6 +33,26 @@ namespace MIDE.FileSystem
             specialPaths = new Dictionary<ApplicationPath, string>();
         }
 
+        /// <summary>
+        /// Recursively deletes a directory from a specified path
+        /// </summary>
+        /// <param name="path"></param>
+        public void DeleteDirectory(string path)
+        {
+            if (!Directory.Exists(path))
+                return;
+            DirectoryInfo dir = new DirectoryInfo(path);
+            FileInfo[] files = dir.GetFiles();
+            foreach (FileInfo file in files)
+            {
+                File.Delete(file.FullName);
+            }
+            foreach (DirectoryInfo subdir in dir.GetDirectories())
+            {
+                DeleteDirectory(subdir.FullName);
+            }
+            Directory.Delete(path);
+        }
         /// <summary>
         /// Adds the given known path entry or updates existing one
         /// </summary>
@@ -104,6 +124,34 @@ namespace MIDE.FileSystem
         /// <param name="path"></param>
         public virtual void Write(string[] data, string path) => File.WriteAllLines(path, data);
         /// <summary>
+        /// Copies all the files and subdirectories from the source directory to the given destination
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="destination"></param>
+        public virtual void Copy(string source, string destination)
+        {
+            if (!Directory.Exists(source))
+                return;
+            DirectoryInfo dir = new DirectoryInfo(source);
+            DirectoryInfo[] dirs = dir.GetDirectories();
+            if (!Directory.Exists(destination))
+            {
+                Directory.CreateDirectory(destination);
+            }
+            
+            FileInfo[] files = dir.GetFiles();
+            foreach (FileInfo file in files)
+            {
+                string temppath = Path.Combine(destination, file.Name);
+                file.CopyTo(temppath, false);
+            }
+            foreach (DirectoryInfo subdir in dirs)
+            {
+                string temppath = Path.Combine(destination, subdir.Name);
+                Copy(subdir.FullName, temppath);
+            }
+        }
+        /// <summary>
         /// Tries to serialize the given object in file, if it is impossible writes log
         /// </summary>
         /// <param name="data"></param>
@@ -127,6 +175,27 @@ namespace MIDE.FileSystem
             catch (Exception ex)
             {
                 AppKernel.Instance.AppLogger.PushError(ex, this, "Can not serialize data");
+            }
+        }
+        /// <summary>
+        /// Cleans all the contents of the given directory
+        /// </summary>
+        /// <param name="path"></param>
+        public virtual void CleanDirectory(string path)
+        {
+            if (!IsDirectory(path))
+                return;
+            DirectoryInfo dir = new DirectoryInfo(path);
+            DirectoryInfo[] dirs = dir.GetDirectories();
+
+            FileInfo[] files = dir.GetFiles();
+            foreach (FileInfo file in files)
+            {
+                Delete(file.FullName);
+            }
+            foreach (DirectoryInfo subdir in dirs)
+            {
+                DeleteDirectory(subdir.FullName);
             }
         }
 
@@ -154,6 +223,8 @@ namespace MIDE.FileSystem
                     folderPath = "root\\assets\\"; break;
                 case ApplicationPath.Themes:
                     folderPath = "root\\themes\\"; break;
+                case ApplicationPath.Tasks:
+                    folderPath = "root\\tasks\\"; break;
                 case ApplicationPath.Logs:
                     folderPath = "root\\logs\\"; break;
                 case ApplicationPath.Root:
@@ -218,6 +289,18 @@ namespace MIDE.FileSystem
         /// <param name="path"></param>
         /// <returns></returns>
         public virtual bool Exists(string path) => File.Exists(path) || Directory.Exists(path);
+        /// <summary>
+        /// Verifies if the given file exists
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public virtual bool IsFile(string path) => File.Exists(path);
+        /// <summary>
+        /// Verifies if the given directory exists
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public virtual bool IsDirectory(string path) => Directory.Exists(path);
         /// <summary>
         /// Maps the given path to application installation path
         /// </summary>
@@ -357,12 +440,36 @@ namespace MIDE.FileSystem
         /// <param name="path"></param>
         /// <returns></returns>
         public abstract IEnumerable<(string prop, string val)> ExtractProperties(string path);
+        /// <summary>
+        /// Tries to deserialize an object from the given file
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public virtual T Deserialize<T>(string path)
+            where T: class
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            try
+            {
+                using (FileStream fs = new FileStream(path, FileMode.OpenOrCreate))
+                {
+                    return formatter.Deserialize(fs) as T;
+                }
+            }
+            catch (Exception ex)
+            {
+                AppKernel.Instance.AppLogger.PushError(ex, this, "Can not serialize data");
+            }
+            return null;
+        }
     }
 
     public enum ApplicationPath
     {
         Root,
         Logs,
+        Tasks,
         Themes,
         AppAssets,
         Installed,

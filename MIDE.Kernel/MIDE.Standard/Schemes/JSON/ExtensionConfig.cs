@@ -8,8 +8,15 @@ namespace MIDE.Schemes.JSON
     public class ExtensionConfig
     {
         [JsonRequired]
+        [JsonProperty(PropertyName = "id")]
+        public string Id { get; set; }
+
+        [JsonRequired]
         [JsonProperty(PropertyName = "self")]
         public string DllPath { get; set; }
+
+        [JsonProperty(PropertyName = "description")]
+        public string Description { get; set; }
 
         [JsonProperty(PropertyName = "assembly_preload")]
         public string[] PreloadedAssemblies { get; set; }

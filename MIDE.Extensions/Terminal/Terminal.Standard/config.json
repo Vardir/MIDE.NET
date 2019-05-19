@@ -1,4 +1,6 @@
 {
+  "id": "terminal",
+  "description": "A basic terminal for application",
   "self": "terminal.dll",
   "include": [
     {

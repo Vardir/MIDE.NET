@@ -10,7 +10,7 @@ namespace Terminal
     [ExtensionProperties(Version = "1.0.0")]
     public class TerminalExtension : AppExtension
     {
-        public TerminalExtension(string id) : base(id)
+        public TerminalExtension(string id, bool isEnabled) : base(id, isEnabled)
         {
 
         }

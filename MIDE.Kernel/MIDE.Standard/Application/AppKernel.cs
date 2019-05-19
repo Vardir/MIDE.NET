@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using MIDE.Helpers;
 using Newtonsoft.Json;
 using MIDE.FileSystem;
 using MIDE.API.Visuals;
 using System.Reflection;
 using MIDE.API.Services;
 using MIDE.Schemes.JSON;
-using MIDE.API.Extensibility;
+using MIDE.Application.Tasks;
 using MIDE.Application.Events;
 using MIDE.Application.Logging;
 using System.Collections.Generic;
@@ -27,7 +28,7 @@ namespace MIDE.Application
         private FileManager fileManager;
         private Assembly currentAssembly;
         private Assembly callingAssembly;
-        private readonly List<AppExtension> extensions;
+        private LinkedList<AppTask> tasks;
 
         /// <summary>
         /// A time when application kernel was started
@@ -58,10 +59,6 @@ namespace MIDE.Application
         /// </summary>
         public IClipboardProvider SystemClipboard { get; set; }
         /// <summary>
-        /// A set of extensions
-        /// </summary>
-        public IEnumerable<AppExtension> Extensions => extensions;
-        /// <summary>
         /// List of application initializers used to configure kernel and it's parts
         /// </summary>
         public List<IApplicationInitializer> Initializers { get; }
@@ -70,8 +67,8 @@ namespace MIDE.Application
 
         private AppKernel()
         {
+            tasks = new LinkedList<AppTask>();
             fileManager = FileManager.Instance;
-            extensions = new List<AppExtension>();
             Initializers = new List<IApplicationInitializer>();
 
             currentAssembly = Assembly.GetAssembly(typeof(AppKernel));
@@ -110,7 +107,8 @@ namespace MIDE.Application
                 isRunning = true;
                 AppLogger.PushFatal(ex.Message);
             }
-
+            LoadTasks();
+            OnStarting();
             AppLogger.PushDebug(null, "Application Kernel started");
             TimeStarted = DateTime.UtcNow;
             isRunning = true;
@@ -121,12 +119,13 @@ namespace MIDE.Application
             LoadConfigurations();
             try
             {
-                LoadExtensions();
+                ExtensionsManager.Instance.LoadExtensions();
             }
             catch (Exception ex)
             {
                 AppLogger.PushError(ex, this);
             }
+            OnStarted();
         }
         /// <summary>
         /// Saves current session's log entries
@@ -186,7 +185,17 @@ namespace MIDE.Application
             Dispose();
             AppLogger.PushDebug(null, "Application Kernel resources are disposed");
             SaveLog();
+            SaveTasks();
+            OnExit();
             ApplicationExit?.Invoke();
+        }
+        public void AddTask(AppTask task)
+        {
+            if (task == null)
+                return;
+            if (tasks.Contains(task))
+                return;
+            tasks.AddLast(task);
         }
 
         /// <summary>
@@ -202,42 +211,6 @@ namespace MIDE.Application
             return null;
         }
         public override string ToString() => $"KERNEL [{Version}] >> {callingAssembly?.FullName ?? "?"}";
-        public T GetExtension<T>(string id)
-            where T: AppExtension
-        {
-            var extension = extensions.Find(ext => ext.Id == id);
-            if (extension == null)
-                return null;
-            return extension as T;
-        }
-
-        /// <summary>
-        /// Registers the given extension in the internal storage and initializes it
-        /// </summary>
-        /// <param name="extension"></param>
-        public void RegisterExtension(AppExtension extension)
-        {
-            AppLogger.PushDebug(null, $"Registering extension '{extension.Id}'");
-            try
-            {
-                if (extension == null)
-                    throw new ArgumentNullException("Extension parameter can not be null");
-                if (extensions.FirstOrDefault(e => e.Id == extension.Id) != null)
-                    throw new ArgumentException("Duplicate extension ID");
-                var type = extension.GetType();
-                string error = VerifyExtensionAttributes(type, extension.Id);
-                if (error != null)
-                    throw new InvalidOperationException($"Extension [{extension.GetType()} :: {extension.Id}] can not be registered due to error: {error}");
-            }
-            catch (Exception ex)
-            {
-                AppLogger.PushError(ex, extension);
-                return;
-            }
-            extension.Initialize();
-            extensions.Add(extension);
-            AppLogger.PushDebug(null, $"Extension '{extension.Id}' registered");
-        }
 
         public void Dispose()
         {
@@ -247,13 +220,9 @@ namespace MIDE.Application
                 return;
             }
             //TODO: dispose all the application resources
-            UnloadExtensions();
+            ExtensionsManager.Instance.Dispose();
         }
 
-        /// <summary>
-        /// Loads all the configurations that are set in config.json file located in the same folder with application itself
-        /// </summary>
-        /// <returns></returns>
         private void LoadConfigurations()
         {
             AppLogger.PushDebug(null, "Loading application configurations");
@@ -279,14 +248,13 @@ namespace MIDE.Application
             LoadAssets();
             AppLogger.PushDebug(null, "Application configurations loaded");
         }
-
         private void LoadAssets()
         {
             AppLogger.PushDebug(null, "Loading assets");
             try
             {
-                string path = fileManager.Combine(fileManager[ApplicationPath.AppAssets], 
-                                                  "glyphs", 
+                string path = fileManager.Combine(fileManager[ApplicationPath.AppAssets],
+                                                  "glyphs",
                                                   (string)ConfigurationManager.Instance["theme"],
                                                   "config.json");
                 string glyphsData = fileManager.ReadOrCreate(path, "{}");
@@ -302,80 +270,6 @@ namespace MIDE.Application
             }
             AppLogger.PushDebug(null, "Application assets loaded");
         }
-        /// <summary>
-        /// Loads all the extensions that are provided in attached assemblies
-        /// </summary>
-        /// <exception cref="FormatException"></exception>
-        /// <exception cref="ApplicationException"></exception>
-        private void LoadExtensions()
-        {
-            AppLogger.PushDebug(null, "Loading extensions");
-            var directory = fileManager.GetOrAddPath(ApplicationPath.Extensions, "extensions\\");
-            var initData = fileManager.ReadOrCreate(directory + "init.json", "{ \"register\": [] }");
-           
-            var init = JsonConvert.DeserializeObject<ExtensionsInit>(initData);
-            foreach (var item in init.Items)
-            {
-                if (!item.Enabled)
-                    continue;
-                string extensionPath = fileManager.GetPath(ApplicationPath.Extensions) + "\\" + item.Path;
-                string configData = fileManager.TryRead(extensionPath + "config.json");
-                if (configData == null)
-                {
-                    AppLogger.PushWarning($"Extension '{item.Id}' does not have config.json file");
-                    continue;
-                }
-                var config = JsonConvert.DeserializeObject<ExtensionConfig>(configData);
-                if (config.PreloadedAssemblies != null)
-                {
-                    foreach (var preloaded in config.PreloadedAssemblies)
-                    {
-                        string path = extensionPath + preloaded;
-                        Assembly.LoadFrom(path);
-                    }
-                }
-                Assembly assembly = Assembly.LoadFrom(extensionPath + config.DllPath);
-                var types = assembly.GetTypes();
-                for (int i = 0; i < types.Length; i++)
-                {
-                    bool isExtension = types[i].IsSubclassOf(typeof(AppExtension));
-                    if (isExtension)
-                    {
-                        var instance = Activator.CreateInstance(types[i], item.Id) as AppExtension;
-                        RegisterExtension(instance);
-                    }
-                }
-                foreach (var member in config.ExtensionMembers)
-                {
-                    if (member.Platform != UIManager.CurrentPlatform)
-                        continue;
-                    if (member.Target != MemberTarget.UI)
-                        continue;                    
-                    if (member.Role == MemberRole.Extension)
-                    {
-                        string path = fileManager.Combine(directory, item.Path, member.Path);
-                        UIManager.RegisterUIExtension(path);
-                    }
-                }
-            }
-            AppLogger.PushDebug(null, "Extensions loaded");
-        }
-        /// <summary>
-        /// Unload all the resources that are used by application extensions
-        /// </summary>
-        private void UnloadExtensions()
-        {
-            AppLogger.PushDebug(null, "Unloading extensions");
-            foreach (var extension in extensions)
-            {
-                extension.Unload();
-            }
-            extensions.Clear();
-            AppLogger.PushDebug(null, "Extensions unloaded");
-        }
-        /// <summary>
-        /// Cleans off all the temporary files that was in use by the current application session
-        /// </summary>
         private void ClearTemporaryFiles()
         {
             AppLogger.PushDebug(null, "Clearing temporary files");
@@ -383,7 +277,61 @@ namespace MIDE.Application
             AppLogger.PushDebug(null, "Temporary files cleared");
 
         }
-       
+        private void SaveTasks()
+        {
+            int i = 0;
+            foreach (var task in tasks)
+            {
+                if (task.RepetitionMode == TaskRepetitionMode.NotLimitedOnce && task.Origin != null)
+                    fileManager.Delete(task.Origin);
+                if (task.Origin != null)
+                    continue;
+                string path = fileManager.Combine(fileManager[ApplicationPath.Tasks], task.ToString() + i + ".bin");
+                fileManager.Serialize(task, path);
+                i++;
+            }
+        }
+        private void LoadTasks()
+        {
+            var files = fileManager.EnumerateFiles(fileManager.GetOrAddPath(ApplicationPath.Tasks, "root\\tasks\\"), "*.bin");
+            foreach (var file in files)
+            {
+                var task = fileManager.Deserialize<AppTask>(file);
+                task.Origin = file;
+                tasks.AddLast(task);
+            }
+        }
+        private void OnStarting()
+        {
+            ApplyTaskAction(TaskActivationEvent.BeforeLoad);
+            tasks.Remove(at => at.ActivationEvent == TaskActivationEvent.BeforeLoad && 
+                               at.RepetitionMode == TaskRepetitionMode.Once);
+        }
+        private void OnStarted()
+        {
+            ApplyTaskAction(TaskActivationEvent.OnLoad);
+            tasks.Remove(at => at.ActivationEvent == TaskActivationEvent.OnLoad &&
+                               at.RepetitionMode == TaskRepetitionMode.Once);
+        }
+        private void OnExit()
+        {
+            ApplyTaskAction(TaskActivationEvent.OnExit);
+            tasks.Remove(at => at.ActivationEvent == TaskActivationEvent.OnExit &&
+                               at.RepetitionMode == TaskRepetitionMode.Once);
+        }
+        private void ApplyTaskAction(TaskActivationEvent activation)
+        {
+            var path = fileManager[ApplicationPath.Tasks];
+            tasks.ForEach(at =>
+            {
+                if (at.ActivationEvent != activation)
+                    return;
+                at.Run();
+                if (at.RepetitionMode == TaskRepetitionMode.Once)
+                    fileManager.Delete(fileManager.Combine(path, at.Origin));
+            });
+        }
+
         private string VerifyAssemblyAttributes()
         {
             AppLogger.PushDebug(null, "Verifying assembly attributes");
@@ -407,38 +355,7 @@ namespace MIDE.Application
 
             return null;
         }
-        private string VerifyExtensionAttributes(Type type, string id)
-        {
-            AppLogger.PushDebug(null, $"Verifying extension attributes for {id} of type {type}");
-            bool kernelVerified = false;
-            foreach (var attribute in type.GetCustomAttributes())
-            {
-                if (attribute is DependencyAttribute dependency)
-                {
-                    if (dependency.Type == DependencyType.ApplicationKernel)
-                    {
-                        if (kernelVerified)
-                            return $"Duplicate DependencyAttribute entry of type ApplicationKernel on extension [{type} :: ID-{id}]";
-                        if (dependency.Version != Version)
-                            return $"Extension [{type} :: {id}] is targeting Kernel version {dependency.Version} but current is {Version}";
-                        kernelVerified = true;
-                    }
-                    else if (dependency.Type == DependencyType.Extension)
-                    {
-                        var any = Extensions.FirstOrDefault(e => e.GetType().Name == dependency.DependentOn);
-                        if (any == null)
-                            throw new ApplicationException($"Extension [{type} :: {id}] requires an extension [{dependency.DependentOn}]");
-                        if (any.Version != dependency.Version)
-                            throw new ApplicationException($"Extension [{type} :: {id}] requires an extension [{dependency.DependentOn}] v{dependency.Version} but got v{any.Version}");
-                    }
-                }
-            }
-            if (!kernelVerified)
-                return $"An expected DependencyAttribute of type ApplicationKernel not found on extension [{type} :: ID-{id}]";
-            AppLogger.PushDebug(null, "Extension attributes verified");
-            return null;
-        }
-        
+
         private void AppLogger_FatalEventRegistered(object sender, FatalEvent e)
         {
             AppLogger.PushInfo("Closing application due to fatal error");

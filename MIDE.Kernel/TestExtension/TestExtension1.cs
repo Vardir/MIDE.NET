@@ -9,7 +9,7 @@ namespace MIDE.Kernel.ConsoleTest.Extensions
     [ExtensionProperties(Version = "1.0.0")]
     public class TestExtension1 : AppExtension
     {
-        public TestExtension1(string id) : base(id) { }
+        public TestExtension1(string id, bool isEnabled) : base(id, isEnabled) { }
 
         protected override void RegisterMenuItems(IMenuConstructionContext context)
         {

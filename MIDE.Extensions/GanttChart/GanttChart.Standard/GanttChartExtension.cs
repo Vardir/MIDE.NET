@@ -8,7 +8,7 @@ namespace GanttChart
     [ExtensionProperties(Version = "1.0.0")]
     public class GanttChartExtension : AppExtension
     {
-        public GanttChartExtension(string id) : base(id)
+        public GanttChartExtension(string id, bool isEnabled) : base(id, isEnabled)
         {
 
         }

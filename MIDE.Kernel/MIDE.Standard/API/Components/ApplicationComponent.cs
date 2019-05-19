@@ -31,7 +31,7 @@ namespace MIDE.API.Components
         /// <summary>
         /// Shortcut to access application kernel
         /// </summary>
-        public AppKernel Kernel => AppKernel.Instance;
+        public AppKernel Kernel { get; private set; }
 
         public ApplicationComponent(string id)
         {
@@ -41,6 +41,7 @@ namespace MIDE.API.Components
                 throw new FormatException($"The ID '{id}' has invalid format");
 
             Id = id;
+            Kernel = AppKernel.Instance;
         }
 
         /// <summary>

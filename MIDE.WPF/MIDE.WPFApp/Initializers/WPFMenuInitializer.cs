@@ -36,13 +36,21 @@ namespace MIDE.WPF.Initializers
             context.AddItem(new MenuButton("view", -97));
             context.AddItem(new MenuButton("tools", 50));
             context.AddItem(new MenuButton("help", 99));
-
+            
             context.AddItem("view", new MenuButton("file-explorer", 0)
             {
                 PressCommand = new RelayCommand(() =>
                 {
                     var expl = new FileExplorer("file-explorer");
                     appKernel.UIManager.AddTab(expl, "browsers");
+                })
+            });
+            context.AddItem("view", new MenuButton("extensions-manager", 0)
+            {
+                PressCommand = new RelayCommand(() =>
+                {
+                    var manager = new ExtensionsManagerTab("extensions-manager");
+                    appKernel.UIManager.AddTab(manager, "editors");
                 })
             });
 #if DEBUG

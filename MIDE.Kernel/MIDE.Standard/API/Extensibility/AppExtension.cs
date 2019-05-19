@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Linq;
-using MIDE.Application;
 using MIDE.API.Components;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace MIDE.API.Extensibility
 {
@@ -11,17 +9,27 @@ namespace MIDE.API.Extensibility
     {
         private readonly List<Module> modules;
 
+        /// <summary>
+        /// A flag to indicate whether the extension is enabled to load
+        /// </summary>
+        public bool IsEnabled { get; }
+        /// <summary>
+        /// A flag to indicate whether the extension was initialized
+        /// </summary>
         public bool IsInitialized { get; private set; }
-        public string Version { get; internal set; }
+        
         public IEnumerable<Module> Modules => modules;
 
-        public AppExtension(string id) : base(id)
+        public AppExtension(string id, bool isEnabled) : base(id)
         {
+            IsEnabled = isEnabled;
             modules = new List<Module>();
         }
 
         public void Initialize()
         {
+            if (!IsEnabled)
+                return;
             Kernel.AppLogger.PushDebug(null, $"Extension {Id} :: begin initialization");
             RegisterMenuItems(Kernel.UIManager.ApplicationMenu);
             Kernel.AppLogger.PushDebug(null, $"Extension {Id} :: menu items loaded");
@@ -33,6 +41,8 @@ namespace MIDE.API.Extensibility
         }
         public void Unload()
         {
+            if (!IsEnabled)
+                return;
             foreach (var module in modules)
             {
                 //if (module.IsRunning)
