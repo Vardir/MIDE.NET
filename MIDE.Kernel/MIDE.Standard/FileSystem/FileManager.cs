@@ -318,6 +318,12 @@ namespace MIDE.FileSystem
                 return null;
             return File.ReadAllBytes(path);
         }
+        public virtual string GetFilePath(string file)
+        {
+            if (!File.Exists(file))
+                return null;
+            return Path.GetDirectoryName(file);
+        }
         /// <summary>
         /// Tries to load data from the given file and returns null if file does not exist
         /// </summary>

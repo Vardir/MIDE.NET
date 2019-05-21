@@ -1,15 +1,42 @@
-﻿using System;
-using MIDE.Helpers;
+﻿using MIDE.Helpers;
 using MIDE.API.Visuals;
 using MIDE.API.Commands;
+using System.Collections;
 using MIDE.API.ViewModels;
+using System.ComponentModel;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 
 namespace MIDE.API.Components
 {
     public class TreeView : LayoutComponent
     {
+        private bool multiselect;
+        private TreeViewItem selectedItem;
+
+        public bool Multiselect
+        {
+            get => multiselect;
+            set
+            {
+                if (value == multiselect)
+                    return;
+                multiselect = value;
+                OnPropertyChanged(nameof(Multiselect));
+            }
+        }
+        public TreeViewItem SelectedItem
+        {
+            get => selectedItem;
+            set
+            {
+                if (value == selectedItem)
+                    return;
+                selectedItem = value;
+                OnPropertyChanged(nameof(SelectedItem));
+            }
+        }
         public List<TreeViewItem> SelectedItems { get; }
         public ObservableCollection<TreeViewItem> Items { get; }
 
@@ -17,11 +44,13 @@ namespace MIDE.API.Components
         {
             SelectedItems = new List<TreeViewItem>();
             Items = new ObservableCollection<TreeViewItem>();
+            Items.CollectionChanged += Items_CollectionChanged;
         }
 
         public void Clear()
         {
             Items.Clear();
+            SelectedItem = null;
             SelectedItems.Clear();
         }
 
@@ -31,11 +60,72 @@ namespace MIDE.API.Components
             clone.Items.AddRange(Items.Select(item => item.Clone()));
             return clone;
         }
+
+        private void Items_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    OnItemsAdded(e.NewItems);
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    OnItemsRemove(e.OldItems);
+                    break;
+                case NotifyCollectionChangedAction.Replace:
+                    OnItemsReplaced(e.OldItems, e.NewItems);
+                    break;
+                case NotifyCollectionChangedAction.Reset:
+                    OnItemsRemove(e.OldItems);
+                    break;
+            }
+        }
+        private void OnItemsAdded(IList list)
+        {
+            if (list == null)
+                return;
+            foreach (var item in list)
+            {
+                var tvi = item as TreeViewItem;
+                tvi.ParentTree = this;
+                tvi.PropertyChanged += OnItemPropertyChanged;
+            }
+        }
+        private void OnItemsRemove(IList list)
+        {
+            if (list == null)
+                return;
+            foreach (var item in list)
+            {
+                var tvi = item as TreeViewItem;
+                tvi.ParentTree = null;
+                tvi.PropertyChanged -= OnItemPropertyChanged;
+            }
+        }
+        private void OnItemsReplaced(IList old, IList newItems)
+        {
+            OnItemsRemove(old);
+            OnItemsAdded(newItems);
+        }
+
+        internal void OnItemPropertyChanged(object sender, PropertyChangedEventArgs args)
+        {
+            TreeViewItem item = sender as TreeViewItem;
+            if (item == null || item.ParentTree != this)
+                return;
+            if (args.PropertyName == nameof(TreeViewItem.IsSelected))
+            {
+                SelectedItem = item;
+                SelectedItems.Clear();
+                if (!SelectedItems.Contains(item))
+                    SelectedItems.Add(item);
+            }
+        }
     }
 
     public abstract class TreeViewItem : BaseViewModel, ICloneable<TreeViewItem>
     {
         private bool isExpanded;
+        private bool isSelected;
         private string caption;
         private string itemClass;
         private Glyph glyph;
@@ -50,6 +140,17 @@ namespace MIDE.API.Components
                 if (value)
                     Expand();
                 isExpanded = value;
+            }
+        }
+        public bool IsSelected
+        {
+            get => isSelected;
+            set
+            {
+                if (value == isSelected)
+                    return;
+                isSelected = value;
+                OnPropertyChanged(nameof(IsSelected));
             }
         }
         /// <summary>
@@ -88,6 +189,7 @@ namespace MIDE.API.Components
                 OnPropertyChanged(nameof(ItemGlyph));
             }
         }
+        public TreeView ParentTree { get; set; }
         public TreeViewItem Parent { get; set; }
         public ContextMenu ContextMenu
         {
@@ -129,6 +231,8 @@ namespace MIDE.API.Components
                 return;
             foreach (var child in Children)
             {
+                child.ParentTree = null;
+                child.PropertyChanged -= ParentTree.OnItemPropertyChanged;
                 child.ClearChildren();
             }
         }
@@ -153,6 +257,8 @@ namespace MIDE.API.Components
             Children.AddRange(childItems);
             foreach (var child in Children)
             {
+                child.ParentTree = ParentTree;
+                child.PropertyChanged += ParentTree.OnItemPropertyChanged;
                 child.Parent = this;
             }
         }

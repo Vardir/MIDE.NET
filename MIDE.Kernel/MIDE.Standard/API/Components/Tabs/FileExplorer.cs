@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Linq;
 using MIDE.Helpers;
-using System.Drawing;
 using MIDE.FileSystem;
 using MIDE.Application;
+using MIDE.API.Visuals;
 using MIDE.API.Bindings;
 using MIDE.API.Commands;
 using MIDE.API.Validations;
 using System.Collections.Generic;
+using MIDE.API.Components.Complex;
 using System.Collections.ObjectModel;
 using IO = System.IO;
-using MIDE.API.Visuals;
 
 namespace MIDE.API.Components
 {
@@ -31,7 +30,7 @@ namespace MIDE.API.Components
             }
         }
         public ActionTextBox SearchBox { get; private set; }
-        public TreeView TreeView { get; private set; }
+        public FileSystemTreeView TreeView { get; private set; }
         public ObservableCollection<string> BrowseHistory { get; }
 
         public FileExplorer(string id) : base(id)
@@ -57,7 +56,8 @@ namespace MIDE.API.Components
             SearchBox.ActionButton.PressCommand = new RelayCommand(ShowCurrent);
             SearchBox.Validations.Add(new PathValidation());
 
-            TreeView = new TreeView("files-view");
+            TreeView = new FileSystemTreeView("files-view");
+            TreeView.Generator = (directoryItem) => new FileExplorerItem(directoryItem);
             ToolbarButton homeButton = new ToolbarButton("home");
             homeButton.Caption = null;
             homeButton.Order = 99;
@@ -106,7 +106,7 @@ namespace MIDE.API.Components
         {
             FileExplorer clone = new FileExplorer(id);
             clone.SearchBox = SearchBox.Clone() as ActionTextBox;
-            clone.TreeView = TreeView.Clone() as TreeView;
+            clone.TreeView = TreeView.Clone() as FileSystemTreeView;
             return clone;
         }
 
@@ -138,14 +138,7 @@ namespace MIDE.API.Components
             if (SearchBox.ValidationErrors.Count > 0)
                 return;
 
-            TreeView.Items.Clear();
-            var items = Enumerable.Empty<DirectoryItem>();
-            if (SearchBox.Text == @"\")
-                items = FileSystemInfo.GetLogicalDrives();
-            else
-                items = FileSystemInfo.GetDirectoryContents(SearchBox.Text);
-            
-            TreeView.Items.AddRange(items.Select(item => new FileExplorerItem(item)));
+            TreeView.Show(SearchBox.Text);
 
             if (_pushHistory)
             {
@@ -168,70 +161,22 @@ namespace MIDE.API.Components
         }
     }
 
-    public class FileExplorerItem : TreeViewItem
+    public class FileExplorerItem : FileSystemTreeViewItem
     {
-        private string fullPath;
-        private FSObjectClass fsObjectClass;
-
-        public override bool CanExpand => !ObjectClass.IsFile;
-        public FSObjectClass ObjectClass
-        {
-            get => fsObjectClass;
-            set
-            {
-                if (fsObjectClass == value)
-                    return;
-                fsObjectClass = value;
-                ItemClass = fsObjectClass.Id;
-                ItemGlyph = fsObjectClass.ObjectGlyph;
-                OnPropertyChanged(nameof(ObjectClass));
-            }
-        }
-        public string FullPath
-        {
-            get => fullPath;
-            set
-            {
-                if (value == null || fullPath == value)
-                    return;
-                fullPath = value;
-                OnPropertyChanged(nameof(FullPath));
-            }
-        }
-
-        public FileExplorerItem(DirectoryItem directoryItem)
-            : this(directoryItem.name, directoryItem.fullPath, directoryItem.itemClass)
+        public FileExplorerItem(DirectoryItem directoryItem) : base(directoryItem)
         {
             ContextMenu = FileExplorerContextMenu.Instance.Select(this);
         }
-        public FileExplorerItem(string caption, string fullPath, FSObjectClass fsObjectClass) : base()
+
+        public FileExplorerItem(string caption, string fullPath, FSObjectClass fsObjectClass) : base(caption, fullPath, fsObjectClass)
         {
-            ExpandCommand = new RelayCommand(Expand);
-
-            Caption = caption;
-            FullPath = fullPath;
-            ObjectClass = fsObjectClass;
-
             ContextMenu = FileExplorerContextMenu.Instance.Select(this);
-
-            ClearChildren();
         }
-        
+
         protected override TreeViewItem CloneInternal()
         {
-            FileExplorerItem clone = new FileExplorerItem(Caption, fullPath, fsObjectClass);
+            FileExplorerItem clone = new FileExplorerItem(Caption, FullPath, ObjectClass);
             return clone;
-        }
-        protected override IEnumerable<TreeViewItem> GetChildItems()
-        {
-            return FileSystemInfo.GetDirectoryContents(FullPath)
-                   .Select(item => new FileExplorerItem(item));
-        }
-
-        protected override void OnChildrenCleared()
-        {
-            if (!ObjectClass.IsFile)
-                Children.Add(null);
         }
     }
 

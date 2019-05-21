@@ -45,6 +45,14 @@ namespace MIDE.API.Components
             Items[index].SelectedChanged -= ItemSelectedChanged;
             Items.RemoveAt(index);
         }
+        public void Clear()
+        {
+            foreach (var item in Items)
+            {
+                item.SelectedChanged -= ItemSelectedChanged;
+            }
+            Items.Clear();
+        }
         
         protected override LayoutComponent CloneInternal(string id)
         {

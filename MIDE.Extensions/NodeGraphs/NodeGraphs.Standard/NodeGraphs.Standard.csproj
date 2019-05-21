@@ -10,14 +10,19 @@
     <Copyright>Andrew Satura © 2019</Copyright>
     <PackageTags>graph;nodes;standard</PackageTags>
     <LangVersion>7.1</LangVersion>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="config.json" />
+    <None Remove="NodeGraphs.nuspec" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="config.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="NodeGraphs.nuspec">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -29,7 +34,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="set path=&quot;E:\Projects\C#\Libs\MIDE.NET\Publish\$(SolutionName)\&quot;&#xD;&#xA;if not exist %path% mkdir %path%&#xD;&#xA;copy &quot;$(TargetDir)$(TargetFileName)&quot; %path%&#xD;&#xA;copy &quot;$(TargetDir)config.json&quot; %path%" />
+    <Exec Command="set path=&quot;E:\Projects\C#\Libs\MIDE.NET\Publish\$(SolutionName)\\&quot;&#xD;&#xA;if not exist %path% mkdir %path%&#xD;&#xA;copy &quot;$(TargetDir)$(TargetFileName)&quot; %path%&#xD;&#xA;copy &quot;$(TargetDir)config.json&quot; %path%&#xD;&#xA;copy &quot;$(ProjectDir)NodeGraphs.nuspec&quot; %path%" />
   </Target>
 
 </Project>

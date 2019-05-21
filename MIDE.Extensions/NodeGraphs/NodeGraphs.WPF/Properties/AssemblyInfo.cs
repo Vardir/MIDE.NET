@@ -8,9 +8,9 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("NodeGraphs.WPF")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("A basic library which is used to create extensions for graphs with nodes")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Vardir Products")]
 [assembly: AssemblyProduct("NodeGraphs.WPF")]
 [assembly: AssemblyCopyright("Copyright ©  2019")]
 [assembly: AssemblyTrademark("")]

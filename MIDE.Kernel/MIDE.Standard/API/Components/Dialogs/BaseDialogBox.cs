@@ -1,5 +1,6 @@
 ﻿using System;
 using MIDE.Helpers;
+using System.ComponentModel;
 using System.Collections.Generic;
 
 namespace MIDE.API.Components

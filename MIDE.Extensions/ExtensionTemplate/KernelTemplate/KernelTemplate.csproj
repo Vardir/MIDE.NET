@@ -3,14 +3,19 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>xtemplate</AssemblyName>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="config.json" />
+    <None Remove="KernelTemplate.nuspec" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="config.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="KernelTemplate.nuspec">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -29,7 +34,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="set path=&quot;E:\Projects\C#\Libs\MIDE.NET\Publish\$(SolutionName)\&quot;&#xD;&#xA;if not exist %path% mkdir %path%&#xD;&#xA;copy &quot;$(TargetDir)$(TargetFileName)&quot; %path%&#xD;&#xA;copy &quot;$(TargetDir)config.json&quot; %path%" />
+    <Exec Command="set path=&quot;E:\Projects\C#\Libs\MIDE.NET\Publish\$(SolutionName)\\&quot;&#xD;&#xA;if not exist %path% mkdir %path%&#xD;&#xA;copy &quot;$(TargetDir)$(TargetFileName)&quot; %path%&#xD;&#xA;copy &quot;$(TargetDir)config.json&quot; %path%&#xD;&#xA;copy &quot;$(TargetDir)KernelTemplate.nuspec&quot; %path%" />
   </Target>
 
 </Project>

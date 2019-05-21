@@ -105,9 +105,11 @@ namespace MIDE.FileSystem
         {
             return Directory.GetLogicalDrives().Select(drive => new DirectoryItem(drive, Instance["drive"]));
         }
-        public static LinkedList<DirectoryItem> GetDirectoryContents(string fullPath)
+        public static LinkedList<DirectoryItem> GetDirectoryContents(string fullPath, string searchPattern = null)
         {
             var items = new LinkedList<DirectoryItem>();
+            if (!FileManager.Instance.IsDirectory(fullPath))
+                return items;
             try
             {
                 var directories = Directory.GetDirectories(fullPath);
@@ -122,7 +124,7 @@ namespace MIDE.FileSystem
             }
             try
             {
-                var files = Directory.GetFiles(fullPath);
+                var files = searchPattern != null ? Directory.GetFiles(fullPath, searchPattern) : Directory.GetFiles(fullPath);
                 if (files != null && files.Length > 0)
                 {
                     items.AddRange(files.Select(file =>
@@ -134,7 +136,7 @@ namespace MIDE.FileSystem
             }
             catch (UnauthorizedAccessException ex)
             {
-                Console.WriteLine(ex.Message);
+                AppKernel.Instance.AppLogger.PushWarning(ex.Message);
             }
             return items;
         }

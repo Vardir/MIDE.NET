@@ -1,4 +1,7 @@
-﻿using MIDE.Application;
+﻿using System.IO;
+using MIDE.FileSystem;
+using MIDE.Application;
+using MIDE.API.Visuals;
 using MIDE.API.Commands;
 using MIDE.API.ViewModels;
 using System.Collections.ObjectModel;
@@ -29,19 +32,18 @@ namespace MIDE.API.Components
             UninstallSelected.PressCommand = new RelayCommand(UninstallSelectedExtension);
             RestoreSelected = new Button("restore");
             RestoreSelected.PressCommand = new RelayCommand(RestoreSelectedEtension);
+            ToolbarButton refresh = new ToolbarButton("refresh");
+            refresh.ButtonGlyph = GlyphPool.Instance["refresh"];
+            refresh.PressCommand = new RelayCommand(Refresh);
 
             AddChild(Install);
             AddChild(Extensions);
             AddChild(RestoreSelected);
             AddChild(UninstallSelected);
 
-            var entries = ExtensionsManager.Instance.ExtensionsEntries;
-            foreach (var entry in entries)
-            {
-                var item = new ExtensionItemViewModel(entry);
-                item.IsEnabled = entry.IsEnabled;
-                Extensions.Add(item);
-            }
+            TabToolbar.AddChild(refresh);
+
+            Refresh();
         }
 
         protected override Tab Create(string id, Toolbar toolbar, bool allowDuplicates)
@@ -50,9 +52,28 @@ namespace MIDE.API.Components
             return clone;
         }
 
+        private void Refresh()
+        {
+            Extensions.Clear();
+            var entries = ExtensionsManager.Instance.ExtensionsEntries;
+            foreach (var entry in entries)
+            {
+                var item = new ExtensionItemViewModel(entry);
+                item.IsEnabled = entry.IsEnabled;
+                Extensions.Add(item);
+            }
+        }
         private void InstallExtension()
         {
-
+            var (dialogResult, path) = Kernel.UIManager.OpenDialog(new OpenFileDialogBox("Select package file", "*.nupkg"));
+            if (dialogResult == DialogResult.Ok)
+            {
+                string directory = FileManager.Instance.GetFilePath(path);
+                string id = Path.GetFileNameWithoutExtension(path);
+                string error = ExtensionsManager.Instance.Install(directory, id);
+                if (error != null)
+                    Kernel.UIManager.OpenDialog(new MessageDialogBox("Installation error", error));
+            }
         }
         private void UninstallSelectedExtension()
         {

@@ -9,14 +9,19 @@
     <Product>MIDE Terminal</Product>
     <Description>A simple terminal extension for MIDE .NET</Description>
     <Copyright>Copyright 2019 © Andrew Satura</Copyright>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="config.json" />
+    <None Remove="Terminal.nuspec" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="config.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Terminal.nuspec">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -37,7 +42,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="set path=&quot;E:\Projects\C#\Libs\MIDE.NET\Publish\$(SolutionName)\&quot;&#xD;&#xA;if not exist %path% mkdir %path%&#xD;&#xA;copy &quot;$(TargetDir)$(TargetFileName)&quot; %path%&#xD;&#xA;copy &quot;$(TargetDir)core.dll&quot; %path%&#xD;&#xA;copy &quot;$(TargetDir)FSharp.Core.dll&quot; %path%&#xD;&#xA;copy &quot;$(TargetDir)Parser.dll&quot; %path%&#xD;&#xA;copy &quot;$(TargetDir)config.json&quot; %path%" />
+    <Exec Command="set path=&quot;E:\Projects\C#\Libs\MIDE.NET\Publish\$(SolutionName)\\&quot;&#xD;&#xA;if not exist %path% mkdir %path%&#xD;&#xA;copy &quot;$(TargetDir)$(TargetFileName)&quot; %path%&#xD;&#xA;copy &quot;$(TargetDir)core.dll&quot; %path%&#xD;&#xA;copy &quot;$(TargetDir)FSharp.Core.dll&quot; %path%&#xD;&#xA;copy &quot;$(TargetDir)Parser.dll&quot; %path%&#xD;&#xA;copy &quot;$(TargetDir)config.json&quot; %path%&#xD;&#xA;copy &quot;$(TargetDir)Terminal.nuspec&quot; %path%" />
   </Target>
 
 </Project>

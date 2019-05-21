@@ -168,6 +168,7 @@
         <TreeView ItemsSource="{Binding Items}" h:TreeViewHelpers.SelectItemOnRightClick="True">
             <TreeView.ItemContainerStyle>
                 <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource DefaultTreeViewItem}">
+                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
                     <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
                     <Setter Property="ContextMenu">
                         <Setter.Value>
@@ -378,6 +379,74 @@
                 </Grid.ColumnDefinitions>
 
                 <ContentPresenter Content="{Binding AcceptButton}"
+                              HorizontalAlignment="Center"
+                              Grid.Column="1"/>
+                <ContentPresenter Content="{Binding CancelButton}"
+                              HorizontalAlignment="Center"
+                              Grid.Column="3"/>
+            </Grid>
+        </Grid>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type api:OpenFileDialogBox}">
+        <Grid MinHeight="520" MinWidth="520"
+              MaxHeight="640" MaxWidth="520">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+
+            <ContentPresenter Content="{Binding FileSystemView}"/>
+            <ContentPresenter Content="{Binding SelectedFile}" IsEnabled="False" Grid.Row="2"/>
+            <TextBlock Text="{Binding Filter}" Grid.Column="2" Grid.Row="2"/>
+            <Grid Grid.ColumnSpan="3" Grid.Row="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <ContentPresenter Content="{Binding OkButton}"
+                              HorizontalAlignment="Center"
+                              Grid.Column="1"/>
+                <ContentPresenter Content="{Binding CancelButton}"
+                              HorizontalAlignment="Center"
+                              Grid.Column="3"/>
+            </Grid>
+        </Grid>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type api:OpenDirectoryDialogBox}">
+        <Grid MinHeight="520" MinWidth="520"
+              MaxHeight="640" MaxWidth="520">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <ContentPresenter Content="{Binding FileSystemView}"/>
+            <ContentPresenter Content="{Binding SelectedDirectory}" IsEnabled="False" Grid.Row="2"/>
+            <Grid Grid.ColumnSpan="3" Grid.Row="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <ContentPresenter Content="{Binding OkButton}"
                               HorizontalAlignment="Center"
                               Grid.Column="1"/>
                 <ContentPresenter Content="{Binding CancelButton}"

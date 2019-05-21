@@ -31,6 +31,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="api, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -101,8 +104,9 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>set path="E:\Projects\C#\Libs\MIDE.NET\Publish\$(SolutionName)\"
+    <PostBuildEvent>set path="E:\Projects\C#\Libs\MIDE.NET\Publish\$(SolutionName)\\"
 if not exist %25path%25 mkdir %25path%25
-copy "$(TargetDir)$(TargetFileName)" %25path%25</PostBuildEvent>
+copy "$(TargetDir)$(TargetFileName)" %25path%25
+E:\Programs\nuget.exe pack %25path%25 -OutputDirectory "E:\Projects\C#\Libs\MIDE.NET\Publish\\"</PostBuildEvent>
   </PropertyGroup>
 </Project>

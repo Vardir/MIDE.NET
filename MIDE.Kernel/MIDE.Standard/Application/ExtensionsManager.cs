@@ -12,6 +12,7 @@ using MIDE.Application.Logging;
 using System.Collections.Generic;
 using MIDE.Application.Attrubites;
 using Newtonsoft.Json.Serialization;
+using NuGet;
 
 namespace MIDE.Application
 {
@@ -28,24 +29,18 @@ namespace MIDE.Application
         private FileManager fileManager;
         private JsonSerializerSettings serializerSettings;
         private List<AppExtensionEntry> entries;
-        private HashSet<string> pendingUninstall;
 
         /// <summary>
         /// A set of registered application extensions
         /// </summary>
         public IEnumerable<AppExtension> Extensions => entries.Select(axe => axe.Extension);
         public IEnumerable<AppExtensionEntry> ExtensionsEntries => entries;
-        /// <summary>
-        /// A set of application extensions to uninstall
-        /// </summary>
-        public IEnumerable<string> PendingUninstall => pendingUninstall;
 
         private ExtensionsManager() : base("app-extension-manager")
         {
             appLogger = Kernel.AppLogger;
             fileManager = FileManager.Instance;
             entries = new List<AppExtensionEntry>();
-            pendingUninstall = new HashSet<string>();
             serializerSettings = new JsonSerializerSettings();
             serializerSettings.Error = OnSerializationError;
         }
@@ -87,79 +82,38 @@ namespace MIDE.Application
             var init = JsonConvert.DeserializeObject<ExtensionsInit>(initData);
             foreach (var item in init.Items)
             {
-                string extensionPath = fileManager.Combine(fileManager.GetPath(ApplicationPath.Extensions), item.Path);
-                string configData = fileManager.TryRead(fileManager.Combine(extensionPath, "config.json"));
-                if (configData == null)
-                {
-                    appLogger.PushWarning($"Extension '{item.Id}' does not have config.json file");
-                    continue;
-                }
-                var config = JsonConvert.DeserializeObject<ExtensionConfig>(configData);
-                if (config.PreloadedAssemblies != null)
-                {
-                    foreach (var preloaded in config.PreloadedAssemblies)
-                    {
-                        string path = fileManager.Combine(extensionPath, preloaded);
-                        Assembly.LoadFrom(path);
-                    }
-                }
-                Assembly assembly = Assembly.LoadFrom(extensionPath + config.DllPath);
-                var types = assembly.GetTypes();
-                for (int i = 0; i < types.Length; i++)
-                {
-                    bool isExtension = types[i].IsSubclassOf(typeof(AppExtension));
-                    if (isExtension)
-                    {
-                        var instance = Activator.CreateInstance(types[i], item.Id, item.Enabled) as AppExtension;
-                        AppExtensionEntry extensionEntry = new AppExtensionEntry(instance);
-                        extensionEntry.IsEnabled = item.Enabled;
-                        extensionEntry.Description = config.Description;
-                        extensionEntry.Origin = item.Path;
-                        RegisterExtension(extensionEntry);
-                    }
-                }
-                foreach (var member in config.ExtensionMembers)
-                {
-                    if (member.Platform != Kernel.UIManager.CurrentPlatform)
-                        continue;
-                    if (member.Target != MemberTarget.UI)
-                        continue;
-                    if (member.Role == MemberRole.Extension)
-                    {
-                        string path = fileManager.Combine(directory, item.Path, member.Path);
-                        Kernel.UIManager.RegisterUIExtension(path);
-                    }
-                }
+                LoadExtension(directory, item.Path, item.Id, item.Enabled);
             }
             appLogger.PushDebug(null, "Extensions loaded");
         }
 
         /// <summary>
-        /// Finds an extension by the given path and installs it to default application extension's path. 
+        /// Searches for an extension with the given ID on the specified repository.
         /// Changes applied after application restart. Returns error result message, null if success
         /// </summary>
         /// <param name="path"></param>
-        public string Install(string path)
+        public string Install(string repositoryPath, string file)
         {
-            if (!fileManager.Exists(path))
-                return "Can not install extension: invalid source path given";
             string directory = fileManager.GetOrAddPath(ApplicationPath.Extensions, "extensions\\");
-            string configData = fileManager.TryRead(fileManager.Combine(path, "config.json"));
-            if (configData == null)
-                return "Can not install extension: the given folder does not contain extension configuration file";
-            ExtensionConfig config = null;
-            try
+            var repository = PackageRepositoryFactory.Default.CreateRepository(repositoryPath);
+            if (repository == null)
+                return $"Can not install extension: repository '{repositoryPath}' not found";
+            string id = null;
+            foreach (var item in repository.GetPackages())
             {
-                config = JsonConvert.DeserializeObject<ExtensionConfig>(configData);
+                string fullName = $"{item.Id}.{item.Version}";
+                if (fullName == file)
+                {
+                    id = item.Id;
+                    break;
+                }
             }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
-            if (entries.FirstOrDefault(ax => ax.Id == config.Id) != null)
-                return $"Can not install duplicate extension [{config.Id}]";
-            string destination = fileManager.Combine(directory, config.Id);
-            fileManager.Copy(path, destination);
+            if (id == null)
+                return $"Can not install extension: could not found extension '{file}' on repository {repositoryPath}";
+
+            PackageManager packageManager = new PackageManager(repository, directory);
+            packageManager.InstallPackage(id);
+            LoadExtension(directory, file, id, false);
             return null;
         }
         /// <summary>
@@ -173,7 +127,7 @@ namespace MIDE.Application
             if (entry == null)
                 return "Can not uninstall extension that does not installed or loaded yet";
 
-            pendingUninstall.Add(id);
+            entry.PendingUninstall = true;
             return null;
         }
         public T GetExtension<T>(string id)
@@ -192,7 +146,6 @@ namespace MIDE.Application
             UnloadExtensions();
             serializerSettings = null;
             entries = null;
-            pendingUninstall = null;
             _disposed = true;
         }
 
@@ -229,6 +182,52 @@ namespace MIDE.Application
             fileManager.Write(serializeData, fileManager.Combine(directory, "init.json"));
             entries.Clear();
             appLogger.PushDebug(null, "Extensions unloaded");
+        }
+        private void LoadExtension(string root, string path, string id, bool isEnabled)
+        {
+            string extensionPath = fileManager.Combine(fileManager.GetPath(ApplicationPath.Extensions), path);
+            string configData = fileManager.TryRead(fileManager.Combine(extensionPath, "config.json"));
+            if (configData == null)
+            {
+                appLogger.PushWarning($"Extension '{id}' does not have config.json file");
+                return;
+            }
+            var config = JsonConvert.DeserializeObject<ExtensionConfig>(configData);
+            if (config.PreloadedAssemblies != null)
+            {
+                foreach (var preloaded in config.PreloadedAssemblies)
+                {
+                    string file = fileManager.Combine(extensionPath, preloaded);
+                    Assembly.LoadFrom(file);
+                }
+            }
+            Assembly assembly = Assembly.LoadFrom(fileManager.Combine(extensionPath, config.DllPath));
+            var types = assembly.GetTypes();
+            for (int i = 0; i < types.Length; i++)
+            {
+                bool isExtension = types[i].IsSubclassOf(typeof(AppExtension));
+                if (isExtension)
+                {
+                    var instance = Activator.CreateInstance(types[i], id, isEnabled) as AppExtension;
+                    AppExtensionEntry extensionEntry = new AppExtensionEntry(instance);
+                    extensionEntry.IsEnabled = isEnabled;
+                    extensionEntry.Description = config.Description;
+                    extensionEntry.Origin = path;
+                    RegisterExtension(extensionEntry);
+                }
+            }
+            foreach (var member in config.ExtensionMembers)
+            {
+                if (member.Platform != Kernel.UIManager.CurrentPlatform)
+                    continue;
+                if (member.Target != MemberTarget.UI)
+                    continue;
+                if (member.Role == MemberRole.Extension)
+                {
+                    string ext = fileManager.Combine(root, path, member.Path);
+                    Kernel.UIManager.RegisterUIExtension(ext);
+                }
+            }
         }
         private void RegisterExtension(AppExtensionEntry entry)
         {

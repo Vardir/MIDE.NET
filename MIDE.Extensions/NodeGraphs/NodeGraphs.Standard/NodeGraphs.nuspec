@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>nodegraphs</id>
+    <version>1.0.0</version>
+    <title>NodeGraphs</title>
+    <authors>Vardir</authors>
+    <owners>Vardir</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A basic library which is used to create extensions for graphs with nodes</description>
+    <releaseNotes>First release.</releaseNotes>
+    <copyright>Copyright 2019 © Andrew Satura</copyright>
+    <tags>mide extension nodes graphs</tags>
+  </metadata>
+</package>
