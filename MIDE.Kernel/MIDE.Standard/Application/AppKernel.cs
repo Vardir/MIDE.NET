@@ -137,36 +137,7 @@ namespace MIDE.Application
             string folder = $"{fileManager.GetPath(ApplicationPath.Logs)}\\{TimeStarted.ToString("dd-M-yyyy HH-mm-ss")}\\";
             string filename = $"{folder}log.txt";
             fileManager.MakeFolder(folder);
-            StringBuilder builder = new StringBuilder();
-            builder.Append(ApplicationName);
-            builder.Append(' ');
-            builder.Append(Version);
-            builder.AppendLine();
-            builder.Append("Is UTC time = " + AppLogger.UseUtcTime);
-            builder.AppendLine();
-            builder.Append("-------------------------");
-            builder.AppendLine();
-            foreach (var item in AppLogger.Pull())
-            {
-                builder.Append(item.ToString());
-                object[] serializationData = item.GetSerializationData();
-                if (serializationData != null)
-                {
-                    for (int i = 0; i < serializationData.Length; i++)
-                    {
-                        if (serializationData[i] == null)
-                            continue;
-                        builder.Append("  - [");
-                        builder.Append(i + 1);
-                        builder.Append(".bin] type - ");
-                        builder.Append(serializationData[i].GetType());
-                        builder.AppendLine();
-                        fileManager.Serialize(serializationData[i], $"{folder}{i + 1}.bin");
-                    }
-                }
-                builder.AppendLine();
-            }
-            fileManager.Write(builder.ToString(), filename);
+            AppLogger.SaveToFile(folder, filename, info: new[] { ApplicationName, Version });
         }
         /// <summary>
         /// Stops all the current threads, releases all resources and closes the application kernel

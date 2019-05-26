@@ -1,5 +1,7 @@
-﻿using System;
+﻿using MIDE.FileSystem;
+using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace MIDE.Application.Logging
 {
@@ -36,6 +38,48 @@ namespace MIDE.Application.Logging
             UseUtcTime = useUtcTime;
             SkipFatalEvents = skipFatals;
             events = new LinkedList<LoggedEvent>();
+        }
+
+        /// <summary>
+        /// Saves log entries into the given file
+        /// </summary>
+        /// <param name="path"></param>
+        public void SaveToFile(string folder, string fileName, string[] info)
+        {
+            StringBuilder builder = new StringBuilder();
+            if (info != null)
+            {
+                for (int i = 0; i < info.Length; i++)
+                {
+                    builder.Append(info[i]);
+                    builder.AppendLine();
+                }
+            }
+            builder.Append("Is UTC time = " + UseUtcTime);
+            builder.AppendLine();
+            builder.Append("-------------------------");
+            builder.AppendLine();
+            foreach (var item in Pull())
+            {
+                builder.Append(item.ToString());
+                object[] serializationData = item.GetSerializationData();
+                if (serializationData != null)
+                {
+                    for (int i = 0; i < serializationData.Length; i++)
+                    {
+                        if (serializationData[i] == null)
+                            continue;
+                        builder.Append("  - [");
+                        builder.Append(i + 1);
+                        builder.Append(".bin] type - ");
+                        builder.Append(serializationData[i].GetType());
+                        builder.AppendLine();
+                        FileManager.Instance.Serialize(serializationData[i], $"{folder}{i + 1}.bin");
+                    }
+                }
+                builder.AppendLine();
+            }
+            FileManager.Instance.Write(builder.ToString(), FileManager.Instance.Combine(folder, fileName));
         }
 
         /// <summary>

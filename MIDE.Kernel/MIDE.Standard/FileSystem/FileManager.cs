@@ -162,7 +162,7 @@ namespace MIDE.FileSystem
                 File.WriteAllText(path, "<null>");
             var type = data.GetType();
             if (!type.HasAttribute<SerializableAttribute>())
-                File.WriteAllText(data.ToString(), "<null>");
+                File.WriteAllText(path, data.ToString());
 
             BinaryFormatter formatter = new BinaryFormatter();
             try

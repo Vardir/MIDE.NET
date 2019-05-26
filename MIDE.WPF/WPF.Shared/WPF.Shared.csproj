@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
     <LangVersion>7.1</LangVersion>
   </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="api, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -174,7 +177,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>set path="E:\Projects\C#\Libs\MIDE.NET\Publish\$(SolutionName)\"
+    <PostBuildEvent>set path="E:\Projects\C#\Libs\MIDE.NET\Publish\$(SolutionName)\\"
 if not exist %25path%25 mkdir %25path%25
 copy "$(TargetDir)$(TargetFileName)" %25path%25</PostBuildEvent>
   </PropertyGroup>

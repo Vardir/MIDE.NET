@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>xstaller</AssemblyName>
+    <Authors>Vardir</Authors>
+    <Product>MIDE Extensions Installer</Product>
+    <Company>Vardir Products</Company>
+    <Description>An application to install extensions on MIDE</Description>
+    <Copyright>Copyright 2019 © Andrew Satura</Copyright>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MIDE.Standard\MIDE.Standard.csproj" />
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="set path=&quot;D:\Projects\C#\Libs\MIDE.NET\Publish\$(SolutionName)\\&quot;&#xD;&#xA;if not exist %25path%25 mkdir %25path%25&#xD;&#xA;copy &quot;$(TargetDir)xstaller.dll&quot; %25path%25" />
+  </Target>
+
+</Project>

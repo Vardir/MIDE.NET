@@ -20,6 +20,7 @@
     <UpgradeBackupLocation>E:\Projects\C#\Libs\MIDE.NET\MIDE.Kernel\Backup\MIDE.Standard\</UpgradeBackupLocation>
     <OldToolsVersion>2.0</OldToolsVersion>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="config.json" />
@@ -35,6 +36,6 @@
     <PackageReference Include="System.Drawing.Common" Version="4.5.1" />
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="set path=&quot;E:\Projects\C#\Libs\MIDE.NET\Publish\$(SolutionName)\&quot;&#xD;&#xA;if not exist %path% mkdir %path%&#xD;&#xA;copy &quot;$(TargetDir)*.dll&quot; %path%&#xD;&#xA;copy &quot;$(TargetDir)config.json&quot; %path%" />
+    <Exec Command="set path=&quot;D:\Projects\C#\Libs\MIDE.NET\Publish\$(SolutionName)\\&quot;&#xD;&#xA;if not exist %25path%25 mkdir %25path%25&#xD;&#xA;copy &quot;$(TargetDir)*.dll&quot; %25path%25&#xD;&#xA;copy &quot;$(TargetDir)config.json&quot; %25path%25" />
   </Target>
 </Project>
