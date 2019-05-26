@@ -13,7 +13,7 @@ namespace MIDE.Application.Events
         public EventBroadcaster()
         {
             groups = new Dictionary<string, LinkedList<IEventListener>>();
-            Logger = new Logger(LoggingLevel.INFO | LoggingLevel.WARN, useUtcTime: true, skipFatals: false);
+            Logger = new Logger(LoggingLevel.INFO | LoggingLevel.WARN, useUtcTime: true);
         }
 
         public void Broadcast(string group, object sender, string message)

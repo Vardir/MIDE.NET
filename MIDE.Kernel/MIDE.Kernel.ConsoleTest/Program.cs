@@ -5,6 +5,7 @@ using MIDE.Application.Attrubites;
 using MIDE.FileSystem;
 using MIDE.API.Extensibility;
 using System.Threading;
+using MIDE.ExtensionsInstaller;
 
 [assembly: ApplicationProperties("consoletest")]
 
@@ -23,11 +24,9 @@ namespace MIDE.Kernel.ConsoleTest
             FileManager.Instance = new WinFileManager();
             Program program = new Program();
 
-            var module = new AModule();
-            module.Execute("tam 4", new BListener());
-            module.Execute("tam 1", new BListener());
-            module.Execute("dam 3", new BListener());
-            module.Execute("dam 2", new BListener());
+            InstallerKernel.Instance.Execute();
+            InstallerKernel.Instance.Exit();
+
 
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey();

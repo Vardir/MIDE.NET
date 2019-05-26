@@ -1,7 +1,7 @@
-﻿using MIDE.FileSystem;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Text;
+using MIDE.FileSystem;
+using System.Collections.Generic;
 
 namespace MIDE.Application.Logging
 {
@@ -18,10 +18,6 @@ namespace MIDE.Application.Logging
         /// </summary>
         public bool UseUtcTime { get; }
         /// <summary>
-        /// A flag to indicate whether to skip fatal errors if <seealso cref="LoggingLevel.FATAL"/> not set to <see cref="Levels"/>
-        /// </summary>
-        public bool SkipFatalEvents { get; }
-        /// <summary>
         /// A set of flags to filter out incoming events
         /// </summary>
         public LoggingLevel Levels { get; internal set; }
@@ -32,11 +28,10 @@ namespace MIDE.Application.Logging
 
         public event EventHandler<FatalEvent> FatalEventRegistered;
 
-        public Logger (LoggingLevel levels, bool useUtcTime, bool skipFatals)
+        public Logger (LoggingLevel levels, bool useUtcTime)
         {
             Levels = levels;
             UseUtcTime = useUtcTime;
-            SkipFatalEvents = skipFatals;
             events = new LinkedList<LoggedEvent>();
         }
 
@@ -59,6 +54,7 @@ namespace MIDE.Application.Logging
             builder.AppendLine();
             builder.Append("-------------------------");
             builder.AppendLine();
+            int binIndex = 0;
             foreach (var item in Pull())
             {
                 builder.Append(item.ToString());
@@ -69,12 +65,15 @@ namespace MIDE.Application.Logging
                     {
                         if (serializationData[i] == null)
                             continue;
-                        builder.Append("  - [");
-                        builder.Append(i + 1);
-                        builder.Append(".bin] type - ");
-                        builder.Append(serializationData[i].GetType());
                         builder.AppendLine();
-                        FileManager.Instance.Serialize(serializationData[i], $"{folder}{i + 1}.bin");
+                        builder.Append('\t');
+                        builder.Append(serializationData[i].GetType());
+                        builder.Append("  - [");
+                        builder.Append(binIndex + 1);
+                        builder.Append(".bin]");
+                        string binFile = FileManager.Instance.Combine(folder, (binIndex + 1).ToString());
+                        FileManager.Instance.Serialize(serializationData[i], $"{binFile}.bin");
+                        binIndex++;
                     }
                 }
                 builder.AppendLine();
@@ -166,13 +165,8 @@ namespace MIDE.Application.Logging
         /// <param name="message"></param>
         public void PushFatal(string message)
         {
-            if (SkipFatalEvents && !Levels.Has(LoggingLevel.FATAL))
-                return;
             if (string.IsNullOrEmpty(message))
-            {
-                PushArgumentError(nameof(message), "Can't add fatal error event with empty message");
-                return;
-            }
+                PushArgumentError(nameof(message), "Adding fatal error event with empty message!");
             
             FatalEvent fatalEvent = new FatalEvent(message, TimeNow);
             events.AddLast(fatalEvent);

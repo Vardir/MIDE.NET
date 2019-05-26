@@ -61,6 +61,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MIDE.ExtensionsInstaller\MIDE.ExtensionsInstaller.csproj">
+      <Project>{4a31c4a7-c816-40f1-a8f0-d96e1c5d7417}</Project>
+      <Name>MIDE.ExtensionsInstaller</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MIDE.Standard\MIDE.Standard.csproj">
       <Project>{1eade570-a992-4d13-9925-239f47f4e2fa}</Project>
       <Name>MIDE.Standard</Name>

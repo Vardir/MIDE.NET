@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -8,6 +8,8 @@
     <Company>Vardir Products</Company>
     <Description>An application to install extensions on MIDE</Description>
     <Copyright>Copyright 2019 © Andrew Satura</Copyright>
+    <LangVersion>8.0</LangVersion>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
   </PropertyGroup>
 
   <ItemGroup>

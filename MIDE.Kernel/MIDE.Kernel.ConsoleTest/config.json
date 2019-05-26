@@ -1,19 +1,19 @@
 {
-  "kernel_version": "0.7.1",
+  "kernel_version": "0.7.3",
   "paths": [
     {
-      "key" : "appassets",
+      "key" : "assets",
       "path": "root\\assets\\",
       "type": "folder"
     },
     {
       "key" : "installed",
-      "path" : "E:\\Projects\\C#\\Libs\\MIDE.NET\\MIDE.Kernel\\MIDE.Kernel.ConsoleTest\\bin\\Debug\\",
+      "path" : "D:\\Projects\\C#\\Libs\\MIDE.NET\\MIDE.Kernel\\MIDE.Kernel.ConsoleTest\\bin\\Debug\\",
       "type": "folder"
     },
     {
-      "key" : "defaultforsolutions",
-      "path": "root\\solutions\\",
+      "key" : "projects",
+      "path": "root\\projects\\",
       "type": "folder"
     },
     {
@@ -27,7 +27,7 @@
       "type": "folder"
     },
     {
-      "key": "usersettings",
+      "key": "settings",
       "path": "root\\user.settings.json",
       "type": "file"
     },
@@ -39,6 +39,11 @@
     {
       "key": "templates",
       "path": "root\\templates\\",
+      "type": "folder"
+    },
+    {
+      "key": "logs",
+      "path": "root\\logs\\",
       "type": "folder"
     }
   ]

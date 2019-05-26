@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace MIDE.Schemes.JSON
 {
@@ -11,9 +12,21 @@ namespace MIDE.Schemes.JSON
 
         [JsonRequired]
         [JsonProperty(PropertyName = "repo")]
-        public string Repository { get; set; }
+        public string Repository { get; set; }       
+
+        [JsonRequired]
+        [JsonProperty(PropertyName = "mode")]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public InstallationMode Mode { get; set; }
 
         [JsonProperty(PropertyName = "auto_enable")]
-        public string AutoEnable { get; set; }
+        public bool AutoEnable { get; set; }
+    }
+
+    public enum InstallationMode
+    {
+        Install,
+        Update,
+        Uninstall
     }
 }

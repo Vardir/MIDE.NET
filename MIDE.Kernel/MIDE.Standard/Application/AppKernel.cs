@@ -75,7 +75,7 @@ namespace MIDE.Application
             var version = currentAssembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
             Version = version.InformationalVersion;
 
-            AppLogger = new Logger(LoggingLevel.ALL, useUtcTime: true, skipFatals: false);
+            AppLogger = new Logger(LoggingLevel.ALL, useUtcTime: true);
             AppLogger.FatalEventRegistered += AppLogger_FatalEventRegistered;
 
             AppLogger.PushDebug(null, "Application Kernel created");
