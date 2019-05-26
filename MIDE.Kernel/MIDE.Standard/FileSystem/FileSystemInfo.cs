@@ -143,7 +143,7 @@ namespace MIDE.FileSystem
 
         private void Initialize()
         {
-            string fileData = fileManager.ReadOrCreate(fileManager.GetPath(ApplicationPath.AppAssets, "file-system-items.json"),
+            string fileData = fileManager.ReadOrCreate(fileManager.GetFilePath(FileManager.ASSETS, "file-system-items.json"),
                                                        "{ \"file-extensions\": null, \"file-editors\": null }");
             FileSystemItemParameters parameters = JsonConvert.DeserializeObject<FileSystemItemParameters>(fileData);
             if (parameters.FileExtensions != null)

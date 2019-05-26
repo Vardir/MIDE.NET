@@ -1,5 +1,5 @@
-﻿using Core.Commands;
-using MIDE.API.Components;
+﻿using MIDE.API.Components;
+using MyCMD.Kernel.Commands;
 using MIDE.API.Extensibility;
 using System.Collections.ObjectModel;
 

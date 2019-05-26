@@ -51,7 +51,7 @@ namespace MIDE.API.Components
 
         private void LoadTemplates()
         {
-            string folder = fileManager.GetPath(ApplicationPath.Templates);
+            string folder = fileManager.GetPath(FileManager.TEMPLATES);
             folder = $"{folder}\\projects\\";
             if (!fileManager.Exists(folder))
                 return;
@@ -79,7 +79,7 @@ namespace MIDE.API.Components
             BrowseButton = new Button("browse");
             SearchBox = new TextBox("search-box");
             ProjectName = new TextBox("project-name", "MyProject");
-            ProjectPath = new TextBox("project-path", fileManager.GetPath(ApplicationPath.DefaultForProjects));
+            ProjectPath = new TextBox("project-path", fileManager.GetPath(FileManager.PROJECTS));
             TemplatesList = new ListBox("templates-list");
             ProjectNameLabel = new Label("project-name-label", "Project name:");
             ProjectPathLabel = new Label("project-path-label", "Project location:");

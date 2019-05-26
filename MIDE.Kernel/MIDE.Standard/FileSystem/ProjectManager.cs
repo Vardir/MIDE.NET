@@ -97,7 +97,7 @@ namespace MIDE.Application
 
         private void Initialize()
         {
-            string fileData = fileManager.ReadOrCreate(fileManager.GetPath(ApplicationPath.AppAssets, "project-items.json"), 
+            string fileData = fileManager.ReadOrCreate(fileManager.GetFilePath(FileManager.ASSETS, "project-items.json"), 
                                                        "{ \"icons\": null, \"extensions\": null, \"templates\": null }");
             ProjectItemParameters parameters = JsonConvert.DeserializeObject<ProjectItemParameters>(fileData);
             if (parameters.FileExtensions != null)

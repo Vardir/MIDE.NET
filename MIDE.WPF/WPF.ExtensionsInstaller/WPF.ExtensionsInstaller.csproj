@@ -4,17 +4,19 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6D924E1F-4F86-4C55-988F-4E1B87DF21B8}</ProjectGuid>
-    <OutputType>library</OutputType>
-    <RootNamespace>GanttChart.WPF</RootNamespace>
-    <AssemblyName>GanttChart.WPF</AssemblyName>
+    <ProjectGuid>{3ACDA763-ABD0-486C-B31E-057A17C64424}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>WPF.ExtensionsInstaller</RootNamespace>
+    <AssemblyName>WPF.ExtensionsInstaller</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,6 +26,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -31,16 +34,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
-  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="api, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Publish\MIDE.Kernel\api.dll</HintPath>
-    </Reference>
-    <Reference Include="NodeGraphs.WPF">
-      <HintPath>..\..\..\Publish\NodeGraphs\NodeGraphs.WPF.dll</HintPath>
+    <Reference Include="api">
+      <HintPath>..\..\Publish\MIDE.Kernel\api.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -56,19 +52,29 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="wpfuix, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Publish\MIDE.WPF\wpfuix.dll</HintPath>
+    <Reference Include="xstaller">
+      <HintPath>..\..\Publish\MIDE.Kernel\xstaller.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Styles\DefaultControls.xaml">
-      <SubType>Designer</SubType>
+    <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GanttChartUIExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -92,21 +98,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Behaviors\" />
-    <Folder Include="Controls\" />
-    <Folder Include="Helpers\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\GanttChart.Standard\GanttChart.Standard.csproj">
-      <Project>{b7c81688-1fa3-4e33-9990-73dde9420e0f}</Project>
-      <Name>GanttChart.Standard</Name>
-    </ProjectReference>
+    <None Include="App.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>set path="D:\Projects\C#\Libs\MIDE.NET\Publish\$(SolutionName)\\"
-if not exist %25path%25 mkdir %25path%25
-copy "$(TargetDir)$(TargetFileName)" %25path%25
-D:\Programs\nuget.exe pack %25path%25 -OutputDirectory "D:\Projects\C#\Libs\MIDE.NET\Publish\\"</PostBuildEvent>
-  </PropertyGroup>
 </Project>

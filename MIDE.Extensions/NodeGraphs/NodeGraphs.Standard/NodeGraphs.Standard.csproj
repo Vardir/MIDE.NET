@@ -34,7 +34,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="set path=&quot;E:\Projects\C#\Libs\MIDE.NET\Publish\$(SolutionName)\\&quot;&#xD;&#xA;if not exist %path% mkdir %path%&#xD;&#xA;copy &quot;$(TargetDir)$(TargetFileName)&quot; %path%&#xD;&#xA;copy &quot;$(TargetDir)config.json&quot; %path%&#xD;&#xA;copy &quot;$(ProjectDir)NodeGraphs.nuspec&quot; %path%" />
+    <Exec Command="set path=&quot;D:\Projects\C#\Libs\MIDE.NET\Publish\$(SolutionName)\\&quot;&#xD;&#xA;if not exist %25path%25 mkdir %25path%25&#xD;&#xA;copy &quot;$(TargetDir)$(TargetFileName)&quot; %25path%25&#xD;&#xA;copy &quot;$(TargetDir)config.json&quot; %25path%25&#xD;&#xA;copy &quot;$(ProjectDir)NodeGraphs.nuspec&quot; %25path%25" />
   </Target>
 
 </Project>

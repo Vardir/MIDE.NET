@@ -30,19 +30,19 @@
     <Reference Include="api">
       <HintPath>..\..\..\Publish\MIDE.Kernel\api.dll</HintPath>
     </Reference>
-    <Reference Include="core">
-      <HintPath>..\..\..\..\..\Console\MyCMD\CMD.Standard\bin\Release\netstandard2.0\core.dll</HintPath>
-    </Reference>
     <Reference Include="FSharp.Core">
-      <HintPath>..\..\..\..\..\Console\MyCMD\CMD.Standard\bin\Release\netstandard2.0\FSharp.Core.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Server\Publish\MyCMD\FSharp.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="mycmd.kernel">
+      <HintPath>..\..\..\..\..\..\..\Server\Publish\MyCMD\mycmd.kernel.dll</HintPath>
     </Reference>
     <Reference Include="Parser">
-      <HintPath>..\..\..\..\..\Console\MyCMD\CMD.Standard\bin\Release\netstandard2.0\Parser.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Server\Publish\MyCMD\Parser.dll</HintPath>
     </Reference>
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="set path=&quot;E:\Projects\C#\Libs\MIDE.NET\Publish\$(SolutionName)\\&quot;&#xD;&#xA;if not exist %path% mkdir %path%&#xD;&#xA;copy &quot;$(TargetDir)$(TargetFileName)&quot; %path%&#xD;&#xA;copy &quot;$(TargetDir)core.dll&quot; %path%&#xD;&#xA;copy &quot;$(TargetDir)FSharp.Core.dll&quot; %path%&#xD;&#xA;copy &quot;$(TargetDir)Parser.dll&quot; %path%&#xD;&#xA;copy &quot;$(TargetDir)config.json&quot; %path%&#xD;&#xA;copy &quot;$(TargetDir)Terminal.nuspec&quot; %path%" />
+    <Exec Command="set path=&quot;D:\Projects\C#\Libs\MIDE.NET\Publish\$(SolutionName)\\&quot;&#xD;&#xA;if not exist %25path%25 mkdir %25path%25&#xD;&#xA;copy &quot;$(TargetDir)$(TargetFileName)&quot; %25path%25&#xD;&#xA;copy &quot;$(TargetDir)FSharp.Core.dll&quot; %25path%25&#xD;&#xA;copy &quot;$(TargetDir)Parser.dll&quot; %25path%25&#xD;&#xA;copy &quot;$(TargetDir)mycmd.kernel.dll&quot; %25path%25&#xD;&#xA;copy &quot;$(TargetDir)config.json&quot; %25path%25&#xD;&#xA;copy &quot;$(TargetDir)Terminal.nuspec&quot; %25path%25" />
   </Target>
 
 </Project>

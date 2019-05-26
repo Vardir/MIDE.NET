@@ -1,20 +1,20 @@
 {
-  "kernel_version": "0.7.1",
+  "kernel_version": "0.7.3",
   "theme": "dark",
-  "log_levels": [ "debug" ],
+  "log_levels": [ "all" ],
   "paths": [
     {
-      "key": "appassets",
+      "key": "assets",
       "path": "root\\assets\\",
       "type": "folder"
     },
     {
       "key": "installed",
-      "path": "E:\\Projects\\C#\\Libs\\MIDE.NET\\MIDE.WPF\\MIDE.WPFApp\\bin\\Debug",
+      "path": "D:\\Projects\\C#\\Libs\\MIDE.NET\\MIDE.WPF\\MIDE.WPFApp\\bin\\Debug",
       "type": "folder"
     },
     {
-      "key": "defaultforprojects",
+      "key": "projects",
       "path": "root\\projects\\",
       "type": "folder"
     },
@@ -29,7 +29,7 @@
       "type": "folder"
     },
     {
-      "key": "usersettings",
+      "key": "settings",
       "path": "root\\user.settings.json",
       "type": "file"
     },

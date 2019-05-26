@@ -43,6 +43,11 @@ namespace MIDE.Kernel.ConsoleTest
 
             }
 
+            public override void Initialize()
+            {
+                throw new NotImplementedException();
+            }
+
             protected override ModuleJob ExecuteCommand(object parameter, IModuleExecutionListener listener)
             {
                 int delay = int.Parse((parameter as string).Substring(4));

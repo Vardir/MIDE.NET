@@ -1,5 +1,5 @@
 ﻿using System;
-using Core.Commands;
+using MyCMD.Kernel.Commands;
 using MIDE.API.Extensibility;
 
 namespace Terminal

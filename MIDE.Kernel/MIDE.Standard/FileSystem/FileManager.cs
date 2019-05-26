@@ -12,16 +12,25 @@ namespace MIDE.FileSystem
 {
     public abstract class FileManager
     {
-        protected Dictionary<ApplicationPath, string> specialPaths;
-        protected Dictionary<string, string> allPaths;
+        protected Dictionary<string, string> paths;
+
+        public const string PROJECTS = "projects";
+        public const string SETTINGS = "settings";
+        public const string EXTENSIONS = "extensions";
+        public const string TEMPLATES = "templates";
+        public const string ASSETS = "assets";
+        public const string THEMES = "themes";
+        public const string TASKS = "tasks";
+        public const string LOGS = "logs";
+        public const string ROOT = "root";
 
         public static FileManager Instance { get; set; }
 
-        public string this[ApplicationPath applicationPath]
+        public string this[string pathId]
         {
             get
             {
-                if (specialPaths.TryGetValue(applicationPath, out string path))
+                if (paths.TryGetValue(pathId, out string path))
                     return path;
                 return null;
             }
@@ -29,8 +38,16 @@ namespace MIDE.FileSystem
 
         public FileManager()
         {
-            allPaths = new Dictionary<string, string>();
-            specialPaths = new Dictionary<ApplicationPath, string>();
+            paths = new Dictionary<string, string>();
+            GetPath(PROJECTS);
+            GetPath(SETTINGS);
+            GetPath(EXTENSIONS);
+            GetPath(TEMPLATES);
+            GetPath(ASSETS);
+            GetPath(THEMES);
+            GetPath(TASKS);
+            GetPath(LOGS);
+            GetPath(ROOT);
         }
 
         /// <summary>
@@ -54,47 +71,21 @@ namespace MIDE.FileSystem
             Directory.Delete(path);
         }
         /// <summary>
-        /// Adds the given known path entry or updates existing one
-        /// </summary>
-        /// <param name="path"></param>
-        /// <param name="value"></param>
-        public void AddOrUpdate(ApplicationPath path, string value)
-        {
-            if (string.IsNullOrEmpty(value))
-                throw new ArgumentException("Path Value can not be null or empty", nameof(value));
-
-            if (specialPaths.ContainsKey(path))
-            {
-                specialPaths[path] = value;
-                allPaths[path.ToString().ToLower()] = value;
-            }
-            else
-            {
-                specialPaths.Add(path, value);
-                allPaths.Add(path.ToString().ToLower(), value);
-            }
-        }
-        /// <summary>
         /// Adds the given path entry or updates existing one
         /// </summary>
-        /// <param name="pathKey"></param>
+        /// <param name="pathId"></param>
         /// <param name="value"></param>
-        public void AddOrUpdate(string pathKey, string value)
+        public void AddOrUpdate(string pathId, string value)
         {
-            if (string.IsNullOrEmpty(pathKey))
-                throw new ArgumentException("Path Key can not be null or empty", nameof(pathKey));
+            if (string.IsNullOrEmpty(pathId))
+                throw new ArgumentException("Path Key can not be null or empty", nameof(pathId));
             if (string.IsNullOrEmpty(value))
                 throw new ArgumentException("Path Value can not be null or empty", nameof(value));
 
-            if (Enum.TryParse(pathKey, true, out ApplicationPath appPath))
-            {
-                AddOrUpdate(appPath, value);
-                return;
-            }
-            if (allPaths.ContainsKey(pathKey))
-                allPaths[pathKey] = value;
+            if (paths.ContainsKey(pathId))
+                paths[pathId] = value;
             else
-                allPaths.Add(pathKey, value);
+                paths.Add(pathId, value);
         }
         /// <summary>
         /// Loads all application paths from the given collection
@@ -204,68 +195,38 @@ namespace MIDE.FileSystem
         /// </summary>
         /// <param name="folder"></param>
         /// <returns></returns>
-        public string GetPath(ApplicationPath folder)
+        public string GetPath(string pathId)
         {
-            if (specialPaths.TryGetValue(folder, out string path))
+            if (paths.TryGetValue(pathId, out string path))
                 return path;
-            string folderPath = "";
-            switch (folder)
+            string folderPath = pathId switch
             {
-                case ApplicationPath.DefaultForProjects:
-                    folderPath = "root\\projects\\"; break;
-                case ApplicationPath.UserSettings:
-                    folderPath = "root\\settings\\"; break;
-                case ApplicationPath.Extensions:
-                    folderPath = "root\\extensions\\"; break;
-                case ApplicationPath.Templates:
-                    folderPath = "root\\templates\\"; break;
-                case ApplicationPath.AppAssets:
-                    folderPath = "root\\assets\\"; break;
-                case ApplicationPath.Themes:
-                    folderPath = "root\\themes\\"; break;
-                case ApplicationPath.Tasks:
-                    folderPath = "root\\tasks\\"; break;
-                case ApplicationPath.Logs:
-                    folderPath = "root\\logs\\"; break;
-                case ApplicationPath.Root:
-                    folderPath = "root\\"; break;
-                case ApplicationPath.Installed:
-                    folderPath = ""; break;
-            }
-            return GetOrAddPath(folder, folderPath);
+                PROJECTS   => "root\\projects\\",
+                SETTINGS   => "root\\user.settings.json",
+                EXTENSIONS => "root\\extensions\\",
+                TEMPLATES  => "root\\templates\\",
+                ASSETS     => "root\\assets\\",
+                THEMES     => "root\\themes\\",
+                TASKS      => "root\\tasks\\",
+                LOGS       => "root\\logs\\",
+                ROOT       => "root\\",
+                _            => ""
+            };
+            return GetOrAddPath(pathId, folderPath);
         }
         /// <summary>
         /// Combines file path with application path that contains the file
         /// </summary>
-        /// <param name="path"></param>
+        /// <param name="pathId"></param>
         /// <param name="file"></param>
         /// <returns></returns>
-        public string GetPath(ApplicationPath path, string file)
+        public string GetFilePath(string pathId, string file)
         {
-            string folder = GetPath(path);
+            string folder = GetPath(pathId);
+            if (folder == null)
+                return null;
             return Combine(folder, file);
         }
-        /// <summary>
-        /// Gets the given application path. If the path is not registered yet, creates new entry based on the given path
-        /// </summary>
-        /// <param name="path"></param>
-        /// <param name="defaultValue"></param>
-        /// <returns></returns>
-        public string GetOrAddPath(ApplicationPath path, string defaultValue = null)
-        {
-            if (!specialPaths.ContainsKey(path))
-            {
-                AddOrUpdate(path, defaultValue);
-                return defaultValue;
-            }
-            return specialPaths[path];
-        }
-        /// <summary>
-        /// Searches for path by the given key
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public string GetPath(string key) => allPaths[key];
         /// <summary>
         /// Gets the given path by key. If the path is not registered yet, creates new entry based on the given path
         /// </summary>
@@ -274,12 +235,12 @@ namespace MIDE.FileSystem
         /// <returns></returns>
         public string GetOrAddPath(string key, string defaultValue = null)
         {
-            if (!allPaths.ContainsKey(key))
+            if (!paths.ContainsKey(key))
             {
                 AddOrUpdate(key, defaultValue);
                 return defaultValue;
             }
-            return allPaths[key];
+            return paths[key];
         }
         public string GetAbsolutePath(string path) => Path.GetFullPath(path);
 
@@ -469,19 +430,5 @@ namespace MIDE.FileSystem
             }
             return null;
         }
-    }
-
-    public enum ApplicationPath
-    {
-        Root,
-        Logs,
-        Tasks,
-        Themes,
-        AppAssets,
-        Installed,
-        Templates,
-        Extensions,
-        UserSettings,
-        DefaultForProjects
     }
 }

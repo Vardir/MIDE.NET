@@ -77,7 +77,7 @@ namespace MIDE.Application
         public void LoadExtensions()
         {
             appLogger.PushDebug(null, "Loading extensions");
-            var directory = fileManager.GetOrAddPath(ApplicationPath.Extensions, "extensions\\");
+            var directory = fileManager.GetPath(FileManager.EXTENSIONS);
             var initData = fileManager.ReadOrCreate(fileManager.Combine(directory, "init.json"), "{ \"register\": [] }");
             var init = JsonConvert.DeserializeObject<ExtensionsInit>(initData);
             foreach (var item in init.Items)
@@ -94,7 +94,7 @@ namespace MIDE.Application
         /// <param name="path"></param>
         public string Install(string repositoryPath, string file)
         {
-            string directory = fileManager.GetOrAddPath(ApplicationPath.Extensions, "extensions\\");
+            string directory = fileManager.GetPath(FileManager.EXTENSIONS);
             var repository = PackageRepositoryFactory.Default.CreateRepository(repositoryPath);
             if (repository == null)
                 return $"Can not install extension: repository '{repositoryPath}' not found";
@@ -164,7 +164,7 @@ namespace MIDE.Application
                 {
                     AppKernel.Instance.AddTask(new DeletePathTask(TaskActivationEvent.BeforeLoad, TaskRepetitionMode.Once)
                     {
-                        Path = fileManager.Combine(fileManager[ApplicationPath.Extensions], entry.Origin)
+                        Path = fileManager.Combine(fileManager[FileManager.EXTENSIONS], entry.Origin)
                     });
                     continue;
                 }
@@ -177,7 +177,7 @@ namespace MIDE.Application
                 entry.Extension.Unload();
             }
             init.Items = registerItems.ToArray();
-            string directory = fileManager.GetOrAddPath(ApplicationPath.Extensions, "extensions\\");
+            string directory = fileManager.GetPath(FileManager.EXTENSIONS);
             string serializeData = JsonConvert.SerializeObject(init, Formatting.Indented);
             fileManager.Write(serializeData, fileManager.Combine(directory, "init.json"));
             entries.Clear();
@@ -185,7 +185,7 @@ namespace MIDE.Application
         }
         private void LoadExtension(string root, string path, string id, bool isEnabled)
         {
-            string extensionPath = fileManager.Combine(fileManager.GetPath(ApplicationPath.Extensions), path);
+            string extensionPath = fileManager.Combine(fileManager.GetPath(FileManager.EXTENSIONS), path);
             string configData = fileManager.TryRead(fileManager.Combine(extensionPath, "config.json"));
             if (configData == null)
             {

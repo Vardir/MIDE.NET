@@ -2,20 +2,20 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>api</AssemblyName>
-    <Authors>Andrew Satura</Authors>
+    <Authors>Vardir</Authors>
     <Company>Vardir Products</Company>
     <Product>MIDE API</Product>
     <Description>The API library to provide basic platform-independent classes to implement extensions that can be shared between applications on different platforms</Description>
-    <Copyright>© 2019 Andrew Satura</Copyright>
+    <Copyright>Copyright © 2019 Andrew Satura</Copyright>
     <PackageProjectUrl>https://github.com/Vardir/MIDE.NET/</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/Vardir/MIDE.NET/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseUrl></PackageLicenseUrl>
     <RepositoryUrl>https://github.com/Vardir/MIDE.NET/</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <NeutralLanguage>en</NeutralLanguage>
-    <LangVersion>7.3</LangVersion>
+    <LangVersion>8.0</LangVersion>
     <RootNamespace>MIDE</RootNamespace>
-    <Version>0.7.1</Version>
+    <Version>0.7.3</Version>
     <FileUpgradeFlags>40</FileUpgradeFlags>
     <UpgradeBackupLocation>E:\Projects\C#\Libs\MIDE.NET\MIDE.Kernel\Backup\MIDE.Standard\</UpgradeBackupLocation>
     <OldToolsVersion>2.0</OldToolsVersion>

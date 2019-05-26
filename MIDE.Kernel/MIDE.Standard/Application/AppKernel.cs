@@ -134,10 +134,9 @@ namespace MIDE.Application
         {
             if (AppLogger.EventsCount == 0)
                 return;
-            string folder = $"{fileManager.GetPath(ApplicationPath.Logs)}\\{TimeStarted.ToString("dd-M-yyyy HH-mm-ss")}\\";
-            string filename = $"{folder}log.txt";
+            string folder = $"{fileManager.GetPath(FileManager.LOGS)}\\{TimeStarted.ToString("dd-M-yyyy HH-mm-ss")}\\";
             fileManager.MakeFolder(folder);
-            AppLogger.SaveToFile(folder, filename, info: new[] { ApplicationName, Version });
+            AppLogger.SaveToFile(folder, "log.txt", info: new[] { ApplicationName, Version });
         }
         /// <summary>
         /// Stops all the current threads, releases all resources and closes the application kernel
@@ -224,7 +223,7 @@ namespace MIDE.Application
             AppLogger.PushDebug(null, "Loading assets");
             try
             {
-                string path = fileManager.Combine(fileManager[ApplicationPath.AppAssets],
+                string path = fileManager.Combine(fileManager[FileManager.ASSETS],
                                                   "glyphs",
                                                   (string)ConfigurationManager.Instance["theme"],
                                                   "config.json");
@@ -257,14 +256,14 @@ namespace MIDE.Application
                     fileManager.Delete(task.Origin);
                 if (task.Origin != null)
                     continue;
-                string path = fileManager.Combine(fileManager[ApplicationPath.Tasks], task.ToString() + i + ".bin");
+                string path = fileManager.Combine(fileManager[FileManager.TASKS], task.ToString() + i + ".bin");
                 fileManager.Serialize(task, path);
                 i++;
             }
         }
         private void LoadTasks()
         {
-            var files = fileManager.EnumerateFiles(fileManager.GetOrAddPath(ApplicationPath.Tasks, "root\\tasks\\"), "*.bin");
+            var files = fileManager.EnumerateFiles(fileManager.GetPath(FileManager.TASKS), "*.bin");
             foreach (var file in files)
             {
                 var task = fileManager.Deserialize<AppTask>(file);
@@ -292,7 +291,7 @@ namespace MIDE.Application
         }
         private void ApplyTaskAction(TaskActivationEvent activation)
         {
-            var path = fileManager[ApplicationPath.Tasks];
+            var path = fileManager[FileManager.TASKS];
             tasks.ForEach(at =>
             {
                 if (at.ActivationEvent != activation)
