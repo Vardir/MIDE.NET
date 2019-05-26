@@ -1,15 +1,16 @@
-﻿<?xml version="1.0"?>
-<package >
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>terminal</id>
+    <id>MIDE.Terminal</id>
     <version>1.0.0</version>
-    <title>Terminal</title>
-    <authors>Vardir</authors>
+    <title>MIDE Terminal</title>
+    <authors>Andrew Satura</authors>
     <owners>Vardir</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
     <description>A basic terminal for application</description>
-    <releaseNotes>First release.</releaseNotes>
-    <copyright>Copyright 2019 © Andrew Satura</copyright>
+    <releaseNotes>First major release.</releaseNotes>
+    <copyright>Copyright ©2019 Andrew Satura</copyright>
     <tags>mide extension terminal</tags>
   </metadata>
 </package>

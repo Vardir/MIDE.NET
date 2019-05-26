@@ -1,6 +1,4 @@
 {
-  "id": "gantt",
-  "description": "An extension to create Gantt diagrams",
   "self": "gantt.dll",
   "include": [
     {

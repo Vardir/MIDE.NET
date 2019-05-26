@@ -1,15 +1,20 @@
 ﻿<?xml version="1.0"?>
-<package >
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>gantt</id>
+    <id>MIDE.Gantt</id>
     <version>1.0.0</version>
-    <title>Gantt Chart</title>
-    <authors>Vardir</authors>
+    <title>MIDE Gantt Charts</title>
+    <authors>Andrew Satura</authors>
     <owners>Vardir</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
     <description>An extension to create Gantt diagrams</description>
-    <releaseNotes>First release.</releaseNotes>
-    <copyright>Copyright 2019 © Andrew Satura</copyright>
+    <releaseNotes>First major release.</releaseNotes>
+    <copyright>Copyright ©2019 Andrew Satura</copyright>
     <tags>mide extension gantt chart</tags>
+
+    <dependencies>
+      <dependency id="MIDE.NodeGraphs" version="1.0.0" />
+    </dependencies>
   </metadata>
 </package>

@@ -1,15 +1,16 @@
 <?xml version="1.0"?>
-<package >
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>nodegraphs</id>
+    <id>MIDE.NodeGraphs</id>
     <version>1.0.0</version>
-    <title>NodeGraphs</title>
-    <authors>Vardir</authors>
+    <title>MIDE Node Graphs</title>
+    <authors>Andrew Satura</authors>
     <owners>Vardir</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
     <description>A basic library which is used to create extensions for graphs with nodes</description>
-    <releaseNotes>First release.</releaseNotes>
-    <copyright>Copyright 2019 © Andrew Satura</copyright>
+    <releaseNotes>First major release.</releaseNotes>
+    <copyright>Copyright ©2019 Andrew Satura</copyright>
     <tags>mide extension nodes graphs</tags>
   </metadata>
 </package>

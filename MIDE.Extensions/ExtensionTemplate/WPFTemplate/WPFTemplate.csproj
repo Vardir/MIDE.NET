@@ -83,6 +83,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <Content Include="config.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -104,9 +107,9 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>set path="D:\Projects\C#\Libs\MIDE.NET\Publish\$(SolutionName)\\"
-if not exist %25path%25 mkdir %25path%25
-copy "$(TargetDir)$(TargetFileName)" %25path%25
-rem D:\Programs\nuget.exe pack %25path%25 -OutputDirectory D:\Projects\C#\Libs\MIDE.NET\Publish\</PostBuildEvent>
+    <PostBuildEvent>rem set path=$(SolutionDir)NuPkg\
+rem copy "$(TargetDir)$(TargetFileName)" %25path%25
+rem copy "$(TargetDir)config.json" %25path%25
+rem D:\Programs\nuget.exe pack %25path%25 -OutputDirectory D:\Server\Publish\</PostBuildEvent>
   </PropertyGroup>
 </Project>

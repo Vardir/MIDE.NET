@@ -1,15 +1,24 @@
 ﻿<?xml version="1.0"?>
-<package >
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>kerneltemplate</id>
+    <id>MIDE.ExtensionTEmplate</id>
     <version>1.0.0</version>
-    <title>Kernel Template</title>
-    <authors>Vardir</authors>
+    <title>MIDE Extension Template</title>
+    <authors>Andrew Satura</authors>
     <owners>Vardir</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>A template for creating extensions</description>
-    <releaseNotes>First release.</releaseNotes>
-    <copyright>Copyright 2019 © Andrew Satura</copyright>
-    <tags>mide extension template</tags>
+    <license type="expression">MIT</license>
+    <description>A basic extension for application</description>
+    <releaseNotes>First major release.</releaseNotes>
+    <copyright>Copyright ©2019 Andrew Satura</copyright>
+    <tags>mide extension</tags>
+
+    <!-- Project URL provides a link for the gallery -->
+    <projectUrl>http://github.com/contoso/UsefulStuff</projectUrl>
+
+    <!-- Dependencies are automatically installed when the package is installed -->
+    <dependencies>
+      <dependency id="Newtonsoft.Json" version="9.0" />
+    </dependencies>
   </metadata>
 </package>

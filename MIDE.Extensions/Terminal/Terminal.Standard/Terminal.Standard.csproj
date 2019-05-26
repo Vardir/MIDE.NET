@@ -4,21 +4,30 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Terminal</RootNamespace>
     <AssemblyName>terminal</AssemblyName>
-    <Authors>Vardir</Authors>
+    <Authors>Andrew Satura</Authors>
     <Company>Vardir Products</Company>
     <Product>MIDE Terminal</Product>
-    <Description>A simple terminal extension for MIDE .NET</Description>
+    <Description></Description>
     <Copyright>Copyright 2019 © Andrew Satura</Copyright>
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <PackageId>MIDE.Terminal</PackageId>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageLicenseExpression></PackageLicenseExpression>
+    <PackageIconUrl></PackageIconUrl>
+    <PackageTags></PackageTags>
+    <PackageReleaseNotes></PackageReleaseNotes>
+    <RepositoryType></RepositoryType>
+    <RepositoryUrl></RepositoryUrl>
+    <PackageProjectUrl></PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="config.json" />
+    <None Remove="icon.png" />
     <None Remove="Terminal.nuspec" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="config.json">
+    <Content Include="icon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Terminal.nuspec">
@@ -42,7 +51,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="set path=&quot;D:\Projects\C#\Libs\MIDE.NET\Publish\$(SolutionName)\\&quot;&#xD;&#xA;if not exist %25path%25 mkdir %25path%25&#xD;&#xA;copy &quot;$(TargetDir)$(TargetFileName)&quot; %25path%25&#xD;&#xA;copy &quot;$(TargetDir)FSharp.Core.dll&quot; %25path%25&#xD;&#xA;copy &quot;$(TargetDir)Parser.dll&quot; %25path%25&#xD;&#xA;copy &quot;$(TargetDir)mycmd.kernel.dll&quot; %25path%25&#xD;&#xA;copy &quot;$(TargetDir)config.json&quot; %25path%25&#xD;&#xA;copy &quot;$(TargetDir)Terminal.nuspec&quot; %25path%25" />
+    <Exec Command="set path=$(SolutionDir)NuPkg\&#xD;&#xA;if not exist %25path%25 mkdir %25path%25&#xD;&#xA;copy &quot;$(TargetDir)$(TargetFileName)&quot; %25path%25&#xD;&#xA;copy &quot;$(TargetDir)FSharp.Core.dll&quot; %25path%25&#xD;&#xA;copy &quot;$(TargetDir)Parser.dll&quot; %25path%25&#xD;&#xA;copy &quot;$(TargetDir)mycmd.kernel.dll&quot; %25path%25&#xD;&#xA;copy &quot;$(TargetDir)Terminal.nuspec&quot; %25path%25&#xD;&#xA;copy &quot;$(TargetDir)icon.png&quot; %25path%25" />
   </Target>
 
 </Project>

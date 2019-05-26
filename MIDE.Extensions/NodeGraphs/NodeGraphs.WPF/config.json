@@ -1,6 +1,4 @@
 {
-  "id": "nodegraphs",
-  "description": "A basic library which is used to create extensions for graphs with nodes",
   "self": "nodegraphs.dll",
   "include": [
     {

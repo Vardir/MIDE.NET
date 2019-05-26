@@ -4,22 +4,27 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>nodegraphs</AssemblyName>
     <RootNamespace>NodeGraphs</RootNamespace>
-    <Authors>Vardir</Authors>
-    <Company />
+    <Authors>Andrew Satura</Authors>
+    <Company>Vardir Products</Company>
     <Product>Node Graphs</Product>
-    <Copyright>Andrew Satura © 2019</Copyright>
-    <PackageTags>graph;nodes;standard</PackageTags>
+    <Copyright>Copyright ©2019 Andrew Satura</Copyright>
+    <PackageTags></PackageTags>
     <LangVersion>7.1</LangVersion>
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <PackageId>MIDE.NodeGraphs</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="config.json" />
+    <None Remove="icon.png" />
     <None Remove="NodeGraphs.nuspec" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="config.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="NodeGraphs.nuspec">
@@ -34,7 +39,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="set path=&quot;D:\Projects\C#\Libs\MIDE.NET\Publish\$(SolutionName)\\&quot;&#xD;&#xA;if not exist %25path%25 mkdir %25path%25&#xD;&#xA;copy &quot;$(TargetDir)$(TargetFileName)&quot; %25path%25&#xD;&#xA;copy &quot;$(TargetDir)config.json&quot; %25path%25&#xD;&#xA;copy &quot;$(ProjectDir)NodeGraphs.nuspec&quot; %25path%25" />
+    <Exec Command="set path=$(SolutionDir)NuPkg\&#xD;&#xA;if not exist %25path%25 mkdir %25path%25&#xD;&#xA;copy &quot;$(TargetDir)$(TargetFileName)&quot; %25path%25&#xD;&#xA;copy &quot;$(ProjectDir)NodeGraphs.nuspec&quot; %25path%25&#xD;&#xA;copy &quot;$(ProjectDir)icon.png&quot; %25path%25" />
   </Target>
 
 </Project>

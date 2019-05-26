@@ -160,6 +160,8 @@ PublishScripts/
 *.nuget.props
 *.nuget.targets
 
+NuPkg/
+
 # Microsoft Azure Build Output
 csx/
 *.build.csdef
