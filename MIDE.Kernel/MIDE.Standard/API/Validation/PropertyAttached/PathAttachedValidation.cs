@@ -1,4 +1,4 @@
-﻿using MIDE.FileSystem;
+﻿using MIDE.Application;
 
 namespace MIDE.API.Validations
 {
@@ -18,7 +18,7 @@ namespace MIDE.API.Validations
                 AddError(propertyName, "Path can not be null or empty", value);
                 return;
             }
-            if (!FileManager.Instance.Exists(value))
+            if (!AppKernel.Instance.FileManager.Exists(value))
                 AddError(propertyName, "Path does not exist", value);
         }
     }

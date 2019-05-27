@@ -7,6 +7,7 @@ using MIDE.Application;
 using MIDE.Schemes.JSON;
 using System.Collections.Generic;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Diagnostics;
 
 namespace MIDE.FileSystem
 {
@@ -23,8 +24,6 @@ namespace MIDE.FileSystem
         public const string TASKS = "tasks";
         public const string LOGS = "logs";
         public const string ROOT = "root";
-
-        public static FileManager Instance { get; set; }
 
         public string this[string pathId]
         {
@@ -102,6 +101,32 @@ namespace MIDE.FileSystem
             }
         }
 
+        /// <summary>
+        /// Asynchronously executes an external command or application using the given path and arguments 
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="arguments"></param>
+        /// <param name="outputHandler">A delegate to method to handle process' output messages, can be omitted</param>
+        /// <param name="errorHandler">A delegate to method to handle process' error messages, can be omitted</param>
+        /// <returns></returns>
+        public virtual void ExecuteExternalApplicationAsync(string path, string arguments,
+                                                            DataReceivedEventHandler outputHandler, DataReceivedEventHandler errorHandler)
+        {
+            Process process = new Process();
+            process.StartInfo.FileName = path;
+            process.StartInfo.Arguments = arguments;
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardError = true;
+            process.StartInfo.CreateNoWindow = true;
+            if (outputHandler != null)
+                process.OutputDataReceived += outputHandler;
+            if (errorHandler != null)
+                process.ErrorDataReceived += errorHandler;
+            process.Start();
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+        }
         /// <summary>
         /// Writes the given string to the given file
         /// </summary>
@@ -243,6 +268,7 @@ namespace MIDE.FileSystem
             return paths[key];
         }
         public string GetAbsolutePath(string path) => Path.GetFullPath(path);
+        public string GetParentDirectory(string path) => Path.GetDirectoryName(path);
 
         /// <summary>
         /// Verifies if the given path exists, it can be either file or directory
@@ -262,6 +288,27 @@ namespace MIDE.FileSystem
         /// <param name="path"></param>
         /// <returns></returns>
         public virtual bool IsDirectory(string path) => Directory.Exists(path);
+        /// <summary>
+        /// Synchronously executes an external command or application using the given path and arguments 
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="arguments"></param>
+        /// <returns></returns>
+        public virtual ExternalExecutionResult ExecuteExternalApplication(string path, string arguments)
+        {
+            Process process = new Process();
+            process.StartInfo.FileName = path;
+            process.StartInfo.Arguments = arguments;
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardError = true;
+            process.StartInfo.CreateNoWindow = true;
+            process.Start();
+            string output = process.StandardOutput.ReadToEnd();
+            string err = process.StandardError.ReadToEnd();
+            process.WaitForExit();
+            return new ExternalExecutionResult(process.ExitCode, output, err);
+        }
         /// <summary>
         /// Maps the given path to application installation path
         /// </summary>
@@ -429,6 +476,20 @@ namespace MIDE.FileSystem
                 AppKernel.Instance.AppLogger.PushError(ex, this, "Can not serialize data");
             }
             return null;
+        }
+    }
+
+    public struct ExternalExecutionResult
+    {
+        public readonly int exitCode;
+        public readonly string output;
+        public readonly string errors;
+
+        public ExternalExecutionResult(int exitCode, string output, string errors)
+        {
+            this.output = output;
+            this.errors = errors;
+            this.exitCode = exitCode;
         }
     }
 }

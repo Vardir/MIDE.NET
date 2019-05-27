@@ -23,7 +23,7 @@ namespace MIDE.Application
         private ProjectManager()
         {
             uiManager = AppKernel.Instance.UIManager;
-            fileManager = FileManager.Instance;
+            fileManager = AppKernel.Instance.FileManager;
             pjObjectClasses = new Dictionary<string, ProjectObjectClass>()
             {
                 ["folder"] = new ProjectObjectClass("folder", FileSystemInfo.FOLDER_EXTENSION, new Glyph("\uf07b") { AlternateColor = Color.Orange }),

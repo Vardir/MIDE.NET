@@ -1,11 +1,9 @@
 ﻿using System;
 using MIDE.Application;
-using MIDE.API.Components;
-using MIDE.Application.Attrubites;
-using MIDE.FileSystem;
-using MIDE.API.Extensibility;
 using System.Threading;
+using MIDE.API.Extensibility;
 using MIDE.ExtensionsInstaller;
+using MIDE.Application.Attrubites;
 
 [assembly: ApplicationProperties("consoletest")]
 
@@ -21,7 +19,7 @@ namespace MIDE.Kernel.ConsoleTest
         public static void Main(string[] args)
         {
             Console.ReadKey();
-            FileManager.Instance = new WinFileManager();
+            InstallerKernel.Instance.FileManager = new WinFileManager();
             Program program = new Program();
 
             InstallerKernel.Instance.Execute();

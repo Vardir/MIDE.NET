@@ -1,12 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using MIDE.API.Visuals;
+using System.Collections.Generic;
 
-namespace MIDE.API.Visuals
+namespace MIDE.FileSystem
 {
-    public class GlyphPool
+    public sealed class GlyphPool
     {
-        private static GlyphPool instance;
-        public static GlyphPool Instance => instance ?? (instance = new GlyphPool());
-
         private Dictionary<string, Glyph> pool;
 
         public Glyph this[string key]
@@ -19,7 +17,7 @@ namespace MIDE.API.Visuals
             }
         }
 
-        private GlyphPool ()
+        public GlyphPool()
         {
             pool = new Dictionary<string, Glyph>();
         }

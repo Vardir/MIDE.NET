@@ -1,4 +1,4 @@
-﻿using MIDE.FileSystem;
+﻿using MIDE.Application;
 using MIDE.API.Bindings;
 using System.Collections.Generic;
 using MIDE.API.Components.Complex;
@@ -57,7 +57,7 @@ namespace MIDE.API.Components
         }
 
         public override string GetData() => SelectedFile.Text;
-        protected override bool Validate() => FileManager.Instance.IsFile(SelectedFile.Text);
+        protected override bool Validate() => AppKernel.Instance.FileManager.IsFile(SelectedFile.Text);
         protected override IEnumerable<DialogResult> GetValidationIgnoredResults() => validationIgnored;
     }
 }

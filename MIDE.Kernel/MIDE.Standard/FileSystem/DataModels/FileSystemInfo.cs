@@ -16,7 +16,6 @@ namespace MIDE.FileSystem
         private static FileSystemInfo instance;
         public static FileSystemInfo Instance => instance ?? (instance = new FileSystemInfo());
 
-        private FileManager fileManager;
         private Dictionary<string, FSObjectClass> fsObjectClasses;
 
         public const string FILE_EXTENSION_PATTERN = @"^\.[A-z0-9]+$";
@@ -37,7 +36,6 @@ namespace MIDE.FileSystem
         
         private FileSystemInfo()
         {
-            fileManager = FileManager.Instance;
             fsObjectClasses = new Dictionary<string, FSObjectClass>()
             {
                 ["drive"]  = new FSObjectClass("drive", DRIVE_EXTENSION),
@@ -108,7 +106,7 @@ namespace MIDE.FileSystem
         public static LinkedList<DirectoryItem> GetDirectoryContents(string fullPath, string searchPattern = null)
         {
             var items = new LinkedList<DirectoryItem>();
-            if (!FileManager.Instance.IsDirectory(fullPath))
+            if (!AppKernel.Instance.FileManager.IsDirectory(fullPath))
                 return items;
             try
             {
@@ -143,6 +141,7 @@ namespace MIDE.FileSystem
 
         private void Initialize()
         {
+            var fileManager = AppKernel.Instance.FileManager;
             string fileData = fileManager.ReadOrCreate(fileManager.GetFilePath(FileManager.ASSETS, "file-system-items.json"),
                                                        "{ \"file-extensions\": null, \"file-editors\": null }");
             FileSystemItemParameters parameters = JsonConvert.DeserializeObject<FileSystemItemParameters>(fileData);
@@ -156,7 +155,7 @@ namespace MIDE.FileSystem
         {
             foreach (var kvp in fsObjectClasses)
             {
-                kvp.Value.ObjectGlyph = GlyphPool.Instance[kvp.Key];
+                kvp.Value.ObjectGlyph = AssetManager.Instance.GlyphPool[kvp.Key];
             }
         }
         private void LoadFileExtensions(FileSystemItemParameters parameters)

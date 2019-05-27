@@ -17,6 +17,7 @@ namespace MIDE.API.Components
     {
         private bool _pushHistory;
         private int _currentHistoryIndex;
+        private GlyphPool glyphPool;
 
         public int CurrentHistoryIndex
         {
@@ -37,7 +38,8 @@ namespace MIDE.API.Components
         {
             _pushHistory = true;
             BrowseHistory = new ObservableCollection<string>();
-            
+            glyphPool = AssetManager.Instance.GlyphPool;
+
             InitializeComponents();
             IsSealed = true;
         }
@@ -52,7 +54,7 @@ namespace MIDE.API.Components
         {            
             SearchBox = new ActionTextBox("search");
             SearchBox.ActionButton.Caption = null;
-            SearchBox.ActionButton.ButtonGlyph = GlyphPool.Instance["search"];
+            SearchBox.ActionButton.ButtonGlyph = glyphPool["search"];
             SearchBox.ActionButton.PressCommand = new RelayCommand(ShowCurrent);
             SearchBox.Validations.Add(new PathValidation());
 
@@ -61,17 +63,17 @@ namespace MIDE.API.Components
             ToolbarButton homeButton = new ToolbarButton("home");
             homeButton.Caption = null;
             homeButton.Order = 99;
-            homeButton.ButtonGlyph = GlyphPool.Instance["home"];
+            homeButton.ButtonGlyph = glyphPool["home"];
             homeButton.PressCommand = new RelayCommand(GoHome);
             ToolbarButton backButton = new ToolbarButton("back");
             backButton.Caption = null;
             backButton.Order = 101;
-            backButton.ButtonGlyph = GlyphPool.Instance["back"];
+            backButton.ButtonGlyph = glyphPool["back"];
             backButton.PressCommand = new RelayCommand(GoBack);
             ToolbarButton forwardButton = new ToolbarButton("forward");
             forwardButton.Caption = null;
             forwardButton.Order = 100;
-            forwardButton.ButtonGlyph = GlyphPool.Instance["forward"];
+            forwardButton.ButtonGlyph = glyphPool["forward"];
             forwardButton.PressCommand = new RelayCommand(GoForward);
 
             var backButtonBinding1 = new ObjectBinding<ObservableCollection<string>, ToolbarButton>(BrowseHistory, backButton);
@@ -285,9 +287,9 @@ namespace MIDE.API.Components
                 .SelectedItems.FirstWith(item => (item as FileExplorerItem).ItemClass == "folder", item => item as FileExplorerItem);
             if (fei == null)
                 return;
-            string file = FileManager.Instance.Combine(fei.FullPath, name);
+            string file = AppKernel.Instance.FileManager.Combine(fei.FullPath, name);
             string template = ProjectManager.Instance.FindBy(IO.Path.GetExtension(name))?.ObjectTemplate;
-            string message = FileManager.Instance.MakeFile(file, template);
+            string message = AppKernel.Instance.FileManager.MakeFile(file, template);
             if (message != null)
             {
                 var messageBox = new MessageDialogBox("Error", message);
@@ -308,8 +310,8 @@ namespace MIDE.API.Components
                 .SelectedItems.FirstWith(item => (item as FileExplorerItem).ItemClass != "file", item => item as FileExplorerItem);
             if (fei == null)
                 return;
-            string folder = FileManager.Instance.Combine(fei.FullPath, name);
-            string message = FileManager.Instance.MakeFolder(folder);
+            string folder = AppKernel.Instance.FileManager.Combine(fei.FullPath, name);
+            string message = AppKernel.Instance.FileManager.MakeFolder(folder);
             if (message != null)
             {
                 var messageBox = new MessageDialogBox("Error", message);
@@ -326,7 +328,7 @@ namespace MIDE.API.Components
                 if (!(item is FileExplorerItem fileExplorerItem))
                     continue;
                 var parent = fileExplorerItem.Parent;
-                string message = FileManager.Instance.Delete(fileExplorerItem.FullPath);
+                string message = AppKernel.Instance.FileManager.Delete(fileExplorerItem.FullPath);
                 if (message != null)
                 {
                     var messageBox = new MessageDialogBox("Error", message);

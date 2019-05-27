@@ -1,4 +1,4 @@
-﻿using MIDE.FileSystem;
+﻿using MIDE.Application;
 using System.Collections.Generic;
 
 namespace MIDE.API.Validations
@@ -17,7 +17,7 @@ namespace MIDE.API.Validations
                 yield return ("Path can not be null or empty", value);
                 yield break;
             }
-            if (!FileManager.Instance.Exists(value))
+            if (!AppKernel.Instance.FileManager.Exists(value))
                 yield return ("Path does not exist", value);
         }
     }

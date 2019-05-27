@@ -75,6 +75,7 @@ namespace MIDE.API.Components
                 return "id";
             string s = str.ToLower();
             s = s.Replace('_', '-');
+            s = s.Replace('.', '-');
             s = Regex.Replace(s, @"[^a-z0-9\-]", string.Empty);
             s = s.Trim();
             s = s.TrimStart('0'.To('9'));

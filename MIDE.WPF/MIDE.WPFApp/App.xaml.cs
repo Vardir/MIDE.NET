@@ -44,7 +44,7 @@ namespace MIDE.WPF
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            FileManager.Instance = new WinFileManager();
+            Kernel.FileManager = new WinFileManager();
             Setup();
             Kernel.Start();
             LoadTheme();

@@ -15,18 +15,17 @@ namespace MIDE.ExtensionsInstaller
         private static InstallerKernel instance;
         public static InstallerKernel Instance => instance ?? (instance = new InstallerKernel());
 
-        private FileManager fileManager;
         private PackageManager uninstallManager;
         private PackageManager installManager;
 
         public DateTime TimeStarted { get; private set; }
         public Logger EventLogger { get; }
+        public FileManager FileManager { get; set; }
 
         public event Action KernelStopped;
 
         private InstallerKernel()
         {
-            fileManager = FileManager.Instance;
             TimeStarted = DateTime.UtcNow;
             EventLogger = new Logger(LoggingLevel.ALL, true);
             EventLogger.FatalEventRegistered += EventLogger_FatalEventRegistered;
@@ -34,13 +33,18 @@ namespace MIDE.ExtensionsInstaller
         
         public void Execute()
         {
+            if (FileManager == null)
+            {
+                EventLogger.PushFatal("File manager is not attached to application");
+                return;
+            }
             LoadConfigurations();
             FetchActions();
             ApplyActions();
         }
         public void Exit()
         {
-            fileManager.Delete(fileManager["installer-config"]);
+            FileManager.Delete(FileManager["installer-config"]);
             EventLogger.PushInfo("Kernel stopped");
             EventLogger.PushInfo("Closing application");
             SaveLog();
@@ -53,7 +57,7 @@ namespace MIDE.ExtensionsInstaller
             ApplicationConfig appConfig = null;
             try
             {
-                string configData = fileManager.ReadOrCreate("config.json", $"{{ }}");
+                string configData = FileManager.ReadOrCreate("config.json", $"{{ }}");
                 appConfig = JsonConvert.DeserializeObject<ApplicationConfig>(configData);
             }
             catch (Exception ex)
@@ -62,14 +66,14 @@ namespace MIDE.ExtensionsInstaller
             }
             EventLogger.PushInfo("Configurations loaded");
             string path = appConfig.Paths.FirstOrDefault(path => path.Key == "extensions")?.Value ?? "root\\extensions\\";
-            path = fileManager.GetAbsolutePath(path);
-            fileManager.AddOrUpdate(FileManager.EXTENSIONS, path);
-            fileManager.AddOrUpdate("installer-config", fileManager.Combine(path, "installer.json"));
-            fileManager.AddOrUpdate("installer-log", fileManager.Combine(path, "installer"));
-            if (fileManager.IsDirectory(fileManager["installer-log"]))
-                fileManager.MakeFolder(fileManager["installer-log"]);
+            path = FileManager.GetAbsolutePath(path);
+            FileManager.AddOrUpdate(FileManager.EXTENSIONS, path);
+            FileManager.AddOrUpdate("installer-config", FileManager.Combine(path, "installer.json"));
+            FileManager.AddOrUpdate("installer-log", FileManager.Combine(path, "installer"));
+            if (FileManager.IsDirectory(FileManager["installer-log"]))
+                FileManager.MakeFolder(FileManager["installer-log"]);
             else
-                fileManager.CleanDirectory(fileManager["installer-log"]);
+                FileManager.CleanDirectory(FileManager["installer-log"]);
 
             var repository = PackageRepositoryFactory.Default.CreateRepository(path);
             uninstallManager = new PackageManager(repository, path);
@@ -79,7 +83,7 @@ namespace MIDE.ExtensionsInstaller
             EventLogger.PushInfo("Fetching actions");
             try
             {
-                string data = fileManager.TryRead(fileManager["installer-config"]);
+                string data = FileManager.TryRead(FileManager["installer-config"]);
                 if (data == null)
                     return;
                 var config = JsonConvert.DeserializeObject<ExtensionInstall[]>(data);
@@ -116,7 +120,7 @@ namespace MIDE.ExtensionsInstaller
         {
             if (EventLogger.EventsCount == 0)
                 return;
-            EventLogger.SaveToFile(fileManager["installer-log"], "log.txt", 
+            EventLogger.SaveToFile(FileManager["installer-log"], "log.txt", 
                                    info: new[] { "Extensions installer", $"Installation finished at {DateTime.UtcNow}" });
         }
 
@@ -186,7 +190,7 @@ namespace MIDE.ExtensionsInstaller
                 var repository = PackageRepositoryFactory.Default.CreateRepository(path);
                 if (repository == null)
                     return null;
-                return (installManager = new PackageManager(repository, fileManager[FileManager.EXTENSIONS]));
+                return (installManager = new PackageManager(repository, FileManager[FileManager.EXTENSIONS]));
             }
             return installManager;
         }

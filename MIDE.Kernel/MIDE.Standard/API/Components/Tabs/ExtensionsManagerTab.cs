@@ -1,7 +1,7 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using MIDE.FileSystem;
 using MIDE.Application;
-using MIDE.API.Visuals;
 using MIDE.API.Commands;
 using MIDE.API.ViewModels;
 using System.Collections.ObjectModel;
@@ -33,7 +33,7 @@ namespace MIDE.API.Components
             RestoreSelected = new Button("restore");
             RestoreSelected.PressCommand = new RelayCommand(RestoreSelectedEtension);
             ToolbarButton refresh = new ToolbarButton("refresh");
-            refresh.ButtonGlyph = GlyphPool.Instance["refresh"];
+            refresh.ButtonGlyph = AssetManager.Instance.GlyphPool["refresh"];
             refresh.PressCommand = new RelayCommand(Refresh);
 
             AddChild(Install);
@@ -68,11 +68,11 @@ namespace MIDE.API.Components
             var (dialogResult, path) = Kernel.UIManager.OpenDialog(new OpenFileDialogBox("Select package file", "*.nupkg"));
             if (dialogResult == DialogResult.Ok)
             {
-                string directory = FileManager.Instance.GetFilePath(path);
+                string directory = Kernel.FileManager.GetFilePath(path);
                 string id = Path.GetFileNameWithoutExtension(path);
-                string error = ExtensionsManager.Instance.Install(directory, id);
-                if (error != null)
-                    Kernel.UIManager.OpenDialog(new MessageDialogBox("Installation error", error));
+                //string error = ExtensionsManager.Instance.Install(directory, id);
+                //if (error != null)
+                //    Kernel.UIManager.OpenDialog(new MessageDialogBox("Installation error", error));
             }
         }
         private void UninstallSelectedExtension()
@@ -120,7 +120,7 @@ namespace MIDE.API.Components
             }
         }
         public string Name { get; }
-        public string Version { get; }
+        public Version Version { get; }
         public string Description { get; }
         public string[] Dependencies { get; }
         public ObservableCollection<string> Messages { get; }

@@ -89,7 +89,7 @@ namespace MIDE.WPF.Services
             try
             {
                 id = ConfigurationManager.Instance["theme"] as string ?? "default";
-                string data = FileManager.Instance.ReadOrCreate($"root\\themes\\{id}.json", "{}");
+                string data = AppKernel.Instance.FileManager.ReadOrCreate($"root\\themes\\{id}.json", "{}");
                 var items = JsonConvert.DeserializeObject<Dictionary<string, string>>(data);
                 colors = new ResourceDictionary();
                 foreach (var kvp in items)

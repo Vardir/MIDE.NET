@@ -1,11 +1,8 @@
 ﻿using MIDE.API.Components;
 using MIDE.API.Extensibility;
-using MIDE.Application.Attrubites;
 
 namespace KernelTemplate
 {
-    [Dependency(Version = "x.x.x", Type = DependencyType.ApplicationKernel)]
-    [ExtensionProperties(Version = "1.0.0")]
     public class TemplateExtension : AppExtension
     {
         public TemplateExtension(string id, bool isEnabled) : base(id, isEnabled)

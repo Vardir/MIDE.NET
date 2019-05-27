@@ -6,7 +6,6 @@ namespace MIDE.Application.Attrubites
     public class ApplicationPropertiesAttribute : Attribute
     {
         public const string APP_NAME_PATTERN = @"^[\w]+$";
-        public const string VERSION_PATTERN = @"^[0-9]\.[0-9]\.[0-9]$";
 
         public string ApplicationName { get; }
 

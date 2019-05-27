@@ -1,11 +1,8 @@
 ﻿using MIDE.API.Components;
 using MIDE.API.Extensibility;
-using MIDE.Application.Attrubites;
 
 namespace GanttChart
 {
-    [Dependency(Version = "0.7.1", Type = DependencyType.ApplicationKernel)]
-    [ExtensionProperties(Version = "1.0.0")]
     public class GanttChartExtension : AppExtension
     {
         public GanttChartExtension(string id, bool isEnabled) : base(id, isEnabled)

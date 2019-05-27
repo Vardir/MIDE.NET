@@ -71,14 +71,14 @@ namespace MIDE.Application.Logging
                         builder.Append("  - [");
                         builder.Append(binIndex + 1);
                         builder.Append(".bin]");
-                        string binFile = FileManager.Instance.Combine(folder, (binIndex + 1).ToString());
-                        FileManager.Instance.Serialize(serializationData[i], $"{binFile}.bin");
+                        string binFile = AppKernel.Instance.FileManager.Combine(folder, (binIndex + 1).ToString());
+                        AppKernel.Instance.FileManager.Serialize(serializationData[i], $"{binFile}.bin");
                         binIndex++;
                     }
                 }
                 builder.AppendLine();
             }
-            FileManager.Instance.Write(builder.ToString(), FileManager.Instance.Combine(folder, fileName));
+            AppKernel.Instance.FileManager.Write(builder.ToString(), AppKernel.Instance.FileManager.Combine(folder, fileName));
         }
 
         /// <summary>

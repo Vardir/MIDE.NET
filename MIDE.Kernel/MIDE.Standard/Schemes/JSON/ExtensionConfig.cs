@@ -7,16 +7,12 @@ namespace MIDE.Schemes.JSON
     [JsonObject(MemberSerialization.OptIn)]
     public class ExtensionConfig
     {
-        [JsonRequired]
-        [JsonProperty(PropertyName = "id")]
-        public string Id { get; set; }
+        [JsonProperty(PropertyName = "enabled")]
+        public bool IsEnabled { get; set; }
 
         [JsonRequired]
         [JsonProperty(PropertyName = "self")]
         public string DllPath { get; set; }
-
-        [JsonProperty(PropertyName = "description")]
-        public string Description { get; set; }
 
         [JsonProperty(PropertyName = "assembly_preload")]
         public string[] PreloadedAssemblies { get; set; }

@@ -26,7 +26,7 @@ namespace MIDE.API.Components
         
         public CreateProjectDialogBox(string title) : base(title)
         {
-            fileManager = FileManager.Instance;
+            fileManager = AppKernel.Instance.FileManager;
             InitializeComponents();
             LoadTemplates();
         }

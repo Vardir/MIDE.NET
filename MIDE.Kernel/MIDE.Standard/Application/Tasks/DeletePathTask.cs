@@ -1,5 +1,4 @@
 ﻿using System;
-using MIDE.FileSystem;
 
 namespace MIDE.Application.Tasks
 {
@@ -11,17 +10,16 @@ namespace MIDE.Application.Tasks
         public DeletePathTask(TaskRepetitionMode repetitionMode, string eventName) : base(repetitionMode, eventName)
         {
         }
-
         public DeletePathTask(TaskActivationEvent activationEvent, TaskRepetitionMode repetitionMode, string eventName = null) : base(activationEvent, repetitionMode, eventName)
         {
         }
 
         public override void Run(params object[] args)
         {
-            if (FileManager.Instance.IsFile(Path))
-                FileManager.Instance.Delete(Path);
-            else if (FileManager.Instance.IsDirectory(Path))
-                FileManager.Instance.DeleteDirectory(Path);
+            if (AppKernel.Instance.FileManager.IsFile(Path))
+                AppKernel.Instance.FileManager.Delete(Path);
+            else if (AppKernel.Instance.FileManager.IsDirectory(Path))
+                AppKernel.Instance.FileManager.DeleteDirectory(Path);
         }
     }
 }
