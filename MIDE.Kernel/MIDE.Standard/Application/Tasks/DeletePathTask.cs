@@ -1,4 +1,5 @@
 ﻿using System;
+using MIDE.FileSystem;
 
 namespace MIDE.Application.Tasks
 {
@@ -16,10 +17,11 @@ namespace MIDE.Application.Tasks
 
         public override void Run(params object[] args)
         {
-            if (AppKernel.Instance.FileManager.IsFile(Path))
-                AppKernel.Instance.FileManager.Delete(Path);
-            else if (AppKernel.Instance.FileManager.IsDirectory(Path))
-                AppKernel.Instance.FileManager.DeleteDirectory(Path);
+            var fileManager = FileManager.Instance;
+            if (fileManager.IsFile(Path))
+                fileManager.Delete(Path);
+            else if (fileManager.IsDirectory(Path))
+                fileManager.DeleteDirectory(Path);
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using MIDE.FileSystem;
 
 namespace MIDE.API.Components
@@ -24,7 +23,7 @@ namespace MIDE.API.Components
         }
         public void ShowProperties(string path)
         {
-            if (!Kernel.FileManager.Exists(path))
+            if (!FileManager.Instance.Exists(path))
                 throw new ArgumentException("Invalid path given", nameof(path));
 
             //var array = FileManager.ExtractProperties(path).ToArray();

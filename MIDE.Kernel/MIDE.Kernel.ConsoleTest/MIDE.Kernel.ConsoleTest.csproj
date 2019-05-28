@@ -54,7 +54,7 @@
   <ItemGroup>
     <None Include="App.config" />
     <Compile Include="Services\WindowsClipboard.cs" />
-    <Compile Include="Services\WinFileManager.cs" />
+    <Compile Include="Services\WinFileResolver.cs" />
     <Content Include="config.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

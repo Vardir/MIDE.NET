@@ -1,29 +1,41 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using System.Linq;
+using System.Text;
 using MIDE.Helpers;
 using MIDE.Application;
 using MIDE.Schemes.JSON;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Diagnostics;
 
 namespace MIDE.FileSystem
 {
-    public abstract class FileManager
+    public sealed class FileManager
     {
-        protected Dictionary<string, string> paths;
+        private IFileResolver fileResolver;
+        private Dictionary<string, string> paths;
 
-        public const string PROJECTS = "projects";
-        public const string SETTINGS = "settings";
-        public const string EXTENSIONS = "extensions";
-        public const string TEMPLATES = "templates";
-        public const string ASSETS = "assets";
-        public const string THEMES = "themes";
-        public const string TASKS = "tasks";
+        #region Common Paths
         public const string LOGS = "logs";
         public const string ROOT = "root";
+        public const string TASKS = "tasks";
+        public const string ASSETS = "assets";
+        public const string THEMES = "themes";
+        public const string PROJECTS = "projects";
+        public const string SETTINGS = "settings";
+        public const string TEMPLATES = "templates";
+        public const string EXTENSIONS = "extensions";
+        #endregion
+
+        private static FileManager instance;
+        public static FileManager Instance => instance ?? (instance = new FileManager());
+
+        public IFileResolver FileResolver
+        {
+            get => fileResolver ?? (fileResolver = DefaultPathResolver.Instance);
+            set => fileResolver = value;
+        }
 
         public string this[string pathId]
         {
@@ -35,7 +47,7 @@ namespace MIDE.FileSystem
             }
         }
 
-        public FileManager()
+        private FileManager()
         {
             paths = new Dictionary<string, string>();
             GetPath(PROJECTS);
@@ -100,7 +112,6 @@ namespace MIDE.FileSystem
                 AddOrUpdate(path.Key, path.Value);
             }
         }
-
         /// <summary>
         /// Asynchronously executes an external command or application using the given path and arguments 
         /// </summary>
@@ -109,42 +120,29 @@ namespace MIDE.FileSystem
         /// <param name="outputHandler">A delegate to method to handle process' output messages, can be omitted</param>
         /// <param name="errorHandler">A delegate to method to handle process' error messages, can be omitted</param>
         /// <returns></returns>
-        public virtual void ExecuteExternalApplicationAsync(string path, string arguments,
-                                                            DataReceivedEventHandler outputHandler, DataReceivedEventHandler errorHandler)
+        public void ExecuteExternalApplicationAsync(string path, string arguments,
+                                                           DataReceivedEventHandler outputHandler, DataReceivedEventHandler errorHandler)
         {
-            Process process = new Process();
-            process.StartInfo.FileName = path;
-            process.StartInfo.Arguments = arguments;
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.RedirectStandardError = true;
-            process.StartInfo.CreateNoWindow = true;
-            if (outputHandler != null)
-                process.OutputDataReceived += outputHandler;
-            if (errorHandler != null)
-                process.ErrorDataReceived += errorHandler;
-            process.Start();
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
+            FileResolver.ExecuteExternalApplicationAsync(path, arguments, outputHandler, errorHandler);
         }
         /// <summary>
         /// Writes the given string to the given file
         /// </summary>
         /// <param name="data"></param>
         /// <param name="path"></param>
-        public virtual void Write(string data, string path) => File.WriteAllText(path, data);
+        public void Write(string data, string path) => File.WriteAllText(path, data);
         /// <summary>
         /// Writes the given lines of text to the given file
         /// </summary>
         /// <param name="data"></param>
         /// <param name="path"></param>
-        public virtual void Write(string[] data, string path) => File.WriteAllLines(path, data);
+        public void Write(string[] data, string path) => File.WriteAllLines(path, data);
         /// <summary>
         /// Copies all the files and subdirectories from the source directory to the given destination
         /// </summary>
         /// <param name="source"></param>
         /// <param name="destination"></param>
-        public virtual void Copy(string source, string destination)
+        public void Copy(string source, string destination)
         {
             if (!Directory.Exists(source))
                 return;
@@ -172,7 +170,7 @@ namespace MIDE.FileSystem
         /// </summary>
         /// <param name="data"></param>
         /// <param name="path"></param>
-        public virtual void Serialize(object data, string path)
+        public void Serialize(object data, string path)
         {
             if (data == null)
                 File.WriteAllText(path, "<null>");
@@ -197,7 +195,7 @@ namespace MIDE.FileSystem
         /// Cleans all the contents of the given directory
         /// </summary>
         /// <param name="path"></param>
-        public virtual void CleanDirectory(string path)
+        public void CleanDirectory(string path)
         {
             if (!IsDirectory(path))
                 return;
@@ -275,58 +273,31 @@ namespace MIDE.FileSystem
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public virtual bool Exists(string path) => File.Exists(path) || Directory.Exists(path);
+        public bool Exists(string path) => File.Exists(path) || Directory.Exists(path);
         /// <summary>
         /// Verifies if the given file exists
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public virtual bool IsFile(string path) => File.Exists(path);
+        public bool IsFile(string path) => File.Exists(path);
         /// <summary>
         /// Verifies if the given directory exists
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public virtual bool IsDirectory(string path) => Directory.Exists(path);
-        /// <summary>
-        /// Synchronously executes an external command or application using the given path and arguments 
-        /// </summary>
-        /// <param name="path"></param>
-        /// <param name="arguments"></param>
-        /// <returns></returns>
-        public virtual ExternalExecutionResult ExecuteExternalApplication(string path, string arguments)
-        {
-            Process process = new Process();
-            process.StartInfo.FileName = path;
-            process.StartInfo.Arguments = arguments;
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.RedirectStandardError = true;
-            process.StartInfo.CreateNoWindow = true;
-            process.Start();
-            string output = process.StandardOutput.ReadToEnd();
-            string err = process.StandardError.ReadToEnd();
-            process.WaitForExit();
-            return new ExternalExecutionResult(process.ExitCode, output, err);
-        }
-        /// <summary>
-        /// Maps the given path to application installation path
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        public abstract string MapPath(string path);
+        public bool IsDirectory(string path) => Directory.Exists(path);
         /// <summary>
         /// Tries to load bytes from the given file and returns null if file does not exist
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public virtual byte[] TryReadBytes(string path)
+        public byte[] TryReadBytes(string path)
         {
             if (!File.Exists(path))
                 return null;
             return File.ReadAllBytes(path);
         }
-        public virtual string GetFilePath(string file)
+        public string GetFilePath(string file)
         {
             if (!File.Exists(file))
                 return null;
@@ -337,7 +308,7 @@ namespace MIDE.FileSystem
         /// </summary>
         /// <param name="filePath"></param>
         /// <returns></returns>
-        public virtual string TryRead(string filePath)
+        public string TryRead(string filePath)
         {
             if (!File.Exists(filePath))
                 return null;
@@ -348,7 +319,7 @@ namespace MIDE.FileSystem
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public virtual string ExtractName(string path)
+        public string ExtractName(string path)
         {
             if (File.Exists(path))
                 return Path.GetFileName(path);
@@ -361,7 +332,7 @@ namespace MIDE.FileSystem
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public virtual string Delete(string path)
+        public string Delete(string path)
         {
             if (File.Exists(path))
                 File.Delete(path);
@@ -378,7 +349,7 @@ namespace MIDE.FileSystem
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public virtual string MakeFolder(string path)
+        public string MakeFolder(string path)
         {
             if (!Directory.Exists(path))
             {
@@ -394,7 +365,7 @@ namespace MIDE.FileSystem
         /// <param name="path"></param>
         /// <param name="templatePath"></param>
         /// <returns></returns>
-        public virtual string MakeFile(string path, string templatePath)
+        public string MakeFile(string path, string templatePath)
         {
             if (File.Exists(path))
                 return "Duplicate file name";
@@ -417,7 +388,7 @@ namespace MIDE.FileSystem
         /// <param name="filePath"></param>
         /// <param name="defaultContent"></param>
         /// <returns></returns>
-        public virtual string ReadOrCreate(string filePath, string defaultContent = "")
+        public string ReadOrCreate(string filePath, string defaultContent = "")
         {
             if (!File.Exists(filePath))
             {
@@ -435,32 +406,36 @@ namespace MIDE.FileSystem
         /// </summary>
         /// <param name="paths"></param>
         /// <returns></returns>
-        public virtual string Combine(params string[] paths) => Path.Combine(paths);
+        public string Combine(params string[] paths) => Path.Combine(paths);
+        /// <summary>
+        /// Synchronously executes an external command or application using the given path and arguments 
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="arguments"></param>
+        /// <returns></returns>
+        public ExternalExecutionResult ExecuteExternalApplication(string path, string arguments)
+        {
+            return FileResolver.ExecuteExternalApplication(path, arguments);
+        }
         /// <summary>
         /// Enumerates all filtered files in the given directory
         /// </summary>
         /// <param name="directory"></param>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public virtual IEnumerable<string> EnumerateFiles(string directory, string filter = null)
+        public IEnumerable<string> EnumerateFiles(string directory, string filter = null)
         {
             if (!Directory.Exists(directory))
                 throw new ArgumentException($"Directory not found [{directory}]");
             return Directory.EnumerateFiles(directory, filter);
         }
         /// <summary>
-        /// Reads properties of the given file or directory
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        public abstract IEnumerable<(string prop, string val)> ExtractProperties(string path);
-        /// <summary>
         /// Tries to deserialize an object from the given file
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="path"></param>
         /// <returns></returns>
-        public virtual T Deserialize<T>(string path)
+        public T Deserialize<T>(string path)
             where T: class
         {
             BinaryFormatter formatter = new BinaryFormatter();
@@ -476,20 +451,6 @@ namespace MIDE.FileSystem
                 AppKernel.Instance.AppLogger.PushError(ex, this, "Can not serialize data");
             }
             return null;
-        }
-    }
-
-    public struct ExternalExecutionResult
-    {
-        public readonly int exitCode;
-        public readonly string output;
-        public readonly string errors;
-
-        public ExternalExecutionResult(int exitCode, string output, string errors)
-        {
-            this.output = output;
-            this.errors = errors;
-            this.exitCode = exitCode;
         }
     }
 }

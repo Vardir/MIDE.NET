@@ -68,7 +68,7 @@ namespace MIDE.API.Components
             var (dialogResult, path) = Kernel.UIManager.OpenDialog(new OpenFileDialogBox("Select package file", "*.nupkg"));
             if (dialogResult == DialogResult.Ok)
             {
-                string directory = Kernel.FileManager.GetFilePath(path);
+                string directory = FileManager.Instance.GetFilePath(path);
                 string id = Path.GetFileNameWithoutExtension(path);
                 //string error = ExtensionsManager.Instance.Install(directory, id);
                 //if (error != null)

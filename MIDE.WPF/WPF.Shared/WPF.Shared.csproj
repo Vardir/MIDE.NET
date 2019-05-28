@@ -92,7 +92,7 @@
     <Compile Include="Converters\Visibility\IntegerToVisibility.cs" />
     <Compile Include="Converters\Visibility\NullableToVisibility.cs" />
     <Compile Include="Converters\Visibility\VisibilityConverter.cs" />
-    <Compile Include="FileSystem\WinFileManager.cs" />
+    <Compile Include="FileSystem\WinFileResolver.cs" />
     <Compile Include="Helpers\CollectionHelpers.cs" />
     <Compile Include="Helpers\ResourceDictionaryHelpers.cs" />
     <Compile Include="Helpers\TreeViewHelpers.cs" />

@@ -6,6 +6,7 @@ using MIDE.WPF.Services;
 using MIDE.WPF.FileSystem;
 using MIDE.WPF.Initializers;
 using MIDE.Application.Attributes;
+using MIDE.FileSystem;
 
 [assembly: ApplicationProperties("wpftemplate")]
 
@@ -43,7 +44,7 @@ namespace MIDE.WPF
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            Kernel.FileManager = new WinFileManager();
+            FileManager.Instance.FileResolver = new WinFileResolver();
             Setup();
             Kernel.Start();
             LoadTheme();

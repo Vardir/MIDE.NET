@@ -22,31 +22,40 @@ namespace MIDE.FileSystem
         {
             GlyphPool = new GlyphPool();
             appKernel = AppKernel.Instance;
-            fileManager = appKernel.FileManager;
+            fileManager = FileManager.Instance;
             configurations = ConfigurationManager.Instance;
         }
 
-        public void LoadAssets()
+        public void LoadAssets(string source)
         {
-            appKernel.AppLogger.PushDebug(null, "Loading assets");
+            appKernel.AppLogger.PushDebug(null, $"Loading assets from {source}");
             try
             {
-                string path = fileManager.Combine(fileManager[FileManager.ASSETS],
-                                                  "glyphs",
-                                                  (string)configurations["theme"],
-                                                  "config.json");
-                string glyphsData = fileManager.ReadOrCreate(path, "{}");
-                var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(glyphsData);
-                foreach (var kvp in dict)
-                {
-                    GlyphPool.AddOrUpdate(kvp.Key, Glyph.From(kvp.Value));
-                }
+                LoadGlyphs(source);
+                //TODO: add another types of assets to load
             }
             catch (Exception ex)
             {
                 appKernel.AppLogger.PushFatal(ex.Message);
             }
-            appKernel.AppLogger.PushDebug(null, "Application assets loaded");
+            appKernel.AppLogger.PushDebug(null, "Assets loading finished");
+        }
+
+        private void LoadGlyphs(string source)
+        {
+            string path = buildPath((string)configurations["theme"]) ?? buildPath("default");
+            if (path == null)
+            {
+                appKernel.AppLogger.PushWarning($"Can not load glyphs from {source}");
+                return;
+            }
+            string glyphsData = fileManager.ReadOrCreate(path, "{}");
+            var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(glyphsData);
+            foreach (var kvp in dict)
+            {
+                GlyphPool.AddOrUpdate(kvp.Key, Glyph.From(kvp.Value));
+            }
+            string buildPath(string theme) => fileManager.Combine(source, "glyphs", theme, "config.json");
         }
     }
 }

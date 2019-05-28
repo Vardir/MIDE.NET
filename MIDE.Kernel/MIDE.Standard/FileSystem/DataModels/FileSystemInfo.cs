@@ -106,7 +106,7 @@ namespace MIDE.FileSystem
         public static LinkedList<DirectoryItem> GetDirectoryContents(string fullPath, string searchPattern = null)
         {
             var items = new LinkedList<DirectoryItem>();
-            if (!AppKernel.Instance.FileManager.IsDirectory(fullPath))
+            if (!FileManager.Instance.IsDirectory(fullPath))
                 return items;
             try
             {
@@ -141,7 +141,7 @@ namespace MIDE.FileSystem
 
         private void Initialize()
         {
-            var fileManager = AppKernel.Instance.FileManager;
+            var fileManager = FileManager.Instance;
             string fileData = fileManager.ReadOrCreate(fileManager.GetFilePath(FileManager.ASSETS, "file-system-items.json"),
                                                        "{ \"file-extensions\": null, \"file-editors\": null }");
             FileSystemItemParameters parameters = JsonConvert.DeserializeObject<FileSystemItemParameters>(fileData);

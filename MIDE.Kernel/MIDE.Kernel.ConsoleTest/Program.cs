@@ -1,4 +1,5 @@
 ﻿using System;
+using MIDE.FileSystem;
 using MIDE.Application;
 using System.Threading;
 using MIDE.API.Extensibility;
@@ -19,7 +20,7 @@ namespace MIDE.Kernel.ConsoleTest
         public static void Main(string[] args)
         {
             Console.ReadKey();
-            InstallerKernel.Instance.FileManager = new WinFileManager();
+            FileManager.Instance.FileResolver = new WinFileResolver();
             Program program = new Program();
 
             InstallerKernel.Instance.Execute();

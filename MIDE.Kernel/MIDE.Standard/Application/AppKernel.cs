@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Linq;
-using System.Text;
 using MIDE.Helpers;
 using Newtonsoft.Json;
 using MIDE.FileSystem;
-using MIDE.API.Visuals;
 using System.Reflection;
 using MIDE.API.Services;
 using MIDE.Schemes.JSON;
@@ -25,6 +23,7 @@ namespace MIDE.Application
         public static AppKernel Instance => instance ?? (instance = new AppKernel());
 
         private bool isRunning;
+        private FileManager fileManager;
         private Assembly currentAssembly;
         private Assembly callingAssembly;
         private LinkedList<AppTask> tasks;
@@ -45,7 +44,6 @@ namespace MIDE.Application
         /// Application-wide logger
         /// </summary>
         public Logger AppLogger { get; }
-        public FileManager FileManager { get; set; }
         /// <summary>
         /// Application UI manager
         /// </summary>
@@ -67,6 +65,7 @@ namespace MIDE.Application
 
         private AppKernel()
         {
+            fileManager = FileManager.Instance;
             tasks = new LinkedList<AppTask>();
             Initializers = new List<IApplicationInitializer>();
 
@@ -90,8 +89,6 @@ namespace MIDE.Application
             {
                 if (isRunning)
                     throw new ApplicationException("Application kernel is already loaded and running!");
-                if (FileManager == null)
-                    throw new NullReferenceException("The FileManager expected to be assigned before application start");
                 if (SystemClipboard == null)
                     throw new NullReferenceException("The SystemBuffer expected to be assigned before application start");
                 if (UIManager == null)
@@ -133,8 +130,8 @@ namespace MIDE.Application
         {
             if (AppLogger.EventsCount == 0)
                 return;
-            string folder = $"{FileManager.GetPath(FileManager.LOGS)}\\{TimeStarted.ToString("dd-M-yyyy HH-mm-ss")}\\";
-            FileManager.MakeFolder(folder);
+            string folder = $"{fileManager.GetPath(FileManager.LOGS)}\\{TimeStarted.ToString("dd-M-yyyy HH-mm-ss")}\\";
+            fileManager.MakeFolder(folder);
             AppLogger.SaveToFile(folder, "log.txt", info: new[] { ApplicationName, Version });
         }
         /// <summary>
@@ -198,7 +195,7 @@ namespace MIDE.Application
             ApplicationConfig appConfig = null;
             try
             {
-                string configData = FileManager.ReadOrCreate("config.json", $"{{ \"kernel_version\": \"{Version}\"}}");
+                string configData = fileManager.ReadOrCreate("config.json", $"{{ \"kernel_version\": \"{Version}\"}}");
                 appConfig = JsonConvert.DeserializeObject<ApplicationConfig>(configData);
                 if (appConfig.KernelVersion != Version)
                     throw new ApplicationException($"Expected application kernel v{Version}, but got v{appConfig.KernelVersion}");
@@ -213,8 +210,8 @@ namespace MIDE.Application
                 AppLogger.Levels = appConfig.LoggingLevels.Aggregate((l1, l2) => l1 | l2);
             AppLogger.FilterEvents(AppLogger.Levels);
             ConfigurationManager.Instance.AddOrUpdate(new Config("theme", appConfig.Theme));
-            FileManager.LoadPaths(appConfig.Paths);
-            AssetManager.Instance.LoadAssets();
+            fileManager.LoadPaths(appConfig.Paths);
+            AssetManager.Instance.LoadAssets(fileManager["assets"]);
             AppLogger.PushDebug(null, "Application configurations loaded");
         }
        
@@ -231,20 +228,20 @@ namespace MIDE.Application
             foreach (var task in tasks)
             {
                 if (task.RepetitionMode == TaskRepetitionMode.NotLimitedOnce && task.Origin != null)
-                    FileManager.Delete(task.Origin);
+                    fileManager.Delete(task.Origin);
                 if (task.Origin != null)
                     continue;
-                string path = FileManager.Combine(FileManager[FileManager.TASKS], task.ToString() + i + ".bin");
-                FileManager.Serialize(task, path);
+                string path = fileManager.Combine(FileManager.Instance[FileManager.TASKS], task.ToString() + i + ".bin");
+                fileManager.Serialize(task, path);
                 i++;
             }
         }
         private void LoadTasks()
         {
-            var files = FileManager.EnumerateFiles(FileManager.GetPath(FileManager.TASKS), "*.bin");
+            var files = fileManager.EnumerateFiles(fileManager.GetPath(FileManager.TASKS), "*.bin");
             foreach (var file in files)
             {
-                var task = FileManager.Deserialize<AppTask>(file);
+                var task = fileManager.Deserialize<AppTask>(file);
                 task.Origin = file;
                 tasks.AddLast(task);
             }
@@ -269,14 +266,14 @@ namespace MIDE.Application
         }
         private void ApplyTaskAction(TaskActivationEvent activation)
         {
-            var path = FileManager[FileManager.TASKS];
+            var path = FileManager.Instance[FileManager.TASKS];
             tasks.ForEach(at =>
             {
                 if (at.ActivationEvent != activation)
                     return;
                 at.Run();
                 if (at.RepetitionMode == TaskRepetitionMode.Once)
-                    FileManager.Delete(FileManager.Combine(path, at.Origin));
+                    fileManager.Delete(fileManager.Combine(path, at.Origin));
             });
         }
 

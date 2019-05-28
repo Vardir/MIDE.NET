@@ -3,14 +3,10 @@ using System.IO;
 using MIDE.FileSystem;
 using System.Collections.Generic;
 
-namespace MIDE.Kernel.ConsoleTest
+namespace MIDE.WPF.FileSystem
 {
-    public class WinFileManager : FileManager
+    public class WinFileResolver : DefaultPathResolver
     {
-        public override string MapPath(string path)
-        {
-            throw new NotImplementedException();
-        }
         public override IEnumerable<(string prop, string val)> ExtractProperties(string path)
         {
             var file = new FileInfo(path);

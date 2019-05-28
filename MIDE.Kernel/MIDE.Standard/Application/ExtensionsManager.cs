@@ -39,7 +39,7 @@ namespace MIDE.Application
         private ExtensionsManager() : base("app-extension-manager")
         {
             appLogger = Kernel.AppLogger;
-            fileManager = Kernel.FileManager;
+            fileManager = FileManager.Instance;
             entries = new List<AppExtensionEntry>();
             serializerSettings = new JsonSerializerSettings();
             serializerSettings.Error = OnSerializationError;
@@ -169,17 +169,17 @@ namespace MIDE.Application
                     var instance = Activator.CreateInstance(types[i], ToSafeId(package.Id), config.IsEnabled) as AppExtension;
                     AppExtensionEntry extensionEntry = new AppExtensionEntry(instance)
                     {
+                        Title = package.Title,
+                        Owners = package.Owners,
+                        Authors = package.Authors,
                         IsEnabled = config.IsEnabled,
+                        Copytight = package.Copyright,
+                        LiceseUrl = package.LicenseUrl,
+                        Tags = package.Tags.Split(' '),
+                        ProjectUrl = package.ProjectUrl,
                         Description = package.Description,
                         Version = package.Version.Version,
                         Origin = package.ProjectUrl.ToString(),
-                        Authors = package.Authors,
-                        Copytight = package.Copyright,
-                        LiceseUrl = package.LicenseUrl,
-                        Owners = package.Owners,
-                        ProjectUrl = package.ProjectUrl,
-                        Tags = package.Tags.Split(' '),
-                        Title = package.Title,
                         Dependencies = package.DependencySets.SelectMany(dps => dps.Dependencies)
                                                              .Select(dp => dp.ToString()).ToArray()
                     };

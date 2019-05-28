@@ -1,4 +1,5 @@
 ﻿using System;
+using MIDE.FileSystem;
 
 namespace MIDE.Application.Tasks
 {
@@ -20,7 +21,7 @@ namespace MIDE.Application.Tasks
             AppKernel.Instance.AppLogger.PushInfo("Launching extensions installer");
             try
             {
-                AppKernel.Instance.FileManager.ExecuteExternalApplication(InstallerApplicationPath, InstallationConfigPath);
+                FileManager.Instance.ExecuteExternalApplication(InstallerApplicationPath, InstallationConfigPath);
             }
             catch(Exception ex)
             {

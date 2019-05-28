@@ -1,4 +1,4 @@
-﻿using MIDE.Application;
+﻿using MIDE.FileSystem;
 using MIDE.API.Bindings;
 using System.Collections.Generic;
 using MIDE.API.Components.Complex;
@@ -54,7 +54,7 @@ namespace MIDE.API.Components
         }
 
         public override string GetData() => SelectedDirectory.Text;
-        protected override bool Validate() => AppKernel.Instance.FileManager.IsDirectory(SelectedDirectory.Text);
+        protected override bool Validate() => FileManager.Instance.IsDirectory(SelectedDirectory.Text);
         protected override IEnumerable<DialogResult> GetValidationIgnoredResults() => validationIgnored;
     }
 }

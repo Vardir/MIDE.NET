@@ -1,0 +1,21 @@
+...\root\extensions\%extension%\
+
+Every application extension for MIDE must meet the given requirements.
+Extension manager will load an extension due to the scheme
+File system scheme:
+
+assets\						<on demand>
+	glyphs\
+		default\			<use this if a set of glyphs for current application theme is not present>
+			config.json
+			%files%
+		%theme 1%\
+			config.json
+			%files%
+		...
+		%theme n%\
+			config.json
+			%files%
+kernel.dll					<required>
+ui.dll						<on demand>
+%attached libs%
