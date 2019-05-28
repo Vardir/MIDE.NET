@@ -3,7 +3,7 @@ using MIDE.Application;
 using System.Threading;
 using MIDE.API.Extensibility;
 using MIDE.ExtensionsInstaller;
-using MIDE.Application.Attrubites;
+using MIDE.Application.Attributes;
 
 [assembly: ApplicationProperties("consoletest")]
 

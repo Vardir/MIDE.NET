@@ -12,7 +12,7 @@ using MIDE.Application.Tasks;
 using MIDE.Application.Events;
 using MIDE.Application.Logging;
 using System.Collections.Generic;
-using MIDE.Application.Attrubites;
+using MIDE.Application.Attributes;
 using MIDE.Application.Initializers;
 using MIDE.Application.Configuration;
 using Module = MIDE.API.Extensibility.Module;
