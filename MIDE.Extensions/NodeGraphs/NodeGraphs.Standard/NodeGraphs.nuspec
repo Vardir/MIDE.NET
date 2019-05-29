@@ -13,4 +13,8 @@
     <copyright>Copyright ©2019 Andrew Satura</copyright>
     <tags>mide extension nodes graphs</tags>
   </metadata>
+
+  <frameworkAssemblies>
+    <frameworkAssembly assemblyName="!MIDE.Kernel:0.7.3"/>
+  </frameworkAssemblies>
 </package>

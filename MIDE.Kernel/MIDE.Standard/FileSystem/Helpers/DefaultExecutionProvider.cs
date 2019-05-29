@@ -1,15 +1,13 @@
-﻿using System;
-using System.Diagnostics;
-using System.Collections.Generic;
+﻿using System.Diagnostics;
 
 namespace MIDE.FileSystem
 {
-    public class DefaultPathResolver : IFileResolver
+    public class DefaultExecutionProvider : IExecutionProvider
     {
-        private static DefaultPathResolver instance;
-        public static DefaultPathResolver Instance => instance ?? (instance = new DefaultPathResolver());
+        private static DefaultExecutionProvider instance;
+        public static DefaultExecutionProvider Instance => instance ?? (instance = new DefaultExecutionProvider());
 
-        protected DefaultPathResolver() { }
+        protected DefaultExecutionProvider() { }
 
         public virtual void ExecuteExternalApplicationAsync(string path, string arguments,
                                                             DataReceivedEventHandler outputHandler, DataReceivedEventHandler errorHandler)
@@ -44,10 +42,6 @@ namespace MIDE.FileSystem
             string err = process.StandardError.ReadToEnd();
             process.WaitForExit();
             return new ExternalExecutionResult(process.ExitCode, output, err);
-        }
-        public virtual IEnumerable<(string prop, string val)> ExtractProperties(string path)
-        {
-            throw new NotImplementedException();
         }
     }
 }

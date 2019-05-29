@@ -12,5 +12,9 @@
     <releaseNotes>First major release.</releaseNotes>
     <copyright>Copyright ©2019 Andrew Satura</copyright>
     <tags>mide extension terminal</tags>
+
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="!MIDE.Kernel:0.7.3"/>
+    </frameworkAssemblies>
   </metadata>
 </package>

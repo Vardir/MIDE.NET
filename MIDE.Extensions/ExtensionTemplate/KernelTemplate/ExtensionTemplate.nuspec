@@ -17,8 +17,11 @@
     <projectUrl>http://github.com/contoso/UsefulStuff</projectUrl>
 
     <!-- Dependencies are automatically installed when the package is installed -->
-    <dependencies>
+    <dependencies>      
       <dependency id="Newtonsoft.Json" version="9.0" />
     </dependencies>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="!MIDE.Kernel:0.7.3"/>
+    </frameworkAssemblies>
   </metadata>
 </package>

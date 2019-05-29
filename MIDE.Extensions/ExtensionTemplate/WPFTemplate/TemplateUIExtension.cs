@@ -3,7 +3,7 @@ using System.Windows;
 using WPF.Extensibility;
 using System.Collections.Generic;
 
-namespace WPFTemplate
+namespace ExtensionTemplate.WPF
 {
     public class TemplateUIExtension : UIExtension
     {

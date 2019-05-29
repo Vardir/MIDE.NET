@@ -12,7 +12,8 @@ namespace MIDE.Application.Tasks
         public ExecuteExtensionsInstallerTask(TaskRepetitionMode repetitionMode, string eventName) : base(repetitionMode, eventName)
         {
         }
-        public ExecuteExtensionsInstallerTask(TaskActivationEvent activationEvent, TaskRepetitionMode repetitionMode, string eventName = null) : base(activationEvent, repetitionMode, eventName)
+        public ExecuteExtensionsInstallerTask(TaskActivationEvent activationEvent, 
+                                              TaskRepetitionMode repetitionMode, string eventName = null) : base(activationEvent, repetitionMode, eventName)
         {
         }
 
@@ -21,7 +22,7 @@ namespace MIDE.Application.Tasks
             AppKernel.Instance.AppLogger.PushInfo("Launching extensions installer");
             try
             {
-                FileManager.Instance.ExecuteExternalApplication(InstallerApplicationPath, InstallationConfigPath);
+                FileManager.Instance.ExecutionProvider.ExecuteExternalApplication(InstallerApplicationPath, InstallationConfigPath);
             }
             catch(Exception ex)
             {

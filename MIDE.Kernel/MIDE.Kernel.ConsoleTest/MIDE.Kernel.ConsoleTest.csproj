@@ -54,11 +54,13 @@
   <ItemGroup>
     <None Include="App.config" />
     <Compile Include="Services\WindowsClipboard.cs" />
-    <Compile Include="Services\WinFileResolver.cs" />
     <Content Include="config.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="packages.config" />
+    <Content Include="paths.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MIDE.ExtensionsInstaller\MIDE.ExtensionsInstaller.csproj">

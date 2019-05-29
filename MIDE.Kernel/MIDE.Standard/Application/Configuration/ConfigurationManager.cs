@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Linq;
+using MIDE.FileSystem;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace MIDE.Application.Configuration
@@ -8,28 +11,31 @@ namespace MIDE.Application.Configuration
         private static ConfigurationManager instance;
         public static ConfigurationManager Instance => instance ?? (instance = new ConfigurationManager());
 
-        private readonly Dictionary<string, object> configs;
+        private readonly FileManager fileManager;
+        private readonly Dictionary<string, Config> configs;
 
-        public object this[string key]
+        public string this[string key]
         {
             get
             {
-                configs.TryGetValue(key, out object value);
-                return value;
+                if (configs.TryGetValue(key, out Config config))
+                    return config.Value;
+                return null;
             }
         }
 
-        private ConfigurationManager ()
+        private ConfigurationManager()
         {
-            configs = new Dictionary<string, object>();
+            fileManager = FileManager.Instance;
+            configs = new Dictionary<string, Config>();
         }
 
         public void AddOrUpdate(Config config)
         {
             if (!configs.ContainsKey(config.Key))
-                configs.Add(config.Key, config.Value);
+                configs.Add(config.Key, config);
             else
-                configs[config.Key] = config.Value;
+                configs[config.Key] = config;
         }
         public void AddRange(IEnumerable<Config> sequence)
         {
@@ -37,7 +43,7 @@ namespace MIDE.Application.Configuration
             {
                 if (configs.ContainsKey(config.Key))
                     throw new InvalidOperationException($"Duplicate configuration key entry on '{config.Key}'");
-                configs.Add(config.Key, config.Value);
+                configs.Add(config.Key, config);
             }
         }
         public void AddOrUpdate(IEnumerable<Config> sequence)
@@ -45,10 +51,36 @@ namespace MIDE.Application.Configuration
             foreach (var config in sequence)
             {
                 if (!configs.ContainsKey(config.Key))
-                    configs.Add(config.Key, config.Value);
+                    configs.Add(config.Key, config);
                 else
-                    configs[config.Key] = config.Value;
+                    configs[config.Key] = config;
             }
+        }
+        public void LoadFrom(string path)
+        {
+            if (!fileManager.FileExists(path))
+                return;
+            string fileData = fileManager.TryRead(path);
+            if (fileData == null)
+                return;
+            Dictionary<string, string> configItems = null;
+            try
+            {
+                configItems = JsonConvert.DeserializeObject<Dictionary<string, string>>(fileData);
+            }
+            catch (Exception ex)
+            {
+                return;
+            }
+            AddOrUpdate(configItems.Select(tuple => new Config(tuple.Key, tuple.Value)));
+        }
+        public void SaveTo(string path)
+        {
+            var selected = configs.Select(kvp => kvp.Value)
+                                  .Where(config => !config.Temporary)
+                                  .ToDictionary(config => config.Key, config => config.Value);
+            string data = JsonConvert.SerializeObject(selected, Formatting.Indented);
+            fileManager.Write(data, path);
         }
 
         public bool Contains(string key) => configs.ContainsKey(key);

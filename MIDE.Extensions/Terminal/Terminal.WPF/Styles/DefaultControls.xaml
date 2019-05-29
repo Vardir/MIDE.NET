@@ -1,8 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:api="clr-namespace:MIDE.API.Components;assembly=api"
+                    xmlns:api="clr-namespace:MIDE.API.Components;assembly=appkernel"
                     xmlns:ctr="clr-namespace:Terminal.WPF.Controls"
-                    xmlns:c="clr-namespace:Terminal.Components;assembly=terminal">
+                    xmlns:c="clr-namespace:Terminal.Components;assembly=MIDE.Terminal">
 
     <DataTemplate DataType="{x:Type c:TerminalTab}">
         <ctr:TerminalTabControl Model="{Binding}"/>

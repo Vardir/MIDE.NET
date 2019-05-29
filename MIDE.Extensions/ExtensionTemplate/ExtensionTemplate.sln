@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.572
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28917.182
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KernelTemplate", "KernelTemplate\KernelTemplate.csproj", "{D9B9BB8A-00D8-43AA-B955-6DFD606FC21F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtensionTemplate", "KernelTemplate\ExtensionTemplate.csproj", "{D9B9BB8A-00D8-43AA-B955-6DFD606FC21F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPFTemplate", "WPFTemplate\WPFTemplate.csproj", "{803964C9-3B3C-4E0D-AA11-96D057F8EE46}"
 EndProject

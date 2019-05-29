@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>xtemplate</AssemblyName>
+    <AssemblyName>MIDE.ExtensionTemplate</AssemblyName>
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
     <Authors>Andrew Satura</Authors>
     <Company>Vardir Products</Company>
@@ -12,15 +12,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="ExtensionTemplate.nuspec" />
     <None Remove="icon.png" />
-    <None Remove="KernelTemplate.nuspec" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="icon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="KernelTemplate.nuspec">
+    <Content Include="ExtensionTemplate.nuspec">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -33,13 +33,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="api">
-      <HintPath>..\..\..\Publish\MIDE.Kernel\api.dll</HintPath>
+    <Reference Include="appkernel">
+      <HintPath>..\..\..\Publish\MIDE.Kernel\appkernel.dll</HintPath>
     </Reference>
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="rem set path=&quot;D:\Projects\C#\Libs\MIDE.NET\Publish\$(SolutionName)\\&quot;&#xD;&#xA;rem if not exist %25path%25 mkdir %25path%25&#xD;&#xA;rem copy &quot;$(TargetDir)$(TargetFileName)&quot; %25path%25&#xD;&#xA;rem copy &quot;$(TargetDir)KernelTemplate.nuspec&quot; %25path%25" />
+    <Exec Command="rem set path=$(SolutionDir)NuGet\&#xD;&#xA;rem %25systemroot%25\System32\xcopy &quot;$(TargetDir)$(TargetFileName)&quot; %25path%25 /y&#xD;&#xA;rem %25systemroot%25\System32\xcopy &quot;$(TargetDir)KernelTemplate.nuspec&quot; %25path%25 /y" />
   </Target>
 
 </Project>

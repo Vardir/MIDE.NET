@@ -57,7 +57,7 @@ namespace MIDE.API.Components
         }
 
         public override string GetData() => SelectedFile.Text;
-        protected override bool Validate() => FileManager.Instance.IsFile(SelectedFile.Text);
+        protected override bool Validate() => FileManager.Instance.FileExists(SelectedFile.Text);
         protected override IEnumerable<DialogResult> GetValidationIgnoredResults() => validationIgnored;
     }
 }

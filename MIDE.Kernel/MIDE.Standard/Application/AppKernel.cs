@@ -26,8 +26,11 @@ namespace MIDE.Application
         private FileManager fileManager;
         private Assembly currentAssembly;
         private Assembly callingAssembly;
+        private ApplicationPaths paths;
         private LinkedList<AppTask> tasks;
+        private ConfigurationManager configuration;
 
+        #region Public properties
         /// <summary>
         /// A time when application kernel was started
         /// </summary>
@@ -35,7 +38,7 @@ namespace MIDE.Application
         /// <summary>
         /// Version of application kernel
         /// </summary>
-        public string Version { get; }
+        public Version KernelVersion { get; }
         /// <summary>
         /// Name of application kernel
         /// </summary>
@@ -59,19 +62,22 @@ namespace MIDE.Application
         /// <summary>
         /// List of application initializers used to configure kernel and it's parts
         /// </summary>
-        public List<IApplicationInitializer> Initializers { get; }
+        public List<IApplicationInitializer> Initializers { get; } 
+        #endregion
 
         public event Action ApplicationExit;
 
         private AppKernel()
         {
+            paths = ApplicationPaths.Instance;
             fileManager = FileManager.Instance;
+            configuration = ConfigurationManager.Instance;
             tasks = new LinkedList<AppTask>();
             Initializers = new List<IApplicationInitializer>();
 
             currentAssembly = Assembly.GetAssembly(typeof(AppKernel));
             var version = currentAssembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
-            Version = version.InformationalVersion;
+            KernelVersion = Version.Parse(version.InformationalVersion);
 
             AppLogger = new Logger(LoggingLevel.ALL, useUtcTime: true);
             AppLogger.FatalEventRegistered += AppLogger_FatalEventRegistered;
@@ -103,6 +109,7 @@ namespace MIDE.Application
                 isRunning = true;
                 AppLogger.PushFatal(ex.Message);
             }
+            LoadConfigurations();
             LoadTasks();
             OnStarting();
             AppLogger.PushDebug(null, "Application Kernel started");
@@ -112,7 +119,6 @@ namespace MIDE.Application
             {
                 initializer.Execute(this);
             }
-            LoadConfigurations();
             try
             {
                 ExtensionsManager.Instance.LoadExtensions();
@@ -130,9 +136,9 @@ namespace MIDE.Application
         {
             if (AppLogger.EventsCount == 0)
                 return;
-            string folder = $"{fileManager.GetPath(FileManager.LOGS)}\\{TimeStarted.ToString("dd-M-yyyy HH-mm-ss")}\\";
+            string folder = $"{paths[ApplicationPaths.LOGS]}\\{TimeStarted.ToString("dd-M-yyyy HH-mm-ss")}\\";
             fileManager.MakeFolder(folder);
-            AppLogger.SaveToFile(folder, "log.txt", info: new[] { ApplicationName, Version });
+            AppLogger.SaveToFile(folder, "log.txt", info: new[] { ApplicationName, KernelVersion.ToString() });
         }
         /// <summary>
         /// Stops all the current threads, releases all resources and closes the application kernel
@@ -152,6 +158,8 @@ namespace MIDE.Application
             AppLogger.PushDebug(null, "Application Kernel resources are disposed");
             SaveLog();
             SaveTasks();
+
+            configuration.SaveTo("config.json");
             OnExit();
             ApplicationExit?.Invoke();
         }
@@ -176,7 +184,7 @@ namespace MIDE.Application
                 return "Null module reference";
             return null;
         }
-        public override string ToString() => $"KERNEL [{Version}] >> {callingAssembly?.FullName ?? "?"}";
+        public override string ToString() => $"KERNEL [{KernelVersion}] >> {callingAssembly?.FullName ?? "?"}";
 
         public void Dispose()
         {
@@ -192,35 +200,41 @@ namespace MIDE.Application
         private void LoadConfigurations()
         {
             AppLogger.PushDebug(null, "Loading application configurations");
-            ApplicationConfig appConfig = null;
             try
             {
-                string configData = fileManager.ReadOrCreate("config.json", $"{{ \"kernel_version\": \"{Version}\"}}");
-                appConfig = JsonConvert.DeserializeObject<ApplicationConfig>(configData);
-                if (appConfig.KernelVersion != Version)
-                    throw new ApplicationException($"Expected application kernel v{Version}, but got v{appConfig.KernelVersion}");
+                configuration.LoadFrom("config.json");
+                string value = configuration["MIDE.Kernel"] as string;
+                bool parsed = Version.TryParse(value, out Version version);
+                if (!parsed || version != KernelVersion)
+                    configuration.AddOrUpdate(new Config("MIDE.Kernel", KernelVersion.ToString(3)));
+
+                LoggingLevel loggingLevel = LoggingLevel.NONE;
+                string[] arr = configuration["log_levels"].Trim().Split(',');
+                if (arr != null)
+                {
+                    Type type = typeof(LoggingLevel);
+                    for (int i = 0; i < arr.Length; i++)
+                    {
+                        loggingLevel |= (LoggingLevel)Enum.Parse(type, arr[i]?.ToString(), true);
+                    }
+                }
             }
             catch (Exception ex)
             {
                 AppLogger.PushFatal(ex.Message);
             }
-            if (appConfig.LoggingLevels == null || appConfig.LoggingLevels.Length == 0)
-                AppLogger.Levels = LoggingLevel.ALL;
-            else
-                AppLogger.Levels = appConfig.LoggingLevels.Aggregate((l1, l2) => l1 | l2);
+            
             AppLogger.FilterEvents(AppLogger.Levels);
-            ConfigurationManager.Instance.AddOrUpdate(new Config("theme", appConfig.Theme));
-            fileManager.LoadPaths(appConfig.Paths);
-            AssetManager.Instance.LoadAssets(fileManager["assets"]);
+            paths.LoadFrom("paths.json");
+            AssetManager.Instance.LoadAssets(paths[ApplicationPaths.ASSETS]);
             AppLogger.PushDebug(null, "Application configurations loaded");
         }
        
         private void ClearTemporaryFiles()
         {
             AppLogger.PushDebug(null, "Clearing temporary files");
-            //TODO: implement cleaning temporary files
+            FileManager.Instance.CleanDirectory(paths[ApplicationPaths.TEMP]);
             AppLogger.PushDebug(null, "Temporary files cleared");
-
         }
         private void SaveTasks()
         {
@@ -231,14 +245,14 @@ namespace MIDE.Application
                     fileManager.Delete(task.Origin);
                 if (task.Origin != null)
                     continue;
-                string path = fileManager.Combine(FileManager.Instance[FileManager.TASKS], task.ToString() + i + ".bin");
+                string path = fileManager.Combine(paths[ApplicationPaths.TASKS], task.ToString() + i + ".bin");
                 fileManager.Serialize(task, path);
                 i++;
             }
         }
         private void LoadTasks()
         {
-            var files = fileManager.EnumerateFiles(fileManager.GetPath(FileManager.TASKS), "*.bin");
+            var files = fileManager.EnumerateFiles(paths[ApplicationPaths.TASKS], "*.bin");
             foreach (var file in files)
             {
                 var task = fileManager.Deserialize<AppTask>(file);
@@ -266,7 +280,7 @@ namespace MIDE.Application
         }
         private void ApplyTaskAction(TaskActivationEvent activation)
         {
-            var path = FileManager.Instance[FileManager.TASKS];
+            var path = paths[ApplicationPaths.TASKS];
             tasks.ForEach(at =>
             {
                 if (at.ActivationEvent != activation)

@@ -77,7 +77,7 @@ namespace MIDE.Application
         public void LoadExtensions()
         {
             appLogger.PushDebug(null, "Loading extensions");
-            var directory = fileManager.GetAbsolutePath(fileManager[FileManager.EXTENSIONS]);
+            var directory = fileManager.GetAbsolutePath(ApplicationPaths.Instance[ApplicationPaths.EXTENSIONS]);
             localRespository = PackageRepositoryFactory.Default.CreateRepository(directory);
             localPathResolver = new DefaultPackagePathResolver(directory);
             foreach (var pack in localRespository.GetPackages())
@@ -143,61 +143,34 @@ namespace MIDE.Application
         }
         private void LoadExtension(string root, IPackage package)
         {
-            string extensionPath = localPathResolver.GetInstallPath(package);
-            string configData = fileManager.TryRead(fileManager.Combine(extensionPath, "config.json"));
-            if (configData == null)
-            {
-                appLogger.PushWarning($"Extension '{package.Id}' does not have config.json file");
-                return;
-            }
-            var config = JsonConvert.DeserializeObject<ExtensionConfig>(configData);
-            if (config.PreloadedAssemblies != null)
-            {
-                foreach (var preloaded in config.PreloadedAssemblies)
-                {
-                    string file = fileManager.Combine(extensionPath, preloaded);
-                    Assembly.LoadFrom(file);
-                }
-            }
-            Assembly assembly = Assembly.LoadFrom(fileManager.Combine(extensionPath, config.DllPath));
-            var types = assembly.GetTypes();
-            for (int i = 0; i < types.Length; i++)
-            {
-                bool isExtension = types[i].IsSubclassOf(typeof(AppExtension));
-                if (isExtension)
-                {
-                    var instance = Activator.CreateInstance(types[i], ToSafeId(package.Id), config.IsEnabled) as AppExtension;
-                    AppExtensionEntry extensionEntry = new AppExtensionEntry(instance)
-                    {
-                        Title = package.Title,
-                        Owners = package.Owners,
-                        Authors = package.Authors,
-                        IsEnabled = config.IsEnabled,
-                        Copytight = package.Copyright,
-                        LiceseUrl = package.LicenseUrl,
-                        Tags = package.Tags.Split(' '),
-                        ProjectUrl = package.ProjectUrl,
-                        Description = package.Description,
-                        Version = package.Version.Version,
-                        Origin = package.ProjectUrl.ToString(),
-                        Dependencies = package.DependencySets.SelectMany(dps => dps.Dependencies)
-                                                             .Select(dp => dp.ToString()).ToArray()
-                    };
-                    RegisterExtension(extensionEntry);
-                }
-            }
-            foreach (var member in config.ExtensionMembers)
-            {
-                if (member.Platform != Kernel.UIManager.CurrentPlatform)
-                    continue;
-                if (member.Target != MemberTarget.UI)
-                    continue;
-                if (member.Role == MemberRole.Extension)
-                {
-                    string ext = fileManager.Combine(root, extensionPath, member.Path);
-                    Kernel.UIManager.RegisterUIExtension(ext);
-                }
-            }
+            string extensionPath = localPathResolver.GetInstallPath(package);            
+            //Assembly assembly = Assembly.LoadFrom(fileManager.Combine(extensionPath, config.DllPath));
+            //var types = assembly.GetTypes();
+            //for (int i = 0; i < types.Length; i++)
+            //{
+            //    bool isExtension = types[i].IsSubclassOf(typeof(AppExtension));
+            //    if (isExtension)
+            //    {
+            //        var instance = Activator.CreateInstance(types[i], ToSafeId(package.Id), config.IsEnabled) as AppExtension;
+            //        AppExtensionEntry extensionEntry = new AppExtensionEntry(instance)
+            //        {
+            //            Title = package.Title,
+            //            Owners = package.Owners,
+            //            Authors = package.Authors,
+            //            IsEnabled = config.IsEnabled,
+            //            Copytight = package.Copyright,
+            //            LiceseUrl = package.LicenseUrl,
+            //            Tags = package.Tags.Split(' '),
+            //            ProjectUrl = package.ProjectUrl,
+            //            Description = package.Description,
+            //            Version = package.Version.Version,
+            //            Origin = package.ProjectUrl.ToString(),
+            //            Dependencies = package.DependencySets.SelectMany(dps => dps.Dependencies)
+            //                                                 .Select(dp => dp.ToString()).ToArray()
+            //        };
+            //        RegisterExtension(extensionEntry);
+            //    }
+            //}
         }
         private void RegisterExtension(AppExtensionEntry entry)
         {

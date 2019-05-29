@@ -1,47 +1,6 @@
 {
-  "kernel_version": "0.7.3",
+  "MIDE.Kernel": "0.7.6",
+  "platform": "none",
   "theme": "dark",
-  "log_levels": [ "debug" ],
-  "paths": [
-    {
-      "key": "assets",
-      "path": "root\\assets\\",
-      "type": "folder"
-    },
-    {
-      "key": "installed",
-      "path": "",
-      "type": "folder"
-    },
-    {
-      "key": "projects",
-      "path": "root\\projects\\",
-      "type": "folder"
-    },
-    {
-      "key": "root",
-      "path": "root\\",
-      "type": "folder"
-    },
-    {
-      "key": "themes",
-      "path": "root\\themes\\",
-      "type": "folder"
-    },
-    {
-      "key": "settings",
-      "path": "root\\user.settings.json",
-      "type": "file"
-    },
-    {
-      "key": "extensions",
-      "path": "root\\extensions\\",
-      "type": "folder"
-    },
-    {
-      "key": "logs",
-      "path": "root\\logs\\",
-      "type": "folder"
-    }
-  ]
+  "log_levels": "info,warning,fatal"
 }

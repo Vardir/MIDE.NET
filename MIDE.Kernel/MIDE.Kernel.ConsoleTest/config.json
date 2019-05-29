@@ -1,50 +1,5 @@
 {
-  "kernel_version": "0.7.3",
-  "paths": [
-    {
-      "key" : "assets",
-      "path": "root\\assets\\",
-      "type": "folder"
-    },
-    {
-      "key" : "installed",
-      "path" : "D:\\Projects\\C#\\Libs\\MIDE.NET\\MIDE.Kernel\\MIDE.Kernel.ConsoleTest\\bin\\Debug\\",
-      "type": "folder"
-    },
-    {
-      "key" : "projects",
-      "path": "root\\projects\\",
-      "type": "folder"
-    },
-    {
-      "key" : "root",
-      "path": "root\\",
-      "type": "folder"
-    },
-    {
-      "key": "themes",
-      "path": "root\\themes\\",
-      "type": "folder"
-    },
-    {
-      "key": "settings",
-      "path": "root\\user.settings.json",
-      "type": "file"
-    },
-    {
-      "key": "extensions",
-      "path": "root\\extensions\\",
-      "type": "folder"
-    },
-    {
-      "key": "templates",
-      "path": "root\\templates\\",
-      "type": "folder"
-    },
-    {
-      "key": "logs",
-      "path": "root\\logs\\",
-      "type": "folder"
-    }
-  ]
+  "MIDE.Kernel": "0.7.6",
+  "platform": "Windows.Console",
+  "log_levels": "all"
 }

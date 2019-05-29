@@ -16,5 +16,8 @@
     <dependencies>
       <dependency id="MIDE.NodeGraphs" version="1.0.0" />
     </dependencies>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="!MIDE.Kernel:0.7.3"/>
+    </frameworkAssemblies>
   </metadata>
 </package>

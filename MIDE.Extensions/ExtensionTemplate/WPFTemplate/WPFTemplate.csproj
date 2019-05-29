@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{803964C9-3B3C-4E0D-AA11-96D057F8EE46}</ProjectGuid>
     <OutputType>library</OutputType>
-    <RootNamespace>WPFTemplate</RootNamespace>
-    <AssemblyName>WPFTemplate</AssemblyName>
+    <RootNamespace>ExtensionTemplate.WPF</RootNamespace>
+    <AssemblyName>MIDE.ExtensionTemplate.UI</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -35,8 +35,8 @@
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="api">
-      <HintPath>..\..\..\Publish\MIDE.Kernel\api.dll</HintPath>
+    <Reference Include="appkernel">
+      <HintPath>..\..\..\Publish\MIDE.Kernel\appkernel.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -83,9 +83,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Content Include="config.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -97,9 +94,9 @@
     <Folder Include="Helpers\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\KernelTemplate\KernelTemplate.csproj">
+    <ProjectReference Include="..\KernelTemplate\ExtensionTemplate.csproj">
       <Project>{d9b9bb8a-00d8-43aa-b955-6dfd606fc21f}</Project>
-      <Name>KernelTemplate</Name>
+      <Name>ExtensionTemplate</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -108,8 +105,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>rem set path=$(SolutionDir)NuPkg\
-rem copy "$(TargetDir)$(TargetFileName)" %25path%25
-rem copy "$(TargetDir)config.json" %25path%25
+rem %25systemroot%25\System32\xcopy "$(TargetDir)$(TargetFileName)" %25path%25lib\wpf\ /y
 rem D:\Programs\nuget.exe pack %25path%25 -OutputDirectory D:\Server\Publish\</PostBuildEvent>
   </PropertyGroup>
 </Project>

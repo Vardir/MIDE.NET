@@ -1,0 +1,50 @@
+[
+  {
+    "key": "assets",
+    "path": "root\\assets\\",
+    "required": true
+  },
+  {
+    "key": "installed",
+    "path": "D:\\Projects\\C#\\Libs\\MIDE.NET\\MIDE.WPF\\MIDE.WPFApp\\bin\\Debug"
+  },
+  {
+    "key": "projects",
+    "path": "root\\projects\\",
+    "required": true
+  },
+  {
+    "key": "root",
+    "path": "root\\",
+    "required": true
+  },
+  {
+    "key": "themes",
+    "path": "root\\themes\\",
+    "required": true
+  },
+  {
+    "key": "settings",
+    "path": "root\\user.settings.json"
+  },
+  {
+    "key": "extensions",
+    "path": "root\\extensions\\",
+    "required": true
+  },
+  {
+    "key": "logs",
+    "path": "root\\logs\\",
+    "required": true
+  },
+  {
+    "key": "tasks",
+    "path": "root\\tasks\\",
+    "required": true
+  },
+  {
+    "key": "temp",
+    "path": "root\\temp\\",
+    "required": true
+  }
+]

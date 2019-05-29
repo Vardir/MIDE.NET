@@ -18,9 +18,9 @@ namespace MIDE.Application.Tasks
         public override void Run(params object[] args)
         {
             var fileManager = FileManager.Instance;
-            if (fileManager.IsFile(Path))
+            if (fileManager.FileExists(Path))
                 fileManager.Delete(Path);
-            else if (fileManager.IsDirectory(Path))
+            else if (fileManager.DirectoryExists(Path))
                 fileManager.DeleteDirectory(Path);
         }
     }

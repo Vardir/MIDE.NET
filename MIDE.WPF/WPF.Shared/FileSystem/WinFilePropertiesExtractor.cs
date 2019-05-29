@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 namespace MIDE.WPF.FileSystem
 {
-    public class WinFileResolver : DefaultPathResolver
+    public class WinFilePropertiesExtractor : IFilePropertiesExtractor
     {
-        public override IEnumerable<(string prop, string val)> ExtractProperties(string path)
+        public IEnumerable<(string prop, string val)> ExtractProperties(string path)
         {
             var file = new FileInfo(path);
             if (file.Exists)

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Terminal</RootNamespace>
-    <AssemblyName>terminal</AssemblyName>
+    <AssemblyName>MIDE.Terminal</AssemblyName>
     <Authors>Andrew Satura</Authors>
     <Company>Vardir Products</Company>
     <Product>MIDE Terminal</Product>
@@ -36,8 +36,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="api">
-      <HintPath>..\..\..\Publish\MIDE.Kernel\api.dll</HintPath>
+    <Reference Include="appkernel">
+      <HintPath>..\..\..\Publish\MIDE.Kernel\appkernel.dll</HintPath>
     </Reference>
     <Reference Include="FSharp.Core">
       <HintPath>..\..\..\..\..\..\..\Server\Publish\MyCMD\FSharp.Core.dll</HintPath>
@@ -51,7 +51,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="set path=$(SolutionDir)NuPkg\&#xD;&#xA;if not exist %25path%25 mkdir %25path%25&#xD;&#xA;copy &quot;$(TargetDir)$(TargetFileName)&quot; %25path%25&#xD;&#xA;copy &quot;$(TargetDir)FSharp.Core.dll&quot; %25path%25&#xD;&#xA;copy &quot;$(TargetDir)Parser.dll&quot; %25path%25&#xD;&#xA;copy &quot;$(TargetDir)mycmd.kernel.dll&quot; %25path%25&#xD;&#xA;copy &quot;$(TargetDir)Terminal.nuspec&quot; %25path%25&#xD;&#xA;copy &quot;$(TargetDir)icon.png&quot; %25path%25" />
+    <Exec Command="set path=$(SolutionDir)NuPkg\&#xD;&#xA;%25systemroot%25\System32\xcopy &quot;$(TargetDir)$(TargetFileName)&quot; %25path%25 /y&#xD;&#xA;%25systemroot%25\System32\xcopy &quot;$(TargetDir)FSharp.Core.dll&quot; %25path%25 /y&#xD;&#xA;%25systemroot%25\System32\xcopy &quot;$(TargetDir)Parser.dll&quot; %25path%25 /y&#xD;&#xA;%25systemroot%25\System32\xcopy &quot;$(TargetDir)mycmd.kernel.dll&quot; %25path%25 /y&#xD;&#xA;%25systemroot%25\System32\xcopy &quot;$(TargetDir)Terminal.nuspec&quot; %25path%25 /y&#xD;&#xA;%25systemroot%25\System32\xcopy &quot;$(TargetDir)icon.png&quot; %25path%25 /y" />
   </Target>
 
 </Project>

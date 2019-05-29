@@ -44,9 +44,9 @@ namespace MIDE.WPF
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            FileManager.Instance.FileResolver = new WinFileResolver();
             Setup();
             Kernel.Start();
+            FileSystemInfo.Instance.FilePropertiesExtractor = new WinFilePropertiesExtractor();
             LoadTheme();
             LoadUIExtensions();
             base.OnStartup(e);

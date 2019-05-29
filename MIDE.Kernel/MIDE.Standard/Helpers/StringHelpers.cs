@@ -13,6 +13,16 @@ namespace MIDE.Helpers
                 return value;
             return value.Substring(0, length);
         }
+        /// <summary>
+        /// Extracts a substring starting from the given index until it reaches one of the given separators.
+        /// <para></para>
+        /// Returns a tuple (head, tail), where head - substring before the separator, 
+        /// tail - the rest of the string starting from the next character after separator
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="start"></param>
+        /// <param name="endChars"></param>
+        /// <returns></returns>
         public static (string head, string tail) ExtractUntil(this string value, int start, params char[] endChars)
         {
             if (value == string.Empty)

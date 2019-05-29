@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="Current">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>api</AssemblyName>
+    <AssemblyName>appkernel</AssemblyName>
     <Authors>Vardir</Authors>
     <Company>Vardir Products</Company>
-    <Product>MIDE API</Product>
-    <Description>The API library to provide basic platform-independent classes to implement extensions that can be shared between applications on different platforms</Description>
+    <Product>MIDE Application Kernel</Product>
+    <Description>The kernel library to provide basic platform-independent classes to implement extensions that can be shared between applications on different platforms</Description>
     <Copyright>Copyright © 2019 Andrew Satura</Copyright>
     <PackageProjectUrl>https://github.com/Vardir/MIDE.NET/</PackageProjectUrl>
     <PackageLicenseUrl></PackageLicenseUrl>
@@ -15,27 +15,24 @@
     <NeutralLanguage>en</NeutralLanguage>
     <LangVersion>8.0</LangVersion>
     <RootNamespace>MIDE</RootNamespace>
-    <Version>0.7.3</Version>
+    <Version>0.7.6</Version>
     <FileUpgradeFlags>40</FileUpgradeFlags>
     <UpgradeBackupLocation>E:\Projects\C#\Libs\MIDE.NET\MIDE.Kernel\Backup\MIDE.Standard\</UpgradeBackupLocation>
     <OldToolsVersion>2.0</OldToolsVersion>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
-  <ItemGroup>
-    <None Remove="config.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="config.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="NuGet.Core" Version="2.14.0" />
     <PackageReference Include="System.Drawing.Common" Version="4.5.1" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="config.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="set path=&quot;D:\Projects\C#\Libs\MIDE.NET\Publish\$(SolutionName)\\&quot;&#xD;&#xA;if not exist %25path%25 mkdir %25path%25&#xD;&#xA;copy &quot;$(TargetDir)*.dll&quot; %25path%25&#xD;&#xA;copy &quot;$(TargetDir)config.json&quot; %25path%25" />
+    <Exec Command="set path=&quot;D:\Projects\C#\Libs\MIDE.NET\Publish\$(SolutionName)\\&quot;&#xD;&#xA;if not exist %25path%25 mkdir %25path%25&#xD;&#xA;copy &quot;$(TargetDir)*.dll&quot; %25path%25" />
   </Target>
 </Project>

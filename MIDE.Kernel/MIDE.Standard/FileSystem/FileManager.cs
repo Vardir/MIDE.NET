@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using MIDE.Helpers;
 using MIDE.Application;
-using MIDE.Schemes.JSON;
-using System.Diagnostics;
 using System.Collections.Generic;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -13,52 +11,20 @@ namespace MIDE.FileSystem
 {
     public sealed class FileManager
     {
-        private IFileResolver fileResolver;
-        private Dictionary<string, string> paths;
-
-        #region Common Paths
-        public const string LOGS = "logs";
-        public const string ROOT = "root";
-        public const string TASKS = "tasks";
-        public const string ASSETS = "assets";
-        public const string THEMES = "themes";
-        public const string PROJECTS = "projects";
-        public const string SETTINGS = "settings";
-        public const string TEMPLATES = "templates";
-        public const string EXTENSIONS = "extensions";
-        #endregion
-
+        private IExecutionProvider executionProvider;
+       
         private static FileManager instance;
         public static FileManager Instance => instance ?? (instance = new FileManager());
 
-        public IFileResolver FileResolver
+        public IExecutionProvider ExecutionProvider
         {
-            get => fileResolver ?? (fileResolver = DefaultPathResolver.Instance);
-            set => fileResolver = value;
-        }
-
-        public string this[string pathId]
-        {
-            get
-            {
-                if (paths.TryGetValue(pathId, out string path))
-                    return path;
-                return null;
-            }
+            get => executionProvider ?? (executionProvider = DefaultExecutionProvider.Instance);
+            set => executionProvider = value;
         }
 
         private FileManager()
         {
-            paths = new Dictionary<string, string>();
-            GetPath(PROJECTS);
-            GetPath(SETTINGS);
-            GetPath(EXTENSIONS);
-            GetPath(TEMPLATES);
-            GetPath(ASSETS);
-            GetPath(THEMES);
-            GetPath(TASKS);
-            GetPath(LOGS);
-            GetPath(ROOT);
+           
         }
 
         /// <summary>
@@ -80,50 +46,6 @@ namespace MIDE.FileSystem
                 DeleteDirectory(subdir.FullName);
             }
             Directory.Delete(path);
-        }
-        /// <summary>
-        /// Adds the given path entry or updates existing one
-        /// </summary>
-        /// <param name="pathId"></param>
-        /// <param name="value"></param>
-        public void AddOrUpdate(string pathId, string value)
-        {
-            if (string.IsNullOrEmpty(pathId))
-                throw new ArgumentException("Path Key can not be null or empty", nameof(pathId));
-            if (string.IsNullOrEmpty(value))
-                throw new ArgumentException("Path Value can not be null or empty", nameof(value));
-
-            if (paths.ContainsKey(pathId))
-                paths[pathId] = value;
-            else
-                paths.Add(pathId, value);
-        }
-        /// <summary>
-        /// Loads all application paths from the given collection
-        /// </summary>
-        /// <param name="collection"></param>
-        public void LoadPaths(IEnumerable<ApplicationPathItem> collection)
-        {
-            if (collection == null)
-                return;
-
-            foreach (var path in collection)
-            {
-                AddOrUpdate(path.Key, path.Value);
-            }
-        }
-        /// <summary>
-        /// Asynchronously executes an external command or application using the given path and arguments 
-        /// </summary>
-        /// <param name="path"></param>
-        /// <param name="arguments"></param>
-        /// <param name="outputHandler">A delegate to method to handle process' output messages, can be omitted</param>
-        /// <param name="errorHandler">A delegate to method to handle process' error messages, can be omitted</param>
-        /// <returns></returns>
-        public void ExecuteExternalApplicationAsync(string path, string arguments,
-                                                           DataReceivedEventHandler outputHandler, DataReceivedEventHandler errorHandler)
-        {
-            FileResolver.ExecuteExternalApplicationAsync(path, arguments, outputHandler, errorHandler);
         }
         /// <summary>
         /// Writes the given string to the given file
@@ -197,7 +119,7 @@ namespace MIDE.FileSystem
         /// <param name="path"></param>
         public void CleanDirectory(string path)
         {
-            if (!IsDirectory(path))
+            if (!DirectoryExists(path))
                 return;
             DirectoryInfo dir = new DirectoryInfo(path);
             DirectoryInfo[] dirs = dir.GetDirectories();
@@ -212,59 +134,7 @@ namespace MIDE.FileSystem
                 DeleteDirectory(subdir.FullName);
             }
         }
-
-        /// <summary>
-        /// Searches for the given known path entry
-        /// </summary>
-        /// <param name="folder"></param>
-        /// <returns></returns>
-        public string GetPath(string pathId)
-        {
-            if (paths.TryGetValue(pathId, out string path))
-                return path;
-            string folderPath = pathId switch
-            {
-                PROJECTS   => "root\\projects\\",
-                SETTINGS   => "root\\user.settings.json",
-                EXTENSIONS => "root\\extensions\\",
-                TEMPLATES  => "root\\templates\\",
-                ASSETS     => "root\\assets\\",
-                THEMES     => "root\\themes\\",
-                TASKS      => "root\\tasks\\",
-                LOGS       => "root\\logs\\",
-                ROOT       => "root\\",
-                _            => ""
-            };
-            return GetOrAddPath(pathId, folderPath);
-        }
-        /// <summary>
-        /// Combines file path with application path that contains the file
-        /// </summary>
-        /// <param name="pathId"></param>
-        /// <param name="file"></param>
-        /// <returns></returns>
-        public string GetFilePath(string pathId, string file)
-        {
-            string folder = GetPath(pathId);
-            if (folder == null)
-                return null;
-            return Combine(folder, file);
-        }
-        /// <summary>
-        /// Gets the given path by key. If the path is not registered yet, creates new entry based on the given path
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="defaultValue"></param>
-        /// <returns></returns>
-        public string GetOrAddPath(string key, string defaultValue = null)
-        {
-            if (!paths.ContainsKey(key))
-            {
-                AddOrUpdate(key, defaultValue);
-                return defaultValue;
-            }
-            return paths[key];
-        }
+              
         public string GetAbsolutePath(string path) => Path.GetFullPath(path);
         public string GetParentDirectory(string path) => Path.GetDirectoryName(path);
 
@@ -275,17 +145,23 @@ namespace MIDE.FileSystem
         /// <returns></returns>
         public bool Exists(string path) => File.Exists(path) || Directory.Exists(path);
         /// <summary>
-        /// Verifies if the given file exists
+        /// Verifies if the given path is existing file
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public bool IsFile(string path) => File.Exists(path);
+        public bool FileExists(string path) => File.Exists(path);
         /// <summary>
-        /// Verifies if the given directory exists
+        /// Verifies if the given path is existing directory
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public bool IsDirectory(string path) => Directory.Exists(path);
+        public bool DirectoryExists(string path) => Directory.Exists(path);
+        /// <summary>
+        /// Verifies if the given path is file
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public bool IsFile(string path) => Path.HasExtension(path);
         /// <summary>
         /// Tries to load bytes from the given file and returns null if file does not exist
         /// </summary>
@@ -297,7 +173,7 @@ namespace MIDE.FileSystem
                 return null;
             return File.ReadAllBytes(path);
         }
-        public string GetFilePath(string file)
+        public string GetFileParent(string file)
         {
             if (!File.Exists(file))
                 return null;
@@ -407,16 +283,6 @@ namespace MIDE.FileSystem
         /// <param name="paths"></param>
         /// <returns></returns>
         public string Combine(params string[] paths) => Path.Combine(paths);
-        /// <summary>
-        /// Synchronously executes an external command or application using the given path and arguments 
-        /// </summary>
-        /// <param name="path"></param>
-        /// <param name="arguments"></param>
-        /// <returns></returns>
-        public ExternalExecutionResult ExecuteExternalApplication(string path, string arguments)
-        {
-            return FileResolver.ExecuteExternalApplication(path, arguments);
-        }
         /// <summary>
         /// Enumerates all filtered files in the given directory
         /// </summary>

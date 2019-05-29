@@ -20,7 +20,6 @@ namespace MIDE.Kernel.ConsoleTest
         public static void Main(string[] args)
         {
             Console.ReadKey();
-            FileManager.Instance.FileResolver = new WinFileResolver();
             Program program = new Program();
 
             InstallerKernel.Instance.Execute();

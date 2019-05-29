@@ -9,7 +9,7 @@
     <Description>An application to install extensions on MIDE</Description>
     <Copyright>Copyright 2019 © Andrew Satura</Copyright>
     <LangVersion>8.0</LangVersion>
-    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
 
   <ItemGroup>

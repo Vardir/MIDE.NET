@@ -32,6 +32,8 @@ namespace MIDE.FileSystem
         /// </summary>
         public const string DRIVE_EXTENSION = "@d";
 
+        public IFilePropertiesExtractor FilePropertiesExtractor { get; set; }
+
         public FSObjectClass this[string id] => fsObjectClasses[id];
         
         private FileSystemInfo()
@@ -90,6 +92,27 @@ namespace MIDE.FileSystem
                     yield return kvp.Value;
             }
         }
+        /// <summary>
+        /// Extracts properties of the file or directory by the given path. If path is invalid, throws an exception
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public IEnumerable<(string prop, string val)> ExtractProperties(string path)
+        {
+            if (FilePropertiesExtractor == null)
+            {
+                var file = new FileInfo(path);
+                if (file.Exists)
+                    return GetFileProperties(file);                
+
+                var directory = new DirectoryInfo(path);
+                if (directory.Exists)
+                    return GetDirectoryProperties(directory);
+
+                throw new ArgumentException("The given path is invalid", nameof(path));
+            }
+            return FilePropertiesExtractor.ExtractProperties(path);
+        }
 
         public static bool IsSpecialExtension(string extension)
         {
@@ -106,7 +129,7 @@ namespace MIDE.FileSystem
         public static LinkedList<DirectoryItem> GetDirectoryContents(string fullPath, string searchPattern = null)
         {
             var items = new LinkedList<DirectoryItem>();
-            if (!FileManager.Instance.IsDirectory(fullPath))
+            if (!FileManager.Instance.DirectoryExists(fullPath))
                 return items;
             try
             {
@@ -142,7 +165,8 @@ namespace MIDE.FileSystem
         private void Initialize()
         {
             var fileManager = FileManager.Instance;
-            string fileData = fileManager.ReadOrCreate(fileManager.GetFilePath(FileManager.ASSETS, "file-system-items.json"),
+            string file = fileManager.Combine(ApplicationPaths.Instance[ApplicationPaths.ASSETS], "file-system-items.json");
+            string fileData = fileManager.ReadOrCreate(file,
                                                        "{ \"file-extensions\": null, \"file-editors\": null }");
             FileSystemItemParameters parameters = JsonConvert.DeserializeObject<FileSystemItemParameters>(fileData);
             if (parameters.FileExtensions != null)
@@ -178,6 +202,19 @@ namespace MIDE.FileSystem
                 fsObjectClasses[key] = objectClass.With(extension, editor, glyph);
             else
                 fsObjectClasses.Add(key, new FSObjectClass(key, extension, editor, glyph));
+        }
+
+        private IEnumerable<(string prop, string val)> GetFileProperties(FileInfo file)
+        {
+            yield return ("Creation time UTC", file.CreationTimeUtc.ToString());
+            yield return ("Parent directory", file.DirectoryName);
+            yield return ("Extension", file.Extension);
+            yield return ("Length", file.Length.ToString());
+        }
+        private IEnumerable<(string prop, string val)> GetDirectoryProperties(DirectoryInfo directory)
+        {
+            yield return ("Creation time UTC", directory.CreationTimeUtc.ToString());
+            yield return ("Parent directory", directory.Parent.FullName);
         }
     }
 }

@@ -4,7 +4,7 @@ using Newtonsoft.Json.Converters;
 namespace MIDE.Schemes.JSON
 {
     [JsonObject(MemberSerialization.OptIn)]
-    public class ExtensionInstall
+    public class ExtensionsInstall
     {
         [JsonRequired]
         [JsonProperty(PropertyName = "id")]
@@ -12,7 +12,7 @@ namespace MIDE.Schemes.JSON
 
         [JsonRequired]
         [JsonProperty(PropertyName = "repo")]
-        public string Repository { get; set; }       
+        public string Repository { get; set; }
 
         [JsonRequired]
         [JsonProperty(PropertyName = "mode")]
