@@ -7,7 +7,7 @@ namespace GanttChart.WPF
 {
     public class GanttChartUIExtension : UIExtension
     {
-        public GanttChartUIExtension() : base("GanttChart.WPF")
+        public GanttChartUIExtension() : base("MIDE.GanttChart.UI")
         {
 
         }

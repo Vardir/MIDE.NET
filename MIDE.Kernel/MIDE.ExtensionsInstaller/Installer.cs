@@ -1,14 +1,11 @@
 ﻿using NuGet;
 using System;
 using MIDE.FileSystem;
+using MIDE.Application;
 using MIDE.Application.Logging;
 using System.Collections.Generic;
-using MIDE.ExtensionsInstaller.ViewModels;
-using System.Linq;
-using Newtonsoft.Json;
-using MIDE.Schemes.JSON;
-using MIDE.Helpers;
 using MIDE.Application.Configuration;
+using MIDE.ExtensionsInstaller.ViewModels;
 
 namespace MIDE.ExtensionsInstaller
 {
@@ -17,6 +14,8 @@ namespace MIDE.ExtensionsInstaller
         private Logger eventLogger;
         private FileManager fileManager;
         private Dictionary<string, PackageManager> packManagers;
+
+        public DefaultPackagePathResolver LocalPathResolver { get; internal set; }
 
         public Installer(Logger eventLogger)
         {
@@ -43,7 +42,7 @@ namespace MIDE.ExtensionsInstaller
                 action.SetProgress(InstallationProgress.Error, "Extension not found");
                 return $"Can not find extension with ID '{id}' on repository '{repositoryPath}'";
             }
-            string error = VerifyPackageDependencies(package);
+            string error = ExtensionsManager.VerifyPackageFrameworkDependencies(package);
             if (error != null)
             {
                 action.SetProgress(InstallationProgress.Error, "Extension can not be installed");
@@ -53,6 +52,12 @@ namespace MIDE.ExtensionsInstaller
             try
             {
                 packageInstaller.InstallPackage(id);
+                string platform = ConfigurationManager.Instance["platform"];
+                string extensionPath = LocalPathResolver.GetPackageDirectory(package.Id, package.Version);
+                string root = ApplicationPaths.Instance[ApplicationPaths.EXTENSIONS];
+                string uiExtensionPath = fileManager.Combine(root, extensionPath, "lib", platform, $"{package.Id}.UI.dll");
+                if (fileManager.FileExists(uiExtensionPath))
+                    fileManager.Copy(uiExtensionPath, fileManager.Combine(extensionPath, $"{package.Id}.UI.dll"));
             }
             catch (Exception ex)
             {
@@ -65,23 +70,6 @@ namespace MIDE.ExtensionsInstaller
             return null;
         }
 
-        private string VerifyPackageDependencies(IPackage package)
-        {
-            var frameworkAssemblies = package.FrameworkAssemblies.Where(assembly => assembly.AssemblyName[0] == '!').ToList();
-            foreach (var assembly in frameworkAssemblies)
-            {
-                var (name, part) = assembly.AssemblyName.ExtractUntil(1, ':');
-                Version version = Version.Parse(part);
-                string entry = ConfigurationManager.Instance[name] as string;
-                Version version2 = entry != null ? Version.Parse(entry) : null;
-                if (version2 == null)
-                    return $"Application does not meet extension's requirements on '{name}' of {version} version";
-                if (version2 < version)
-                    return $"Extension requires '{name}' of {version} version but application got {version2}";
-            }
-            return null;
-
-        }
         private PackageManager GetInstallerManager(string path)
         {
             if (packManagers.TryGetValue(path, out PackageManager manager))

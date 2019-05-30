@@ -41,7 +41,7 @@ namespace MIDE.API.Extensibility
         }
         public void Unload()
         {
-            if (!IsEnabled)
+            if (!IsInitialized)
                 return;
             foreach (var module in modules)
             {

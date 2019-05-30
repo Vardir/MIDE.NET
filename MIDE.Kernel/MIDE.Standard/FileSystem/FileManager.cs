@@ -59,6 +59,16 @@ namespace MIDE.FileSystem
         /// <param name="data"></param>
         /// <param name="path"></param>
         public void Write(string[] data, string path) => File.WriteAllLines(path, data);
+        public void Write(IEnumerable<string> data, string path)
+        {
+            using (var writer = new StreamWriter(File.OpenWrite(path)))
+            {
+                foreach (var line in data)
+                {
+                    writer.WriteLine(line);
+                }
+            }
+        }
         /// <summary>
         /// Copies all the files and subdirectories from the source directory to the given destination
         /// </summary>
@@ -189,6 +199,17 @@ namespace MIDE.FileSystem
             if (!File.Exists(filePath))
                 return null;
             return File.ReadAllText(filePath);
+        }
+        /// <summary>
+        /// Tries to load data from the given file and returns null if file does not exist
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        public string[] TryReadLines(string filePath)
+        {
+            if (!File.Exists(filePath))
+                return null;
+            return File.ReadAllLines(filePath);
         }
         /// <summary>
         /// Extracts the exact file or directory name from the given path

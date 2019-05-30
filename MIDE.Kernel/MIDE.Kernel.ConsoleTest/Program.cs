@@ -28,8 +28,8 @@ namespace MIDE.Kernel.ConsoleTest
 
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
-            Console.WriteLine(program.Kernel.SystemClipboard.Pop(API.Services.DataFormat.FileDrop));
-            Console.ReadKey();
+            //Console.WriteLine(program.Kernel.SystemClipboard.Pop(API.Services.DataFormat.FileDrop));
+            //Console.ReadKey();
             program.Kernel.Exit();
         }
 

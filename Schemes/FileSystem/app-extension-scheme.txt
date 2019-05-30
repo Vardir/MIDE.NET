@@ -40,3 +40,11 @@ lib\
 		%extension%.UI.dll	<on demand>
 %extension%.dll				 <required>
 %attached libs%
+
+-----------------------------------------------------------------------------------------------------------
+
+Supported %platform% ID's list:
+	- WPF
+	- Windows.Console
+	- WinForms
+	- ...

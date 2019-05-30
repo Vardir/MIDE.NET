@@ -4,13 +4,13 @@ using System.Linq;
 using MIDE.Helpers;
 using Newtonsoft.Json;
 using MIDE.FileSystem;
-using MIDE.Schemes.JSON;
 using System.Reflection;
 using MIDE.API.Components;
 using MIDE.API.Extensibility;
 using MIDE.Application.Logging;
 using System.Collections.Generic;
 using Newtonsoft.Json.Serialization;
+using MIDE.Application.Configuration;
 
 namespace MIDE.Application
 {
@@ -26,49 +26,26 @@ namespace MIDE.Application
         private Logger appLogger;
         private FileManager fileManager;
         private JsonSerializerSettings serializerSettings;
-        private List<AppExtensionEntry> entries;
         private IPackageRepository localRespository;
         private DefaultPackagePathResolver localPathResolver;
+        private LinkedList<AppExtensionEntry> pendingRegister;
+        private Dictionary<string, AppExtensionEntry> registered;
 
         /// <summary>
         /// A set of registered application extensions
         /// </summary>
-        public IEnumerable<AppExtension> Extensions => entries.Select(axe => axe.Extension);
-        public IEnumerable<AppExtensionEntry> ExtensionsEntries => entries;
+        public IEnumerable<AppExtensionEntry> Extensions => registered.Select(kvp => kvp.Value);
 
         private ExtensionsManager() : base("app-extension-manager")
         {
             appLogger = Kernel.AppLogger;
             fileManager = FileManager.Instance;
-            entries = new List<AppExtensionEntry>();
             serializerSettings = new JsonSerializerSettings();
             serializerSettings.Error = OnSerializationError;
+            pendingRegister = new LinkedList<AppExtensionEntry>();
+            registered = new Dictionary<string, AppExtensionEntry>();
         }
 
-        /// <summary>
-        /// Enables a previously installed extension by the given name, so it can be initialized in application.
-        /// Changes applied after application restart.
-        /// </summary>
-        /// <param name="id"></param>
-        public void Enable(string id)
-        {
-            var extension = entries.FirstOrDefault(ax => ax.Id == id);
-            if (extension == null)
-                return;
-            extension.IsEnabled = true;
-        }
-        /// <summary>
-        /// Disables a previously installed extension by the given name, so it will not be initialized in application.
-        /// Changes applied after application restart.
-        /// </summary>
-        /// <param name="id"></param>
-        public void Disable(string id)
-        {
-            var extension = entries.FirstOrDefault(ax => ax.Id == id);
-            if (extension == null)
-                return;
-            extension.IsEnabled = true;
-        }
         /// <summary>
         /// Loads all the extensions that are provided in attached assemblies
         /// </summary>
@@ -80,18 +57,44 @@ namespace MIDE.Application
             var directory = fileManager.GetAbsolutePath(ApplicationPaths.Instance[ApplicationPaths.EXTENSIONS]);
             localRespository = PackageRepositoryFactory.Default.CreateRepository(directory);
             localPathResolver = new DefaultPackagePathResolver(directory);
+            string[] lines = fileManager.TryReadLines(fileManager.Combine(directory, ".enabled"));
+            var enabledExtensions = new HashSet<string>(lines.Where(l => !string.IsNullOrWhiteSpace(l)));
             foreach (var pack in localRespository.GetPackages())
             {
-                LoadExtension(directory, pack);
+                string error = Validate(pack);
+                if (error != null)
+                {
+                    appLogger.PushWarning($"Couldn't load extension '{pack.Id}': {error}");
+                    continue;
+                }
+                var entry = new AppExtensionEntry(pack, localPathResolver.GetInstallPath(pack), enabledExtensions.Contains(pack.Id));
+                pendingRegister.AddLast(entry);
             }
+            RegisterExtensions();
             appLogger.PushDebug(null, "Extensions loaded");
+        }
+
+        public static string VerifyPackageFrameworkDependencies(IPackage package)
+        {
+            var frameworkAssemblies = package.FrameworkAssemblies.Where(assembly => assembly.AssemblyName[0] == '!').ToList();
+            foreach (var assembly in frameworkAssemblies)
+            {
+                var (name, part) = assembly.AssemblyName.ExtractUntil(1, ':');
+                Version version = Version.Parse(part);
+                string entry = ConfigurationManager.Instance[name] as string;
+                Version version2 = entry != null ? Version.Parse(entry) : null;
+                if (version2 == null)
+                    return $"Application does not meet extension's requirements on '{name}' of {version} version";
+                if (version2 < version)
+                    return $"Extension requires '{name}' of {version} version but got {version2}";
+            }
+            return null;
         }
 
         public T GetExtension<T>(string id)
             where T : AppExtension
         {
-            var entry = entries.Find(ext => ext.Id == id);
-            if (entry == null)
+            if (!registered.TryGetValue(id, out var entry))
                 return null;
             return entry.Extension as T;
         }
@@ -102,7 +105,7 @@ namespace MIDE.Application
                 return;
             UnloadExtensions();
             serializerSettings = null;
-            entries = null;
+            registered = null;
             localRespository = null;
             _disposed = true;
         }
@@ -112,65 +115,52 @@ namespace MIDE.Application
         /// </summary>
         private void UnloadExtensions()
         {
-            //appLogger.PushDebug(null, "Unloading extensions");
-            //ExtensionsInit init = new ExtensionsInit();
-            //LinkedList<RegisterItem> registerItems = new LinkedList<RegisterItem>();
-            //SortExtensions();
-            //foreach (var entry in entries)
-            //{
-            //    if (entry.PendingUninstall)
-            //    {
-            //        AppKernel.Instance.AddTask(new DeletePathTask(TaskActivationEvent.BeforeLoad, TaskRepetitionMode.Once)
-            //        {
-            //            Path = fileManager.Combine(fileManager[FileManager.EXTENSIONS], entry.Origin)
-            //        });
-            //        continue;
-            //    }
-            //    registerItems.AddLast(new RegisterItem()
-            //    {
-            //        Id = entry.Id,
-            //        Enabled = entry.IsEnabled,
-            //        Path = entry.Origin
-            //    });
-            //    entry.Extension.Unload();
-            //}
-            //init.Items = registerItems.ToArray();
-            //string directory = fileManager.GetPath(FileManager.EXTENSIONS);
-            //string serializeData = JsonConvert.SerializeObject(init, Formatting.Indented);
-            //fileManager.Write(serializeData, fileManager.Combine(directory, "init.json"));
-            //entries.Clear();
-            //appLogger.PushDebug(null, "Extensions unloaded");
+            appLogger.PushDebug(null, "Unloading extensions");
+            var enabled = registered.Select(kvp => kvp.Value)
+                                    .Where(e => e.IsEnabled && !e.PendingUninstall)
+                                    .Select(e => e.Id);
+            string directory = ApplicationPaths.Instance[ApplicationPaths.EXTENSIONS];
+            fileManager.Write(enabled, fileManager.Combine(directory, ".enabled"));
+            foreach (var kvp in registered)
+            {
+                var entry = kvp.Value;
+                entry.Extension.Unload();
+            }            
+            registered.Clear();
+            appLogger.PushDebug(null, "Extensions unloaded");
         }
-        private void LoadExtension(string root, IPackage package)
+        private void RegisterExtensions()
         {
-            string extensionPath = localPathResolver.GetInstallPath(package);            
-            //Assembly assembly = Assembly.LoadFrom(fileManager.Combine(extensionPath, config.DllPath));
-            //var types = assembly.GetTypes();
-            //for (int i = 0; i < types.Length; i++)
-            //{
-            //    bool isExtension = types[i].IsSubclassOf(typeof(AppExtension));
-            //    if (isExtension)
-            //    {
-            //        var instance = Activator.CreateInstance(types[i], ToSafeId(package.Id), config.IsEnabled) as AppExtension;
-            //        AppExtensionEntry extensionEntry = new AppExtensionEntry(instance)
-            //        {
-            //            Title = package.Title,
-            //            Owners = package.Owners,
-            //            Authors = package.Authors,
-            //            IsEnabled = config.IsEnabled,
-            //            Copytight = package.Copyright,
-            //            LiceseUrl = package.LicenseUrl,
-            //            Tags = package.Tags.Split(' '),
-            //            ProjectUrl = package.ProjectUrl,
-            //            Description = package.Description,
-            //            Version = package.Version.Version,
-            //            Origin = package.ProjectUrl.ToString(),
-            //            Dependencies = package.DependencySets.SelectMany(dps => dps.Dependencies)
-            //                                                 .Select(dp => dp.ToString()).ToArray()
-            //        };
-            //        RegisterExtension(extensionEntry);
-            //    }
-            //}
+            var node = pendingRegister.First;
+            while (node != null)
+            {
+                var entry = node.Value;
+                var next = node.Next;
+                pendingRegister.Remove(node);
+                bool resolved = true;
+                foreach (var dependency in entry.Dependencies)
+                {
+                    if (registered.TryGetValue(dependency, out var parent))
+                    {
+                        parent.AddDependent(entry.Id);
+                        if (!parent.IsEnabled)
+                            entry.IsEnabled = false;
+                        continue;
+                    }
+                    resolved = false;
+                    pendingRegister.AddLast(node);
+                    break;
+                }
+                node = next;
+                if (!resolved)
+                    continue;
+                RegisterExtension(entry);
+            }
+            foreach (var entry in pendingRegister)
+            {
+                appLogger.PushWarning($"Couldn't register extension '{entry.Id}' because one of it dependencies wasn't loaded");
+            }
+            pendingRegister.Clear();
         }
         private void RegisterExtension(AppExtensionEntry entry)
         {
@@ -179,8 +169,9 @@ namespace MIDE.Application
             {
                 if (entry == null)
                     throw new ArgumentNullException("Extension parameter can not be null");
-                if (entries.FirstOrDefault(e => e.Id == entry.Id) != null)
+                if (registered.ContainsKey(entry.Id))
                     throw new ArgumentException("Duplicate extension ID");
+                LoadExtension(entry);
             }
             catch (Exception ex)
             {
@@ -188,8 +179,31 @@ namespace MIDE.Application
                 return;
             }
             entry.Extension.Initialize();
-            entries.Add(entry);
+            registered.Add(entry.Id, entry);
             appLogger.PushDebug(null, $"Extension '{entry.Id}' registered");
+        }
+        private void LoadExtension(AppExtensionEntry entry)
+        {
+            string file = fileManager.Combine(entry.Origin, $"{entry.Id}.dll");
+            if (!fileManager.FileExists(file))
+                throw new DllNotFoundException("Extension does not have a kernel library");
+
+            Assembly assembly = Assembly.LoadFrom(file);
+            var types = assembly.GetTypes();
+            for (int i = 0; i < types.Length; i++)
+            {
+                bool isExtension = types[i].IsSubclassOf(typeof(AppExtension));
+                if (isExtension)
+                {
+                    var instance = Activator.CreateInstance(types[i], ToSafeId(entry.Id), entry.IsEnabled) as AppExtension;
+                    entry.Extension = instance;
+                }
+            }
+            if (entry.Extension == null)
+                throw new EntryPointNotFoundException("Extension kernel library does not have suitable extension definition");
+            file = fileManager.Combine(entry.Origin, $"{entry.Id}.UI.dll");
+            if (fileManager.FileExists(file))
+                AppKernel.Instance.UIManager.RegisterUIExtension(file);
         }
 
         private void OnSerializationError(object sender, ErrorEventArgs e)
@@ -197,10 +211,21 @@ namespace MIDE.Application
             Kernel.AppLogger.PushError(e.ErrorContext.Error, e.ErrorContext, 
                                        $"An error occurred on object serialization: {e.ErrorContext.Error.Message}");
         }
-    }
 
+        private string Validate(IPackage package)
+        {
+            string error = VerifyPackageFrameworkDependencies(package);
+            if (error != null)
+                return error;
+            return null;
+        }
+    }
+    
     public class AppExtensionEntry
     {
+        private HashSet<string> dependants;
+        private HashSet<string> dependencies;
+
         public string Id { get; }
         /// <summary>
         /// A flag to indicate whether the extension is enabled to load
@@ -210,33 +235,55 @@ namespace MIDE.Application
         /// A flag to indicate entry to uninstall from application
         /// </summary>
         public bool PendingUninstall { get; internal set; }
-        public string Title { get; internal set; }
+        /// <summary>
+        /// A descriptive name of the application that is visible to end user
+        /// </summary>
+        public string Title { get; }
         /// <summary>
         /// A short description of the extension
         /// </summary>
-        public string Description { get; internal set; }
-        public string Copytight { get; internal set; }        
+        public string Description { get; }
+        public string Copyright { get; }        
         /// <summary>
         /// Original extension path from which it was loaded
         /// </summary>
-        public string Origin { get; internal set; }
-        public Uri LiceseUrl { get; internal set; }
-        public Uri ProjectUrl { get; internal set; }
-        public Version Version { get; internal set; }
-        public string[] Tags { get; internal set; }
+        public string Origin { get; }
+        public Uri LiceseUrl { get; }
+        public Uri ProjectUrl { get; }
+        public Version Version { get; }
+        public string[] Tags { get; }
+        
+        public int DependantsCount => dependants.Count;
+        public int DependenciesCount => dependencies.Count;
         /// <summary>
         /// A set of extensions id's this extension depends on
         /// </summary>
-        public string[] Dependencies { get; internal set; }        
-        public AppExtension Extension { get; }
-        public IEnumerable<string> Owners { get; internal set; }
-        public IEnumerable<string> Authors { get; internal set; }
+        public IEnumerable<string> Dependencies => dependencies;
+        /// <summary>
+        /// A set of extensions that are depend on this extension
+        /// </summary>
+        public IEnumerable<string> Dependants => dependants;
+        public IEnumerable<string> Owners { get; }
+        public IEnumerable<string> Authors { get; }
+        public AppExtension Extension { get; internal set; }
 
-        public AppExtensionEntry(AppExtension extension)
+        public AppExtensionEntry(IPackage package, string location, bool isEnabled = true)
         {
-            Id = extension.Id;
-            Extension = extension;
-            IsEnabled = extension.IsEnabled;
+            Id = package.Id;
+            Origin = location;
+            IsEnabled = isEnabled;
+            Title = package.Title ?? Id;
+            Copyright = package.Copyright;
+            LiceseUrl = package.LicenseUrl;
+            Tags = package.Tags.Split(' ');
+            ProjectUrl = package.ProjectUrl;
+            Description = package.Description;
+            Version = package.Version.Version;
+            dependants = new HashSet<string>();
+            dependencies = new HashSet<string>(package.DependencySets.SelectMany(set => set.Dependencies)
+                                                                     .Select(dp => dp.Id));
         }
+
+        public void AddDependent(string id) => dependants.Add(id);
     }
 }

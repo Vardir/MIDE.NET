@@ -55,13 +55,13 @@ namespace MIDE.API.Components
         private void Refresh()
         {
             Extensions.Clear();
-            var entries = ExtensionsManager.Instance.ExtensionsEntries;
-            foreach (var entry in entries)
-            {
-                var item = new ExtensionItemViewModel(entry);
-                item.IsEnabled = entry.IsEnabled;
-                Extensions.Add(item);
-            }
+            //var entries = ExtensionsManager.Instance.ExtensionsEntries;
+            //foreach (var entry in entries)
+            //{
+            //    var item = new ExtensionItemViewModel(entry);
+            //    item.IsEnabled = entry.IsEnabled;
+            //    Extensions.Add(item);
+            //}
         }
         private void InstallExtension()
         {
@@ -131,7 +131,7 @@ namespace MIDE.API.Components
             Name = entry.Id;
             Version = entry.Version;
             Description = entry.Description;
-            Dependencies = entry.Dependencies;
+            //Dependencies = entry.Dependencies;
             Messages = new ObservableCollection<string>();
             UpdateMessages();
         }

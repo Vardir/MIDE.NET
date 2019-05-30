@@ -13,7 +13,6 @@ namespace MIDE.API.Services
         private List<TabSection> tabSections;
         private Dictionary<string, Tab> tabs;
 
-        public Platform CurrentPlatform { get; set; }
         public Menu ApplicationMenu { get; }
 
         public TabSection this[string id] => tabSections.Find(ts => ts.Id == id);
@@ -138,10 +137,5 @@ namespace MIDE.API.Services
                     break;
             }
         }
-    }
-
-    public enum Platform
-    {
-        WindowsConsole, WPF, WinForms //TODO: add more platforms
     }
 }

@@ -7,7 +7,7 @@ namespace Terminal.WPF
 {
     public class TerminalUIExtension : UIExtension
     {
-        public TerminalUIExtension() : base("Terminal.WPF")
+        public TerminalUIExtension() : base("MIDE.Terminal.UI")
         {
 
         }

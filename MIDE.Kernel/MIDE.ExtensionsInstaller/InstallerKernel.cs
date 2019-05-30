@@ -5,6 +5,7 @@ using MIDE.Schemes.JSON;
 using MIDE.Application.Logging;
 using MIDE.ExtensionsInstaller.Components;
 using MIDE.Application.Configuration;
+using NuGet;
 
 namespace MIDE.ExtensionsInstaller
 {
@@ -17,6 +18,7 @@ namespace MIDE.ExtensionsInstaller
         private ApplicationPaths paths;
         private Installer installer;
         private Uninstaller uninstaller;
+        private DefaultPackagePathResolver localPathResolver;
 
         public DateTime TimeStarted { get; private set; }
         public Logger EventLogger { get; }
@@ -71,7 +73,8 @@ namespace MIDE.ExtensionsInstaller
                 fileManager.MakeFolder(paths["installer-log"]);
             else
                 fileManager.CleanDirectory(paths["installer-log"]);
-
+            localPathResolver = new DefaultPackagePathResolver(paths[ApplicationPaths.EXTENSIONS]);
+            installer.LocalPathResolver = localPathResolver;
             EventLogger.PushInfo("Configurations loaded");
         }
         private void FetchActions()

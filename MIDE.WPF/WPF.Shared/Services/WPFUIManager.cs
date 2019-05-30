@@ -20,7 +20,6 @@ namespace MIDE.WPF.Services
 
         public WpfUIManager()
         {
-            CurrentPlatform = Platform.WPF;
             loadedUIExtensions = new LinkedList<UIExtension>();
         }
 

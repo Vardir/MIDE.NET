@@ -7,7 +7,7 @@ namespace NodeGraphs.WPF
 {
     public class NodeGraphsUIExtension : UIExtension
     {
-        public NodeGraphsUIExtension() : base("NodeGraphs.WPF")
+        public NodeGraphsUIExtension() : base("MIDE.NodeGraphs.UI")
         {
             
         }
