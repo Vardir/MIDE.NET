@@ -17,7 +17,7 @@ namespace MIDE.API.Components
 
         public TextBoxDialogBox(string title, string message, string defaultValue = null) : base(title)
         {
-            Message = message;
+            Message = localization[message];
             Input = new TextBox("input", defaultValue);
             AcceptButton = new DialogButton(this, DialogResult.Accept);
             CancelButton = new DialogButton(this, DialogResult.Cancel);

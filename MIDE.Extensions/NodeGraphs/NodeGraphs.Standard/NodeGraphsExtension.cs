@@ -13,9 +13,11 @@ namespace NodeGraphs
         {
             context.AddItem("view", new MenuButton("node-graph", 0)
             {
+                Caption = "(ng:node-graph)",
                 PressCommand = new RelayCommand(() =>
                 {
                     NodeGraphTab tab = new NodeGraphTab("nodes-graph");
+                    tab.Header = "(ng:node-graph)";
                     Kernel.UIManager.AddTab(tab, "editors");
                 })
             });

@@ -28,44 +28,42 @@ namespace MIDE.ExtensionsInstaller
         {
             string id = action.ExtensionId;
             string repositoryPath = action.ExtensionSource;
-            action.SetProgress(InstallationProgress.Loading, "Loading extension from repository");
+            action.SetProgress(InstallationProgress.Loading, "(ext-installer:progr-loading)");
             eventLogger.PushInfo($"Attempting to install extension '{id}' from '{repositoryPath}'");
             var packageInstaller = GetInstallerManager(repositoryPath);
             if (packageInstaller == null)
             {
-                action.SetProgress(InstallationProgress.Error, "Repository not found or it is corrupted");
+                action.SetProgress(InstallationProgress.Error, "(ext-installer:progr-error-repo-notfound)");
                 return $"Can not install extension '{id}': repository '{repositoryPath}' not found";
             }
             var package = packageInstaller.SourceRepository.FindPackage(id);
             if (package == null)
             {
-                action.SetProgress(InstallationProgress.Error, "Extension not found");
+                action.SetProgress(InstallationProgress.Error, "(ext-installer:progr-error-ext-notfound)");
                 return $"Can not find extension with ID '{id}' on repository '{repositoryPath}'";
             }
             string error = ExtensionsManager.VerifyPackageFrameworkDependencies(package);
             if (error != null)
             {
-                action.SetProgress(InstallationProgress.Error, "Extension can not be installed");
+                action.SetProgress(InstallationProgress.Error, "(ext-installer:progr-error-ext-cntinstall)");
                 return $"Can not install extension with ID '{id}': {error}";
             }
-            action.SetProgress(InstallationProgress.Installing, "Installing extension");
+            action.SetProgress(InstallationProgress.Installing, "(ext-installer:progr-installing)");
             try
             {
                 packageInstaller.InstallPackage(id);
-                string platform = ConfigurationManager.Instance["platform"];
-                string extensionPath = LocalPathResolver.GetPackageDirectory(package.Id, package.Version);
-                string root = ApplicationPaths.Instance[ApplicationPaths.EXTENSIONS];
-                string uiExtensionPath = fileManager.Combine(root, extensionPath, "lib", platform, $"{package.Id}.UI.dll");
-                if (fileManager.FileExists(uiExtensionPath))
-                    fileManager.Copy(uiExtensionPath, fileManager.Combine(extensionPath, $"{package.Id}.UI.dll"));
+                //string platform = ConfigurationManager.Instance["platform"];
+                //string extensionPath = LocalPathResolver.GetPackageDirectory(package.Id, package.Version);
+                //string root = ApplicationPaths.Instance[ApplicationPaths.EXTENSIONS];
+                //string uiExtensionPath = fileManager.Combine(root, extensionPath, "lib", platform, $"{package.Id}.UI.dll");
             }
             catch (Exception ex)
             {
-                action.SetProgress(InstallationProgress.Error, "Extension installation failed, see log");
+                action.SetProgress(InstallationProgress.Error, "(ext-installer:progr-error-ext-failinstall)");
                 eventLogger.PushError(ex, null);
                 return $"Extension '{id}': installation failed";
             }
-            action.SetProgress(InstallationProgress.Success, "Extension installed");
+            action.SetProgress(InstallationProgress.Success, "(ext-installer:progr-success)");
             eventLogger.PushInfo($"Extension '{id}' installed");
             return null;
         }

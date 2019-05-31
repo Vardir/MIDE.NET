@@ -23,7 +23,7 @@ namespace MIDE.ExtensionsInstaller.Components
         {
             var actionViewModel = new InstallationActionViewModel(extensionId, extensionSource, mode);
             actionViewModel.AutoEnable = autoEnable;
-            actionViewModel.SetProgress(InstallationProgress.Fetching, "Fetching up");
+            actionViewModel.SetProgress(InstallationProgress.Fetching, "(ext-installer:progr-fetching)");
             installationPage.Actions.Add(actionViewModel);
         }
 

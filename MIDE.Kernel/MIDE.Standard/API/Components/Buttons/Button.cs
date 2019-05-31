@@ -14,9 +14,10 @@ namespace MIDE.API.Components
             get => caption;
             set
             {
-                if (value == caption)
+                string localized = localization[value];
+                if (localized == caption)
                     return;
-                caption = value;
+                caption = localized;
                 OnPropertyChanged(nameof(Caption));
             }
         }
@@ -35,7 +36,7 @@ namespace MIDE.API.Components
         
         public Button(string id) : base(id)
         {
-            Caption = FormatId();
+            Caption = $"({id})";
         }
 
         public virtual void Press(object parameter)

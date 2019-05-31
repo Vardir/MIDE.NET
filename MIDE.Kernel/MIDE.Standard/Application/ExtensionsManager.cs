@@ -201,9 +201,11 @@ namespace MIDE.Application
             }
             if (entry.Extension == null)
                 throw new EntryPointNotFoundException("Extension kernel library does not have suitable extension definition");
-            file = fileManager.Combine(entry.Origin, $"{entry.Id}.UI.dll");
+            file = fileManager.Combine(entry.Origin, "lib", ConfigurationManager.Instance["platform"], $"{entry.Id}.UI.dll");
             if (fileManager.FileExists(file))
                 AppKernel.Instance.UIManager.RegisterUIExtension(file);
+            file = fileManager.Combine(entry.Origin, "assets", "lang", $"{ConfigurationManager.Instance["lang"]}.json");
+            localization.LoadFrom(file);
         }
 
         private void OnSerializationError(object sender, ErrorEventArgs e)

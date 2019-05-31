@@ -1,6 +1,7 @@
 {
-  "MIDE.Kernel": "0.7.6",
+  "MIDE.Kernel": "0.8.1",
   "platform": "WPF",
   "theme": "dark",
+  "lang": "en-us",
   "log_levels": "info,warn,fatal"
 }

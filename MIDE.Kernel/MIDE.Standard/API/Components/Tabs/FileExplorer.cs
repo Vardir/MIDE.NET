@@ -156,7 +156,7 @@ namespace MIDE.API.Components
             {
                 if (!IO.Directory.Exists(value) && !IO.File.Exists(value) && value != @"\")
                 {
-                    yield return("The specified path does not exist", value);
+                    yield return(localization["(fexpl-msg-path-nexist)"], value);
                 }
             }
         }
@@ -188,7 +188,7 @@ namespace MIDE.API.Components
 
         private Dictionary<string, ContextMenu> contextMenuSchemes;
         
-        private FileExplorerContextMenu ()
+        private FileExplorerContextMenu()
         {
             contextMenuSchemes = new Dictionary<string, ContextMenu>()
             {
@@ -253,12 +253,12 @@ namespace MIDE.API.Components
             var addbtn = new MenuButton("add", -99);
             addbtn.Add(new MenuButton("new-empty-file", -99)
             {
-                Caption = "New empty file...",
+                Caption = "(new-empty-file)...",
                 PressCommand = new RelayCommand(NewEmptyFile)
             }, null);
             addbtn.Add(new MenuButton("new-folder", -98)
             {
-                Caption = "New empty folder...",
+                Caption = "(new-folder)...",
                 PressCommand = new RelayCommand(NewFolder)
             }, null);
             fdscheme.Add(addbtn, null);
@@ -276,7 +276,7 @@ namespace MIDE.API.Components
 
         public static void NewEmptyFile()
         {
-            var dialogBox = new TextBoxDialogBox("New file", "File name");
+            var dialogBox = new TextBoxDialogBox("(dlg-new-file-title)", "(dlg-new-file-msg)");
             var (dialogResult, name) = AppKernel.Instance.UIManager.OpenDialog(dialogBox);
             if (dialogResult == DialogResult.Cancel)
                 return;
@@ -291,7 +291,7 @@ namespace MIDE.API.Components
             string message = FileManager.Instance.MakeFile(file, template);
             if (message != null)
             {
-                var messageBox = new MessageDialogBox("Error", message);
+                var messageBox = new MessageDialogBox("(dlg-msg-error-title)", message);
                 AppKernel.Instance.UIManager.OpenDialog(messageBox);
             }
             fei.IsExpanded = false;
@@ -299,7 +299,7 @@ namespace MIDE.API.Components
         }
         public static void NewFolder()
         {
-            var dialogBox = new TextBoxDialogBox("New folder", "Folder name");
+            var dialogBox = new TextBoxDialogBox("(dlg-new-folder-title)", "(dlg-new-folder-msg)");
             var (dialogResult, name) = AppKernel.Instance.UIManager.OpenDialog(dialogBox);
             if (dialogResult == DialogResult.Cancel)
                 return;
@@ -313,7 +313,7 @@ namespace MIDE.API.Components
             string message = FileManager.Instance.MakeFolder(folder);
             if (message != null)
             {
-                var messageBox = new MessageDialogBox("Error", message);
+                var messageBox = new MessageDialogBox("(dlg-msg-error-title)", message);
                 AppKernel.Instance.UIManager.OpenDialog(messageBox);
             }
             fei.IsExpanded = false;
@@ -330,7 +330,7 @@ namespace MIDE.API.Components
                 string message = FileManager.Instance.Delete(fileExplorerItem.FullPath);
                 if (message != null)
                 {
-                    var messageBox = new MessageDialogBox("Error", message);
+                    var messageBox = new MessageDialogBox("(dlg-msg-error-title)", message);
                     AppKernel.Instance.UIManager.OpenDialog(messageBox);
                     return;
                 }

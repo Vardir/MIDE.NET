@@ -14,7 +14,7 @@ namespace MIDE.API.Components
 
         public MessageDialogBox(string title, string message) : base(title)
         {
-            Message = message;
+            Message = localization[message];
             OkButton = new DialogButton(this, DialogResult.Ok);
         }
 

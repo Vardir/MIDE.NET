@@ -12,11 +12,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="assets\lang\en-us.json" />
     <None Remove="ExtensionTemplate.nuspec" />
     <None Remove="icon.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="assets\lang\en-us.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="icon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -39,7 +43,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="rem set path=$(SolutionDir)NuGet\&#xD;&#xA;rem %25systemroot%25\System32\xcopy &quot;$(TargetDir)$(TargetFileName)&quot; %25path%25 /y&#xD;&#xA;rem %25systemroot%25\System32\xcopy &quot;$(TargetDir)KernelTemplate.nuspec&quot; %25path%25 /y" />
+    <Exec Command="rem set path=$(SolutionDir)NuGet\&#xD;&#xA;rem %25systemroot%25\System32\xcopy &quot;$(TargetDir)$(TargetFileName)&quot; %25path%25 /y&#xD;&#xA;rem %25systemroot%25\System32\xcopy &quot;$(TargetDir)KernelTemplate.nuspec&quot; %25path%25 /y&#xD;&#xA;rem %25systemroot%25\System32\xcopy &quot;$(TargetDir)assets\*&quot; %25path%25\assets /y /s /i" />
   </Target>
 
 </Project>

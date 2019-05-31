@@ -78,11 +78,11 @@ namespace MIDE.API.Components
         {
             BrowseButton = new Button("browse");
             SearchBox = new TextBox("search-box");
-            ProjectName = new TextBox("project-name", "MyProject");
+            ProjectName = new TextBox("project-name", localization["crt-proj-msgbox-defname"]);
             ProjectPath = new TextBox("project-path", ApplicationPaths.Instance[ApplicationPaths.PROJECTS]);
             TemplatesList = new ListBox("templates-list");
-            ProjectNameLabel = new Label("project-name-label", "Project name:");
-            ProjectPathLabel = new Label("project-path-label", "Project location:");
+            ProjectNameLabel = new Label("project-name-label", "(crt-proj-msgbox-lblname):");
+            ProjectPathLabel = new Label("project-path-label", "(crt-proj-msgbox-lblloc):");
             AcceptButton = new DialogButton(this, DialogResult.Accept);
             CancelButton = new DialogButton(this, DialogResult.Cancel);
 

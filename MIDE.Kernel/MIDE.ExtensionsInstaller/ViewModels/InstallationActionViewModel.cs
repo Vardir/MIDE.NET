@@ -1,5 +1,6 @@
 ﻿using MIDE.Schemes.JSON;
 using MIDE.API.ViewModels;
+using MIDE.Application.Localization;
 
 namespace MIDE.ExtensionsInstaller.ViewModels
 {
@@ -26,9 +27,10 @@ namespace MIDE.ExtensionsInstaller.ViewModels
             get => progressMessage;
             set
             {
-                if (value == progressMessage)
+                string localized = LocalizationProvider.Instance[value];
+                if (localized == progressMessage)
                     return;
-                progressMessage = value;
+                progressMessage = localized;
                 OnPropertyChanged(nameof(ProgressMessage));
             }
         }

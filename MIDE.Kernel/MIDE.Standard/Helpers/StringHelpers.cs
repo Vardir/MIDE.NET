@@ -13,6 +13,22 @@ namespace MIDE.Helpers
                 return value;
             return value.Substring(0, length);
         }
+        public static string Between(this string input, char first, char second)
+        {
+            if (string.IsNullOrEmpty(input))
+                return input;
+            int index = input.IndexOf(first);
+            if (index == -1)
+                return input;
+            index++;
+            int len = 0;
+            for (int i = index; i < input.Length; i++, len++)
+            {
+                if (input[i] == second)
+                    break;
+            }
+            return input.Substring(index, len);
+        }
         /// <summary>
         /// Extracts a substring starting from the given index until it reaches one of the given separators.
         /// <para></para>

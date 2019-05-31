@@ -1,11 +1,11 @@
-﻿using System;
+﻿using NuGet;
+using System;
 using MIDE.FileSystem;
 using Newtonsoft.Json;
 using MIDE.Schemes.JSON;
 using MIDE.Application.Logging;
-using MIDE.ExtensionsInstaller.Components;
 using MIDE.Application.Configuration;
-using NuGet;
+using MIDE.ExtensionsInstaller.Components;
 
 namespace MIDE.ExtensionsInstaller
 {
@@ -54,7 +54,6 @@ namespace MIDE.ExtensionsInstaller
         private void LoadConfigurations()
         {
             EventLogger.PushInfo("Loading configurations");
-
             try
             {
                 ConfigurationManager.Instance.LoadFrom("config.json");

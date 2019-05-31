@@ -4,6 +4,7 @@ using MIDE.FileSystem;
 using MIDE.Application;
 using MIDE.API.Commands;
 using MIDE.API.ViewModels;
+using MIDE.Application.Localization;
 using System.Collections.ObjectModel;
 
 namespace MIDE.API.Components
@@ -65,7 +66,7 @@ namespace MIDE.API.Components
         }
         private void InstallExtension()
         {
-            var (dialogResult, path) = Kernel.UIManager.OpenDialog(new OpenFileDialogBox("Select package file", "*.nupkg"));
+            var (dialogResult, path) = Kernel.UIManager.OpenDialog(new OpenFileDialogBox("(dlg-pck-sel-file)", "*.nupkg"));
             if (dialogResult == DialogResult.Ok)
             {
                 string directory = FileManager.Instance.GetFileParent(path);
@@ -93,7 +94,7 @@ namespace MIDE.API.Components
     {
         private AppExtensionEntry entry;
 
-        private string PendingUninstallMessage => "Extension is going to be uninstalled";
+        private string PendingUninstallMessage => LocalizationProvider.Instance["(extmng-msg-extuninst)"];
 
         public bool IsEnabled
         {

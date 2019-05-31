@@ -21,7 +21,7 @@ namespace MIDE.ExtensionsInstaller
         public string Uninstall(InstallationActionViewModel action)
         {
             string id = action.ExtensionId;
-            action.SetProgress(InstallationProgress.Uninstalling, "Uninstalling");
+            action.SetProgress(InstallationProgress.Uninstalling, "(ext-installer:progr-uninstalling)");
             eventLogger.PushInfo($"Attempting to uninstall extension '{id}'");
             try
             {
@@ -33,7 +33,7 @@ namespace MIDE.ExtensionsInstaller
                 return $"Extension '{id}': uninstallation failed";
             }
             eventLogger.PushInfo($"Extension '{id}' uninstalled");
-            action.SetProgress(InstallationProgress.Success, "Extension uninstalled");
+            action.SetProgress(InstallationProgress.Success, "(ext-installer:progr-success-uninstall)");
             return null;
         }
     }

@@ -1,7 +1,7 @@
 ﻿using System;
 using MIDE.Helpers;
-using System.ComponentModel;
 using System.Collections.Generic;
+using MIDE.Application.Localization;
 
 namespace MIDE.API.Components
 {
@@ -12,6 +12,8 @@ namespace MIDE.API.Components
     {
         private readonly HashSet<DialogResult> validationIgnoredResults;
 
+        protected static readonly LocalizationProvider localization = LocalizationProvider.Instance;
+
         public DialogResult SelectedResult { get; set; }
         public string Title { get; }
 
@@ -19,7 +21,7 @@ namespace MIDE.API.Components
 
         public BaseDialogBox(string title)
         {
-            Title = title;
+            Title = localization[title];
             validationIgnoredResults = new HashSet<DialogResult>();
             validationIgnoredResults.AddRange(GetValidationIgnoredResults());
         }

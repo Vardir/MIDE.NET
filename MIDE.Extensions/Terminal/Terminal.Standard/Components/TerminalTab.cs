@@ -37,7 +37,7 @@ namespace Terminal.Components
         public void ReceiveStatus(int completion, object context)
         {
             if (completion >= 0)
-                Lines.Add($"> Progress {completion}.\n{context}");
+                Lines.Add($"> {localization["t:progress"]} {completion}.\n{context}");
             else
                 Lines.Add($"> {context}");
         }

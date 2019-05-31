@@ -1,6 +1,7 @@
 {
-  "MIDE.Kernel": "0.7.6",
+  "MIDE.Kernel": "0.8.1",
   "platform": "none",
   "theme": "dark",
+  "lang": "en-us",
   "log_levels": "none,info,warn,debug,error,fatal,all"
 }

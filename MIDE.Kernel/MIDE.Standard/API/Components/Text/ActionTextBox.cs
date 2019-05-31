@@ -1,6 +1,4 @@
-﻿using MIDE.Helpers;
-
-namespace MIDE.API.Components
+﻿namespace MIDE.API.Components
 {
     public class ActionTextBox : TextBox
     {

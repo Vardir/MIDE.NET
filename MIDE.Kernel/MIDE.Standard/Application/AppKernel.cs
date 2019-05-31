@@ -14,6 +14,7 @@ using MIDE.Application.Attributes;
 using MIDE.Application.Initializers;
 using MIDE.Application.Configuration;
 using Module = MIDE.API.Extensibility.Module;
+using MIDE.Application.Localization;
 
 namespace MIDE.Application
 {
@@ -28,6 +29,7 @@ namespace MIDE.Application
         private Assembly callingAssembly;
         private ApplicationPaths paths;
         private LinkedList<AppTask> tasks;
+        public LocalizationProvider localization;
         private ConfigurationManager configuration;
 
         #region Public properties
@@ -71,6 +73,7 @@ namespace MIDE.Application
         {
             paths = ApplicationPaths.Instance;
             fileManager = FileManager.Instance;
+            localization = LocalizationProvider.Instance;
             configuration = ConfigurationManager.Instance;
             tasks = new LinkedList<AppTask>();
             Initializers = new List<IApplicationInitializer>();
@@ -110,6 +113,8 @@ namespace MIDE.Application
                 AppLogger.PushFatal(ex.Message);
             }
             LoadConfigurations();
+            string langPath = fileManager.Combine(paths[ApplicationPaths.ASSETS], "lang", $"{configuration["lang"]}.json");
+            localization.LoadFrom(langPath);
             LoadTasks();
             OnStarting();
             AppLogger.PushDebug(null, "Application Kernel started");
@@ -153,7 +158,6 @@ namespace MIDE.Application
             }
             AppLogger.PushDebug(null, "Application Kernel stopped");
             isRunning = false;
-            ClearTemporaryFiles();
             Dispose();
             AppLogger.PushDebug(null, "Application Kernel resources are disposed");
             SaveLog();
@@ -230,12 +234,6 @@ namespace MIDE.Application
             AppLogger.PushDebug(null, "Application configurations loaded");
         }
        
-        private void ClearTemporaryFiles()
-        {
-            AppLogger.PushDebug(null, "Clearing temporary files");
-            FileManager.Instance.CleanDirectory(paths[ApplicationPaths.TEMP]);
-            AppLogger.PushDebug(null, "Temporary files cleared");
-        }
         private void SaveTasks()
         {
             int i = 0;

@@ -16,17 +16,17 @@ namespace Terminal
         {
             context.AddItem("view", new MenuButton("terminal", 50)
             {
-                PressCommand = new RelayCommand(OpenTerminal)
+                Caption = "(t:terminal)",
+                PressCommand = new RelayCommand(() =>
+                {
+                    Kernel.UIManager.GetOrAddTab("loggers", () => new TerminalTab("terminal", this)
+                                                                  { Header = "(t:terminal)" });
+                })
             });
         }
         protected override void RegisterModules()
         {
             RegisterModule(new TerminalModule());
-        }
-
-        private void OpenTerminal()
-        {
-            Kernel.UIManager.GetOrAddTab("loggers", () => new TerminalTab("terminal", this));
         }
     }
 }

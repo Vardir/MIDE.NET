@@ -1,9 +1,10 @@
 ﻿using System;
+using MIDE.Helpers;
 using MIDE.Application;
 using System.Globalization;
 using MIDE.Application.Events;
+using MIDE.Application.Localization;
 using System.Text.RegularExpressions;
-using MIDE.Helpers;
 
 namespace MIDE.API.Components
 {
@@ -14,6 +15,8 @@ namespace MIDE.API.Components
     public abstract class ApplicationComponent : IEventListener
     {
         private static readonly TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+
+        protected static readonly LocalizationProvider localization = LocalizationProvider.Instance;
 
         /// <summary>
         /// The RegEx pattern that is applied to ID of all the components

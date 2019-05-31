@@ -19,9 +19,10 @@ namespace MIDE.API.Components
             get => header;
             set
             {
-                if (value == header)
+                string localized = localization[value];
+                if (localized == header)
                     return;
-                header = value;
+                header = localized;
                 OnPropertyChanged(nameof(Header));
             }
         }
@@ -32,7 +33,7 @@ namespace MIDE.API.Components
         private Tab(string id, Toolbar toolbar, bool allowDuplicates) : base(id)
         {
             AllowDuplicates = allowDuplicates;
-            Header = FormatId();
+            Header = $"({id})";
             TabToolbar = toolbar ?? new Toolbar("toolbar");
             TabToolbar.Parent = this;
             CloseCommand = new RelayCommand(Close);

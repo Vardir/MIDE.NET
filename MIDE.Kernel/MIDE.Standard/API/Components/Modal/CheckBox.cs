@@ -25,9 +25,10 @@ namespace MIDE.API.Components
             get => caption;
             set
             {
-                if (value == caption)
+                string localized = localization[value];
+                if (localized == caption)
                     return;
-                caption = value;
+                caption = localized;
                 OnPropertyChanged(nameof(Caption));
             }
         }

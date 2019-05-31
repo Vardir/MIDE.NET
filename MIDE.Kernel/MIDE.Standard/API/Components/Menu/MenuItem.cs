@@ -30,9 +30,10 @@ namespace MIDE.API.Components
             get => caption;
             set
             {
-                if (value == caption)
+                string localized = localization[value];
+                if (localized == caption)
                     return;
-                caption = value;
+                caption = localized;
                 OnPropertyChanged(nameof(Caption));
             }
         }
@@ -86,7 +87,7 @@ namespace MIDE.API.Components
 
         public MenuItem(string id, short ordinalIndex) : base(id)
         {
-            Caption = FormatId();
+            Caption = $"({id})";
             OrdinalIndex = ordinalIndex.Clamp(MIN_ORDINAL, MAX_ORDINAL);
             menuGroups = new List<MenuGroup>(1)
             {

@@ -1,5 +1,6 @@
 {
-  "MIDE.Kernel": "0.7.6",
+  "MIDE.Kernel": "0.8.1",
+  "lang": "en-us",
   "platform": "Windows.Console",
   "log_levels": "all"
 }
