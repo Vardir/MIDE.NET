@@ -18,7 +18,7 @@ namespace MIDE.API.Validations
                 AddError(propertyName, "Path can not be null or empty", value);
                 return;
             }
-            if (!FileManager.Instance.Exists(value))
+            if (!FileManager.Exists(value))
                 AddError(propertyName, "Path does not exist", value);
         }
     }

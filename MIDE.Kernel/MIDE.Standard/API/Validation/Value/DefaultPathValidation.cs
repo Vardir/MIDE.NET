@@ -17,7 +17,7 @@ namespace MIDE.API.Validations
                 yield return ("Path can not be null or empty", value);
                 yield break;
             }
-            if (!FileManager.Instance.Exists(value))
+            if (!FileManager.Exists(value))
                 yield return ("Path does not exist", value);
         }
     }

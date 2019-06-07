@@ -9,29 +9,21 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace MIDE.FileSystem
 {
-    public sealed class FileManager
+    public static class FileManager
     {
-        private IExecutionProvider executionProvider;
-       
-        private static FileManager instance;
-        public static FileManager Instance => instance ?? (instance = new FileManager());
+        private static IExecutionProvider executionProvider;
 
-        public IExecutionProvider ExecutionProvider
+        public static IExecutionProvider ExecutionProvider
         {
             get => executionProvider ?? (executionProvider = DefaultExecutionProvider.Instance);
             set => executionProvider = value;
-        }
-
-        private FileManager()
-        {
-           
         }
 
         /// <summary>
         /// Recursively deletes a directory from a specified path
         /// </summary>
         /// <param name="path"></param>
-        public void DeleteDirectory(string path)
+        public static void DeleteDirectory(string path)
         {
             if (!Directory.Exists(path))
                 return;
@@ -52,14 +44,14 @@ namespace MIDE.FileSystem
         /// </summary>
         /// <param name="data"></param>
         /// <param name="path"></param>
-        public void Write(string data, string path) => File.WriteAllText(path, data);
+        public static void Write(string data, string path) => File.WriteAllText(path, data);
         /// <summary>
         /// Writes the given lines of text to the given file
         /// </summary>
         /// <param name="data"></param>
         /// <param name="path"></param>
-        public void Write(string[] data, string path) => File.WriteAllLines(path, data);
-        public void Write(IEnumerable<string> data, string path)
+        public static void Write(string[] data, string path) => File.WriteAllLines(path, data);
+        public static void Write(IEnumerable<string> data, string path)
         {
             using (var writer = new StreamWriter(File.OpenWrite(path)))
             {
@@ -74,7 +66,7 @@ namespace MIDE.FileSystem
         /// </summary>
         /// <param name="source"></param>
         /// <param name="destination"></param>
-        public void Copy(string source, string destination)
+        public static void Copy(string source, string destination)
         {
             if (!Directory.Exists(source))
                 return;
@@ -102,7 +94,7 @@ namespace MIDE.FileSystem
         /// </summary>
         /// <param name="data"></param>
         /// <param name="path"></param>
-        public void Serialize(object data, string path)
+        public static void Serialize(object data, string path)
         {
             if (data == null)
                 File.WriteAllText(path, "<null>");
@@ -120,14 +112,14 @@ namespace MIDE.FileSystem
             }
             catch (Exception ex)
             {
-                AppKernel.Instance.AppLogger.PushError(ex, this, "Can not serialize data");
+                AppKernel.Instance.AppLogger.PushError(ex, formatter, "Can not serialize data");
             }
         }
         /// <summary>
         /// Cleans all the contents of the given directory
         /// </summary>
         /// <param name="path"></param>
-        public void CleanDirectory(string path)
+        public static void CleanDirectory(string path)
         {
             if (!DirectoryExists(path))
                 return;
@@ -145,45 +137,45 @@ namespace MIDE.FileSystem
             }
         }
               
-        public string GetAbsolutePath(string path) => Path.GetFullPath(path);
-        public string GetParentDirectory(string path) => Path.GetDirectoryName(path);
+        public static string GetAbsolutePath(string path) => Path.GetFullPath(path);
+        public static string GetParentDirectory(string path) => Path.GetDirectoryName(path);
 
         /// <summary>
         /// Verifies if the given path exists, it can be either file or directory
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public bool Exists(string path) => File.Exists(path) || Directory.Exists(path);
+        public static bool Exists(string path) => File.Exists(path) || Directory.Exists(path);
         /// <summary>
         /// Verifies if the given path is existing file
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public bool FileExists(string path) => File.Exists(path);
+        public static bool FileExists(string path) => File.Exists(path);
         /// <summary>
         /// Verifies if the given path is existing directory
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public bool DirectoryExists(string path) => Directory.Exists(path);
+        public static bool DirectoryExists(string path) => Directory.Exists(path);
         /// <summary>
         /// Verifies if the given path is file
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public bool IsFile(string path) => Path.HasExtension(path);
+        public static bool IsFile(string path) => Path.HasExtension(path);
         /// <summary>
         /// Tries to load bytes from the given file and returns null if file does not exist
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public byte[] TryReadBytes(string path)
+        public static byte[] TryReadBytes(string path)
         {
             if (!File.Exists(path))
                 return null;
             return File.ReadAllBytes(path);
         }
-        public string GetFileParent(string file)
+        public static string GetFileParent(string file)
         {
             if (!File.Exists(file))
                 return null;
@@ -194,7 +186,7 @@ namespace MIDE.FileSystem
         /// </summary>
         /// <param name="filePath"></param>
         /// <returns></returns>
-        public string TryRead(string filePath)
+        public static string TryRead(string filePath)
         {
             if (!File.Exists(filePath))
                 return null;
@@ -205,7 +197,7 @@ namespace MIDE.FileSystem
         /// </summary>
         /// <param name="filePath"></param>
         /// <returns></returns>
-        public string[] TryReadLines(string filePath)
+        public static string[] TryReadLines(string filePath)
         {
             if (!File.Exists(filePath))
                 return null;
@@ -216,7 +208,7 @@ namespace MIDE.FileSystem
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public string ExtractName(string path)
+        public static string ExtractName(string path)
         {
             if (File.Exists(path))
                 return Path.GetFileName(path);
@@ -229,7 +221,7 @@ namespace MIDE.FileSystem
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public string Delete(string path)
+        public static string Delete(string path)
         {
             if (File.Exists(path))
                 File.Delete(path);
@@ -246,7 +238,7 @@ namespace MIDE.FileSystem
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public string MakeFolder(string path)
+        public static string MakeFolder(string path)
         {
             if (!Directory.Exists(path))
             {
@@ -262,7 +254,7 @@ namespace MIDE.FileSystem
         /// <param name="path"></param>
         /// <param name="templatePath"></param>
         /// <returns></returns>
-        public string MakeFile(string path, string templatePath)
+        public static string MakeFile(string path, string templatePath)
         {
             if (File.Exists(path))
                 return "Duplicate file name";
@@ -285,7 +277,7 @@ namespace MIDE.FileSystem
         /// <param name="filePath"></param>
         /// <param name="defaultContent"></param>
         /// <returns></returns>
-        public string ReadOrCreate(string filePath, string defaultContent = "")
+        public static string ReadOrCreate(string filePath, string defaultContent = "")
         {
             if (!File.Exists(filePath))
             {
@@ -303,14 +295,14 @@ namespace MIDE.FileSystem
         /// </summary>
         /// <param name="paths"></param>
         /// <returns></returns>
-        public string Combine(params string[] paths) => Path.Combine(paths);
+        public static string Combine(params string[] paths) => Path.Combine(paths);
         /// <summary>
         /// Enumerates all filtered files in the given directory
         /// </summary>
         /// <param name="directory"></param>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public IEnumerable<string> EnumerateFiles(string directory, string filter = null)
+        public static IEnumerable<string> EnumerateFiles(string directory, string filter = null)
         {
             if (!Directory.Exists(directory))
                 throw new ArgumentException($"Directory not found [{directory}]");
@@ -322,7 +314,7 @@ namespace MIDE.FileSystem
         /// <typeparam name="T"></typeparam>
         /// <param name="path"></param>
         /// <returns></returns>
-        public T Deserialize<T>(string path)
+        public static T Deserialize<T>(string path)
             where T: class
         {
             BinaryFormatter formatter = new BinaryFormatter();
@@ -335,7 +327,7 @@ namespace MIDE.FileSystem
             }
             catch (Exception ex)
             {
-                AppKernel.Instance.AppLogger.PushError(ex, this, "Can not serialize data");
+                AppKernel.Instance.AppLogger.PushError(ex, formatter, "Can not serialize data");
             }
             return null;
         }

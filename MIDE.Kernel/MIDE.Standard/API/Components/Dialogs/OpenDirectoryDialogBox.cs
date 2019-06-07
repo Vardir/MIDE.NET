@@ -54,7 +54,7 @@ namespace MIDE.API.Components
         }
 
         public override string GetData() => SelectedDirectory.Text;
-        protected override bool Validate() => FileManager.Instance.DirectoryExists(SelectedDirectory.Text);
+        protected override bool Validate() => FileManager.DirectoryExists(SelectedDirectory.Text);
         protected override IEnumerable<DialogResult> GetValidationIgnoredResults() => validationIgnored;
     }
 }

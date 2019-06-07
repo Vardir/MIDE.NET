@@ -10,7 +10,6 @@ namespace MIDE.FileSystem
         private static ApplicationPaths instance;
         public static ApplicationPaths Instance => instance ?? (instance = new ApplicationPaths());
 
-        private readonly FileManager fileManager;
         private readonly Dictionary<string, string> paths;
 
         #region Common Paths
@@ -38,7 +37,6 @@ namespace MIDE.FileSystem
 
         private ApplicationPaths()
         {
-            fileManager = FileManager.Instance;
             paths = new Dictionary<string, string>();
             AddOrUpdate(LOGS, "root\\");
             AddOrUpdate(ROOT, "root\\logs\\");
@@ -50,6 +48,7 @@ namespace MIDE.FileSystem
             AddOrUpdate(TEMPLATES, "root\\templates\\");
             AddOrUpdate(EXTENSIONS, "root\\extensions\\");
             AddOrUpdate(SETTINGS, "root\\user.settings.json");
+            LoadFrom("paths.json");
         }
 
         /// <summary>
@@ -75,9 +74,9 @@ namespace MIDE.FileSystem
         /// <param name="path"></param>
         public void LoadFrom(string path)
         {
-            if (!fileManager.FileExists(path))
+            if (!FileManager.FileExists(path))
                 return;
-            string fileData = fileManager.TryRead(path);
+            string fileData = FileManager.TryRead(path);
             if (fileData == null)
                 return;
             ApplicationPathItem[] pathItems = null;
@@ -102,12 +101,12 @@ namespace MIDE.FileSystem
 
             foreach (var path in collection)
             {
-                if (!fileManager.Exists(path.Value))
+                if (!FileManager.Exists(path.Value))
                 {
-                    if (fileManager.IsFile(path.Value))
-                        fileManager.MakeFile(path.Value, null);
+                    if (FileManager.IsFile(path.Value))
+                        FileManager.MakeFile(path.Value, null);
                     else
-                        fileManager.MakeFolder(path.Value);
+                        FileManager.MakeFolder(path.Value);
                 }
                 AddOrUpdate(path.Key, path.Value);
             }
@@ -124,7 +123,7 @@ namespace MIDE.FileSystem
             string folder = this[pathId];
             if (folder == null)
                 return null;
-            return FileManager.Instance.Combine(folder, file);
+            return FileManager.Combine(folder, file);
         }
         /// <summary>
         /// Gets the given path by key. If the path is not registered yet, creates new entry based on the given path

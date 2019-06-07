@@ -38,9 +38,9 @@ namespace MIDE.Application.Localization
 
         public void LoadFrom(string file)
         {
-            if (!FileManager.Instance.FileExists(file))
+            if (!FileManager.FileExists(file))
                 return;
-            string fileData = FileManager.Instance.TryRead(file);
+            string fileData = FileManager.TryRead(file);
             if (fileData == null)
                 return;
             Dictionary<string, string> pairs = null;

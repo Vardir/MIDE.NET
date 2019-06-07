@@ -69,7 +69,7 @@ namespace MIDE.API.Components
             var (dialogResult, path) = Kernel.UIManager.OpenDialog(new OpenFileDialogBox("(dlg-pck-sel-file)", "*.nupkg"));
             if (dialogResult == DialogResult.Ok)
             {
-                string directory = FileManager.Instance.GetFileParent(path);
+                string directory = FileManager.GetFileParent(path);
                 string id = Path.GetFileNameWithoutExtension(path);
                 //string error = ExtensionsManager.Instance.Install(directory, id);
                 //if (error != null)

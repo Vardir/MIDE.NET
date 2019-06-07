@@ -1,20 +1,17 @@
 ﻿using System;
-using System.Linq;
 using MIDE.Helpers;
-using Newtonsoft.Json;
 using MIDE.FileSystem;
 using System.Reflection;
 using MIDE.API.Services;
-using MIDE.Schemes.JSON;
 using MIDE.Application.Tasks;
 using MIDE.Application.Events;
 using MIDE.Application.Logging;
 using System.Collections.Generic;
 using MIDE.Application.Attributes;
 using MIDE.Application.Initializers;
+using MIDE.Application.Localization;
 using MIDE.Application.Configuration;
 using Module = MIDE.API.Extensibility.Module;
-using MIDE.Application.Localization;
 
 namespace MIDE.Application
 {
@@ -24,7 +21,6 @@ namespace MIDE.Application
         public static AppKernel Instance => instance ?? (instance = new AppKernel());
 
         private bool isRunning;
-        private FileManager fileManager;
         private Assembly currentAssembly;
         private Assembly callingAssembly;
         private ApplicationPaths paths;
@@ -72,7 +68,6 @@ namespace MIDE.Application
         private AppKernel()
         {
             paths = ApplicationPaths.Instance;
-            fileManager = FileManager.Instance;
             localization = LocalizationProvider.Instance;
             configuration = ConfigurationManager.Instance;
             tasks = new LinkedList<AppTask>();
@@ -113,7 +108,7 @@ namespace MIDE.Application
                 AppLogger.PushFatal(ex.Message);
             }
             LoadConfigurations();
-            string langPath = fileManager.Combine(paths[ApplicationPaths.ASSETS], "lang", $"{configuration["lang"]}.json");
+            string langPath = FileManager.Combine(paths[ApplicationPaths.ASSETS], "lang", $"{configuration["lang"]}.json");
             localization.LoadFrom(langPath);
             LoadTasks();
             OnStarting();
@@ -142,7 +137,7 @@ namespace MIDE.Application
             if (AppLogger.EventsCount == 0)
                 return;
             string folder = $"{paths[ApplicationPaths.LOGS]}\\{TimeStarted.ToString("dd-M-yyyy HH-mm-ss")}\\";
-            fileManager.MakeFolder(folder);
+            FileManager.MakeFolder(folder);
             AppLogger.SaveToFile(folder, "log.txt", info: new[] { ApplicationName, KernelVersion.ToString() });
         }
         /// <summary>
@@ -229,7 +224,6 @@ namespace MIDE.Application
             }
             
             AppLogger.FilterEvents(AppLogger.Levels);
-            paths.LoadFrom("paths.json");
             AssetManager.Instance.LoadAssets(paths[ApplicationPaths.ASSETS]);
             AppLogger.PushDebug(null, "Application configurations loaded");
         }
@@ -240,20 +234,20 @@ namespace MIDE.Application
             foreach (var task in tasks)
             {
                 if (task.RepetitionMode == TaskRepetitionMode.NotLimitedOnce && task.Origin != null)
-                    fileManager.Delete(task.Origin);
+                    FileManager.Delete(task.Origin);
                 if (task.Origin != null)
                     continue;
-                string path = fileManager.Combine(paths[ApplicationPaths.TASKS], task.ToString() + i + ".bin");
-                fileManager.Serialize(task, path);
+                string path = FileManager.Combine(paths[ApplicationPaths.TASKS], task.ToString() + i + ".bin");
+                FileManager.Serialize(task, path);
                 i++;
             }
         }
         private void LoadTasks()
         {
-            var files = fileManager.EnumerateFiles(paths[ApplicationPaths.TASKS], "*.bin");
+            var files = FileManager.EnumerateFiles(paths[ApplicationPaths.TASKS], "*.bin");
             foreach (var file in files)
             {
-                var task = fileManager.Deserialize<AppTask>(file);
+                var task = FileManager.Deserialize<AppTask>(file);
                 task.Origin = file;
                 tasks.AddLast(task);
             }
@@ -285,7 +279,7 @@ namespace MIDE.Application
                     return;
                 at.Run();
                 if (at.RepetitionMode == TaskRepetitionMode.Once)
-                    fileManager.Delete(fileManager.Combine(path, at.Origin));
+                    FileManager.Delete(FileManager.Combine(path, at.Origin));
             });
         }
 

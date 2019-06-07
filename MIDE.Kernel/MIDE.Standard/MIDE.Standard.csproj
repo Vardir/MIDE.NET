@@ -13,9 +13,9 @@
     <RepositoryType>Git</RepositoryType>
     <AssemblyVersion>0.8.1.0</AssemblyVersion>
     <NeutralLanguage>en</NeutralLanguage>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>latest</LangVersion>
     <RootNamespace>MIDE</RootNamespace>
-    <Version>0.8.1</Version>
+    <Version>0.8.3</Version>
     <FileUpgradeFlags>40</FileUpgradeFlags>
     <UpgradeBackupLocation>E:\Projects\C#\Libs\MIDE.NET\MIDE.Kernel\Backup\MIDE.Standard\</UpgradeBackupLocation>
     <OldToolsVersion>2.0</OldToolsVersion>
@@ -41,6 +41,6 @@
     </None>
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="set path=&quot;D:\Projects\C#\Libs\MIDE.NET\Publish\$(SolutionName)\\&quot;&#xD;&#xA;if not exist %25path%25 mkdir %25path%25&#xD;&#xA;copy &quot;$(TargetDir)*.dll&quot; %25path%25" />
+    <Exec Command="set path=D:\Projects\C#\Libs\MIDE.NET\Publish\$(SolutionName)\&#xD;&#xA;%systemroot%\System32\xcopy &quot;$(TargetDir)*.dll&quot; %path% /y" />
   </Target>
 </Project>

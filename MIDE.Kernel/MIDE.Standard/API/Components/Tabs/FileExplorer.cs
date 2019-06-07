@@ -286,9 +286,9 @@ namespace MIDE.API.Components
                 .SelectedItems.FirstWith(item => (item as FileExplorerItem).ItemClass == "folder", item => item as FileExplorerItem);
             if (fei == null)
                 return;
-            string file = FileManager.Instance.Combine(fei.FullPath, name);
+            string file = FileManager.Combine(fei.FullPath, name);
             string template = ProjectManager.Instance.FindBy(IO.Path.GetExtension(name))?.ObjectTemplate;
-            string message = FileManager.Instance.MakeFile(file, template);
+            string message = FileManager.MakeFile(file, template);
             if (message != null)
             {
                 var messageBox = new MessageDialogBox("(dlg-msg-error-title)", message);
@@ -309,8 +309,8 @@ namespace MIDE.API.Components
                 .SelectedItems.FirstWith(item => (item as FileExplorerItem).ItemClass != "file", item => item as FileExplorerItem);
             if (fei == null)
                 return;
-            string folder = FileManager.Instance.Combine(fei.FullPath, name);
-            string message = FileManager.Instance.MakeFolder(folder);
+            string folder = FileManager.Combine(fei.FullPath, name);
+            string message = FileManager.MakeFolder(folder);
             if (message != null)
             {
                 var messageBox = new MessageDialogBox("(dlg-msg-error-title)", message);
@@ -327,7 +327,7 @@ namespace MIDE.API.Components
                 if (!(item is FileExplorerItem fileExplorerItem))
                     continue;
                 var parent = fileExplorerItem.Parent;
-                string message = FileManager.Instance.Delete(fileExplorerItem.FullPath);
+                string message = FileManager.Delete(fileExplorerItem.FullPath);
                 if (message != null)
                 {
                     var messageBox = new MessageDialogBox("(dlg-msg-error-title)", message);

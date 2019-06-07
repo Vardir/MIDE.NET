@@ -22,7 +22,7 @@ namespace MIDE.Application.Tasks
             AppKernel.Instance.AppLogger.PushInfo("Launching extensions installer");
             try
             {
-                FileManager.Instance.ExecutionProvider.ExecuteExternalApplication(InstallerApplicationPath, InstallationConfigPath);
+                FileManager.ExecutionProvider.ExecuteExternalApplication(InstallerApplicationPath, InstallationConfigPath);
             }
             catch(Exception ex)
             {

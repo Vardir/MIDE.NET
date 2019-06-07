@@ -23,7 +23,7 @@ namespace MIDE.API.Components
         }
         public void ShowProperties(string path)
         {
-            if (!FileManager.Instance.Exists(path))
+            if (!FileManager.Exists(path))
                 throw new ArgumentException("Invalid path given", nameof(path));
 
             //var array = FileManager.ExtractProperties(path).ToArray();

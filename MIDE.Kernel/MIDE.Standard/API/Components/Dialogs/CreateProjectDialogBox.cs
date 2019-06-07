@@ -11,7 +11,6 @@ namespace MIDE.API.Components
 {
     public sealed class CreateProjectDialogBox : BaseDialogBox<ProjectCreationArgs>
     {
-        private FileManager fileManager;
         private DialogResult[] validationIgnored = new[] { DialogResult.Cancel };
 
         public Button BrowseButton { get; private set; }
@@ -26,7 +25,6 @@ namespace MIDE.API.Components
         
         public CreateProjectDialogBox(string title) : base(title)
         {
-            fileManager = FileManager.Instance;
             InitializeComponents();
             LoadTemplates();
         }
@@ -53,15 +51,15 @@ namespace MIDE.API.Components
         {
             string folder = ApplicationPaths.Instance[ApplicationPaths.TEMPLATES];
             folder = $"{folder}\\projects\\";
-            if (!fileManager.Exists(folder))
+            if (!FileManager.Exists(folder))
                 return;
-            IEnumerable<string> files = fileManager.EnumerateFiles(folder, "*-proj.json");
+            IEnumerable<string> files = FileManager.EnumerateFiles(folder, "*-proj.json");
             foreach (var def in files)
             {
                 ProjectScheme scheme = null;
                 try
                 {
-                    scheme = JsonConvert.DeserializeObject<ProjectScheme>(fileManager.ReadOrCreate(def));
+                    scheme = JsonConvert.DeserializeObject<ProjectScheme>(FileManager.ReadOrCreate(def));
                 }
                 catch (Exception ex)
                 {

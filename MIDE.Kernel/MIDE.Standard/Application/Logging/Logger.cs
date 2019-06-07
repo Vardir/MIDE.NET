@@ -41,7 +41,6 @@ namespace MIDE.Application.Logging
         /// <param name="path"></param>
         public void SaveToFile(string folder, string fileName, string[] info)
         {
-            var fileManager = FileManager.Instance;
             StringBuilder builder = new StringBuilder();
             if (info != null)
             {
@@ -72,14 +71,14 @@ namespace MIDE.Application.Logging
                         builder.Append("  - [");
                         builder.Append(binIndex + 1);
                         builder.Append(".bin]");
-                        string binFile = fileManager.Combine(folder, (binIndex + 1).ToString());
-                        fileManager.Serialize(serializationData[i], $"{binFile}.bin");
+                        string binFile = FileManager.Combine(folder, (binIndex + 1).ToString());
+                        FileManager.Serialize(serializationData[i], $"{binFile}.bin");
                         binIndex++;
                     }
                 }
                 builder.AppendLine();
             }
-            fileManager.Write(builder.ToString(), fileManager.Combine(folder, fileName));
+            FileManager.Write(builder.ToString(), FileManager.Combine(folder, fileName));
         }
 
         /// <summary>

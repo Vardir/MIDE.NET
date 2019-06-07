@@ -24,7 +24,6 @@ namespace MIDE.Application
 
         private bool _disposed;
         private Logger appLogger;
-        private FileManager fileManager;
         private JsonSerializerSettings serializerSettings;
         private IPackageRepository localRespository;
         private DefaultPackagePathResolver localPathResolver;
@@ -39,7 +38,6 @@ namespace MIDE.Application
         private ExtensionsManager() : base("app-extension-manager")
         {
             appLogger = Kernel.AppLogger;
-            fileManager = FileManager.Instance;
             serializerSettings = new JsonSerializerSettings();
             serializerSettings.Error = OnSerializationError;
             pendingRegister = new LinkedList<AppExtensionEntry>();
@@ -54,10 +52,10 @@ namespace MIDE.Application
         public void LoadExtensions()
         {
             appLogger.PushDebug(null, "Loading extensions");
-            var directory = fileManager.GetAbsolutePath(ApplicationPaths.Instance[ApplicationPaths.EXTENSIONS]);
+            var directory = FileManager.GetAbsolutePath(ApplicationPaths.Instance[ApplicationPaths.EXTENSIONS]);
             localRespository = PackageRepositoryFactory.Default.CreateRepository(directory);
             localPathResolver = new DefaultPackagePathResolver(directory);
-            string[] lines = fileManager.TryReadLines(fileManager.Combine(directory, ".enabled"));
+            string[] lines = FileManager.TryReadLines(FileManager.Combine(directory, ".enabled"));
             var enabledExtensions = new HashSet<string>(lines.Where(l => !string.IsNullOrWhiteSpace(l)));
             foreach (var pack in localRespository.GetPackages())
             {
@@ -120,7 +118,7 @@ namespace MIDE.Application
                                     .Where(e => e.IsEnabled && !e.PendingUninstall)
                                     .Select(e => e.Id);
             string directory = ApplicationPaths.Instance[ApplicationPaths.EXTENSIONS];
-            fileManager.Write(enabled, fileManager.Combine(directory, ".enabled"));
+            FileManager.Write(enabled, FileManager.Combine(directory, ".enabled"));
             foreach (var kvp in registered)
             {
                 var entry = kvp.Value;
@@ -184,8 +182,8 @@ namespace MIDE.Application
         }
         private void LoadExtension(AppExtensionEntry entry)
         {
-            string file = fileManager.Combine(entry.Origin, $"{entry.Id}.dll");
-            if (!fileManager.FileExists(file))
+            string file = FileManager.Combine(entry.Origin, $"{entry.Id}.dll");
+            if (!FileManager.FileExists(file))
                 throw new DllNotFoundException("Extension does not have a kernel library");
 
             Assembly assembly = Assembly.LoadFrom(file);
@@ -201,10 +199,10 @@ namespace MIDE.Application
             }
             if (entry.Extension == null)
                 throw new EntryPointNotFoundException("Extension kernel library does not have suitable extension definition");
-            file = fileManager.Combine(entry.Origin, "lib", ConfigurationManager.Instance["platform"], $"{entry.Id}.UI.dll");
-            if (fileManager.FileExists(file))
+            file = FileManager.Combine(entry.Origin, "lib", ConfigurationManager.Instance["platform"], $"{entry.Id}.UI.dll");
+            if (FileManager.FileExists(file))
                 AppKernel.Instance.UIManager.RegisterUIExtension(file);
-            file = fileManager.Combine(entry.Origin, "assets", "lang", $"{ConfigurationManager.Instance["lang"]}.json");
+            file = FileManager.Combine(entry.Origin, "assets", "lang", $"{ConfigurationManager.Instance["lang"]}.json");
             localization.LoadFrom(file);
         }
 

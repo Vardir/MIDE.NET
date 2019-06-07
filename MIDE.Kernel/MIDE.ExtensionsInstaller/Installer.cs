@@ -12,7 +12,6 @@ namespace MIDE.ExtensionsInstaller
     public sealed class Installer
     {
         private Logger eventLogger;
-        private FileManager fileManager;
         private Dictionary<string, PackageManager> packManagers;
 
         public DefaultPackagePathResolver LocalPathResolver { get; internal set; }
@@ -20,7 +19,6 @@ namespace MIDE.ExtensionsInstaller
         public Installer(Logger eventLogger)
         {
             this.eventLogger = eventLogger;
-            fileManager = FileManager.Instance;
             packManagers = new Dictionary<string, PackageManager>();
         }
 
@@ -55,7 +53,7 @@ namespace MIDE.ExtensionsInstaller
                 //string platform = ConfigurationManager.Instance["platform"];
                 //string extensionPath = LocalPathResolver.GetPackageDirectory(package.Id, package.Version);
                 //string root = ApplicationPaths.Instance[ApplicationPaths.EXTENSIONS];
-                //string uiExtensionPath = fileManager.Combine(root, extensionPath, "lib", platform, $"{package.Id}.UI.dll");
+                //string uiExtensionPath = FileManager.Combine(root, extensionPath, "lib", platform, $"{package.Id}.UI.dll");
             }
             catch (Exception ex)
             {

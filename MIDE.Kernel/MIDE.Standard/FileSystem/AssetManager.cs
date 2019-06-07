@@ -13,7 +13,6 @@ namespace MIDE.FileSystem
         public static AssetManager Instance => instance ?? (instance = new AssetManager());
 
         private AppKernel appKernel;
-        private FileManager fileManager;
         private ConfigurationManager configurations;
 
         public GlyphPool GlyphPool { get; }
@@ -22,7 +21,6 @@ namespace MIDE.FileSystem
         {
             GlyphPool = new GlyphPool();
             appKernel = AppKernel.Instance;
-            fileManager = FileManager.Instance;
             configurations = ConfigurationManager.Instance;
         }
 
@@ -49,13 +47,13 @@ namespace MIDE.FileSystem
                 appKernel.AppLogger.PushWarning($"Can not load glyphs from {source}");
                 return;
             }
-            string glyphsData = fileManager.ReadOrCreate(path, "{}");
+            string glyphsData = FileManager.ReadOrCreate(path, "{}");
             var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(glyphsData);
             foreach (var kvp in dict)
             {
                 GlyphPool.AddOrUpdate(kvp.Key, Glyph.From(kvp.Value));
             }
-            string buildPath(string theme) => fileManager.Combine(source, "glyphs", theme, "config.json");
+            string buildPath(string theme) => FileManager.Combine(source, "glyphs", theme, "config.json");
         }
     }
 }

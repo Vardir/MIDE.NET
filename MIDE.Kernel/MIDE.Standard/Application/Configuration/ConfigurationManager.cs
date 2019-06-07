@@ -11,7 +11,6 @@ namespace MIDE.Application.Configuration
         private static ConfigurationManager instance;
         public static ConfigurationManager Instance => instance ?? (instance = new ConfigurationManager());
 
-        private readonly FileManager fileManager;
         private readonly Dictionary<string, Config> configs;
 
         public string this[string key]
@@ -26,7 +25,6 @@ namespace MIDE.Application.Configuration
 
         private ConfigurationManager()
         {
-            fileManager = FileManager.Instance;
             configs = new Dictionary<string, Config>();
         }
 
@@ -58,9 +56,9 @@ namespace MIDE.Application.Configuration
         }
         public void LoadFrom(string path)
         {
-            if (!fileManager.FileExists(path))
+            if (!FileManager.FileExists(path))
                 return;
-            string fileData = fileManager.TryRead(path);
+            string fileData = FileManager.TryRead(path);
             if (fileData == null)
                 return;
             Dictionary<string, string> configItems = null;
@@ -80,7 +78,7 @@ namespace MIDE.Application.Configuration
                                   .Where(config => !config.Temporary)
                                   .ToDictionary(config => config.Key, config => config.Value);
             string data = JsonConvert.SerializeObject(selected, Formatting.Indented);
-            fileManager.Write(data, path);
+            FileManager.Write(data, path);
         }
 
         public bool Contains(string key) => configs.ContainsKey(key);

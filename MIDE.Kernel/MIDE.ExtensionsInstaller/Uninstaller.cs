@@ -1,6 +1,5 @@
 ﻿using NuGet;
 using System;
-using MIDE.FileSystem;
 using MIDE.Application.Logging;
 using MIDE.ExtensionsInstaller.ViewModels;
 
@@ -9,13 +8,11 @@ namespace MIDE.ExtensionsInstaller
     public sealed class Uninstaller
     {
         private Logger eventLogger;
-        private FileManager fileManager;
         private PackageManager packManager;
         
         public Uninstaller(Logger eventLogger)
         {
             this.eventLogger = eventLogger;
-            fileManager = FileManager.Instance;
         }
 
         public string Uninstall(InstallationActionViewModel action)

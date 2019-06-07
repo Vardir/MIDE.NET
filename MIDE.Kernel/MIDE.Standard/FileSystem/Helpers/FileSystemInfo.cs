@@ -129,7 +129,7 @@ namespace MIDE.FileSystem
         public static LinkedList<DirectoryItem> GetDirectoryContents(string fullPath, string searchPattern = null)
         {
             var items = new LinkedList<DirectoryItem>();
-            if (!FileManager.Instance.DirectoryExists(fullPath))
+            if (!FileManager.DirectoryExists(fullPath))
                 return items;
             try
             {
@@ -164,9 +164,8 @@ namespace MIDE.FileSystem
 
         private void Initialize()
         {
-            var fileManager = FileManager.Instance;
-            string file = fileManager.Combine(ApplicationPaths.Instance[ApplicationPaths.ASSETS], "file-system-items.json");
-            string fileData = fileManager.ReadOrCreate(file,
+            string file = FileManager.Combine(ApplicationPaths.Instance[ApplicationPaths.ASSETS], "file-system-items.json");
+            string fileData = FileManager.ReadOrCreate(file,
                                                        "{ \"file-extensions\": null, \"file-editors\": null }");
             FileSystemItemParameters parameters = JsonConvert.DeserializeObject<FileSystemItemParameters>(fileData);
             if (parameters.FileExtensions != null)

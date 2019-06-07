@@ -91,7 +91,7 @@ namespace MIDE.API.Visuals
             else if (format.Length > 6 && format.StartsWith("@pba-")) // @pba-root/assets/icons/file.png -- path to image to load as byte array
             {
                 string path = format.Substring(5);
-                byte[] array = FileManager.Instance.TryReadBytes(path);
+                byte[] array = FileManager.TryReadBytes(path);
                 if (array != null)
                     glyph = new Glyph(array, GlyphKind.ByteArray);
             }
@@ -125,7 +125,7 @@ namespace MIDE.API.Visuals
                     if (value is string imgPath)
                     {
                         return !string.IsNullOrWhiteSpace(imgPath) &&
-                                FileManager.Instance.Exists(imgPath);
+                                FileManager.Exists(imgPath);
                     }
                     break;
                 case GlyphKind.ByteArray:

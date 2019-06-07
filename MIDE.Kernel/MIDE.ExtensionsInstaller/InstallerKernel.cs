@@ -14,7 +14,6 @@ namespace MIDE.ExtensionsInstaller
         private static InstallerKernel instance;
         public static InstallerKernel Instance => instance ?? (instance = new InstallerKernel());
 
-        private FileManager fileManager;
         private ApplicationPaths paths;
         private Installer installer;
         private Uninstaller uninstaller;
@@ -29,7 +28,6 @@ namespace MIDE.ExtensionsInstaller
         {
             TimeStarted = DateTime.UtcNow;
             paths = ApplicationPaths.Instance;
-            fileManager = FileManager.Instance;
             EventLogger = new Logger(LoggingLevel.ALL, true);
             EventLogger.FatalEventRegistered += EventLogger_FatalEventRegistered;
             installer = new Installer(EventLogger);
@@ -44,7 +42,7 @@ namespace MIDE.ExtensionsInstaller
         }
         public void Exit()
         {
-            fileManager.Delete(paths["installer-config"]);
+            FileManager.Delete(paths["installer-config"]);
             EventLogger.PushInfo("Kernel stopped");
             EventLogger.PushInfo("Closing application");
             SaveLog();
@@ -62,16 +60,15 @@ namespace MIDE.ExtensionsInstaller
             {
                 EventLogger.PushFatal(ex.Message);
             }
-            paths.LoadFrom("paths.json");
-            string path = paths.GetOrAddPath(ApplicationPaths.EXTENSIONS, "root\\extensions\\");
-            path = fileManager.GetAbsolutePath(path);
+            string path = paths[ApplicationPaths.EXTENSIONS];
+            path = FileManager.GetAbsolutePath(path);
             paths.AddOrUpdate(ApplicationPaths.EXTENSIONS, path);
-            paths.AddOrUpdate("installer-config", fileManager.Combine(path, "installer.json"));
-            paths.AddOrUpdate("installer-log", fileManager.Combine(path, "installer"));
-            if (!fileManager.DirectoryExists(paths["installer-log"]))
-                fileManager.MakeFolder(paths["installer-log"]);
+            paths.AddOrUpdate("installer-config", FileManager.Combine(path, "installer.json"));
+            paths.AddOrUpdate("installer-log", FileManager.Combine(path, "installer"));
+            if (!FileManager.DirectoryExists(paths["installer-log"]))
+                FileManager.MakeFolder(paths["installer-log"]);
             else
-                fileManager.CleanDirectory(paths["installer-log"]);
+                FileManager.CleanDirectory(paths["installer-log"]);
             localPathResolver = new DefaultPackagePathResolver(paths[ApplicationPaths.EXTENSIONS]);
             installer.LocalPathResolver = localPathResolver;
             EventLogger.PushInfo("Configurations loaded");
@@ -81,7 +78,7 @@ namespace MIDE.ExtensionsInstaller
             EventLogger.PushInfo("Fetching actions");
             try
             {
-                string data = fileManager.TryRead(paths["installer-config"]);
+                string data = FileManager.TryRead(paths["installer-config"]);
                 if (data == null)
                     return;
                 var config = JsonConvert.DeserializeObject<ExtensionsInstall[]>(data);
@@ -104,12 +101,14 @@ namespace MIDE.ExtensionsInstaller
             var actions = InstallerTabSection.Instance.GetInstallationActions();
             foreach (var viewModel in actions)
             {
-                string message = viewModel.InstallationMode switch
+                string message = null;
+                switch (viewModel.InstallationMode)
                 {
-                    InstallationMode.Install   => installer.Install(viewModel),
-                    InstallationMode.Uninstall => uninstaller.Uninstall(viewModel),
-                    _ => null
-                };
+                    case InstallationMode.Install:
+                        message = installer.Install(viewModel); break;
+                    case InstallationMode.Uninstall:
+                        message = uninstaller.Uninstall(viewModel); break;
+                }
                 if (message != null)
                     EventLogger.PushWarning(message);
             }

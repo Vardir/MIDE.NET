@@ -17,13 +17,11 @@ namespace MIDE.Application
         public static ProjectManager Instance => (assetManager ?? (assetManager = new ProjectManager()));
 
         private readonly UIManager uiManager;
-        private readonly FileManager fileManager;
         private readonly Dictionary<string, ProjectObjectClass> pjObjectClasses;
 
         private ProjectManager()
         {
             uiManager = AppKernel.Instance.UIManager;
-            fileManager = FileManager.Instance;
             pjObjectClasses = new Dictionary<string, ProjectObjectClass>()
             {
                 ["folder"] = new ProjectObjectClass("folder", FileSystemInfo.FOLDER_EXTENSION, new Glyph("\uf07b") { AlternateColor = Color.Orange }),
@@ -86,8 +84,8 @@ namespace MIDE.Application
             if (dialogResult == DialogResult.Cancel)
                 return null;
             
-            string path = fileManager.Combine(creationArgs.path, creationArgs.name);
-            fileManager.MakeFolder(path);
+            string path = FileManager.Combine(creationArgs.path, creationArgs.name);
+            FileManager.MakeFolder(path);
             Project project = new Project(creationArgs.projectScheme);
             //TODO: initialize project
 
@@ -98,8 +96,8 @@ namespace MIDE.Application
         private void Initialize()
         {
             var paths = ApplicationPaths.Instance;
-            string file = fileManager.Combine(paths[ApplicationPaths.ASSETS], "project-items.json");
-            string fileData = fileManager.ReadOrCreate(file, 
+            string file = FileManager.Combine(paths[ApplicationPaths.ASSETS], "project-items.json");
+            string fileData = FileManager.ReadOrCreate(file, 
                                                        "{ \"icons\": null, \"extensions\": null, \"templates\": null }");
             ProjectItemParameters parameters = JsonConvert.DeserializeObject<ProjectItemParameters>(fileData);
             if (parameters.FileExtensions != null)
