@@ -36,7 +36,6 @@
     <Folder Include="Modules\" />
     <Folder Include="Components\" />
     <Folder Include="Helpers\" />
-    <Folder Include="DataModels\" />
   </ItemGroup>
 
   <ItemGroup>

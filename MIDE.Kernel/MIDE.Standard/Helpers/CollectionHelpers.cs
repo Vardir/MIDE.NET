@@ -111,6 +111,23 @@ namespace MIDE.Helpers
             }
         }
         /// <summary>
+        /// Iterates through collection and applies action to each item using it's index
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="collection"></param>
+        /// <param name="action"></param>
+        public static void ForEachI<T>(this IEnumerable<T> collection, Action<int, T> action)
+        {
+            if (action == null)
+                throw new ArgumentNullException(nameof(action));
+            int i = 0;
+            foreach (var item in collection)
+            {
+                action(i, item);
+                i++;
+            }
+        }
+        /// <summary>
         /// Removes all the items that match predicate from the given collection
         /// </summary>
         /// <typeparam name="T"></typeparam>
