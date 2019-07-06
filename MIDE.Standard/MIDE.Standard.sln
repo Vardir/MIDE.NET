@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29021.104
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MIDE.Unicore", "MIDE.Unicore\MIDE.Unicore.csproj", "{8762618C-F078-450E-B55D-9B21C601FB79}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MIDE.Unicore", "MIDE.Unicore\MIDE.Unicore.csproj", "{8762618C-F078-450E-B55D-9B21C601FB79}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MIDE.ClientCore", "MIDE.ClientCore\MIDE.ClientCore.csproj", "{F93B75CA-F99A-42AE-96ED-074BF077119E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MIDE.ClientCore", "MIDE.ClientCore\MIDE.ClientCore.csproj", "{F93B75CA-F99A-42AE-96ED-074BF077119E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MIDE.ExtensionsInstaller", "MIDE.ExtensionsInstaller\MIDE.ExtensionsInstaller.csproj", "{69D3942F-7332-4532-BEBF-17BE05F36F22}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{F93B75CA-F99A-42AE-96ED-074BF077119E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F93B75CA-F99A-42AE-96ED-074BF077119E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F93B75CA-F99A-42AE-96ED-074BF077119E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69D3942F-7332-4532-BEBF-17BE05F36F22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69D3942F-7332-4532-BEBF-17BE05F36F22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69D3942F-7332-4532-BEBF-17BE05F36F22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69D3942F-7332-4532-BEBF-17BE05F36F22}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
