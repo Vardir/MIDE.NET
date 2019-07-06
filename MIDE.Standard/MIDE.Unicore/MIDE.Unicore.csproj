@@ -10,6 +10,11 @@
     <Description>A unified shared core library for MIDE ecosystem</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Copyright>Copyright 2019 © Andrew Satura</Copyright>
+    <PackageId>MIDE.Unicore</PackageId>
+    <PackageProjectUrl>https://github.com/Vardir/MIDE.NET/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Vardir/MIDE.NET/</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <PackageTags>mide unicore netstandard</PackageTags>
   </PropertyGroup>
 
 </Project>
