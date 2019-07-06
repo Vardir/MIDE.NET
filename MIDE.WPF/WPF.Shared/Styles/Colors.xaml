@@ -81,6 +81,7 @@
     <Color x:Key="Textbox_BorderDisabled">#6A6A75</Color>
     <Color x:Key="Textbox_BorderHovered">#007ACC</Color>
 
+    <Color x:Key="ComboBox_ItemBackgroundHovered">#3F3F46</Color>
     <Color x:Key="ComboBox_Toggle">#6A6A75</Color>
     <Color x:Key="ComboBox_DropdownBackground">#6A6A75</Color>
     <Color x:Key="ComboBox_DropdownBorder">#6A6A75</Color>

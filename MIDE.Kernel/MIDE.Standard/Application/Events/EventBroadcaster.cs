@@ -16,10 +16,10 @@ namespace MIDE.Application.Events
             Logger = new Logger(LoggingLevel.INFO | LoggingLevel.WARN, useUtcTime: true);
         }
 
-        public void Broadcast(string group, object sender, string message)
+        public void Broadcast(string group, object sender, object message)
         {
             if (WriteLog)
-                Logger.PushInfo($"{sender} sent {message} to <{group}>");
+                Logger.PushInfo($"{sender} sent message to <{group}>");
             if (!groups.TryGetValue(group, out var listeners))
             {
                 if (WriteLog)

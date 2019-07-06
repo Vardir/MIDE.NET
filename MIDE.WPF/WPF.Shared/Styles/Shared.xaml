@@ -97,7 +97,7 @@
 
                                 <!--Window contents-->
                                 <Border Grid.Row="1" Padding="{Binding InnerContentPadding}"
-                                        Background="{DynamicResource Window_BodyBackground_Brush}" ClipToBounds="True">
+                                        Background="{DynamicResource Tab_Background_Brush}" ClipToBounds="True">
 
                                     <ContentPresenter Content="{TemplateBinding Content}"/>
                                 </Border>

@@ -164,6 +164,15 @@
             </Grid>
         </Border>
     </DataTemplate>
+    <DataTemplate DataType="{x:Type api:ComboBox}">
+        <ComboBox ItemsSource="{Binding Items}"
+                  SelectedItem="{Binding SelectedItem}"
+                  Visibility="{Binding Visibility, Converter={c:VisibilityConverter}}"
+                  IsEnabled="{Binding IsEnabled}"/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type api:ComboBoxItem}">
+        <TextBlock Text="{Binding Caption}"/>
+    </DataTemplate>
     <DataTemplate DataType="{x:Type api:TreeView}">
         <TreeView ItemsSource="{Binding Items}" h:TreeViewHelpers.SelectItemOnRightClick="True">
             <TreeView.ItemContainerStyle>

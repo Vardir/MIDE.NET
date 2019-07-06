@@ -682,7 +682,7 @@
         <Setter Property="ContentTemplate">
             <Setter.Value>
                 <DataTemplate>
-                    <Grid>
+                    <Grid Background="{DynamicResource Tab_Background_Brush}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="*" />
@@ -750,9 +750,8 @@
                                    Margin="0 0 15 0"/>
                         <Button Name="CloseButton"
                                 Grid.Column="1" Command="{Binding CloseCommand, Converter={c:RelayCommandConverter}}"
-                                FontFamily="{StaticResource FontAwesome}"
                                 Style="{StaticResource XButton}"
-                                Content="&#xf00d;" FontWeight="Bold"/>
+                                Content="X" FontWeight="Bold"/>
                     </Grid>
                 </DataTemplate>
             </Setter.Value>
@@ -1510,7 +1509,7 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsHighlighted" Value="true">
                             <Setter TargetName="Border" Property="Background" 
-                                    Value="{StaticResource ComboBox_BackgroundHoveredBrush}"/>
+                                    Value="{StaticResource ComboBox_ItemBackgroundHoveredBrush}"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="false">
                             <Setter Property="Foreground" Value="{DynamicResource Textbox_ForegroundDisabled_Brush}"/>

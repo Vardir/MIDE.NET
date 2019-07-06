@@ -15,6 +15,6 @@
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="message"></param>
-        void Receive(object sender, string message);
+        void Receive(object sender, object message);
     }
 }

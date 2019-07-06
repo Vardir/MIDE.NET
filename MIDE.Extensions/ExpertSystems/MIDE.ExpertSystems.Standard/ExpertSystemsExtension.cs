@@ -12,7 +12,7 @@ namespace MIDE.ExpertSystems
 
         protected override void RegisterMenuItems(IMenuConstructionContext context)
         {
-
+            
         }
 
         protected override void RegisterModules()

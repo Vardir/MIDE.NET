@@ -52,7 +52,7 @@ namespace MIDE.API.Components
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="message"></param>
-        public virtual void Receive(object sender, string message) { } 
+        public virtual void Receive(object sender, object message) { } 
 
         /// <summary>
         /// Formats the ID of the component. Replace all '-' symbols with spaces and make the resulting sentence title case.

@@ -84,6 +84,7 @@
     <SolidColorBrush x:Key="Textbox_BorderDisabled_Brush" Color="{DynamicResource Textbox_BorderDisabled}" />
     <SolidColorBrush x:Key="Textbox_BorderHovered_Brush" Color="{DynamicResource Textbox_BorderHovered}" />
 
+    <SolidColorBrush x:Key="ComboBox_ItemBackgroundHoveredBrush" Color="{DynamicResource ComboBox_ItemBackgroundHovered}" />
     <SolidColorBrush x:Key="ComboBox_DropdownBackground_Brush" Color="{DynamicResource ComboBox_DropdownBackground}" />
     <SolidColorBrush x:Key="ComboBox_DropdownBorder_Brush" Color="{DynamicResource ComboBox_DropdownBorder}" />
     <SolidColorBrush x:Key="ComboBox_DropdownForeground_Brush" Color="{DynamicResource ComboBox_DropdownForeground}" />
