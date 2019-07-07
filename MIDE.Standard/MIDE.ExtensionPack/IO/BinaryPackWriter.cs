@@ -3,8 +3,16 @@ using MIDE.ExtensionPack.Helpers;
 
 namespace MIDE.ExtensionPack
 {
+    /// <summary>
+    /// Binary extension pack writer
+    /// </summary>
     public class BinaryPackWriter : IPackWriter
     {
+        /// <summary>
+        /// Writes the given extension pack to the given file
+        /// </summary>
+        /// <param name="pack"></param>
+        /// <param name="path"></param>
         public void WritePack(IExtensionPack pack, string path)
         {
             //TODO: replace with loading actual locals

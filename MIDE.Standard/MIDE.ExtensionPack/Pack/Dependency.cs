@@ -1,13 +1,28 @@
-﻿using MIDE.Helpers;
-using System;
+﻿using System;
+using MIDE.Helpers;
 
 namespace MIDE.ExtensionPack
 {
+    /// <summary>
+    /// An extension pack dependency which corresponds to either application version or another extension
+    /// </summary>
     public class Dependency
     {
+        /// <summary>
+        /// Target ID
+        /// </summary>
         public string Target { get; }
+        /// <summary>
+        /// Required target version
+        /// </summary>
         public Version Version { get; }
+        /// <summary>
+        /// Minimum allowed target version
+        /// </summary>
         public Version MinimumVersion { get; }
+        /// <summary>
+        /// Flag indicating how versions should be handled
+        /// </summary>
         public VersionRangeMode VersionRangeMode { get; }
 
         public Dependency(string target, Version version)
@@ -24,6 +39,10 @@ namespace MIDE.ExtensionPack
             VersionRangeMode = rangeMode;
         }
 
+        /// <summary>
+        /// Converts dependency object to string
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             char left = '(';
@@ -40,6 +59,12 @@ namespace MIDE.ExtensionPack
             return $"{Target}::{left}{MinimumVersion.ToString(3)},{Version.ToString(3)}{right}";
         }
 
+        /// <summary>
+        /// Converts the given pair of characters to version range mode
+        /// </summary>
+        /// <param name="l"></param>
+        /// <param name="r"></param>
+        /// <returns></returns>
         public static VersionRangeMode From(char l, char r)
         {
             if (l == '[' && r == ']')
@@ -50,8 +75,13 @@ namespace MIDE.ExtensionPack
                 return VersionRangeMode.LeftExclusive;
             if (r == ')')
                 return VersionRangeMode.RightExclusive;
-            return VersionRangeMode.BothInclusive;
+            throw new ArgumentException("Invalid characters given");
         }
+        /// <summary>
+        /// Converts the given string back to dependency
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
         public static Dependency FromString(string str)
         {
             var (target, tail) = str.ExtractUntil(0, ':');

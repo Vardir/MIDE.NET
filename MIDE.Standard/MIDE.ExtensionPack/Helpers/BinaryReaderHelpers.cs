@@ -1,11 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace MIDE.ExtensionPack.Helpers
 {
+    /// <summary>
+    /// A set of helper methods for <see cref="BinaryReader"/>
+    /// </summary>
     public static class BinaryReaderHelpers
     {
+        /// <summary>
+        /// Reads an array of bytes from binary stream, expects an integer value given before bytes to define length of array
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
         public static byte[] ReadBytes(this BinaryReader reader)
         {
             int count = reader.ReadInt32();
@@ -16,6 +25,11 @@ namespace MIDE.ExtensionPack.Helpers
             }
             return bytes;
         }
+        /// <summary>
+        /// Reads an array of strings from binary stream, expects an integer value given before the strings to define length of array
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
         public static string[] ReadStrings(this BinaryReader reader)
         {
             int count = reader.ReadInt32();
@@ -26,6 +40,14 @@ namespace MIDE.ExtensionPack.Helpers
             }
             return strings;
         }
+        /// <summary>
+        /// Reads a collection of items written in form of strings using the given transforms function,
+        /// expects an integer value given before the strings to define length of collection
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="reader"></param>
+        /// <param name="transform"></param>
+        /// <returns></returns>
         public static ReadOnlyCollection<T> Read<T>(this BinaryReader reader, Func<string, T> transform)
         {
             int count = reader.ReadInt32();

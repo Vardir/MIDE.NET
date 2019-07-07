@@ -1,5 +1,8 @@
 ﻿namespace MIDE.ExtensionPack
 {
+    /// <summary>
+    /// A set of basic description info for extension pack
+    /// </summary>
     public struct PackInfo
     {
         public readonly string id;

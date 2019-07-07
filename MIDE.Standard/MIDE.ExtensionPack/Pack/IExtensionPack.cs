@@ -3,6 +3,9 @@ using System.Collections.ObjectModel;
 
 namespace MIDE.ExtensionPack
 {
+    /// <summary>
+    /// An extension pack info
+    /// </summary>
     public interface IExtensionPack
     {
         string Id { get; }

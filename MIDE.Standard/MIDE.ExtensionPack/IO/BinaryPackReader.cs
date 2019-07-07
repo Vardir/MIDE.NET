@@ -4,9 +4,17 @@ using System.Collections.Generic;
 
 namespace MIDE.ExtensionPack
 {
+    /// <summary>
+    /// Binary extension pack reader
+    /// </summary>
     public class BinaryPackReader : IPackReader
     {
-        public XPack Read(string path)
+        /// <summary>
+        /// Reads an extension pack from the given binary file
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public IExtensionPack Read(string path)
         {
             BinaryReader reader = new BinaryReader(null);
             string id = reader.ReadString();
