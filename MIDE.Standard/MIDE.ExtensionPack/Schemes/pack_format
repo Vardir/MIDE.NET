@@ -1,0 +1,8 @@
+﻿---------------- Binary File Pack --------------------
+
+id 2 lang1 [descr1] lang2 [descr2] version 3 tag1 tag2 tag3 copyright 1 owner1 1 author1 243 [icon] 2 appdep1 appdep2 1 packdep1 [files]
+
+/descr
+title description releasenotes
+
+---------------- Binary File Pack --------------------
