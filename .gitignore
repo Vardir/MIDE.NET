@@ -258,9 +258,10 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+
 /MIDE.WPF/MIDE.WPFApp/Controls/TestControl.xaml.cs
 /MIDE.WPF/MIDE.WPFApp/Controls/TestControl.xaml
 /MIDE.Kernel/MIDE.Standard/API/Components/future.txt
-/MIDE.Extensions/NodeGraphs/ConsoleTest
-/MIDE.Extensions/NodeGraphs/TestApp
-/MIDE.Extensions/ExpertSystems/ConsoleTest
+Publish/
+.vscode/
+.ionide/
