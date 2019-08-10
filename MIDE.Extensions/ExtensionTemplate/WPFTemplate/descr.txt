@@ -1,4 +1,0 @@
-﻿Name: WPF UI Extension Template
-Description: A basic project template to create UI extensions for WPF implementation of MIDE
-Icon: 
-Preview: 

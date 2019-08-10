@@ -5,7 +5,7 @@
     /// </summary>
     public interface IClipboardProvider
     {
-        /// <summary>
+        // <summary>
         /// Pushes the given data into the clipboard's storage
         /// </summary>
         /// <param name="obj">The data to store</param>
@@ -23,10 +23,10 @@
         /// </summary>
         /// <param name="dataFormat"></param>
         /// <returns></returns>
-        object Pop(DataFormat dataFormat);        
+        object Pop(DataFormat dataFormat);      
     }
 
-    public enum DataFormat
+     public enum DataFormat
     {
         /// <summary>
         /// Specifies a bitmap format

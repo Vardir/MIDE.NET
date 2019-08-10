@@ -1,4 +1,0 @@
-﻿Name: Application Extension Template
-Description: A basic project template to create application extensions for MIDE
-Icon: 
-Preview: 
