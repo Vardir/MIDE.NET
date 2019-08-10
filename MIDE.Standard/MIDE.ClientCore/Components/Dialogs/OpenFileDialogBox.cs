@@ -1,5 +1,6 @@
-﻿using MIDE.Bindings;
-using MIDE.FileSystem;
+﻿using MIDE.IoC;
+using MIDE.API;
+using MIDE.Bindings;
 using MIDE.Components.Complex;
 using System.Collections.Generic;
 
@@ -22,6 +23,7 @@ namespace MIDE.Components
             {
                 if (value == directory)
                     return;
+
                 directory = value;
                 FileSystemView.Show(directory);
             }
@@ -57,7 +59,7 @@ namespace MIDE.Components
         }
 
         public override string GetData() => SelectedFile.Text;
-        protected override bool Validate() => FileManager.FileExists(SelectedFile.Text);
+        protected override bool Validate() => IoCContainer.Resolve<IFileManager>().FileExists(SelectedFile.Text);
         protected override IEnumerable<DialogResult> GetValidationIgnoredResults() => validationIgnored;
     }
 }

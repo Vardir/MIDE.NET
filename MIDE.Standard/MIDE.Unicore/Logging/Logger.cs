@@ -1,7 +1,7 @@
 ﻿using System;
+using MIDE.IoC;
+using MIDE.API;
 using System.Text;
-using MIDE.Services;
-using MIDE.Dependencies;
 using System.Collections.Generic;
 
 namespace MIDE.Logging
@@ -9,7 +9,7 @@ namespace MIDE.Logging
     /// <summary>
     /// A logging service to register application events based on their logging levels
     /// </summary>
-    public class Logger
+    public class Logger : ILogger
     {
         private readonly IFileManager fileManager;
         private DateTime TimeNow => UseUtcTime ? DateTime.UtcNow : DateTime.Now;
@@ -30,12 +30,12 @@ namespace MIDE.Logging
 
         public event EventHandler<FatalEvent> FatalEventRegistered;
 
-        public Logger (LoggingLevel levels, bool useUtcTime)
+        public Logger(LoggingLevel levels, bool useUtcTime)
         {
             Levels = levels;
             UseUtcTime = useUtcTime;
             events = new LinkedList<LoggedEvent>();
-            fileManager = DependencyProvider.FileManager;
+            fileManager = IoCContainer.Resolve<IFileManager>();
         }
 
         /// <summary>
@@ -171,7 +171,7 @@ namespace MIDE.Logging
         {
             if (string.IsNullOrEmpty(message))
                 PushArgumentError(nameof(message), "Adding fatal error event with empty message!");
-            
+
             FatalEvent fatalEvent = new FatalEvent(message, TimeNow);
             events.AddLast(fatalEvent);
             FatalEventRegistered?.Invoke(this, fatalEvent);

@@ -1,6 +1,9 @@
 ﻿using System;
+using MIDE.IoC;
 using System.Linq;
+using MIDE.Helpers;
 using MIDE.Components;
+using MIDE.Application;
 using System.Collections.Generic;
 
 namespace MIDE.Extensibility
@@ -28,29 +31,35 @@ namespace MIDE.Extensibility
 
         public void Initialize()
         {
-            if (!IsEnabled)
-                return;
-            Kernel.AppLogger.PushDebug(null, $"Extension {Id} :: begin initialization");
-            RegisterMenuItems(Kernel.UIManager.ApplicationMenu);
-            Kernel.AppLogger.PushDebug(null, $"Extension {Id} :: menu items loaded");
-            RegisterModules();
-            if (modules.Count > 0)
-                Kernel.AppLogger.PushDebug(null, $"Extension {Id} :: modules loaded");
-            Kernel.AppLogger.PushDebug(null, $"Extension {Id} :: initialization completed");
-            IsInitialized = true;
+            if (IsEnabled)
+            {
+                Kernel.AppLogger.PushDebug(null, $"Extension {Id} :: begin initialization");
+
+                RegisterMenuItems(IoCContainer.Resolve<UIManager>().ApplicationMenu);
+                Kernel.AppLogger.PushDebug(null, $"Extension {Id} :: menu items loaded");
+
+                RegisterModules();
+
+                if (modules.Count > 0)
+                    Kernel.AppLogger.PushDebug(null, $"Extension {Id} :: modules loaded");
+
+                Kernel.AppLogger.PushDebug(null, $"Extension {Id} :: initialization completed");
+                IsInitialized = true;
+            }
         }
         public void Unload()
         {
-            if (!IsInitialized)
-                return;
-            foreach (var module in modules)
+            if (IsInitialized)
             {
-                //if (module.IsRunning)
-                //    module.Stop();
-                module.Unload();
+                foreach (var module in modules)
+                {
+                    //if (module.IsRunning)
+                    //    module.Stop();
+                    module.Unload();
+                }
+                modules.Clear();
+                Dispose();
             }
-            modules.Clear();
-            Dispose();
         }
 
         public T GetModule<T>(string id)
@@ -59,6 +68,7 @@ namespace MIDE.Extensibility
             var module = modules.Find(m => m.Id == id);
             if (module == null)
                 return null;
+                
             return module as T;
         }
         public override string ToString() => $"EXTENSION [{GetType().Name}] :: {Id}";
@@ -73,14 +83,18 @@ namespace MIDE.Extensibility
         {
             if (module == null)
                 throw new ArgumentNullException("Module parameter can not be null");
-            if (modules.FirstOrDefault(m => m.Id == module.Id) != null)
+
+            if (modules.Any(m => m.Id == module.Id))
                 throw new ArgumentException("Duplicate module ID");
+
             var validation = Kernel.VerifyModule(module);
-            if (validation != null)
+            if (validation.HasValue())
                 throw new ArgumentException($"The given module [{module.Id}] is invalid: {validation}");
+
             module.Extension = this;
             modules.Add(module);
             module.Initialize();
+
             Kernel.AppLogger.PushDebug(null, $"Extension {Id} :: module {module.Id} registered");
         }
 

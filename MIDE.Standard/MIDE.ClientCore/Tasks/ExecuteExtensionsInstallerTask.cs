@@ -1,4 +1,5 @@
 ﻿using System;
+using MIDE.IoC;
 using MIDE.FileSystem;
 
 namespace MIDE.Application.Tasks
@@ -20,14 +21,16 @@ namespace MIDE.Application.Tasks
         public override void Run(params object[] args)
         {
             AppKernel.Instance.AppLogger.PushInfo("Launching extensions installer");
+
             try
             {
-                FileManager.ExecutionProvider.ExecuteExternalApplication(InstallerApplicationPath, InstallationConfigPath);
+                IoCContainer.Resolve<IExecutionProvider>().ExecuteExternalApplication(InstallerApplicationPath, InstallationConfigPath);
             }
             catch(Exception ex)
             {
                 AppKernel.Instance.AppLogger.PushError(ex, this, "Unable to execute task");
             }
+
             AppKernel.Instance.AppLogger.PushInfo("Extensions installer stopped");
         }
     }

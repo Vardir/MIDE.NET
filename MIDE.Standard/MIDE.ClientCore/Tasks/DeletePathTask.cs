@@ -1,5 +1,6 @@
 ﻿using System;
-using MIDE.FileSystem;
+using MIDE.API;
+using MIDE.IoC;
 
 namespace MIDE.Application.Tasks
 {
@@ -17,10 +18,16 @@ namespace MIDE.Application.Tasks
 
         public override void Run(params object[] args)
         {
-            if (FileManager.FileExists(Path))
-                FileManager.Delete(Path);
-            else if (FileManager.DirectoryExists(Path))
-                FileManager.DeleteDirectory(Path);
+            var fileManager = IoCContainer.Resolve<IFileManager>();
+
+            if (fileManager.FileExists(Path))
+            {
+                fileManager.Delete(Path);
+            }
+            else if (fileManager.DirectoryExists(Path))
+            {
+                fileManager.DeleteDirectory(Path);
+            }
         }
     }
 }

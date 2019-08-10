@@ -1,6 +1,9 @@
 ﻿using System;
+using MIDE.IoC;
+using MIDE.API;
 using System.Linq;
-using MIDE.FileSystem;
+using MIDE.Helpers;
+using MIDE.Logging;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 
@@ -8,9 +11,6 @@ namespace MIDE.Application.Configuration
 {
     public class ConfigurationManager
     {
-        private static ConfigurationManager instance;
-        public static ConfigurationManager Instance => instance ?? (instance = new ConfigurationManager());
-
         private readonly Dictionary<string, Config> configs;
 
         public string this[string key]
@@ -19,6 +19,7 @@ namespace MIDE.Application.Configuration
             {
                 if (configs.TryGetValue(key, out Config config))
                     return config.Value;
+
                 return null;
             }
         }
@@ -30,10 +31,14 @@ namespace MIDE.Application.Configuration
 
         public void AddOrUpdate(Config config)
         {
-            if (!configs.ContainsKey(config.Key))
-                configs.Add(config.Key, config);
-            else
+            if (configs.ContainsKey(config.Key))
+            {
                 configs[config.Key] = config;
+            }
+            else
+            {
+                configs.Add(config.Key, config);
+            }
         }
         public void AddRange(IEnumerable<Config> sequence)
         {
@@ -41,6 +46,7 @@ namespace MIDE.Application.Configuration
             {
                 if (configs.ContainsKey(config.Key))
                     throw new InvalidOperationException($"Duplicate configuration key entry on '{config.Key}'");
+
                 configs.Add(config.Key, config);
             }
         }
@@ -48,29 +54,38 @@ namespace MIDE.Application.Configuration
         {
             foreach (var config in sequence)
             {
-                if (!configs.ContainsKey(config.Key))
-                    configs.Add(config.Key, config);
-                else
+                if (configs.ContainsKey(config.Key))
+                {
                     configs[config.Key] = config;
+                }
+                else
+                {
+                    configs.Add(config.Key, config);
+                }
             }
         }
         public void LoadFrom(string path)
         {
-            if (!FileManager.FileExists(path))
-                return;
-            string fileData = FileManager.TryRead(path);
-            if (fileData == null)
-                return;
-            Dictionary<string, string> configItems = null;
-            try
+            var fileManager = IoCContainer.Resolve<IFileManager>();
+
+            if (fileManager.FileExists(path))
             {
-                configItems = JsonConvert.DeserializeObject<Dictionary<string, string>>(fileData);
+                var fileData = fileManager.TryRead(path);
+                if (fileData.HasValue())
+                {
+                    Dictionary<string, string> configItems = null;
+                    try
+                    {
+                        configItems = JsonConvert.DeserializeObject<Dictionary<string, string>>(fileData);
+                    }
+                    catch (Exception ex)
+                    {
+                        IoCContainer.Resolve<ILogger>().PushError(ex, this, "Couldn't load configurations: invalid file syntax");
+                        return;
+                    }
+                    AddOrUpdate(configItems.Select(tuple => new Config(tuple.Key, tuple.Value)));
+                }
             }
-            catch (Exception ex)
-            {
-                return;
-            }
-            AddOrUpdate(configItems.Select(tuple => new Config(tuple.Key, tuple.Value)));
         }
         public void SaveTo(string path)
         {
@@ -78,7 +93,8 @@ namespace MIDE.Application.Configuration
                                   .Where(config => !config.Temporary)
                                   .ToDictionary(config => config.Key, config => config.Value);
             string data = JsonConvert.SerializeObject(selected, Formatting.Indented);
-            FileManager.Write(data, path);
+
+            IoCContainer.Resolve<IFileManager>().Write(data, path);
         }
 
         public bool Contains(string key) => configs.ContainsKey(key);

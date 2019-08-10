@@ -1,4 +1,8 @@
 ﻿using System;
+using MIDE.IoC;
+using MIDE.API;
+using MIDE.Logging;
+using MIDE.Helpers;
 using Newtonsoft.Json;
 using MIDE.Schemes.JSON;
 using System.Collections.Generic;
@@ -60,36 +64,47 @@ namespace MIDE.FileSystem
         {
             if (string.IsNullOrEmpty(pathId))
                 throw new ArgumentException("Path Key can not be null or empty", nameof(pathId));
+
             if (string.IsNullOrEmpty(value))
                 throw new ArgumentException("Path Value can not be null or empty", nameof(value));
 
             if (paths.ContainsKey(pathId))
+            {
                 paths[pathId] = value;
+            }
             else
+            {
                 paths.Add(pathId, value);
+            }
         }
+
         /// <summary>
         /// Loads all application paths from the given file
         /// </summary>
         /// <param name="path"></param>
         public void LoadFrom(string path)
         {
-            if (!FileManager.FileExists(path))
-                return;
-            string fileData = FileManager.TryRead(path);
-            if (fileData == null)
-                return;
-            ApplicationPathItem[] pathItems = null;
-            try
-            {
-                pathItems = JsonConvert.DeserializeObject<ApplicationPathItem[]>(fileData);
-            }
-            catch (Exception ex)
-            {
+            var fileManager = IoCContainer.Resolve<IFileManager>();
 
+            if (fileManager.FileExists(path))
+            {
+                string fileData = fileManager.TryRead(path);
+                if (fileData == null)
+                    return;
+                
+                ApplicationPathItem[] pathItems = null;
+                try
+                {
+                    pathItems = JsonConvert.DeserializeObject<ApplicationPathItem[]>(fileData);
+                }
+                catch (Exception ex)
+                {
+                    IoCContainer.Resolve<ILogger>().PushError(ex, this, "Couldn't load application paths: invalid syntax");
+                }
+                LoadFrom(pathItems);
             }
-            LoadFrom(pathItems);
         }
+
         /// <summary>
         /// Loads all application paths from the given collection
         /// </summary>
@@ -99,14 +114,20 @@ namespace MIDE.FileSystem
             if (collection == null)
                 return;
 
+            var fileManager = IoCContainer.Resolve<IFileManager>();
+
             foreach (var path in collection)
             {
-                if (!FileManager.Exists(path.Value))
+                if (!fileManager.Exists(path.Value))
                 {
-                    if (FileManager.IsFile(path.Value))
-                        FileManager.MakeFile(path.Value, null);
+                    if (fileManager.IsFile(path.Value))
+                    {
+                        fileManager.MakeFile(path.Value, null);
+                    }
                     else
-                        FileManager.MakeFolder(path.Value);
+                    {
+                        fileManager.MakeFolder(path.Value);
+                    }
                 }
                 AddOrUpdate(path.Key, path.Value);
             }
@@ -121,10 +142,12 @@ namespace MIDE.FileSystem
         public string GetFilePath(string pathId, string file)
         {
             string folder = this[pathId];
-            if (folder == null)
-                return null;
-            return FileManager.Combine(folder, file);
+            if (folder.HasValue())
+                return IoCContainer.Resolve<IFileManager>().Combine(folder, file);            
+
+            return null;
         }
+
         /// <summary>
         /// Gets the given path by key. If the path is not registered yet, creates new entry based on the given path
         /// </summary>
@@ -133,12 +156,11 @@ namespace MIDE.FileSystem
         /// <returns></returns>
         public string GetOrAddPath(string key, string defaultValue = null)
         {
-            if (!paths.ContainsKey(key))
-            {
-                AddOrUpdate(key, defaultValue);
-                return defaultValue;
-            }
-            return paths[key];
+            if (paths.ContainsKey(key))
+                return paths[key];
+            
+            AddOrUpdate(key, defaultValue);
+            return defaultValue;
         }
     }
 }

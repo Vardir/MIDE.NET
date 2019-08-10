@@ -22,6 +22,7 @@ namespace MIDE.Helpers
             foreach (var item in items)
                 collection.Add(item);
         }
+
         /// <summary>
         /// Ensures the count of elements in collection is equals to the given count. 
         /// Uses the generator to create new elements if collection needs to be enlarged
@@ -34,6 +35,7 @@ namespace MIDE.Helpers
         {
             if (count < 0)
                 throw new ArgumentException("Expected count greater or equals to 0");
+
             if (count < list.Count)
             {
                 int diff = list.Count - count;
@@ -47,6 +49,7 @@ namespace MIDE.Helpers
                     list.Add(generator());
             }
         }
+
         /// <summary>
         /// Inserts an item into collection based on it's ordinal index
         /// </summary>
@@ -64,19 +67,28 @@ namespace MIDE.Helpers
             {
                 int firstIndex = items.LastIndexWith(i => i.OrdinalIndex <= item.OrdinalIndex);
                 if (firstIndex == -1)
+                {
                     items.Insert(0, item);
+                }
                 else
+                {
                     items.Insert(firstIndex + 1, item);
+                }
             }
             else
             {
                 int firstIndex = items.FirstIndexWith(i => i.OrdinalIndex >= item.OrdinalIndex);
                 if (firstIndex == -1)
+                {
                     items.Add(item);
+                }
                 else
+                {
                     items.Insert(firstIndex, item);
+                }
             }
         }
+
         /// <summary>
         /// Moves an item from the specified index to destination
         /// </summary>
@@ -88,6 +100,7 @@ namespace MIDE.Helpers
         {
             if (list.OutOfRange(origin) || list.OutOfRange(destination))
                 throw new IndexOutOfRangeException();
+
             T item = list[origin];
             for (int i = origin; i <= destination; i++)
             {
@@ -95,6 +108,7 @@ namespace MIDE.Helpers
             }
             list[destination] = item;
         }
+
         /// <summary>
         /// Iterates through collection and applies action to each item
         /// </summary>
@@ -105,11 +119,13 @@ namespace MIDE.Helpers
         {
             if (action == null)
                 throw new ArgumentNullException(nameof(action));
+
             foreach (var item in collection)
             {
                 action(item);
             }
         }
+
         /// <summary>
         /// Iterates through collection and applies action to each item using it's index
         /// </summary>
@@ -120,6 +136,7 @@ namespace MIDE.Helpers
         {
             if (action == null)
                 throw new ArgumentNullException(nameof(action));
+
             int i = 0;
             foreach (var item in collection)
             {
@@ -127,6 +144,7 @@ namespace MIDE.Helpers
                 i++;
             }
         }
+
         /// <summary>
         /// Removes all the items that match predicate from the given collection
         /// </summary>
@@ -137,12 +155,14 @@ namespace MIDE.Helpers
         {
             if (predicate == null)
                 throw new ArgumentNullException(nameof(predicate));
+
             var node = list.First;
-            while (node != null)
+            while (node.HasValue())
             {
                 var next = node.Next;
                 if (predicate(node.Value))
                     list.Remove(node);
+
                 node = next;
             }
         }
@@ -158,13 +178,16 @@ namespace MIDE.Helpers
         {
             if (predicate == null)
                 throw new ArgumentNullException(nameof(predicate));
+
             foreach (var item in collection)
             {
                 if (predicate(item))
                     return true;
             }
+
             return false;
         }
+        
         /// <summary>
         /// Finds the first occurrence of the item by the given predicate and gives out it's index. Returns -1 if none found
         /// </summary>
@@ -182,8 +205,10 @@ namespace MIDE.Helpers
                 if (predicate(list[i]))
                     return i;
             }
+
             return -1;
         }
+
         /// <summary>
         /// Finds the first occurrence of the item starting from the given index by the given predicate and gives out it's index. Returns -1 if none found
         /// </summary>
@@ -195,15 +220,19 @@ namespace MIDE.Helpers
         {
             if (predicate == null)
                 throw new ArgumentNullException(nameof(predicate));
+
             if (list.OutOfRange(startIndex))
                 throw new IndexOutOfRangeException();
+
             for (int i = startIndex; i < list.Count; i++)
             {
                 if (predicate(list[i]))
                     return i;
             }
+
             return -1;
         }
+
         /// <summary>
         /// Searches for item in collection that matches the given predicate
         /// </summary>
@@ -215,13 +244,16 @@ namespace MIDE.Helpers
         {
             if (predicate == null)
                 throw new ArgumentNullException(nameof(predicate));
+
             foreach (var item in collection)
             {
                 if (predicate(item))
                     return item;
             }
+
             return default;
         }
+
         /// <summary>
         /// Searches for node in linked list which value matches the given predicate
         /// </summary>
@@ -233,15 +265,19 @@ namespace MIDE.Helpers
         {
             if (predicate == null)
                 throw new ArgumentNullException(nameof(predicate));
+
             var node = list.First;
-            while (node != null)
+            while (node.HasValue())
             {
                 if (predicate(node.Value))
                     return node;
+
                 node = node.Next;
             }
+
             return null;
         }
+        
         /// <summary>
         /// LINQ Select implementation for collections to produce array with transformed items
         /// </summary>
@@ -254,12 +290,15 @@ namespace MIDE.Helpers
         {
             if (transform == null)
                 throw new ArgumentNullException(nameof(transform));
-            TResult[] result = new TResult[collection.Count];
+
+            var result = new TResult[collection.Count];
             int i = 0;
             foreach (var item in collection)
                 result[i++] = transform(item);
+
             return result;
         }
+
         /// <summary>
         /// LINQ Select implementation for collections to produce array with transformed items
         /// </summary>
@@ -272,12 +311,15 @@ namespace MIDE.Helpers
         {
             if (transform == null)
                 throw new ArgumentNullException(nameof(transform));
-            TResult[] result = new TResult[collection.Count];
+
+            var result = new TResult[collection.Count];
             int i = 0;
             foreach (var item in collection)
                 result[i++] = transform(i, item);
+
             return result;
         }
+
         /// <summary>
         /// Searches for the first occurrence of the element by the given predicate and returns the value extracted from it
         /// </summary>
@@ -292,15 +334,19 @@ namespace MIDE.Helpers
         {
             if (predicate == null)
                 throw new ArgumentNullException(nameof(predicate));
+
             if (extractor == null)
                 throw new ArgumentNullException(nameof(extractor));
+
             foreach (var item in collection)
             {
                 if (predicate(item))
                     return extractor(item);
             }
+
             return default;
         }
+
         /// <summary>
         /// Searches for the first occurrence of the element by the given predicate and returns the value extracted from it
         /// </summary>
@@ -314,15 +360,19 @@ namespace MIDE.Helpers
         {
             if (predicate == null)
                 throw new ArgumentNullException(nameof(predicate));
+
             if (extractor == null)
                 throw new ArgumentNullException(nameof(extractor));
+
             foreach (var item in collection)
             {
                 if (predicate(item))
                     return extractor(item);
             }
+
             return default;
         }
+
         /// <summary>
         /// Searches for the first occurrence of the element by the given predicate and returns the index of the item
         /// </summary>
@@ -337,15 +387,19 @@ namespace MIDE.Helpers
         {
             if (predicate == null)
                 throw new ArgumentNullException(nameof(predicate));
+
             int i = 0;
             foreach (var item in collection)
             {
                 if (predicate(item))
                     return i;
+                    
                 i++;
             }
+
             return -1;
         }
+
         /// <summary>
         /// Searches for the last occurrence of the element by the given predicate and returns the value extracted from it
         /// </summary>
@@ -360,10 +414,12 @@ namespace MIDE.Helpers
         {
             if (predicate == null)
                 throw new ArgumentNullException(nameof(predicate));
+
             if (extractor == null)
                 throw new ArgumentNullException(nameof(extractor));
+
             T last = default;
-            bool any = false;
+            var any = false;
             foreach (var item in collection)
             {
                 if (predicate(item))
@@ -372,10 +428,13 @@ namespace MIDE.Helpers
                     any = true;
                 }
             }
-            if (!any)
-                return default;
-            return extractor(last);
+
+            if (any)
+                return extractor(last);
+
+            return default;
         }
+
         /// <summary>
         /// Searches for the last occurrence of the element by the given predicate and returns the index of the item
         /// </summary>
@@ -390,16 +449,20 @@ namespace MIDE.Helpers
         {
             if (predicate == null)
                 throw new ArgumentNullException(nameof(predicate));
+
             int i = 0;
             int last = -1;
             foreach (var item in collection)
             {
                 if (predicate(item))
                     last = i;
+
                 i++;
             }
+
             return last;
         }
+
         /// <summary>
         /// Finds indexes of all the elements in collection that are match the predicate
         /// </summary>
@@ -411,6 +474,7 @@ namespace MIDE.Helpers
         {
             int count = 0;
             var selected = select();
+
             return selected.ToArray(count);
 
             IEnumerable<int> select()
@@ -444,10 +508,11 @@ namespace MIDE.Helpers
         /// <exception cref="IndexOutOfRangeException">Throws if count of elements in collection was bigger than array capacity</exception>
         public static T[] ToArray<T>(this IEnumerable<T> collection, int count)
         {
-            T[] array = new T[count];
+            var array = new T[count];
             int index = 0;
             foreach (var element in collection)
                 array[index++] = element;
+
             return array;
         }
 
@@ -473,8 +538,10 @@ namespace MIDE.Helpers
                         return true;
                 }
             }
+            
             return false;
         }
+
         /// <summary>
         /// Checks if another collection contains any of the items from the current one transformed with the provided function
         /// </summary>
@@ -490,6 +557,7 @@ namespace MIDE.Helpers
         {
             if (another == null)
                 throw new ArgumentNullException(nameof(another));
+
             if (extractor == null)
                 throw new ArgumentNullException(nameof(extractor));
 
@@ -502,8 +570,10 @@ namespace MIDE.Helpers
                         return true;
                 }
             }
+
             return false;
         }
+
         /// <summary>
         /// Checks if another collection, transformed with the provided function, contains any of the items from the current one
         /// </summary>
@@ -519,6 +589,7 @@ namespace MIDE.Helpers
         {
             if (another == null)
                 throw new ArgumentNullException(nameof(another));
+
             if (extractor == null)
                 throw new ArgumentNullException(nameof(extractor));
 
@@ -531,8 +602,10 @@ namespace MIDE.Helpers
                         return true;
                 }
             }
+            
             return false;
         }
+
         /// <summary>
         /// Checks if another collection does not contain any of the items from the current one
         /// </summary>
@@ -555,8 +628,10 @@ namespace MIDE.Helpers
                         found = true;
                 }
             }
+
             return !found;
         }
+
         /// <summary>
         /// Checks if another collection does not contain any of the items from the current one transformed with the provided function
         /// </summary>
@@ -571,6 +646,7 @@ namespace MIDE.Helpers
         {
             if (another == null)
                 throw new ArgumentNullException(nameof(another));
+
             if (extractor == null)
                 throw new ArgumentNullException(nameof(extractor));
 
@@ -584,8 +660,10 @@ namespace MIDE.Helpers
                         found = true;
                 }
             }
+            
             return !found;
         }
+
         /// <summary>
         /// Checks if another collection, transformed with the provided function, does not contain any of the items from the current one
         /// </summary>
@@ -600,6 +678,7 @@ namespace MIDE.Helpers
         {
             if (another == null)
                 throw new ArgumentNullException(nameof(another));
+
             if (extractor == null)
                 throw new ArgumentNullException(nameof(extractor));
 
@@ -613,8 +692,10 @@ namespace MIDE.Helpers
                         found = true;
                 }
             }
+
             return !found;
         }
+
         /// <summary>
         /// Verifies if the given index is out of range for the current collection
         /// </summary>
@@ -622,7 +703,8 @@ namespace MIDE.Helpers
         /// <param name="list"></param>
         /// <param name="index"></param>
         /// <returns></returns>
-        public static bool OutOfRange<T>(this IList<T> list, int index) => index < 0 || index >= list.Count;
+        public static bool OutOfRange<T>(this ICollection<T> list, int index) => index < 0 || index >= list.Count;
+
         /// <summary>
         /// Verifies if the given index is out of range for the current array
         /// </summary>
@@ -631,5 +713,21 @@ namespace MIDE.Helpers
         /// <param name="index"></param>
         /// <returns></returns>
         public static bool OutOfRange<T>(this T[] array, int index) => index < 0 || index >= array.Length;
+
+        /// <summary>
+        /// Verifies if the given collection is not null and contains at least one item
+        /// </summary>
+        /// <param name="collection"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static bool HasItems<T>(this ICollection<T> collection) => collection != null && collection.Count > 0;
+
+        /// <summary>
+        /// Verifies if the given array in not null and contains at leas one cell
+        /// </summary>
+        /// <param name="array"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static bool HasItems<T>(this T[] array) => array != null && array.Length > 0;
     }
 }

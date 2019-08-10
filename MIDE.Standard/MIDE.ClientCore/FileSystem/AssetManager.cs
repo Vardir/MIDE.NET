@@ -1,5 +1,8 @@
 ﻿using System;
+using MIDE.IoC;
+using MIDE.API;
 using MIDE.Visuals;
+using MIDE.Helpers;
 using Newtonsoft.Json;
 using MIDE.Application;
 using System.Collections.Generic;
@@ -21,12 +24,13 @@ namespace MIDE.FileSystem
         {
             GlyphPool = new GlyphPool();
             appKernel = AppKernel.Instance;
-            configurations = ConfigurationManager.Instance;
+            configurations = IoCContainer.Resolve<ConfigurationManager>();
         }
 
         public void LoadAssets(string source)
         {
             appKernel.AppLogger.PushDebug(null, $"Loading assets from {source}");
+
             try
             {
                 LoadGlyphs(source);
@@ -36,24 +40,29 @@ namespace MIDE.FileSystem
             {
                 appKernel.AppLogger.PushFatal(ex.Message);
             }
+
             appKernel.AppLogger.PushDebug(null, "Assets loading finished");
         }
 
         private void LoadGlyphs(string source)
         {
+            var fileManager = IoCContainer.Resolve<IFileManager>();
             string path = buildPath((string)configurations["theme"]) ?? buildPath("default");
-            if (path == null)
+
+            if (path.HasValue())
+            {
+                string glyphsData = fileManager.ReadOrCreate(path, "{}");
+                foreach (var kvp in JsonConvert.DeserializeObject<Dictionary<string, string>>(glyphsData))
+                {
+                    GlyphPool.AddOrUpdate(kvp.Key, Glyph.From(kvp.Value));
+                }
+            }
+            else
             {
                 appKernel.AppLogger.PushWarning($"Can not load glyphs from {source}");
-                return;
             }
-            string glyphsData = FileManager.ReadOrCreate(path, "{}");
-            var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(glyphsData);
-            foreach (var kvp in dict)
-            {
-                GlyphPool.AddOrUpdate(kvp.Key, Glyph.From(kvp.Value));
-            }
-            string buildPath(string theme) => FileManager.Combine(source, "glyphs", theme, "config.json");
+
+            string buildPath(string theme) => fileManager.Combine(source, "glyphs", theme, "config.json");
         }
     }
 }

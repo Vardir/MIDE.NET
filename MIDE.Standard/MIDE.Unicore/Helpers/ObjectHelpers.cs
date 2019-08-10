@@ -19,5 +19,12 @@ namespace MIDE.Helpers
             return value.Equals(first) && value.Equals(second);
         }
         public static bool IsNot<T>(this object obj) => !(obj is T);
+
+        /// <summary>
+        /// Verifies if the reference to an object is not null
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static bool HasValue(this object obj) => obj != null;
     }
 }

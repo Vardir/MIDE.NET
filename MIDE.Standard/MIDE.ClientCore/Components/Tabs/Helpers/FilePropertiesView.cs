@@ -1,5 +1,6 @@
 ﻿using System;
-using MIDE.FileSystem;
+using MIDE.API;
+using MIDE.IoC;
 
 namespace MIDE.Components
 {    
@@ -23,18 +24,20 @@ namespace MIDE.Components
         }
         public void ShowProperties(string path)
         {
-            if (!FileManager.Exists(path))
-                throw new ArgumentException("Invalid path given", nameof(path));
+            if (IoCContainer.Resolve<IFileManager>().Exists(path))
+            {
+                //var array = FileManager.ExtractProperties(path).ToArray();
+                //EnsureRowCount(array.Length + 1);
+                //for (int i = 0; i < array.Length; i++)
+                //{
+                //    int index = i + 1;
+                //    AddChild(new Label($"lb-prop{index}-caption", array[i].prop), index, 0);
+                //    AddChild(new Label($"lb-prop{index}", array[i].val), index, 1);
+                //}
+                //(Children[1].Component as Label).Text = FileManager.ExtractName(path);
+            }
 
-            //var array = FileManager.ExtractProperties(path).ToArray();
-            //EnsureRowCount(array.Length + 1);
-            //for (int i = 0; i < array.Length; i++)
-            //{
-            //    int index = i + 1;
-            //    AddChild(new Label($"lb-prop{index}-caption", array[i].prop), index, 0);
-            //    AddChild(new Label($"lb-prop{index}", array[i].val), index, 1);
-            //}
-            //(Children[1].Component as Label).Text = FileManager.ExtractName(path);
+            throw new ArgumentException("Invalid path given", nameof(path));            
         }
 
         protected override void InitializeComponents()

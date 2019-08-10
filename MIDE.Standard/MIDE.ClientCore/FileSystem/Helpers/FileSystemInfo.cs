@@ -1,10 +1,12 @@
 ﻿using System;
+using MIDE.API;
+using MIDE.IoC;
 using System.IO;
 using System.Linq;
 using MIDE.Helpers;
+using MIDE.Visuals;
 using Newtonsoft.Json;
 using MIDE.Application;
-using MIDE.Visuals;
 using MIDE.Schemes.JSON;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -13,9 +15,6 @@ namespace MIDE.FileSystem
 {
     public class FileSystemInfo
     {
-        private static FileSystemInfo instance;
-        public static FileSystemInfo Instance => instance ?? (instance = new FileSystemInfo());
-
         private Dictionary<string, FSObjectClass> fsObjectClasses;
 
         public const string FILE_EXTENSION_PATTERN = @"^\.[A-z0-9]+$";
@@ -36,7 +35,7 @@ namespace MIDE.FileSystem
 
         public FSObjectClass this[string id] => fsObjectClasses[id];
         
-        private FileSystemInfo()
+        public FileSystemInfo()
         {
             fsObjectClasses = new Dictionary<string, FSObjectClass>()
             {
@@ -124,54 +123,64 @@ namespace MIDE.FileSystem
         }
         public static IEnumerable<DirectoryItem> GetLogicalDrives()
         {
-            return Directory.GetLogicalDrives().Select(drive => new DirectoryItem(drive, Instance["drive"]));
+            var fileSystemInfo = IoCContainer.Resolve<FileSystemInfo>();
+            return Directory.GetLogicalDrives().Select(drive => new DirectoryItem(drive, fileSystemInfo["drive"]));
         }
         public static LinkedList<DirectoryItem> GetDirectoryContents(string fullPath, string searchPattern = null)
         {
             var items = new LinkedList<DirectoryItem>();
-            if (!FileManager.DirectoryExists(fullPath))
-                return items;
-            try
+            var fileSystemInfo = IoCContainer.Resolve<FileSystemInfo>();
+
+            if (IoCContainer.Resolve<IFileManager>().DirectoryExists(fullPath))
             {
-                var directories = Directory.GetDirectories(fullPath);
-                if (directories != null && directories.Length > 0)
+                try
                 {
-                    items.AddRange(directories.Select(directory => new DirectoryItem(directory, Instance["folder"])));
-                }
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                AppKernel.Instance.AppLogger.PushWarning(ex.Message);
-            }
-            try
-            {
-                var files = searchPattern != null ? Directory.GetFiles(fullPath, searchPattern) : Directory.GetFiles(fullPath);
-                if (files != null && files.Length > 0)
-                {
-                    items.AddRange(files.Select(file =>
+                    var directories = Directory.GetDirectories(fullPath);
+                    if (directories.HasItems())
                     {
-                        string extension = Path.GetExtension(file);
-                        return new DirectoryItem(file, Instance.FindBy(extension));
-                    }));
+                        items.AddRange(directories.Select(directory => new DirectoryItem(directory, fileSystemInfo["folder"])));
+                    }
                 }
+                catch (UnauthorizedAccessException ex)
+                {
+                    AppKernel.Instance.AppLogger.PushWarning(ex.Message);
+                }
+                try
+                {
+                    var files = searchPattern.HasValue() ? Directory.GetFiles(fullPath, searchPattern) : Directory.GetFiles(fullPath);
+                    if (files.HasItems())
+                    {
+                        items.AddRange(files.Select(file =>
+                        {
+                            string extension = Path.GetExtension(file);
+                            return new DirectoryItem(file, fileSystemInfo.FindBy(extension));
+                        }));
+                    }
+                }
+                catch (UnauthorizedAccessException ex)
+                {
+                    AppKernel.Instance.AppLogger.PushWarning(ex.Message);
+                }
+                return items;
             }
-            catch (UnauthorizedAccessException ex)
-            {
-                AppKernel.Instance.AppLogger.PushWarning(ex.Message);
-            }
+
             return items;
         }
 
         private void Initialize()
         {
-            string file = FileManager.Combine(ApplicationPaths.Instance[ApplicationPaths.ASSETS], "file-system-items.json");
-            string fileData = FileManager.ReadOrCreate(file,
+            var fileManager = IoCContainer.Resolve<IFileManager>();
+            var file = fileManager.Combine(ApplicationPaths.Instance[ApplicationPaths.ASSETS], "file-system-items.json");
+            var fileData = fileManager.ReadOrCreate(file,
                                                        "{ \"file-extensions\": null, \"file-editors\": null }");
-            FileSystemItemParameters parameters = JsonConvert.DeserializeObject<FileSystemItemParameters>(fileData);
-            if (parameters.FileExtensions != null)
+            var parameters = JsonConvert.DeserializeObject<FileSystemItemParameters>(fileData);
+
+            if (parameters.FileExtensions.HasItems())
                 LoadFileExtensions(parameters);
-            if (parameters.FileEditors != null)
+
+            if (parameters.FileEditors.HasItems())
                 LoadFileEditors(parameters);
+
             LoadItemIcons();
         }
         private void LoadItemIcons()
@@ -198,9 +207,13 @@ namespace MIDE.FileSystem
         private void Update(string key, string extension, string editor, Glyph glyph)
         {
             if (fsObjectClasses.TryGetValue(key, out FSObjectClass objectClass))
+            {
                 fsObjectClasses[key] = objectClass.With(extension, editor, glyph);
+            }
             else
+            {
                 fsObjectClasses.Add(key, new FSObjectClass(key, extension, editor, glyph));
+            }
         }
 
         private IEnumerable<(string prop, string val)> GetFileProperties(FileInfo file)

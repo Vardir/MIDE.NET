@@ -1,14 +1,10 @@
-﻿using System.Diagnostics;
+﻿using MIDE.Helpers;
+using System.Diagnostics;
 
 namespace MIDE.FileSystem
 {
     public class DefaultExecutionProvider : IExecutionProvider
     {
-        private static DefaultExecutionProvider instance;
-        public static DefaultExecutionProvider Instance => instance ?? (instance = new DefaultExecutionProvider());
-
-        protected DefaultExecutionProvider() { }
-
         public virtual void ExecuteExternalApplicationAsync(string path, string arguments,
                                                             DataReceivedEventHandler outputHandler, DataReceivedEventHandler errorHandler)
         {
@@ -19,10 +15,13 @@ namespace MIDE.FileSystem
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.RedirectStandardError = true;
             process.StartInfo.CreateNoWindow = true;
-            if (outputHandler != null)
+
+            if (outputHandler.HasValue())
                 process.OutputDataReceived += outputHandler;
-            if (errorHandler != null)
+
+            if (errorHandler.HasValue())
                 process.ErrorDataReceived += errorHandler;
+
             process.Start();
             process.BeginOutputReadLine();
             process.BeginErrorReadLine();
@@ -38,9 +37,12 @@ namespace MIDE.FileSystem
             process.StartInfo.RedirectStandardError = true;
             process.StartInfo.RedirectStandardOutput = true;
             process.Start();
+
             string output = process.StandardOutput.ReadToEnd();
             string err = process.StandardError.ReadToEnd();
+
             process.WaitForExit();
+
             return new ExternalExecutionResult(process.ExitCode, output, err);
         }
     }

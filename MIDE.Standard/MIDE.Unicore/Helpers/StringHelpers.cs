@@ -5,6 +5,13 @@ namespace MIDE.Helpers
 {
     public static class StringHelpers
     {
+        /// <summary>
+        /// Verifies if the string contains any characters
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static bool HasValue(this string str) => !string.IsNullOrEmpty(str);
+
         public static string Clamp(this string value, int length)
         {
             if (value == string.Empty)
@@ -29,6 +36,7 @@ namespace MIDE.Helpers
             }
             return input.Substring(index, len);
         }
+        
         /// <summary>
         /// Extracts a substring starting from the given index until it reaches one of the given separators.
         /// <para></para>

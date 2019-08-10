@@ -1,13 +1,16 @@
 ﻿using System;
+using MIDE.API;
 using MIDE.Helpers;
 using MIDE.FileSystem;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using MIDE.IoC;
+using MIDE.Logging;
 
 namespace MIDE.Application.Localization
 {
-    public sealed class LocalizationProvider
+    public sealed class LocalizationProvider : ILocalizationProvider
     {
         private static LocalizationProvider instance;
         public static LocalizationProvider Instance => instance ?? (instance = new LocalizationProvider());
@@ -23,6 +26,7 @@ namespace MIDE.Application.Localization
             {
                 if (string.IsNullOrEmpty(str))
                     return str;
+
                 return regex.Replace(str, Resolve);
             }
         }
@@ -38,26 +42,31 @@ namespace MIDE.Application.Localization
 
         public void LoadFrom(string file)
         {
-            if (!FileManager.FileExists(file))
-                return;
-            string fileData = FileManager.TryRead(file);
-            if (fileData == null)
-                return;
-            Dictionary<string, string> pairs;
-            try
-            {
-                pairs = JsonConvert.DeserializeObject<Dictionary<string, string>>(fileData);
-            }
-            catch (Exception ex)
-            {
-                return;
-            }
+            var fileManager = IoCContainer.Resolve<IFileManager>();
 
-            foreach (var kvp in pairs)
+            if (fileManager.FileExists(file))
             {
-                var (prefix, key) = Split(kvp.Key);
-                var space = GetOrAddNamespace(prefix);
-                space.Add(key, kvp.Value);
+                string fileData = fileManager.TryRead(file);
+                if (fileData.HasValue())
+                {
+                    Dictionary<string, string> pairs;
+                    try
+                    {
+                        pairs = JsonConvert.DeserializeObject<Dictionary<string, string>>(fileData);
+                    }
+                    catch (Exception ex)
+                    {
+                        IoCContainer.Resolve<ILogger>()?.PushError(ex, this, "Couldn't load localization data from a file: invalid syntax");
+                        return;
+                    }
+
+                    foreach (var kvp in pairs)
+                    {
+                        var (prefix, key) = Split(kvp.Key);
+                        var space = GetOrAddNamespace(prefix);
+                        space.Add(key, kvp.Value);
+                    }
+                }
             }
         }
 
@@ -65,6 +74,7 @@ namespace MIDE.Application.Localization
         {
             if (namespaces.TryGetValue(namespaceKey, out var space))
                 return space[key];
+
             return null;
         }
         private string Resolve(Match match)
@@ -72,8 +82,10 @@ namespace MIDE.Application.Localization
             string expr = match.Value.Between('(', ')');
             var (prefix, key) = Split(expr);
             string result = GetValue(prefix, key);
-            if (result == null && prefix != string.Empty)
+
+            if (result == null && prefix.HasValue())
                 result = GetValue(string.Empty, key);
+                
             return result ?? expr;
         }
         private (string prefix, string key) Split(string str)
@@ -81,16 +93,17 @@ namespace MIDE.Application.Localization
             var (head, tail) = str.ExtractUntil(0, ':');
             if (string.IsNullOrEmpty(tail))
                 return (string.Empty, head);
+
             return (head, tail);
         }
         private LocalizationNamespace GetOrAddNamespace(string key)
         {
             if (namespaces.TryGetValue(key, out var space))
                 return space;
+                
             space = new LocalizationNamespace();
             namespaces.Add(key, space);
             return space;
         }
-
     }
 }

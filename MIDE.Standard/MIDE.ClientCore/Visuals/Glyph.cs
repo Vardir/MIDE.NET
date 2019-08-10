@@ -1,5 +1,7 @@
-﻿using System.Drawing;
-using MIDE.FileSystem;
+﻿using MIDE.IoC;
+using MIDE.API;
+using MIDE.Helpers;
+using System.Drawing;
 using System.Globalization;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
@@ -21,10 +23,12 @@ namespace MIDE.Visuals
             {
                 if (this.value == value)
                     return;
-                if (!Validate(value))
-                    return;
-                this.value = value;
-                OnPropertyChanged(nameof(Value));
+
+                if (Validate(value))
+                {
+                    this.value = value;
+                    OnPropertyChanged(nameof(Value));
+                }
             }
         }
         public GlyphKind Kind { get; }
@@ -35,6 +39,7 @@ namespace MIDE.Visuals
             {
                 if (value == alternateColor)
                     return;
+
                 alternateColor = value;
                 OnPropertyChanged(nameof(AlternateColor));
             }
@@ -67,21 +72,25 @@ namespace MIDE.Visuals
             Glyph glyph = null;
             if (format == null)
                 return null;
+
             if (format.Length > 4 && format.StartsWith("@fa-")) // @fa-f07c:0000ff -- blue folder icon
             {
                 int delim = format.IndexOf(':');
                 if (delim != -1 && format.Length > 8)
                 {
-                    char icon = (char)int.Parse(format.Substring(4, delim - 4), NumberStyles.AllowHexSpecifier);
-                    string colorHex = format.Substring(delim + 1);
-                    Color color = Color.FromArgb(int.Parse(colorHex, NumberStyles.AllowHexSpecifier));
+                    var icon = (char)int.Parse(format.Substring(4, delim - 4), NumberStyles.AllowHexSpecifier);
+                    var colorHex = format.Substring(delim + 1);
+                    var color = Color.FromArgb(int.Parse(colorHex, NumberStyles.AllowHexSpecifier));
+
                     glyph = new Glyph(icon, GlyphKind.FontAwesome)
                     {
                         AlternateColor = color
                     };
                 }
                 else
+                {
                     glyph = new Glyph(format.Substring(4));
+                }
             }
             else if (format.Length > 4 && format.StartsWith("@p-")) // @p-root/assets/icons/file.png -- path to image
             {
@@ -90,8 +99,9 @@ namespace MIDE.Visuals
             else if (format.Length > 6 && format.StartsWith("@pba-")) // @pba-root/assets/icons/file.png -- path to image to load as byte array
             {
                 string path = format.Substring(5);
-                byte[] array = FileManager.TryReadBytes(path);
-                if (array != null)
+                byte[] array = IoCContainer.Resolve<IFileManager>().TryReadBytes(path);
+
+                if (array.HasValue())
                     glyph = new Glyph(array, GlyphKind.ByteArray);
             }
             return glyph;
@@ -109,27 +119,25 @@ namespace MIDE.Visuals
                 case GlyphKind.UnicodeSymbol:
                     if (value is string code)
                     {
-                        return !string.IsNullOrWhiteSpace(code) &&
-                               Regex.IsMatch(code, @"^\p{L}+$");
+                        return code.HasValue() && Regex.IsMatch(code, @"^\p{L}+$");
                     }
                     return value is char;
                 case GlyphKind.FontAwesome:
                     if (value is string str)
                     {
-                        return !string.IsNullOrWhiteSpace(str) &&
-                               Regex.IsMatch(str, "^f[0-9a-fA-f]{3}$");
+                        return str.HasValue() && Regex.IsMatch(str, "^f[0-9a-fA-f]{3}$");
                     }
                     return value is char;
                 case GlyphKind.ImagePath:
                     if (value is string imgPath)
                     {
-                        return !string.IsNullOrWhiteSpace(imgPath) &&
-                                FileManager.Exists(imgPath);
+                        return imgPath.HasValue() && IoCContainer.Resolve<IFileManager>().Exists(imgPath);
                     }
                     break;
                 case GlyphKind.ByteArray:
                     return value is byte[];
             }
+
             return false;
         }
     }
