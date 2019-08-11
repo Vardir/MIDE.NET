@@ -9,41 +9,40 @@ namespace MIDE.Components
     public class ListBox : LayoutComponent
     {
         private bool isMultiselect;
+       
+        protected ObservableCollection<ListBoxItem> mItems;
 
         public bool IsMultiselect
         {
             get => isMultiselect;
-            set
-            {
-                if (isMultiselect == value)
-                    return;
-                isMultiselect = value;
-                OnPropertyChanged(nameof(IsMultiselect));
-            }
+            set => SetAndNotify(value, ref isMultiselect);
         }
         public List<ListBoxItem> SelectedItems { get; }
-        public ObservableCollection<ListBoxItem> Items { get; }
+        public ReadOnlyObservableCollection<ListBoxItem> Items { get; }
 
         public ListBox(string id) : base(id)
         {
             SelectedItems = new List<ListBoxItem>();
-            Items = new ObservableCollection<ListBoxItem>();
+            mItems = new ObservableCollection<ListBoxItem>();
+            Items = new ReadOnlyObservableCollection<ListBoxItem>(mItems);
         }
 
         public void Add(object value)
         {
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
-            ListBoxItem item = new ListBoxItem();
+
+            var item = new ListBoxItem();
             item.SelectedChanged += ItemSelectedChanged;
             item.Value = value;
-            Items.Add(item);
+
+            mItems.Add(item);
         }
         public void Remove(object value)
         {
             int index = Items.IndexOf(item => item.Value == value);
             Items[index].SelectedChanged -= ItemSelectedChanged;
-            Items.RemoveAt(index);
+            mItems.RemoveAt(index);
         }
         public void Clear()
         {
@@ -51,12 +50,13 @@ namespace MIDE.Components
             {
                 item.SelectedChanged -= ItemSelectedChanged;
             }
-            Items.Clear();
+
+            mItems.Clear();
         }
         
         protected override LayoutComponent CloneInternal(string id)
         {
-            ListBox clone = Create(id);
+            var clone = Create(id);
             return clone;
         }
         protected virtual ListBox Create(string id) => new ListBox(id);
@@ -64,9 +64,13 @@ namespace MIDE.Components
         private void ItemSelectedChanged(ListBoxItem item, bool selected)
         {
             if (selected)
+            {
                 SelectedItems.Add(item);
+            }
             else
+            {
                 SelectedItems.Remove(item);
+            }
         }
     }
 
@@ -82,21 +86,16 @@ namespace MIDE.Components
             {
                 if (isSelected == value)
                     return;
+
                 isSelected = value;
                 SelectedChanged?.Invoke(this, value);
-                OnPropertyChanged(nameof(IsSelected));
+                OnPropertyChanged();
             }
         }
         public object Value
         {
             get => value;
-            set
-            {
-                if (this.value == value)
-                    return;
-                this.value = value;
-                OnPropertyChanged(nameof(Value));
-            }
+            set => SetAndNotify(value, ref this.value);
         }
 
         public event Action<ListBoxItem, bool> SelectedChanged;

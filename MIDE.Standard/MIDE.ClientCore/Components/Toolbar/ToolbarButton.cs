@@ -9,9 +9,10 @@
 
         protected override Button Create(string id)
         {
-            ToolbarButton clone = new ToolbarButton(id);
+            var clone = new ToolbarButton(id);
             clone.Order = Order;
             clone.Group = Group;
+            
             return clone;
         }
     }

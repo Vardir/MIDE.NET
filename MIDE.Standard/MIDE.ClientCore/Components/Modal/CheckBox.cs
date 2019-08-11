@@ -14,8 +14,9 @@ namespace MIDE.Components
             {
                 if (isChecked == value || !IsEnabled)
                     return;
+
                 isChecked = value;
-                OnPropertyChanged(nameof(IsChecked));
+                OnPropertyChanged();
                 CheckedChanged?.Invoke(isChecked);
                 OnCheckedChanged();
             }
@@ -23,14 +24,7 @@ namespace MIDE.Components
         public string Caption
         {
             get => caption;
-            set
-            {
-                string localized = localization[value];
-                if (localized == caption)
-                    return;
-                caption = localized;
-                OnPropertyChanged(nameof(Caption));
-            }
+            set => SetLocalizedAndNotify(value, ref caption);
         }
 
         public event Action<bool> CheckedChanged;
@@ -39,8 +33,9 @@ namespace MIDE.Components
 
         protected override LayoutComponent CloneInternal(string id)
         {
-            CheckBox clone = new CheckBox(id);
+            var clone = new CheckBox(id);
             clone.caption = caption;
+
             return clone;
         }
 

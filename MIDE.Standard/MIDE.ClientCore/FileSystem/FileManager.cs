@@ -1,10 +1,11 @@
 ﻿using System;
 using MIDE.API;
+using MIDE.IoC;
 using System.IO;
 using System.Linq;
 using System.Text;
 using MIDE.Helpers;
-using MIDE.Application;
+using MIDE.Logging;
 using System.Collections.Generic;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -110,7 +111,7 @@ namespace MIDE.FileSystem
                 }
                 catch (Exception ex)
                 {
-                    AppKernel.Instance.AppLogger.PushError(ex, formatter, "Can not serialize data");
+                    IoCContainer.Resolve<ILogger>().PushError(ex, formatter, "Can not serialize data");
                 }
             }
             else             
@@ -357,7 +358,7 @@ namespace MIDE.FileSystem
             }
             catch (Exception ex)
             {
-                AppKernel.Instance.AppLogger.PushError(ex, formatter, "Can not serialize data");
+                IoCContainer.Resolve<ILogger>().PushError(ex, formatter, "Can not serialize data");
             }
             return null;
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using MIDE.IoC;
+using MIDE.Logging;
 using MIDE.FileSystem;
 
 namespace MIDE.Application.Tasks
@@ -20,7 +21,8 @@ namespace MIDE.Application.Tasks
 
         public override void Run(params object[] args)
         {
-            AppKernel.Instance.AppLogger.PushInfo("Launching extensions installer");
+            var logger = IoCContainer.Resolve<ILogger>();
+            logger.PushInfo("Launching extensions installer");
 
             try
             {
@@ -28,10 +30,10 @@ namespace MIDE.Application.Tasks
             }
             catch(Exception ex)
             {
-                AppKernel.Instance.AppLogger.PushError(ex, this, "Unable to execute task");
+                logger.PushError(ex, this, "Unable to execute task");
             }
 
-            AppKernel.Instance.AppLogger.PushInfo("Extensions installer stopped");
+            logger.PushInfo("Extensions installer stopped");
         }
     }
 }

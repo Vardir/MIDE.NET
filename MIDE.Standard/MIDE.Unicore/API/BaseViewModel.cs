@@ -1,5 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace MIDE.API
 {
@@ -9,9 +11,17 @@ namespace MIDE.API
         [field: NonSerialized]
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected void OnPropertyChanged(string name)
+        protected void OnPropertyChanged([CallerMemberName] string name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
+        protected bool SetAndNotify<T>(T value, ref T field, [CallerMemberName] string propertyName = null)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            if (EqualityComparer<T>.Default.Equals(field, value))
+                return false;
+            
+            field = value;
+            OnPropertyChanged(propertyName);
+            
+            return true;
         }
     }
 }

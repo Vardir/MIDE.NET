@@ -9,7 +9,7 @@
 
         protected override LayoutComponent CloneInternal(string id)
         {
-            Label clone = new Label(id, text);
+            var clone = new Label(id, text);
             return clone;
         }
     }

@@ -3,6 +3,7 @@ using MIDE.IoC;
 using MIDE.API;
 using MIDE.Visuals;
 using MIDE.Helpers;
+using MIDE.Logging;
 using Newtonsoft.Json;
 using MIDE.Application;
 using System.Collections.Generic;
@@ -10,26 +11,22 @@ using MIDE.Application.Configuration;
 
 namespace MIDE.FileSystem
 {
-    public class AssetManager
+    public class AssetsManager
     {
-        private static AssetManager instance;
-        public static AssetManager Instance => instance ?? (instance = new AssetManager());
-
         private AppKernel appKernel;
-        private ConfigurationManager configurations;
 
         public GlyphPool GlyphPool { get; }
 
-        private AssetManager()
+        public AssetsManager()
         {
             GlyphPool = new GlyphPool();
             appKernel = AppKernel.Instance;
-            configurations = IoCContainer.Resolve<ConfigurationManager>();
         }
 
         public void LoadAssets(string source)
         {
-            appKernel.AppLogger.PushDebug(null, $"Loading assets from {source}");
+            var logger = IoCContainer.Resolve<ILogger>();
+            logger.PushDebug(null, $"Loading assets from {source}");
 
             try
             {
@@ -38,20 +35,21 @@ namespace MIDE.FileSystem
             }
             catch (Exception ex)
             {
-                appKernel.AppLogger.PushFatal(ex.Message);
+                logger.PushFatal(ex.Message);
             }
 
-            appKernel.AppLogger.PushDebug(null, "Assets loading finished");
+            logger.PushDebug(null, "Assets loading finished");
         }
 
         private void LoadGlyphs(string source)
         {
             var fileManager = IoCContainer.Resolve<IFileManager>();
-            string path = buildPath((string)configurations["theme"]) ?? buildPath("default");
+            var configurations = IoCContainer.Resolve<ConfigurationManager>();
+            var path = buildPath((string)configurations["theme"]) ?? buildPath("default");
 
             if (path.HasValue())
             {
-                string glyphsData = fileManager.ReadOrCreate(path, "{}");
+                var glyphsData = fileManager.ReadOrCreate(path, "{}");
                 foreach (var kvp in JsonConvert.DeserializeObject<Dictionary<string, string>>(glyphsData))
                 {
                     GlyphPool.AddOrUpdate(kvp.Key, Glyph.From(kvp.Value));
@@ -59,7 +57,7 @@ namespace MIDE.FileSystem
             }
             else
             {
-                appKernel.AppLogger.PushWarning($"Can not load glyphs from {source}");
+                IoCContainer.Resolve<ILogger>().PushWarning($"Can not load glyphs from {source}");
             }
 
             string buildPath(string theme) => fileManager.Combine(source, "glyphs", theme, "config.json");

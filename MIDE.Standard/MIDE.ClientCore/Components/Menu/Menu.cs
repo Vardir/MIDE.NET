@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace MIDE.Components
 {
-    public class Menu : LayoutContainer, IMenuConstructionContext
+    public class Menu : LayoutComponent, IMenuConstructionContext
     {
         private List<MenuItem> items;
 
@@ -36,10 +36,12 @@ namespace MIDE.Components
         }
         public void AddItem(MenuItem item)
         {
-            if (IsSealed)
-                throw new InvalidOperationException("Attempt to add item to sealed collection");
+            // if (IsSealed)
+            //     throw new InvalidOperationException("Attempt to add item to sealed collection");
+
             items.Insert(item);
         }
+
         /// <summary>
         /// Puts the specified element to the last one element in path. Each non-existing element in path will be created.
         /// </summary>
@@ -49,27 +51,36 @@ namespace MIDE.Components
         /// <exception cref="FormatException"></exception>
         public void AddItem(string path, MenuItem item)
         {
-            if (IsSealed)
-                throw new InvalidOperationException("Attempt to add item to sealed collection");
+            // if (IsSealed)
+            //     throw new InvalidOperationException("Attempt to add item to sealed collection");
+
             if (string.IsNullOrWhiteSpace(path) || path.Length == 0)
                 throw new ArgumentException("The path can not be empty");
+
             if (path == "/")
             {
                 items.Insert(item);
-                return;
             }
-            if (!Regex.IsMatch(path, PATH_PATTERN))
-                throw new FormatException("Path has invalid format");
-
-            var (rootId, tail) = path.ExtractUntil(0, '/');
-            var root = this[rootId];
-            if (root == null)
+            else
             {
-                root = new MenuButton(rootId, 0);
-                items.Insert(item);
+                if (Regex.IsMatch(path, PATH_PATTERN))
+                {
+                    var (rootId, tail) = path.ExtractUntil(0, '/');
+                    var root = this[rootId];
+                    if (root == null)
+                    {
+                        root = new MenuButton(rootId, 0);
+                        items.Insert(item);
+                    }
+
+                    var last = GetItem(root, tail, true);
+                    last.Add(item, null);
+                }
+                else
+                {
+                    throw new FormatException("Path has invalid format");
+                }
             }
-            MenuItem last = GetItem(root, tail, true);
-            last.Add(item, null);
         }
 
         /// <summary>
@@ -83,20 +94,24 @@ namespace MIDE.Components
         {
             if (string.IsNullOrWhiteSpace(path) || path.Length == 0)
                 throw new ArgumentException("The path can not be empty");
+
             if (path == "/")
                 return true;
-            if (!Regex.IsMatch(path, PATH_PATTERN))
-                throw new FormatException("Path has invalid format");
 
-            var (rootId, tail) = path.ExtractUntil(0, '/');
-            var root = this[rootId];
-            if (root == null)
-                return false;
-            if (GetItem(root, tail, false) != null)
-                return true;
-            return false;
+            if (Regex.IsMatch(path, PATH_PATTERN))
+            {
+                var (rootId, tail) = path.ExtractUntil(0, '/');
+                var root = this[rootId];
+                if (root == null)
+                    return false;
+
+                return GetItem(root, tail, false).HasValue();
+            }
+
+            throw new FormatException("Path has invalid format");
         }
-        public override bool Contains(string id) => items.FirstOrDefault(i => i.Id == id) != null;
+        public bool Contains(string id) => items.FirstOrDefault(i => i.Id == id) != null;
+
         /// <summary>
         /// Searches recursively for the menu item with specified ID. Returns null if nothing found
         /// </summary>
@@ -104,18 +119,21 @@ namespace MIDE.Components
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="FormatException"></exception>
-        public override LayoutComponent Find(string id)
+        public LayoutComponent Find(string id)
         {
             foreach (var item in items)
             {
                 if (item.Id == id)
                     return item;
+
                 var inter = item.Find(id);
-                if (inter != null)
+                if (inter.HasValue())
                     return inter;
             }
+
             return null;
         }
+
         /// <summary>
         /// Searches for the last item in the given path and produces out array of all child items ID. Returns null if nothing found
         /// </summary>
@@ -127,22 +145,27 @@ namespace MIDE.Components
         {
             if (string.IsNullOrWhiteSpace(path) || path.Length == 0)
                 throw new ArgumentException("The path can not be empty");
+
             if (path == "/")
                 return items.Select(mi => mi.Id);
 
-            if (!Regex.IsMatch(path, PATH_PATTERN))
-                throw new FormatException("Path has invalid format");
+            if (Regex.IsMatch(path, PATH_PATTERN))
+            {
+                var (rootId, tail) = path.ExtractUntil(0, '/');
+                var root = this[rootId];
+                if (root == null)
+                    return null;
 
-            var (rootId, tail) = path.ExtractUntil(0, '/');
-            var root = this[rootId];
-            if (root == null)
-                return null;
+                var item = GetItem(root, tail, false);
+                if (item == null)
+                    return null;
 
-            MenuItem item = GetItem(root, tail, false);
-            if (item == null)
-                return null;
-            return item.GetAllItemsIDs();
+                return item.GetAllItemsIDs();
+            }
+
+            throw new FormatException("Path has invalid format");
         }
+
         /// <summary>
         /// Searches for the last item in the given path and produces it's child items ordinal indexes. Returns null if nothing found
         /// </summary>
@@ -154,54 +177,64 @@ namespace MIDE.Components
         {
             if (string.IsNullOrWhiteSpace(path) || path.Length == 0)
                 throw new ArgumentException("The path can not be empty");
+
             if (path == "/")
                 return items.Select(mi => (mi.Id, mi.OrdinalIndex));
 
-            if (!Regex.IsMatch(path, PATH_PATTERN))
-                throw new FormatException("Path has invalid format");
-
-            var (rootId, tail) = path.ExtractUntil(0, '/');
-            var root = this[rootId];
-            if (root == null)
-                return null;
-            string segment = tail;
-            while (!string.IsNullOrEmpty(segment))
+            if (Regex.IsMatch(path, PATH_PATTERN))
             {
-                var (elementId, tail2) = segment.ExtractUntil(0, '/');
-                var element = root[elementId];
-                if (element == null)
+                var (rootId, tail) = path.ExtractUntil(0, '/');
+                var root = this[rootId];
+                if (root == null)
                     return null;
-                root = element;
-                segment = tail2;
+
+                var segment = tail;
+                while (segment.HasValue())
+                {
+                    var (elementId, tail2) = segment.ExtractUntil(0, '/');
+                    var element = root[elementId];
+                    if (element == null)
+                        return null;
+
+                    root = element;
+                    segment = tail2;
+                }
+
+                return root.GetItemsOrdinals();
             }
-            return root.GetItemsOrdinals();
+
+            throw new FormatException("Path has invalid format");
         }
 
-        protected override void AddChild_Impl(LayoutComponent component)
+        protected void AddChild_Impl(LayoutComponent component)
         {
-            if (!(component is MenuItem item))
+            if (component is MenuItem item)
+            {
+                items.Insert(item);
+            }
+            else
+            {
                 throw new ArgumentException($"Expected [MenuItem] but got [{component.GetType()}]");
-            items.Insert(item);
+            }
         }
-        protected override void RemoveChild_Impl(string id)
+        protected void RemoveChild_Impl(string id)
         {
             int index = items.FirstIndexWith(i => i.Id == id);
-            if (index == -1)
-                return;
-            items.RemoveAt(index);
+            if (index > -1)
+                items.RemoveAt(index);
         }
-        protected override void RemoveChild_Impl(LayoutComponent component)
+        protected void RemoveChild_Impl(LayoutComponent component)
         {
             int index = items.FirstIndexWith(i => i == component);
-            if (index == -1)
-                return;
-            items.RemoveAt(index);
+            if (index > -1)
+                items.RemoveAt(index);
         }
 
         protected override LayoutComponent CloneInternal(string id)
         {
-            Menu clone = new Menu(id);
+            var clone = new Menu(id);
             clone.items.AddRange(items.Select(item => item.Clone() as MenuItem));
+
             return clone;
         }
         
@@ -209,19 +242,24 @@ namespace MIDE.Components
         {
             if (string.IsNullOrEmpty(path))
                 return root;
+
             var (segment, tail) = path.ExtractUntil(0, '/');
             if (root.ContainsGroup(segment))
                 return GetItem(root, tail, createIfNotExist);
-            MenuItem item = root.Find(segment);
+
+            var item = root.Find(segment);
             if (item == null && !createIfNotExist)
                 return null;
+
             if (item == null)
             {
                 item = new MenuButton(segment, 0);
                 root.Add(item, null);
             }
+
             if (tail == null)
                 return item;
+
             return GetItem(item, tail, createIfNotExist);
         }
     }

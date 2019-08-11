@@ -5,58 +5,74 @@ using System.Collections.ObjectModel;
 
 namespace MIDE.Components
 {
-    public class Toolbar : LayoutContainer
+    public class Toolbar : LayoutComponent
     {
-        public ObservableCollection<IToolBarItem> Items { get; }
+        protected ObservableCollection<IToolBarItem> mItems;
+
+        public ReadOnlyObservableCollection<IToolBarItem> Items { get; }
 
         public Toolbar(string id) : base(id)
         {
-            Items = new ObservableCollection<IToolBarItem>();
+            mItems = new ObservableCollection<IToolBarItem>();
+            Items = new ReadOnlyObservableCollection<IToolBarItem>(mItems);
         }
 
-        public override bool Contains(string id) => Items.FirstOrDefault(item => item.Id == id) != null;
-        public override LayoutComponent Find(string id)
+        public bool Contains(string id) => Items.FirstOrDefault(item => item.Id == id) != null;
+        public LayoutComponent Find(string id)
         {
             var item = Items.FirstOrDefault(i => i.Id == id);
             if (item == null)
                 return null;
+
             return item as LayoutComponent;
         }
 
         protected override LayoutComponent CloneInternal(string id)
         {
-            Toolbar clone = new Toolbar(id);
+            var clone = new Toolbar(id);
             clone.Items.AddRange(Items.Select(item => item.Clone() as IToolBarItem));
+
             return clone;
         }
 
-        protected override void AddChild_Impl(LayoutComponent component)
+        protected void AddChild_Impl(LayoutComponent component)
         {
-            if (!(component is IToolBarItem item))
-                throw new ArgumentException("The given component is not toolbar item", nameof(component));
-
-            int index = Items.LastIndexWith(i => i.Group == item.Group && i.Order < item.Order);
-            if (index == -1)
+            if (component is IToolBarItem item)
             {
-                Items.Add(item);
-                return;
+                int index = Items.LastIndexWith(i => i.Group == item.Group && i.Order < item.Order);
+                if (index > -1)
+                {
+                    mItems.Insert(index, item);
+                }
+                else
+                {
+                    mItems.Add(item);
+                }
             }
-            Items.Insert(index, item);
+            else
+            {
+                throw new ArgumentException("The given component is not toolbar item", nameof(component));
+            }
         }
-        protected override void RemoveChild_Impl(string id)
+        protected void RemoveChild_Impl(string id)
         {
             int index = Items.FirstIndexWith(i => i.Id == id);
-            if (index == -1)
-                return;
-            Items.RemoveAt(index);
+            if (index > -1)
+                mItems.RemoveAt(index);
         }
-        protected override void RemoveChild_Impl(LayoutComponent component)
+        protected void RemoveChild_Impl(LayoutComponent component)
         {
             if (component == null)
                 throw new ArgumentNullException(nameof(component));
-            if (!(component is IToolBarItem item))
+
+            if (component is IToolBarItem item)
+            {
+                mItems.Remove(item);
+            }
+            else
+            {
                 throw new ArgumentException($"Toolbar does not contain items of type [{component.GetType()}]");
-            Items.Remove(item);
+            }
         }
     }
 }

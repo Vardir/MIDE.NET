@@ -16,6 +16,7 @@ namespace MIDE.Components
         {
             if (radiobutton.Group != this)
                 throw new ArgumentException("The given radio-button does not belong to the group");
+            
             for (int i = 0; i < radioButtons.Count; i++)
             {
                 if (radioButtons[i].Id != radiobutton.Id)

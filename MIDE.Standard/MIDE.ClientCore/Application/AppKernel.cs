@@ -9,7 +9,6 @@ using MIDE.Application.Tasks;
 using MIDE.Application.Events;
 using System.Collections.Generic;
 using MIDE.Application.Attributes;
-using MIDE.Application.Initializers;
 using MIDE.Application.Configuration;
 using Module = MIDE.Extensibility.Module;
 
@@ -43,20 +42,6 @@ namespace MIDE.Application
         /// </summary>
         public string ApplicationName { get; private set; }
 
-        /// <summary>
-        /// Application-wide logger
-        /// </summary>
-        public Logger AppLogger { get; }
-
-        /// <summary>
-        /// Application-wide event broadcaster to provide event-based interaction between application components
-        /// </summary>
-        public EventBroadcaster Broadcaster { get; }
-
-        /// <summary>
-        /// List of application initializers used to configure kernel and it's parts
-        /// </summary>
-        public List<IApplicationInitializer> Initializers { get; } 
         #endregion
 
         public event Action ApplicationExit;
@@ -65,17 +50,16 @@ namespace MIDE.Application
         {
             paths = ApplicationPaths.Instance;
             tasks = new LinkedList<AppTask>();
-            Initializers = new List<IApplicationInitializer>();
 
             currentAssembly = Assembly.GetAssembly(typeof(AppKernel));
             
             var version = currentAssembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
             KernelVersion = Version.Parse(version.InformationalVersion);
 
-            AppLogger = new Logger(LoggingLevel.ALL, useUtcTime: true);
-            AppLogger.FatalEventRegistered += AppLogger_FatalEventRegistered;
+            var logger = IoCContainer.Resolve<ILogger>();
+            logger.FatalEventRegistered += AppLogger_FatalEventRegistered;
 
-            AppLogger.PushDebug(null, "Application Kernel created");
+            logger.PushDebug(null, "Application Kernel created");
         }
 
         /// <summary>
@@ -83,7 +67,8 @@ namespace MIDE.Application
         /// </summary>
         public void Start()
         {
-            AppLogger.PushDebug(null, "Application Kernel starting");
+            var logger = IoCContainer.Resolve<ILogger>();
+            logger.PushDebug(null, "Application Kernel starting");
 
             try
             {
@@ -109,7 +94,7 @@ namespace MIDE.Application
             catch (Exception ex)
             {
                 isRunning = true;
-                AppLogger.PushFatal(ex.Message);
+                logger.PushFatal(ex.Message);
             }
 
             LoadConfigurations();
@@ -122,22 +107,17 @@ namespace MIDE.Application
             LoadTasks();
             OnStarting();
 
-            AppLogger.PushDebug(null, "Application Kernel started");
+            logger.PushDebug(null, "Application Kernel started");
             TimeStarted = DateTime.UtcNow;
             isRunning = true;
 
-            foreach (var initializer in Initializers)
-            {
-                initializer.Execute(this);
-            }
-
             try
             {
-                ExtensionsManager.Instance.LoadExtensions();
+                IoCContainer.Resolve<ExtensionsManager>().LoadExtensions();
             }
             catch (Exception ex)
             {
-                AppLogger.PushError(ex, this);
+                logger.PushError(ex, this);
             }
 
             OnStarted();
@@ -148,12 +128,13 @@ namespace MIDE.Application
         /// </summary>
         public void SaveLog()
         {
-            if (AppLogger.EventsCount == 0)
-                return;
-
-            string folder = $"{paths[ApplicationPaths.LOGS]}\\{TimeStarted.ToString("dd-M-yyyy HH-mm-ss")}\\";
-            IoCContainer.Resolve<IFileManager>().MakeFolder(folder);
-            AppLogger.SaveToFile(folder, "log.txt", info: new[] { ApplicationName, KernelVersion.ToString() });
+            var logger = IoCContainer.Resolve<ILogger>();
+            if (logger.EventsCount != 0)
+            {
+                string folder = $"{paths[ApplicationPaths.LOGS]}\\{TimeStarted.ToString("dd-M-yyyy HH-mm-ss")}\\";
+                IoCContainer.Resolve<IFileManager>().MakeFolder(folder);
+                logger.SaveToFile(folder, "log.txt", info: new[] { ApplicationName, KernelVersion.ToString() });
+            }
         }
 
         /// <summary>
@@ -162,13 +143,14 @@ namespace MIDE.Application
         /// <exception cref="ApplicationException"></exception>
         public void Exit()
         {
+            var logger = IoCContainer.Resolve<ILogger>();
             if (isRunning)
             {
                 isRunning = false;
-                AppLogger.PushDebug(null, "Application Kernel stopped");
+                logger.PushDebug(null, "Application Kernel stopped");
 
                 Dispose();
-                AppLogger.PushDebug(null, "Application Kernel resources are disposed");
+                logger.PushDebug(null, "Application Kernel resources are disposed");
 
                 SaveLog();
                 SaveTasks();
@@ -181,7 +163,7 @@ namespace MIDE.Application
             }
             else
             {
-                AppLogger.PushWarning("Attempt to terminate application while it is not started yet");
+                logger.PushWarning("Attempt to terminate application while it is not started yet");
             }
         }
         public void AddTask(AppTask task)
@@ -214,17 +196,18 @@ namespace MIDE.Application
         {
             if (isRunning)
             {
-                AppLogger.PushWarning("Attempt to dispose of resources while application still running");
+                IoCContainer.Resolve<ILogger>().PushWarning("Attempt to dispose of resources while application still running");
                 return;
             }
 
             //TODO: dispose all the application resources
-            ExtensionsManager.Instance.Dispose();
+            IoCContainer.Resolve<ExtensionsManager>().Dispose();
         }
 
         private void LoadConfigurations()
         {
-            AppLogger.PushDebug(null, "Loading application configurations");
+            var logger = IoCContainer.Resolve<ILogger>();
+            logger.PushDebug(null, "Loading application configurations");
             
             var configuration = IoCContainer.Resolve<ConfigurationManager>();
 
@@ -250,13 +233,13 @@ namespace MIDE.Application
             }
             catch (Exception ex)
             {
-                AppLogger.PushFatal(ex.Message);
+                logger.PushFatal(ex.Message);
             }
             
-            AppLogger.FilterEvents(AppLogger.Levels);
-            AssetManager.Instance.LoadAssets(paths[ApplicationPaths.ASSETS]);
+            logger.FilterEvents(logger.Levels);
+            IoCContainer.Resolve<AssetsManager>().LoadAssets(paths[ApplicationPaths.ASSETS]);
 
-            AppLogger.PushDebug(null, "Application configurations loaded");
+            logger.PushDebug(null, "Application configurations loaded");
         }
        
         private void SaveTasks()
@@ -323,7 +306,8 @@ namespace MIDE.Application
 
         private string VerifyAssemblyAttributes()
         {
-            AppLogger.PushDebug(null, "Verifying assembly attributes");
+            var logger = IoCContainer.Resolve<ILogger>();
+            logger.PushDebug(null, "Verifying assembly attributes");
 
             var hasAppPropsAttriburte = false;
             var attributes = Attribute.GetCustomAttributes(callingAssembly);
@@ -340,7 +324,7 @@ namespace MIDE.Application
 
             if (hasAppPropsAttriburte)
             {
-                AppLogger.PushDebug(null, "Assembly attributes verified");
+                logger.PushDebug(null, "Assembly attributes verified");
 
                 return null;
             }
@@ -350,7 +334,7 @@ namespace MIDE.Application
 
         private void AppLogger_FatalEventRegistered(object sender, FatalEvent e)
         {
-            AppLogger.PushInfo("Closing application due to fatal error");
+            IoCContainer.Resolve<ILogger>().PushInfo("Closing application due to fatal error");
             Exit();
         }
     }

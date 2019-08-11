@@ -1,6 +1,7 @@
 ﻿using MIDE.API;
 using MIDE.Helpers;
 using MIDE.Visuals;
+using MIDE.Commands;
 using System.Collections;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -13,6 +14,8 @@ namespace MIDE.Components
     {
         private bool multiselect;
         private TreeViewItem selectedItem;
+        
+        protected ObservableCollection<TreeViewItem> mItems;
 
         public bool Multiselect
         {
@@ -37,26 +40,28 @@ namespace MIDE.Components
             }
         }
         public List<TreeViewItem> SelectedItems { get; }
-        public ObservableCollection<TreeViewItem> Items { get; }
+        public ReadOnlyObservableCollection<TreeViewItem> Items { get; }
 
         public TreeView(string id) : base(id)
         {
             SelectedItems = new List<TreeViewItem>();
-            Items = new ObservableCollection<TreeViewItem>();
-            Items.CollectionChanged += Items_CollectionChanged;
+            mItems = new ObservableCollection<TreeViewItem>();
+            mItems.CollectionChanged += Items_CollectionChanged;
+            Items = new ReadOnlyObservableCollection<TreeViewItem>(mItems);
         }
 
         public void Clear()
         {
-            Items.Clear();
+            mItems.Clear();
             SelectedItem = null;
             SelectedItems.Clear();
         }
 
         protected override LayoutComponent CloneInternal(string id)
         {
-            TreeView clone = new TreeView(id);
+            var clone = new TreeView(id);
             clone.Items.AddRange(Items.Select(item => item.Clone()));
+
             return clone;
         }
 
@@ -82,6 +87,7 @@ namespace MIDE.Components
         {
             if (list == null)
                 return;
+
             foreach (var item in list)
             {
                 var tvi = item as TreeViewItem;
@@ -93,6 +99,7 @@ namespace MIDE.Components
         {
             if (list == null)
                 return;
+
             foreach (var item in list)
             {
                 var tvi = item as TreeViewItem;
@@ -108,15 +115,17 @@ namespace MIDE.Components
 
         internal void OnItemPropertyChanged(object sender, PropertyChangedEventArgs args)
         {
-            TreeViewItem item = sender as TreeViewItem;
-            if (item == null || item.ParentTree != this)
-                return;
-            if (args.PropertyName == nameof(TreeViewItem.IsSelected))
+            var item = sender as TreeViewItem;
+            if (item != null && item.ParentTree == this)
             {
-                SelectedItem = item;
-                SelectedItems.Clear();
-                if (!SelectedItems.Contains(item))
-                    SelectedItems.Add(item);
+                if (args.PropertyName == nameof(TreeViewItem.IsSelected))
+                {
+                    SelectedItem = item;
+                    SelectedItems.Clear();
+
+                    if (!SelectedItems.Contains(item))
+                        SelectedItems.Add(item);
+                }
             }
         }
     }
@@ -148,6 +157,7 @@ namespace MIDE.Components
             {
                 if (value == isSelected)
                     return;
+
                 isSelected = value;
                 OnPropertyChanged(nameof(IsSelected));
             }
@@ -162,6 +172,7 @@ namespace MIDE.Components
             {
                 if (value == caption)
                     return;
+
                 caption = value;
                 OnPropertyChanged(nameof(Caption));
             }
@@ -173,6 +184,7 @@ namespace MIDE.Components
             {
                 if (value == itemClass)
                     return;
+
                 itemClass = value;
                 OnPropertyChanged(nameof(ItemClass));
             }
@@ -184,6 +196,7 @@ namespace MIDE.Components
             {
                 if (value == glyph)
                     return;
+
                 glyph = value;
                 OnPropertyChanged(nameof(ItemGlyph));
             }
@@ -193,17 +206,11 @@ namespace MIDE.Components
         public ContextMenu ContextMenu
         {
             get => contextMenu;
-            set
-            {
-                if (value == contextMenu)
-                    return;
-                contextMenu = value;
-                OnPropertyChanged(nameof(ContextMenu));
-            }
+            set => SetAndNotify(value, ref contextMenu);
         }
         public ObservableCollection<TreeViewItem> Children { get; }
 
-        public ICommand ExpandCommand { get; protected set; }
+        public BaseCommand ExpandCommand { get; protected set; }
 
         public TreeViewItem()
         {
@@ -214,25 +221,27 @@ namespace MIDE.Components
 
         public TreeViewItem Clone()
         {
-            TreeViewItem clone = CloneInternal();
+            var clone = CloneInternal();
             clone.Children.AddRange(Children.Select(item => item.Clone()));
             clone.caption = caption;
             clone.itemClass = itemClass;
             clone.glyph = glyph;
             clone.contextMenu = contextMenu;
+
             return clone;
         }
         public TreeViewItem Clone(string _) => Clone();
 
         protected virtual void OnChildrenClearing()
         {
-            if (Children.Count == 0 || Children[0] == null)
-                return;
-            foreach (var child in Children)
-            {
-                child.ParentTree = null;
-                child.PropertyChanged -= ParentTree.OnItemPropertyChanged;
-                child.ClearChildren();
+            if (Children.Count != 0 && Children[0] != null)
+            {   
+                foreach (var child in Children)
+                {
+                    child.ParentTree = null;
+                    child.PropertyChanged -= ParentTree.OnItemPropertyChanged;
+                    child.ClearChildren();
+                }
             }
         }
         protected virtual void OnChildrenCleared() { }
@@ -245,20 +254,22 @@ namespace MIDE.Components
         }
         protected void Expand()
         {
-            if (!CanExpand)
-                return;
-            //if (Children.Count > 0 && Children[0] != null)
-            //    return;
-
-            var childItems = GetChildItems();
-            ClearChildren();
-            Children.Clear();
-            Children.AddRange(childItems);
-            foreach (var child in Children)
+            if (CanExpand)
             {
-                child.ParentTree = ParentTree;
-                child.PropertyChanged += ParentTree.OnItemPropertyChanged;
-                child.Parent = this;
+                //if (Children.Count > 0 && Children[0] != null)
+                //    return;
+
+                var childItems = GetChildItems();
+                ClearChildren();
+                Children.Clear();
+                Children.AddRange(childItems);
+
+                foreach (var child in Children)
+                {
+                    child.ParentTree = ParentTree;
+                    child.PropertyChanged += ParentTree.OnItemPropertyChanged;
+                    child.Parent = this;
+                }
             }
         }
 

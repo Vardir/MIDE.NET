@@ -2,6 +2,7 @@
 using MIDE.IoC;
 using System.Linq;
 using MIDE.Helpers;
+using MIDE.Logging;
 using MIDE.Components;
 using MIDE.Application;
 using System.Collections.Generic;
@@ -33,17 +34,18 @@ namespace MIDE.Extensibility
         {
             if (IsEnabled)
             {
-                Kernel.AppLogger.PushDebug(null, $"Extension {Id} :: begin initialization");
+                var logger = IoCContainer.Resolve<ILogger>();
+                logger.PushDebug(null, $"Extension {Id} :: begin initialization");
 
                 RegisterMenuItems(IoCContainer.Resolve<UIManager>().ApplicationMenu);
-                Kernel.AppLogger.PushDebug(null, $"Extension {Id} :: menu items loaded");
+                logger.PushDebug(null, $"Extension {Id} :: menu items loaded");
 
                 RegisterModules();
 
                 if (modules.Count > 0)
-                    Kernel.AppLogger.PushDebug(null, $"Extension {Id} :: modules loaded");
+                    logger.PushDebug(null, $"Extension {Id} :: modules loaded");
 
-                Kernel.AppLogger.PushDebug(null, $"Extension {Id} :: initialization completed");
+                logger.PushDebug(null, $"Extension {Id} :: initialization completed");
                 IsInitialized = true;
             }
         }
@@ -95,7 +97,7 @@ namespace MIDE.Extensibility
             modules.Add(module);
             module.Initialize();
 
-            Kernel.AppLogger.PushDebug(null, $"Extension {Id} :: module {module.Id} registered");
+            IoCContainer.Resolve<ILogger>().PushDebug(null, $"Extension {Id} :: module {module.Id} registered");
         }
 
         protected abstract void RegisterMenuItems(IMenuConstructionContext context);

@@ -1,18 +1,18 @@
 ﻿//using NuGet;
 using System;
+using MIDE.API;
+using MIDE.IoC;
 using System.Linq;
-using MIDE.Helpers;
 using MIDE.Logging;
-using MIDE.FileSystem;
+using MIDE.Helpers;
 using MIDE.Components;
 using Newtonsoft.Json;
+using MIDE.FileSystem;
 using System.Reflection;
 using MIDE.Extensibility;
 using System.Collections.Generic;
 using Newtonsoft.Json.Serialization;
 using MIDE.Application.Configuration;
-using MIDE.IoC;
-using MIDE.API;
 
 namespace MIDE.Application
 {
@@ -21,11 +21,7 @@ namespace MIDE.Application
     /// </summary>
     public sealed class ExtensionsManager : ApplicationComponent, IDisposable
     {
-        private static ExtensionsManager instance;
-        public static ExtensionsManager Instance => instance ?? (instance = new ExtensionsManager());
-
         private bool _disposed;
-        private Logger appLogger;
         private JsonSerializerSettings serializerSettings;
         //private IPackageRepository localRespository;
         //private DefaultPackagePathResolver localPathResolver;
@@ -39,7 +35,6 @@ namespace MIDE.Application
 
         private ExtensionsManager() : base("app-extension-manager")
         {
-            appLogger = Kernel.AppLogger;
             serializerSettings = new JsonSerializerSettings();
             serializerSettings.Error = OnSerializationError;
             pendingRegister = new LinkedList<AppExtensionEntry>();
@@ -53,13 +48,14 @@ namespace MIDE.Application
         /// <exception cref="ApplicationException"></exception>
         public void LoadExtensions()
         {
-            appLogger.PushDebug(null, "Loading extensions");
+            var logger = IoCContainer.Resolve<ILogger>();
+            logger.PushDebug(null, "Loading extensions");
 
             var fileManager = IoCContainer.Resolve<IFileManager>();
             var directory = fileManager.GetAbsolutePath(ApplicationPaths.Instance[ApplicationPaths.EXTENSIONS]);
             //localRespository = PackageRepositoryFactory.Default.CreateRepository(directory);
             //localPathResolver = new DefaultPackagePathResolver(directory);
-            string[] lines = fileManager.TryReadLines(fileManager.Combine(directory, ".enabled"));
+            var lines = fileManager.TryReadLines(fileManager.Combine(directory, ".enabled"));
             var enabledExtensions = new HashSet<string>(lines.Where(l => !string.IsNullOrWhiteSpace(l)));
             //foreach (var pack in localRespository.GetPackages())
             //{
@@ -73,7 +69,7 @@ namespace MIDE.Application
             //    pendingRegister.AddLast(entry);
             //}
             RegisterExtensions();
-            appLogger.PushDebug(null, "Extensions loaded");
+            logger.PushDebug(null, "Extensions loaded");
         }
 
         //public static string VerifyPackageFrameworkDependencies(IPackage package)
@@ -119,13 +115,14 @@ namespace MIDE.Application
         /// </summary>
         private void UnloadExtensions()
         {
-            appLogger.PushDebug(null, "Unloading extensions");
+            var logger = IoCContainer.Resolve<ILogger>();
+            logger.PushDebug(null, "Unloading extensions");
 
             var fileManager = IoCContainer.Resolve<IFileManager>();
             var enabled = registered.Select(kvp => kvp.Value)
                                     .Where(e => e.IsEnabled && !e.PendingUninstall)
                                     .Select(e => e.Id);
-            string directory = ApplicationPaths.Instance[ApplicationPaths.EXTENSIONS];
+            var directory = ApplicationPaths.Instance[ApplicationPaths.EXTENSIONS];
 
             fileManager.Write(enabled, fileManager.Combine(directory, ".enabled"));
             foreach (var kvp in registered)
@@ -135,7 +132,7 @@ namespace MIDE.Application
 
             registered.Clear();
 
-            appLogger.PushDebug(null, "Extensions unloaded");
+            logger.PushDebug(null, "Extensions unloaded");
         }
         private void RegisterExtensions()
         {
@@ -147,7 +144,7 @@ namespace MIDE.Application
 
                 pendingRegister.Remove(node);
 
-                bool resolved = true;
+                var resolved = true;
                 foreach (var dependency in entry.Dependencies)
                 {
                     if (registered.TryGetValue(dependency, out var parent))
@@ -174,14 +171,15 @@ namespace MIDE.Application
 
             foreach (var entry in pendingRegister)
             {
-                appLogger.PushWarning($"Couldn't register extension '{entry.Id}' because one of it dependencies wasn't loaded");
+                IoCContainer.Resolve<ILogger>().PushWarning($"Couldn't register extension '{entry.Id}' because one of it dependencies wasn't loaded");
             }
 
             pendingRegister.Clear();
         }
         private void RegisterExtension(AppExtensionEntry entry)
         {
-            appLogger.PushDebug(null, $"Registering extension '{entry.Id}'");
+            var logger = IoCContainer.Resolve<ILogger>();
+            logger.PushDebug(null, $"Registering extension '{entry.Id}'");
 
             try
             {
@@ -195,13 +193,13 @@ namespace MIDE.Application
             }
             catch (Exception ex)
             {
-                appLogger.PushError(ex, entry);
+                logger.PushError(ex, entry);
                 return;
             }
 
             entry.Extension.Initialize();
             registered.Add(entry.Id, entry);
-            appLogger.PushDebug(null, $"Extension '{entry.Id}' registered");
+            logger.PushDebug(null, $"Extension '{entry.Id}' registered");
         }
         private void LoadExtension(AppExtensionEntry entry)
         {
@@ -239,8 +237,8 @@ namespace MIDE.Application
 
         private void OnSerializationError(object sender, ErrorEventArgs e)
         {
-            Kernel.AppLogger.PushError(e.ErrorContext.Error, e.ErrorContext, 
-                                       $"An error occurred on object serialization: {e.ErrorContext.Error.Message}");
+            IoCContainer.Resolve<ILogger>().PushError(e.ErrorContext.Error, e.ErrorContext, 
+                                                      $"An error occurred on object serialization: {e.ErrorContext.Error.Message}");
         }
 
         //private string Validate(IPackage package)

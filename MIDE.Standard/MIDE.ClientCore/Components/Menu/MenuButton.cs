@@ -1,10 +1,10 @@
-﻿using MIDE.API;
+﻿using MIDE.Commands;
 
 namespace MIDE.Components
 {
     public class MenuButton : MenuItem, IButton
     {
-        public ICommand PressCommand { get; set; }
+        public BaseCommand PressCommand { get; set; }
         
         public MenuButton(string id, short ordinalIndex) : base(id, ordinalIndex)
         {
@@ -17,16 +17,15 @@ namespace MIDE.Components
 
         public void Press(object parameter)
         {
-            if (ChildCount > 0)
-                return;
-            if (PressCommand.CanExecute(parameter))
+            if (ChildCount == 0)
                 PressCommand.Execute(parameter);
         }
-        
+
         protected override MenuItem Create(string id, short ordinalIndex, string group)
         {
-            MenuButton clone = new MenuButton(id, ordinalIndex);
+            var clone = new MenuButton(id, ordinalIndex);
             clone.PressCommand = PressCommand;
+            
             return clone;
         }
     }

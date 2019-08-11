@@ -9,9 +9,10 @@
 
         protected override TextBox Create(string id)
         {
-            ToolbarActionTextBox clone = new ToolbarActionTextBox(id, Default);
+            var clone = new ToolbarActionTextBox(id, Default);
             clone.Order = Order;
             clone.Group = Group;
+            
             return clone;
         }
     }

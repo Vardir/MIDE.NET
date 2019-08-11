@@ -7,11 +7,7 @@
         public virtual string Text
         {
             get => text;
-            set
-            {
-                text = value;
-                OnPropertyChanged(nameof(Text));
-            }
+            set => SetAndNotify(value, ref text);
         }
 
         public TextComponent(string id) : base(id)

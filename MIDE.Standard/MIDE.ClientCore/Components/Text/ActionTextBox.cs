@@ -11,8 +11,9 @@
             {
                 if (value == actionButton || value == null)
                     return;
+
                 actionButton = value;
-                OnPropertyChanged(nameof(ActionButton));
+                OnPropertyChanged();
             }
         }
 
@@ -23,8 +24,9 @@
 
         protected override TextBox Create(string id)
         {
-            ActionTextBox clone = new ActionTextBox(id, Default);
+            var clone = new ActionTextBox(id, Default);
             clone.actionButton = actionButton.Clone() as Button;
+            
             return clone;
         }
     }

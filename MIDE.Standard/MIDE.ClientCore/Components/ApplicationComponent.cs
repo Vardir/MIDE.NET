@@ -1,10 +1,12 @@
 ﻿using System;
+using MIDE.API;
 using MIDE.Helpers;
 using MIDE.Application;
 using System.Globalization;
 using MIDE.Application.Events;
 using MIDE.Application.Localization;
 using System.Text.RegularExpressions;
+using System.Runtime.CompilerServices;
 
 namespace MIDE.Components
 {
@@ -12,7 +14,7 @@ namespace MIDE.Components
     /// The base class that should be implemented for all elements
     /// that are required to be identified and considered as the application components.
     /// </summary>
-    public abstract class ApplicationComponent : IEventListener
+    public abstract class ApplicationComponent : BaseViewModel, IEventListener
     {
         private static readonly TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
 
@@ -22,6 +24,7 @@ namespace MIDE.Components
         /// The RegEx pattern that is applied to ID of all the components
         /// </summary>
         public const string ID_PATTERN = @"^([a-z]+[a-z0-9\-]*[a-z0-9]+)$";
+
         /// <summary>
         /// The inline version of <seealso cref="ID_PATTERN"/> that can be used as single part in other patterns
         /// </summary>
@@ -31,6 +34,7 @@ namespace MIDE.Components
         /// The ID of the component. It has uniform format for all the components in application
         /// </summary>
         public string Id { get; private set; }
+
         /// <summary>
         /// Shortcut to access application kernel
         /// </summary>
@@ -40,6 +44,7 @@ namespace MIDE.Components
         {
             if (string.IsNullOrWhiteSpace(id))
                 throw new ArgumentException("The ID must not be empty");
+
             if (!Regex.IsMatch(id, ID_PATTERN))
                 throw new FormatException($"The ID '{id}' has invalid format");
 
@@ -60,6 +65,7 @@ namespace MIDE.Components
         /// </summary>
         /// <returns></returns>
         public string FormatId() => textInfo.ToTitleCase(Id.Replace('-', ' '));
+
         /// <summary>
         /// Gets string specification representation of the component in the following format: [type] ID:[id]
         /// </summary>
@@ -76,13 +82,15 @@ namespace MIDE.Components
         {
             if (string.IsNullOrWhiteSpace(str))
                 return "id";
-            string s = str.ToLower();
+
+            var s = str.ToLower();
             s = s.Replace('_', '-');
             s = s.Replace('.', '-');
             s = Regex.Replace(s, @"[^a-z0-9\-]", string.Empty);
             s = s.Trim();
             s = s.TrimStart('0'.To('9'));
             s = s.Trim('-');
+
             return s;
         }
 
@@ -94,6 +102,7 @@ namespace MIDE.Components
                 bool hasDash = false;
                 int i = Id.Length - 1;
                 int number = 1;
+
                 for (; i > 0; i--)
                 {
                     if (!char.IsDigit(Id[i]))
@@ -102,17 +111,32 @@ namespace MIDE.Components
                         break;
                     }
                 }
+
                 string newId = Id;
                 if (hasDash)
                 {
                     number = int.Parse(Id.Substring(i + 1, Id.Length - (i + 1))) + 1;
                     newId = Id.Remove(i);
                 }
+                
                 newId = newId + '-' + number;
                 Id = newId;
+
                 return;
             }
             Id = Id + "-" + 1;
+        }
+
+        protected bool SetLocalizedAndNotify(string value, ref string field, [CallerMemberName] string propertyName = null)
+        {
+            string localized = localization[value];
+            if (localized == field)
+                return false;
+
+            field = localized;
+            OnPropertyChanged(propertyName);
+
+            return true;
         }
     }
 }

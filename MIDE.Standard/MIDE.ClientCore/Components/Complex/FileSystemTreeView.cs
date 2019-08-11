@@ -19,14 +19,19 @@ namespace MIDE.Components.Complex
         
         public void Show(string path)
         {
-            Items.Clear();
+            mItems.Clear();
+
             var items = Enumerable.Empty<DirectoryItem>();
             if (path == @"\")
+            {
                 items = FileSystemInfo.GetLogicalDrives();
+            }
             else
+            {
                 items = FileSystemInfo.GetDirectoryContents(path, FileFilter);
+            }
 
-            Items.AddRange(items.Select(Generator));
+            mItems.AddRange(items.Select(Generator));
         }
     }
 
@@ -43,10 +48,11 @@ namespace MIDE.Components.Complex
             {
                 if (fsObjectClass == value)
                     return;
+
                 fsObjectClass = value;
                 ItemClass = fsObjectClass.Id;
                 ItemGlyph = fsObjectClass.ObjectGlyph;
-                OnPropertyChanged(nameof(ObjectClass));
+                OnPropertyChanged();
             }
         }
         public string FullPath
@@ -56,8 +62,9 @@ namespace MIDE.Components.Complex
             {
                 if (value == null || fullPath == value)
                     return;
+                
                 fullPath = value;
-                OnPropertyChanged(nameof(FullPath));
+                OnPropertyChanged();
             }
         }
 
@@ -68,7 +75,7 @@ namespace MIDE.Components.Complex
         }
         public FileSystemTreeViewItem(string caption, string fullPath, FSObjectClass fsObjectClass) : base()
         {
-            ExpandCommand = new RelayCommand(Expand);
+            ExpandCommand = new RelayCommand(Expand, () => CanExpand);
 
             Caption = caption;
             FullPath = fullPath;
@@ -79,7 +86,7 @@ namespace MIDE.Components.Complex
 
         protected override TreeViewItem CloneInternal()
         {
-            FileSystemTreeViewItem clone = new FileSystemTreeViewItem(Caption, fullPath, fsObjectClass);
+            var clone = new FileSystemTreeViewItem(Caption, fullPath, fsObjectClass);
             return clone;
         }
         protected override IEnumerable<TreeViewItem> GetChildItems()

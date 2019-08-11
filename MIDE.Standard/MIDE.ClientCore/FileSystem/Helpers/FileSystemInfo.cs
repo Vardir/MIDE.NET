@@ -1,12 +1,12 @@
 ﻿using System;
-using MIDE.API;
 using MIDE.IoC;
+using MIDE.API;
 using System.IO;
 using System.Linq;
 using MIDE.Helpers;
+using MIDE.Logging;
 using MIDE.Visuals;
 using Newtonsoft.Json;
-using MIDE.Application;
 using MIDE.Schemes.JSON;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -143,8 +143,9 @@ namespace MIDE.FileSystem
                 }
                 catch (UnauthorizedAccessException ex)
                 {
-                    AppKernel.Instance.AppLogger.PushWarning(ex.Message);
+                    IoCContainer.Resolve<ILogger>().PushWarning(ex.Message);
                 }
+
                 try
                 {
                     var files = searchPattern.HasValue() ? Directory.GetFiles(fullPath, searchPattern) : Directory.GetFiles(fullPath);
@@ -159,7 +160,7 @@ namespace MIDE.FileSystem
                 }
                 catch (UnauthorizedAccessException ex)
                 {
-                    AppKernel.Instance.AppLogger.PushWarning(ex.Message);
+                    IoCContainer.Resolve<ILogger>().PushWarning(ex.Message);
                 }
                 return items;
             }
@@ -187,7 +188,7 @@ namespace MIDE.FileSystem
         {
             foreach (var kvp in fsObjectClasses)
             {
-                kvp.Value.ObjectGlyph = AssetManager.Instance.GlyphPool[kvp.Key];
+                kvp.Value.ObjectGlyph = IoCContainer.Resolve<AssetsManager>().GlyphPool[kvp.Key];
             }
         }
         private void LoadFileExtensions(FileSystemItemParameters parameters)

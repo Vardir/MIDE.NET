@@ -9,27 +9,17 @@ namespace MIDE.Components
         private bool hasErrors;
         private bool isReadonly;
 
+        protected ObservableCollection<ValidationError> validationErrors;
+
         public bool HasErrors
         {
             get => hasErrors;
-            private set
-            {
-                if (value == hasErrors)
-                    return;
-                hasErrors = value;
-                OnPropertyChanged(nameof(HasErrors));
-            }
+            private set => SetAndNotify(value, ref hasErrors);
         }
         public bool IsReadonly
         {
             get => isReadonly;
-            set
-            {
-                if (value == isReadonly)
-                    return;
-                isReadonly = value;
-                OnPropertyChanged(nameof(IsReadonly));
-            }
+            set => SetAndNotify(value, ref isReadonly);
         }
         public override string Text
         {
@@ -38,41 +28,46 @@ namespace MIDE.Components
             {
                 if (text == value || IsReadonly || !IsEnabled)
                     return;
+
                 HasErrors = false;
-                ValidationErrors.Clear();
+                validationErrors.Clear();
                 Validations.ForEach(v => v.Validate(value, nameof(Text), ValidationErrors));
-                if (ValidationErrors.Count != 0)
+
+                if (ValidationErrors.Count == 0)
+                {
+                    text = value;
+                    OnPropertyChanged();
+                }
+                else
                 {
                     HasErrors = true;
-                    return;
                 }
-                text = value;
-                OnPropertyChanged(nameof(Text));
             }
         }
         public string Default { get; }
         public List<ValueValidation<string>> Validations { get; }
-        public ObservableCollection<ValidationError> ValidationErrors { get; }
+        public ReadOnlyObservableCollection<ValidationError> ValidationErrors { get; }
 
         public TextBox(string id, string defaultValue = null) : base(id)
         {
             Default = defaultValue;
             Validations = new List<ValueValidation<string>>();
-            ValidationErrors = new ObservableCollection<ValidationError>();
+            validationErrors = new ObservableCollection<ValidationError>();
+            ValidationErrors = new ReadOnlyObservableCollection<ValidationError>(validationErrors);
         }
 
         public void Clear()
         {
-            if (!IsEnabled)
-                return;
-            Text = Default;
+            if (IsEnabled)
+                Text = Default;
         }
 
         protected override LayoutComponent CloneInternal(string id)
         {
-            TextBox clone = new TextBox(id, Default);
+            var clone = new TextBox(id, Default);
             clone.isReadonly = isReadonly;
             clone.text = text;
+
             return clone;
         }
 
