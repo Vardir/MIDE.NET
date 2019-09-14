@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>unicore</AssemblyName>
+    <RootNamespace>XApp</RootNamespace>
+    <Authors>Vardir</Authors>
+    <Company>Vardir Products</Company>
+    <Product>XApp Unicore</Product>
+    <Description>A unified shared core library for XApp ecosystem</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Copyright>Copyright 2019 © Andrew Satura</Copyright>
+    <PackageId>XApp.Unicore</PackageId>
+    <PackageProjectUrl>https://github.com/Vardir/MIDE.NET/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Vardir/MIDE.NET/</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <PackageTags>xapp unicore netstandard</PackageTags>
+  </PropertyGroup>
+
+</Project>
