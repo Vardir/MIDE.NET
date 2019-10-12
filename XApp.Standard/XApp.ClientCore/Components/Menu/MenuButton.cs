@@ -1,12 +1,12 @@
-﻿using XApp.Commands;
+﻿using Vardirsoft.Shared.MVVM;
 
-namespace XApp.Components
+namespace Vardirsoft.XApp.Components
 {
     public class MenuButton : MenuItem
     {
         public BaseCommand PressCommand { get; set; }
         
-        public MenuButton(string id, short ordinalIndex) : base(id, ordinalIndex)
+        public MenuButton(string id, int ordinalIndex) : base(id, ordinalIndex)
         {
 
         }
@@ -21,7 +21,7 @@ namespace XApp.Components
                 PressCommand.Execute(parameter);
         }
 
-        protected override MenuItem Create(string id, short ordinalIndex, string group)
+        protected override MenuItem Create(string id, int ordinalIndex, string group)
         {
             var clone = new MenuButton(id, ordinalIndex);
             clone.PressCommand = PressCommand;

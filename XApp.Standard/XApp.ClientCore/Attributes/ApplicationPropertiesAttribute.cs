@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 
-namespace XApp.Application.Attributes
+namespace Vardirsoft.XApp.Application.Attributes
 {
     public class ApplicationPropertiesAttribute : Attribute
     {

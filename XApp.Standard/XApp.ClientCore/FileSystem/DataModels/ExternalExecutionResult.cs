@@ -1,4 +1,4 @@
-﻿namespace XApp.FileSystem
+﻿namespace Vardirsoft.XApp.FileSystem
 {
     public struct ExternalExecutionResult
     {

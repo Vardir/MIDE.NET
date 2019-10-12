@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Collections;
+using System;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
@@ -6,14 +7,15 @@ using System.Text.RegularExpressions;
 
 using Newtonsoft.Json;
 
-using XApp.IoC;
-using XApp.API;
-using XApp.Helpers;
-using XApp.Logging;
-using XApp.Visuals;
-using XApp.Schemes.JSON;
+using Vardirsoft.Shared.Helpers;
 
-namespace XApp.FileSystem
+using Vardirsoft.XApp.IoC;
+using Vardirsoft.XApp.API;
+using Vardirsoft.XApp.Logging;
+using Vardirsoft.XApp.Visuals;
+using Vardirsoft.XApp.Schemes.JSON;
+
+namespace Vardirsoft.XApp.FileSystem
 {
     public class FileSystemInfo
     {
@@ -190,12 +192,12 @@ namespace XApp.FileSystem
             var fileData = fileManager.ReadOrCreate(file, "{ \"file-extensions\": null, \"file-editors\": null }");
             var parameters = JsonConvert.DeserializeObject<FileSystemItemParameters>(fileData);
 
-            if (parameters.FileExtensions.HasItems())
-            {    
+            if (((ICollection)parameters.FileExtensions).HasItems())
+            { 
                 LoadFileExtensions(parameters);
             }
 
-            if (parameters.FileEditors.HasItems())
+            if (((ICollection)parameters.FileEditors).HasItems())
             {    
                 LoadFileEditors(parameters);
             }

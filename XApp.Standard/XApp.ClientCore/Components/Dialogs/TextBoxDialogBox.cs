@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 
-namespace XApp.Components
+namespace Vardirsoft.XApp.Components
 {
     /// <summary>
     /// Basic dialog box with text input and simple validation if user didn't entered anything

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using XApp.Helpers;
-using XApp.Application.Localization;
+using Vardirsoft.Shared.Helpers;
 
-namespace XApp.Components
+using Vardirsoft.XApp.Application.Localization;
+
+namespace Vardirsoft.XApp.Components
 {
     /// <summary>
     /// Top base class for dialog boxes

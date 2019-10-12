@@ -1,4 +1,4 @@
-﻿namespace XApp.Logging
+﻿namespace Vardirsoft.XApp.Logging
 {
     /// <summary>
     /// Local logging helpers class

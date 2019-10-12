@@ -2,11 +2,12 @@
 using System.Text;
 using System.Collections.Generic;
 
-using XApp.IoC;
-using XApp.API;
-using XApp.Helpers;
+using Vardirsoft.Shared.Helpers;
 
-namespace XApp.Logging
+using Vardirsoft.XApp.IoC;
+using Vardirsoft.XApp.API;
+
+namespace Vardirsoft.XApp.Logging
 {
     /// <summary>
     /// A logging service to register application events based on their logging levels

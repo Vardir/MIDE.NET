@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace XApp.API
+namespace Vardirsoft.XApp.API
 {
     public interface IFileManager
     {

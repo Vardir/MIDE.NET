@@ -1,10 +1,10 @@
 ﻿//using NuGet;
 using System;
 
-using XApp.Logging;
-using XApp.ExtensionsInstaller.ViewModels;
+using Vardirsoft.XApp.Logging;
+using Vardirsoft.XApp.ExtensionsInstaller.ViewModels;
 
-namespace XApp.ExtensionsInstaller
+namespace Vardirsoft.XApp.ExtensionsInstaller
 {
     public sealed class Uninstaller
     {

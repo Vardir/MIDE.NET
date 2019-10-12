@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace XApp.API.Validations
+namespace Vardirsoft.XApp.API.Validations
 {
     public interface IValidate : INotifyPropertyChanged
     {

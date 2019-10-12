@@ -1,8 +1,8 @@
 ﻿using System;
 
-using XApp.Visuals;
+using Vardirsoft.XApp.Visuals;
 
-namespace XApp.FileSystem
+namespace Vardirsoft.XApp.FileSystem
 {
     /// <summary>
     /// A class to describe a file system objects such as files and directories

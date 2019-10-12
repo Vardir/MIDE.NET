@@ -2,11 +2,12 @@
 using System.Linq;
 using System.Collections.Generic;
 
-using XApp.Helpers;
-using XApp.Commands;
-using XApp.FileSystem;
+using Vardirsoft.Shared.MVVM;
+using Vardirsoft.Shared.Helpers;
 
-namespace XApp.Components.Complex
+using Vardirsoft.XApp.FileSystem;
+
+namespace Vardirsoft.XApp.Components.Complex
 {
     public class FileSystemTreeView : TreeView
     {
@@ -54,13 +55,13 @@ namespace XApp.Components.Complex
                 ItemClass = fsObjectClass.Id;
                 ItemGlyph = fsObjectClass.ObjectGlyph;
                 
-                OnPropertyChanged();
+                NotifyPropertyChanged();
             }
         }
         public string FullPath
         {
             get => fullPath;
-            set => SetAndNotify(value, ref fullPath);
+            set => SetWithNotify(ref fullPath, value, true);
         }
 
         public FileSystemTreeViewItem(DirectoryItem directoryItem)

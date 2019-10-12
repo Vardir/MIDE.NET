@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-using XApp.API.Validations;
+using Vardirsoft.XApp.API.Validations;
 
-namespace XApp.Components
+namespace Vardirsoft.XApp.Components
 {
     public class TextBox : TextComponent
     {
@@ -15,12 +15,12 @@ namespace XApp.Components
         public bool HasErrors
         {
             get => hasErrors;
-            private set => SetAndNotify(value, ref hasErrors);
+            private set => SetWithNotify(ref hasErrors, value);
         }
         public bool IsReadonly
         {
             get => isReadonly;
-            set => SetAndNotify(value, ref isReadonly);
+            set => SetWithNotify(ref isReadonly, value);
         }
         public override string Text
         {
@@ -37,7 +37,7 @@ namespace XApp.Components
                 if (ValidationErrors.Count == 0)
                 {
                     text = value;
-                    OnPropertyChanged();
+                    NotifyPropertyChanged();
                 }
                 else
                 {

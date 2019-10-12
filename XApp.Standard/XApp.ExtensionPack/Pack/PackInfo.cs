@@ -1,4 +1,4 @@
-﻿namespace XApp.ExtensionPack
+﻿namespace Vardirsoft.XApp.ExtensionPack
 {
     /// <summary>
     /// A set of basic description info for extension pack

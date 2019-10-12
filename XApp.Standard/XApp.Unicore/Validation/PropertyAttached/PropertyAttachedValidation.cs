@@ -5,9 +5,9 @@ using System.Collections;
 using System.ComponentModel;
 using System.Collections.Generic;
 
-using XApp.Helpers;
+using Vardirsoft.Shared.Helpers;
 
-namespace XApp.API.Validations
+namespace Vardirsoft.XApp.API.Validations
 {
     public abstract class PropertyAttachedValidation<T> : Validation, INotifyPropertyChanged
     {

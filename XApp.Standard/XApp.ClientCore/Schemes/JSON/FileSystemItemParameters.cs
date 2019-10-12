@@ -2,7 +2,7 @@
 
 using Newtonsoft.Json;
 
-namespace XApp.Schemes.JSON
+namespace Vardirsoft.XApp.Schemes.JSON
 {
     [JsonObject(MemberSerialization.OptIn)]
     public class FileSystemItemParameters

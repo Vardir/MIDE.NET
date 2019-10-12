@@ -4,9 +4,9 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-using XApp.API.Validations;
+using Vardirsoft.XApp.API.Validations;
 
-namespace XApp.Components.PropertyEditors
+namespace Vardirsoft.XApp.Components.PropertyEditors
 {
     public abstract class BasePropertyEditor : LayoutComponent
     {
@@ -16,12 +16,12 @@ namespace XApp.Components.PropertyEditors
         public bool HasErrors
         {
             get => hasErrors;
-            protected set => SetAndNotify(value, ref hasErrors);
+            protected set => SetWithNotify(ref hasErrors, value);
         }
         public string PropertyName
         {
             get => propName;
-            set => SetAndNotify(value, ref propName);
+            set => SetWithNotify(ref propName, value, true);
         }
 
         public BasePropertyEditor(string id) : base(id)
@@ -51,7 +51,7 @@ namespace XApp.Components.PropertyEditors
         public bool IsReadonly
         {
             get => isReadonly;
-            set => SetAndNotify(value, ref isReadonly);
+            set => SetWithNotify(ref isReadonly, value);
         }
         /// <summary>
         /// Gets or sets value of attached object's property
@@ -151,7 +151,7 @@ namespace XApp.Components.PropertyEditors
         {
             if (e.PropertyName == PropertyName)
             {
-                OnPropertyChanged(nameof(Value));
+                NotifyPropertyChanged(nameof(Value));
             }
         }
     }

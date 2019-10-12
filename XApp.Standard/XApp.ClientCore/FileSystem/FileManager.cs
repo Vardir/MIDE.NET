@@ -5,12 +5,13 @@ using System.Text;
 using System.Collections.Generic;
 using System.Runtime.Serialization.Formatters.Binary;
 
-using XApp.API;
-using XApp.IoC;
-using XApp.Helpers;
-using XApp.Logging;
+using Vardirsoft.Shared.Helpers;
 
-namespace XApp.FileSystem
+using Vardirsoft.XApp.API;
+using Vardirsoft.XApp.IoC;
+using Vardirsoft.XApp.Logging;
+
+namespace Vardirsoft.XApp.FileSystem
 {
     public class FileManager : IFileManager
     {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace XApp.FileSystem
+namespace Vardirsoft.XApp.FileSystem
 {
     public interface IFilePropertiesExtractor
     {

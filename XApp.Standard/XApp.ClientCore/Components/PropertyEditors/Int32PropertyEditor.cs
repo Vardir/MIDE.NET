@@ -1,4 +1,4 @@
-﻿namespace XApp.Components.PropertyEditors
+﻿namespace Vardirsoft.XApp.Components.PropertyEditors
 {
     /// <summary>
     /// A basic int32 property editor

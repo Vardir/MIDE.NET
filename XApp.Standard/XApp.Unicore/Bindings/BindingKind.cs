@@ -1,4 +1,4 @@
-﻿namespace XApp.Bindings
+﻿namespace Vardirsoft.XApp.Bindings
 {
     public enum BindingKind
     {

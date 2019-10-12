@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace XApp.Components
+namespace Vardirsoft.XApp.Components
 {
     public class CheckBox : LayoutComponent
     {
@@ -16,7 +16,8 @@ namespace XApp.Components
                     return;
 
                 isChecked = value;
-                OnPropertyChanged();
+                
+                NotifyPropertyChanged();
                 CheckedChanged?.Invoke(isChecked);
                 OnCheckedChanged();
             }

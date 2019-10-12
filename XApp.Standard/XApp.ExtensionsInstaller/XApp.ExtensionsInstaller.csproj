@@ -14,9 +14,11 @@
     <RepositoryType>Git</RepositoryType>
     <PackageTags>xapp extensions installer</PackageTags>
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BoilerplateCode.Helpers" Version="1.1.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
   </ItemGroup>
 

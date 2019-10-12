@@ -1,4 +1,4 @@
-﻿namespace XApp.Application.Tasks
+﻿namespace Vardirsoft.XApp.Application.Tasks
 {
     /// <summary>
     /// An enumeration that indicates when a task will be activated

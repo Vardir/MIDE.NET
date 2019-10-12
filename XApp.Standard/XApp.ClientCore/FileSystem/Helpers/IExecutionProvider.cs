@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace XApp.FileSystem
+namespace Vardirsoft.XApp.FileSystem
 {
     public interface IExecutionProvider
     {

@@ -1,10 +1,10 @@
 ﻿using System;
 
-using XApp.IoC;
-using XApp.Logging;
-using XApp.FileSystem;
+using Vardirsoft.XApp.IoC;
+using Vardirsoft.XApp.Logging;
+using Vardirsoft.XApp.FileSystem;
 
-namespace XApp.Application.Tasks
+namespace Vardirsoft.XApp.Application.Tasks
 {
     [Serializable]
     public class ExecuteExtensionsInstallerTask : AppTask

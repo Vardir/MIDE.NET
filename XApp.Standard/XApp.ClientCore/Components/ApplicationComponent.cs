@@ -3,13 +3,14 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Runtime.CompilerServices;
 
-using XApp.API;
-using XApp.Helpers;
-using XApp.Application;
-using XApp.Application.Events;
-using XApp.Application.Localization;
+using Vardirsoft.Shared.MVVM;
+using Vardirsoft.Shared.Helpers;
 
-namespace XApp.Components
+using Vardirsoft.XApp.Application;
+using Vardirsoft.XApp.Application.Events;
+using Vardirsoft.XApp.Application.Localization;
+
+namespace Vardirsoft.XApp.Components
 {
     /// <summary>
     /// The base class that should be implemented for all elements
@@ -140,7 +141,7 @@ namespace XApp.Components
                 return false;
 
             field = localized;
-            OnPropertyChanged(propertyName);
+            NotifyPropertyChanged(propertyName);
 
             return true;
         }

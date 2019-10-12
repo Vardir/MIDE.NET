@@ -1,4 +1,4 @@
-﻿namespace XApp.ExtensionPack
+﻿namespace Vardirsoft.XApp.ExtensionPack
 {
     /// <summary>
     /// Extension pack writer

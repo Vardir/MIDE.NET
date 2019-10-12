@@ -1,4 +1,4 @@
-﻿namespace XApp.Components
+﻿namespace Vardirsoft.XApp.Components
 {
     public abstract class TextComponent : LayoutComponent
     {
@@ -7,7 +7,7 @@
         public virtual string Text
         {
             get => text;
-            set => SetAndNotify(value, ref text);
+            set => SetWithNotify(ref text, value, false);
         }
 
         public TextComponent(string id) : base(id)

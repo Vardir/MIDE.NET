@@ -3,7 +3,7 @@ using System.Reflection;
 using System.ComponentModel;
 using System.Collections.Generic;
 
-namespace XApp.Components.PropertyEditors
+namespace Vardirsoft.XApp.Components.PropertyEditors
 {
     public static class PropertyEditorFactory
     {

@@ -4,15 +4,15 @@ using System.Collections.Generic;
 
 using Newtonsoft.Json;
 
-using XApp.IoC;
-using XApp.API;
-using XApp.Logging;
-using XApp.FileSystem;
-using XApp.Schemes.JSON;
-using XApp.Application.Configuration;
-using XApp.ExtensionsInstaller.ViewModels;
+using Vardirsoft.XApp.IoC;
+using Vardirsoft.XApp.API;
+using Vardirsoft.XApp.Logging;
+using Vardirsoft.XApp.FileSystem;
+using Vardirsoft.XApp.Schemes.JSON;
+using Vardirsoft.XApp.Application.Configuration;
+using Vardirsoft.XApp.ExtensionsInstaller.ViewModels;
 
-namespace XApp.ExtensionsInstaller
+namespace Vardirsoft.XApp.ExtensionsInstaller
 {
     public class InstallerKernel
     {

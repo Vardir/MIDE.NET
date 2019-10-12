@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 
-namespace XApp.ExtensionPack
+namespace Vardirsoft.XApp.ExtensionPack
 {
     public class XPack : IExtensionPack
     {

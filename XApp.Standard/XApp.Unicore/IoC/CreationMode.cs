@@ -1,4 +1,4 @@
-namespace XApp.IoC
+namespace Vardirsoft.XApp.IoC
 {
     public enum CreationMode
     {

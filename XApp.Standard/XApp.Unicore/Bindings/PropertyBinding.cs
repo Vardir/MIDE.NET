@@ -2,11 +2,12 @@
 using System.Reflection;
 using System.ComponentModel;
 
-using XApp.API;
-using XApp.Converters;
-using XApp.Helpers;
+using Vardirsoft.Shared.Helpers;
 
-namespace XApp.Bindings
+using Vardirsoft.XApp.API;
+using Vardirsoft.XApp.Converters;
+
+namespace Vardirsoft.XApp.Bindings
 {
     /// <summary>
     /// A simple binding class that is used to connect two objects via property binding.

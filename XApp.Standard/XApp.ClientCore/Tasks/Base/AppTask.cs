@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace XApp.Application.Tasks
+namespace Vardirsoft.XApp.Application.Tasks
 {
     /// <summary>
     /// A task that gives simple instruction to application to accomplish on certain event

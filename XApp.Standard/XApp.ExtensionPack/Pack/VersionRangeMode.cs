@@ -1,4 +1,4 @@
-﻿namespace XApp.ExtensionPack
+﻿namespace Vardirsoft.XApp.ExtensionPack
 {
     /// <summary>
     /// Dependency version range mode

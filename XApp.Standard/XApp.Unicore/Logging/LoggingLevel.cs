@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace XApp.Logging
+namespace Vardirsoft.XApp.Logging
 {
     [Flags]
     public enum LoggingLevel

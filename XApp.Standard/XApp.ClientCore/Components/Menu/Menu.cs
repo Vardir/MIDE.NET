@@ -3,9 +3,9 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-using XApp.Helpers;
+using Vardirsoft.Shared.Helpers;
 
-namespace XApp.Components
+namespace Vardirsoft.XApp.Components
 {
     public class Menu : LayoutComponent, IMenuConstructionContext
     {
@@ -174,7 +174,7 @@ namespace XApp.Components
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="FormatException"></exception>
-        public (string id, short ordinalIndex)[] GetItemsOrdinals(string path)
+        public (string id, int ordinalIndex)[] GetItemsOrdinals(string path)
         {
             if (string.IsNullOrWhiteSpace(path) || path.Length == 0)
                 throw new ArgumentException("The path can not be empty");
@@ -220,13 +220,13 @@ namespace XApp.Components
         }
         protected void RemoveChild_Impl(string id)
         {
-            int index = items.FirstIndexWith(i => i.Id == id);
+            int index = items.IndexWith(i => i.Id == id);
             if (index > -1)
                 items.RemoveAt(index);
         }
         protected void RemoveChild_Impl(LayoutComponent component)
         {
-            int index = items.FirstIndexWith(i => i == component);
+            int index = items.IndexWith(i => i == component);
             if (index > -1)
                 items.RemoveAt(index);
         }

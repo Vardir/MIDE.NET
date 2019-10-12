@@ -1,9 +1,9 @@
 ﻿using System.IO;
 using System.Collections.Generic;
 
-using XApp.ExtensionPack.Helpers;
+using Vardirsoft.XApp.ExtensionPack.Helpers;
 
-namespace XApp.ExtensionPack
+namespace Vardirsoft.XApp.ExtensionPack
 {
     /// <summary>
     /// Binary extension pack reader

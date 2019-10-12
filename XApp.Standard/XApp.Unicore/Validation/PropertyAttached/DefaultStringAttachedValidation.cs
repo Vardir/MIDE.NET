@@ -1,8 +1,8 @@
 ﻿using System.Text.RegularExpressions;
 
-using XApp.Helpers;
+using Vardirsoft.Shared.Helpers;
 
-namespace XApp.API.Validations
+namespace Vardirsoft.XApp.API.Validations
 {
     public class DefaultStringAttachedValidation : PropertyAttachedValidation<string>
     {

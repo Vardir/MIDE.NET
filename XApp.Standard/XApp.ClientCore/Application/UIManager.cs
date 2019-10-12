@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Reflection;
 
-using XApp.Components;
+using Vardirsoft.XApp.Components;
 
-namespace XApp.Application
+namespace Vardirsoft.XApp.Application
 {
     public abstract class UIManager
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace XApp.API.Validations
+namespace Vardirsoft.XApp.API.Validations
 {
     public abstract class ValueValidation<T> : Validation
     {

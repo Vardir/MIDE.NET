@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace XApp.Schemes.JSON
+namespace Vardirsoft.XApp.Schemes.JSON
 {
     [JsonObject(MemberSerialization.OptIn)]
     public class ExtensionsInstall

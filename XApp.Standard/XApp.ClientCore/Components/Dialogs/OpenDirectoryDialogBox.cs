@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 
-using XApp.IoC;
-using XApp.API;
-using XApp.Bindings;
-using XApp.Components.Complex;
+using Vardirsoft.XApp.IoC;
+using Vardirsoft.XApp.API;
+using Vardirsoft.XApp.Bindings;
+using Vardirsoft.XApp.Components.Complex;
 
-namespace XApp.Components
+namespace Vardirsoft.XApp.Components
 {
     /// <summary>
     /// Allows selecting a directory

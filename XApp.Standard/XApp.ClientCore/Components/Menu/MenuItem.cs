@@ -2,10 +2,12 @@
 using System.Linq;
 using System.Collections.Generic;
 
-using XApp.API;
-using XApp.Helpers;
+using Vardirsoft.Shared.API;
+using Vardirsoft.Shared.Helpers;
 
-namespace XApp.Components
+using Vardirsoft.XApp.API;
+
+namespace Vardirsoft.XApp.Components
 {
     public abstract class MenuItem : LayoutComponent, IOrderable
     {
@@ -28,7 +30,7 @@ namespace XApp.Components
         /// <summary>
         /// Ordinal index that corresponds to ordering position of item in collection
         /// </summary>
-        public short OrdinalIndex { get; }
+        public int OrdinalIndex { get; }
         public string Caption
         {
             get => caption;
@@ -64,8 +66,7 @@ namespace XApp.Components
                         yield return item;
                     }
 
-                    if (menuGroups[i].Items.Count > 0 && i < menuGroups.Count - 1 
-                                                      && menuGroups[i + 1].Items.Count > 0)
+                    if (menuGroups[i].Items.Count > 0 && i < menuGroups.Count - 1 && menuGroups[i + 1].Items.Count > 0)
                     {
                         yield return new MenuSplitter("splitter", 0);
                     }
@@ -90,7 +91,7 @@ namespace XApp.Components
             }
         }
 
-        public MenuItem(string id, short ordinalIndex) : base(id)
+        public MenuItem(string id, int ordinalIndex) : base(id)
         {
             Caption = $"({id})";
             OrdinalIndex = ordinalIndex.Clamp(MIN_ORDINAL, MAX_ORDINAL);
@@ -99,7 +100,7 @@ namespace XApp.Components
                 new MenuGroup(DEFAULT_GROUP, -99)
             };
         }
-        public MenuItem(string id, string group, short ordinalIndex) : this(id, ordinalIndex)
+        public MenuItem(string id, string group, int ordinalIndex) : this(id, ordinalIndex)
         {
             Group = group;
         }
@@ -175,7 +176,7 @@ namespace XApp.Components
         /// </summary>
         /// <param name="id"></param>
         /// <param name="ordinalIndex"></param>
-        public void AddGroup(string id, short ordinalIndex)
+        public void AddGroup(string id, int ordinalIndex)
         {
             var group = new MenuGroup(id, ordinalIndex);
             menuGroups.Insert(group);
@@ -204,7 +205,7 @@ namespace XApp.Components
             if (id == DEFAULT_GROUP)
                 return;
 
-            int index = menuGroups.FirstIndexWith(mg => mg.Id == id);
+            int index = menuGroups.IndexWith(mg => mg.Id == id);
             if (index == -1)
                 return;
 
@@ -249,9 +250,9 @@ namespace XApp.Components
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public (string, short)[] GetItemsOrdinals()
+        public (string, int)[] GetItemsOrdinals()
         {
-            var array = new (string, short)[menuGroups.Sum(g => g.Items.Count)];
+            var array = new (string, int)[menuGroups.Sum(g => g.Items.Count)];
             for (int i = 0, k = 0; i < menuGroups.Count; i++)
             {
                 var items = menuGroups[i].Items;
@@ -293,17 +294,17 @@ namespace XApp.Components
 
             return clone;
         }
-        protected abstract MenuItem Create(string id, short ordinalIndex, string group);
+        protected abstract MenuItem Create(string id, int ordinalIndex, string group);
 
         protected class MenuGroup : ApplicationComponent, ICloneable<MenuGroup>, IOrderable
         {
             public const short MIN_ORDINAL = -8;
             public const short MAX_ORDINAL = 8;
 
-            public short OrdinalIndex { get; }
+            public int OrdinalIndex { get; }
             public List<MenuItem> Items { get; }
 
-            public MenuGroup(string id, short ordinalIndex) : base(id)
+            public MenuGroup(string id, int ordinalIndex) : base(id)
             {
                 OrdinalIndex = ordinalIndex.Clamp(MIN_ORDINAL, MAX_ORDINAL);
                 Items = new List<MenuItem>();
@@ -313,12 +314,14 @@ namespace XApp.Components
             {
                 var clone = new MenuGroup(Id, OrdinalIndex);
                 clone.Items.AddRange(Items);
+
                 return clone;
             }
             public MenuGroup Clone(string id)
             {
                 var clone = new MenuGroup(id, OrdinalIndex);
                 clone.Items.AddRange(Items);
+
                 return clone;
             }
         }

@@ -1,8 +1,9 @@
-﻿using XApp.API;
-using XApp.Schemes.JSON;
-using XApp.Application.Localization;
+﻿using Vardirsoft.Shared.MVVM;
 
-namespace XApp.ExtensionsInstaller.ViewModels
+using Vardirsoft.XApp.Schemes.JSON;
+using Vardirsoft.XApp.Application.Localization;
+
+namespace Vardirsoft.XApp.ExtensionsInstaller.ViewModels
 {
     public class InstallationActionViewModel : BaseViewModel
     {
@@ -13,13 +14,13 @@ namespace XApp.ExtensionsInstaller.ViewModels
         public InstallationProgress Progress
         {
             get => progress;
-            set => SetAndNotify(value, ref progress);
+            set => SetWithNotify(ref progress, value);
         }
         public InstallationMode InstallationMode { get; }
         public string ProgressMessage
         {
             get => progressMessage;
-            set => SetAndNotify(LocalizationProvider.Instance[value], ref progressMessage);
+            set => SetWithNotify(ref progressMessage, LocalizationProvider.Instance[value], false);
         }
         public string ExtensionId { get; }
         public string ExtensionSource { get; }

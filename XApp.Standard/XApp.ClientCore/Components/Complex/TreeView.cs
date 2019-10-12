@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 
-using XApp.API;
-using XApp.Helpers;
-using XApp.Visuals;
-using XApp.Commands;
+using Vardirsoft.Shared.MVVM;
+using Vardirsoft.Shared.Helpers;
 
-namespace XApp.Components
+using Vardirsoft.XApp.API;
+using Vardirsoft.XApp.Visuals;
+
+namespace Vardirsoft.XApp.Components
 {
     public class TreeView : LayoutComponent
     {
@@ -21,12 +22,12 @@ namespace XApp.Components
         public bool Multiselect
         {
             get => multiselect;
-            set => SetAndNotify(value, ref multiselect);
+            set => SetWithNotify(ref multiselect, value);
         }
         public TreeViewItem SelectedItem
         {
             get => selectedItem;
-            set => SetAndNotify(value, ref selectedItem);
+            set => SetWithNotify(ref selectedItem, value, true);
         }
         public List<TreeViewItem> SelectedItems { get; }
         public ReadOnlyObservableCollection<TreeViewItem> Items { get; }
@@ -116,7 +117,9 @@ namespace XApp.Components
                     SelectedItems.Clear();
 
                     if (!SelectedItems.Contains(item))
+                    {    
                         SelectedItems.Add(item);
+                    }
                 }
             }
         }
@@ -148,7 +151,7 @@ namespace XApp.Components
         public bool IsSelected
         {
             get => isSelected;
-            set => SetAndNotify(value, ref isSelected);
+            set => SetWithNotify(ref isSelected, value);
         }
         /// <summary>
         /// Type of an item (e.g. 'drive', 'file' and 'directory' for file system objects)
@@ -156,45 +159,24 @@ namespace XApp.Components
         public string Caption
         {
             get => caption;
-            set
-            {
-                if (value == caption)
-                    return;
-
-                caption = value;
-                OnPropertyChanged(nameof(Caption));
-            }
+            set => SetWithNotify(ref caption, value, true);
         }
         public string ItemClass
         {
             get => itemClass;
-            set
-            {
-                if (value == itemClass)
-                    return;
-
-                itemClass = value;
-                OnPropertyChanged(nameof(ItemClass));
-            }
+            set => SetWithNotify(ref itemClass, value, true);
         }
         public Glyph ItemGlyph
         {
             get => glyph;
-            set
-            {
-                if (value == glyph)
-                    return;
-
-                glyph = value;
-                OnPropertyChanged(nameof(ItemGlyph));
-            }
+            set => SetWithNotify(ref glyph, value, true);
         }
         public TreeView ParentTree { get; set; }
         public TreeViewItem Parent { get; set; }
         public ContextMenu ContextMenu
         {
             get => contextMenu;
-            set => SetAndNotify(value, ref contextMenu);
+            set => SetWithNotify(ref contextMenu, value, true);
         }
         public ObservableCollection<TreeViewItem> Children { get; }
 

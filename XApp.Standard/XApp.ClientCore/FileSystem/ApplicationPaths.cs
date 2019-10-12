@@ -3,13 +3,14 @@ using System.Collections.Generic;
 
 using Newtonsoft.Json;
 
-using XApp.IoC;
-using XApp.API;
-using XApp.Logging;
-using XApp.Helpers;
-using XApp.Schemes.JSON;
+using Vardirsoft.Shared.Helpers;
 
-namespace XApp.FileSystem
+using Vardirsoft.XApp.IoC;
+using Vardirsoft.XApp.API;
+using Vardirsoft.XApp.Logging;
+using Vardirsoft.XApp.Schemes.JSON;
+
+namespace Vardirsoft.XApp.FileSystem
 {
     public class ApplicationPaths
     {

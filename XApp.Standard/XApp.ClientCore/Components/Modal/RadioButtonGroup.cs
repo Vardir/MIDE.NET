@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace XApp.Components
+namespace Vardirsoft.XApp.Components
 {
     public class RadioButtonGroup : ApplicationComponent
     {

@@ -1,6 +1,6 @@
-﻿using XApp.API;
+﻿using Vardirsoft.XApp.API;
 
-namespace XApp.Components
+namespace Vardirsoft.XApp.Components
 {
     public interface IToolBarItem : ICloneable<LayoutComponent>
     {

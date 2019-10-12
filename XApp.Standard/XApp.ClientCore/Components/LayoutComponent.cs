@@ -1,6 +1,6 @@
-﻿using XApp.API;
+﻿using Vardirsoft.XApp.API;
 
-namespace XApp.Components
+namespace Vardirsoft.XApp.Components
 {
     /// <summary>
     /// The base class for all the application components that are required to be visually represented
@@ -15,17 +15,17 @@ namespace XApp.Components
         public bool IsEnabled
         {
             get => isEnabled;
-            set => SetAndNotify(value, ref isEnabled);
+            set => SetWithNotify(ref isEnabled, value);
         }
         public Visibility Visibility
         {
             get => visibility;
-            set => SetAndNotify(value, ref visibility);
+            set => SetWithNotify(ref visibility, value);
         }
         public LayoutComponent Parent
         {
             get => parent;
-            set => SetAndNotify(value, ref parent);
+            set => SetWithNotify(ref parent, value, true);
         }
 
         public LayoutComponent(string id) : base(id)

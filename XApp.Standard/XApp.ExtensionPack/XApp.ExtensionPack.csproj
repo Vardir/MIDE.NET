@@ -13,10 +13,15 @@
     <RepositoryUrl>https://github.com/Vardir/MIDE.NET/</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>xapp extension packs</PackageTags>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\XApp.Unicore\XApp.Unicore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BoilerplateCode.Helpers" Version="1.1.1" />
   </ItemGroup>
 
 </Project>

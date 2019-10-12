@@ -1,8 +1,8 @@
 ﻿using System;
 
-using XApp.API;
+using Vardirsoft.XApp.API;
 
-namespace XApp.Converters
+namespace Vardirsoft.XApp.Converters
 {
     public class ValueConverter<T, Y> : IValueConverter
     {

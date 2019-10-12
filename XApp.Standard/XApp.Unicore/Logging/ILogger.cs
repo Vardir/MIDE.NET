@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace XApp.Logging
+namespace Vardirsoft.XApp.Logging
 {
     public interface ILogger
     {

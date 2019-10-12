@@ -1,4 +1,4 @@
-﻿namespace XApp.Application.Events
+﻿namespace Vardirsoft.XApp.Application.Events
 {
     /// <summary>
     /// Provides access to subscribe on events from broadcasters

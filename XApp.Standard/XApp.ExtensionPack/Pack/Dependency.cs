@@ -1,8 +1,8 @@
 ﻿using System;
 
-using XApp.Helpers;
+using Vardirsoft.Shared.Helpers;
 
-namespace XApp.ExtensionPack
+namespace Vardirsoft.XApp.ExtensionPack
 {
     /// <summary>
     /// An extension pack dependency which corresponds to either application version or another extension

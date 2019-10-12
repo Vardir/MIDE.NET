@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace XApp.Logging
+namespace Vardirsoft.XApp.Logging
 {
     /// <summary>
     /// Base class for all application events, provides basic information -- logging level, register time and message

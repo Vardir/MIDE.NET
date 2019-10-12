@@ -3,7 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace XApp.ExtensionPack.Helpers
+namespace Vardirsoft.XApp.ExtensionPack.Helpers
 {
     /// <summary>
     /// A set of helper methods for <see cref="BinaryReader"/>

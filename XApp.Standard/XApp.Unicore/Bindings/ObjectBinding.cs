@@ -3,11 +3,12 @@ using System.Reflection;
 using System.ComponentModel;
 using System.Linq.Expressions;
 
-using XApp.API;
-using XApp.Helpers;
-using XApp.Converters;
+using Vardirsoft.Shared.Helpers;
 
-namespace XApp.Bindings
+using Vardirsoft.XApp.API;
+using Vardirsoft.XApp.Converters;
+
+namespace Vardirsoft.XApp.Bindings
 {
     /// <summary>
     /// A generic-typed binding class that is used to connect two objects via property binding.

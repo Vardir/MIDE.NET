@@ -1,18 +1,20 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 
-using XApp.API;
-using XApp.IoC;
-using XApp.Helpers;
-using XApp.Logging;
-using XApp.FileSystem;
-using XApp.Application.Tasks;
-using XApp.Application.Attributes;
-using XApp.Application.Configuration;
-using Module = XApp.Extensibility.Module;
+using Vardirsoft.Shared.Helpers;
 
-namespace XApp.Application
+using Vardirsoft.XApp.API;
+using Vardirsoft.XApp.IoC;
+using Vardirsoft.XApp.Logging;
+using Vardirsoft.XApp.FileSystem;
+using Vardirsoft.XApp.Application.Tasks;
+using Vardirsoft.XApp.Application.Attributes;
+using Vardirsoft.XApp.Application.Configuration;
+using Module = Vardirsoft.XApp.Extensibility.Module;
+
+namespace Vardirsoft.XApp.Application
 {
     public class AppKernel : IDisposable
     {
@@ -285,20 +287,17 @@ namespace XApp.Application
         private void OnStarting()
         {
             ApplyTaskAction(TaskActivationEvent.BeforeLoad);
-            tasks.Remove(at => at.ActivationEvent == TaskActivationEvent.BeforeLoad && 
-                               at.RepetitionMode == TaskRepetitionMode.Once);
+            tasks.Remove(at => at.ActivationEvent == TaskActivationEvent.BeforeLoad && at.RepetitionMode == TaskRepetitionMode.Once);
         }
         private void OnStarted()
         {
             ApplyTaskAction(TaskActivationEvent.OnLoad);
-            tasks.Remove(at => at.ActivationEvent == TaskActivationEvent.OnLoad &&
-                               at.RepetitionMode == TaskRepetitionMode.Once);
+            tasks.Remove(at => at.ActivationEvent == TaskActivationEvent.OnLoad && at.RepetitionMode == TaskRepetitionMode.Once);
         }
         private void OnExit()
         {
             ApplyTaskAction(TaskActivationEvent.OnExit);
-            tasks.Remove(at => at.ActivationEvent == TaskActivationEvent.OnExit &&
-                               at.RepetitionMode == TaskRepetitionMode.Once);
+            tasks.Remove(at => at.ActivationEvent == TaskActivationEvent.OnExit && at.RepetitionMode == TaskRepetitionMode.Once);
         }
         private void ApplyTaskAction(TaskActivationEvent activation)
         {

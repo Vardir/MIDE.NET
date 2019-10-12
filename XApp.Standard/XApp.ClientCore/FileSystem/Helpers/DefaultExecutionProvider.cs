@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics;
 
-using XApp.Helpers;
+using Vardirsoft.Shared.Helpers;
 
-namespace XApp.FileSystem
+namespace Vardirsoft.XApp.FileSystem
 {
     public class DefaultExecutionProvider : IExecutionProvider
     {

@@ -1,4 +1,4 @@
-﻿namespace XApp.Components
+﻿namespace Vardirsoft.XApp.Components
 {
     public enum Visibility
     {

@@ -1,6 +1,6 @@
-﻿using XApp.Commands;
+﻿using Vardirsoft.Shared.MVVM;
 
-namespace XApp.Components
+namespace Vardirsoft.XApp.Components
 {
     public class ToolbarButton : LayoutComponent, IToolBarItem
     {
@@ -12,7 +12,7 @@ namespace XApp.Components
         public BaseCommand PressCommand
         {
             get => pressCommand;
-            set => SetAndNotify(value, ref pressCommand);
+            set => SetWithNotify(ref pressCommand, value, true);
         }
 
         public ToolbarButton(string id) : base(id) {}

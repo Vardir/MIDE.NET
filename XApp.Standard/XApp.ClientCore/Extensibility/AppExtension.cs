@@ -2,13 +2,14 @@
 using System.Linq;
 using System.Collections.Generic;
 
-using XApp.IoC;
-using XApp.Helpers;
-using XApp.Logging;
-using XApp.Components;
-using XApp.Application;
+using Vardirsoft.Shared.Helpers;
 
-namespace XApp.Extensibility
+using Vardirsoft.XApp.IoC;
+using Vardirsoft.XApp.Logging;
+using Vardirsoft.XApp.Components;
+using Vardirsoft.XApp.Application;
+
+namespace Vardirsoft.XApp.Extensibility
 {
     public abstract class AppExtension : ApplicationComponent, IDisposable
     {

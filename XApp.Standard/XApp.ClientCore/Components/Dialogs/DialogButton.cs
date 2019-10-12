@@ -1,6 +1,6 @@
-﻿using XApp.Commands;
+﻿using Vardirsoft.Shared.MVVM;
 
-namespace XApp.Components
+namespace Vardirsoft.XApp.Components
 {
     public class DialogButton : LayoutComponent
     {

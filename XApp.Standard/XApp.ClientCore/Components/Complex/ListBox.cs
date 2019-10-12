@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-using XApp.API;
-using XApp.Helpers;
+using Vardirsoft.Shared.MVVM;
+using Vardirsoft.Shared.Helpers;
 
-namespace XApp.Components
+namespace Vardirsoft.XApp.Components
 {
     public class ListBox : LayoutComponent
     {
@@ -16,7 +16,7 @@ namespace XApp.Components
         public bool IsMultiselect
         {
             get => isMultiselect;
-            set => SetAndNotify(value, ref isMultiselect);
+            set => SetWithNotify(ref isMultiselect, value);
         }
         public List<ListBoxItem> SelectedItems { get; }
         public ReadOnlyObservableCollection<ListBoxItem> Items { get; }
@@ -42,7 +42,7 @@ namespace XApp.Components
         }
         public void Remove(object value)
         {
-            var index = Items.IndexOf(item => item.Value == value);
+            var index = Items.IndexWith(item => item.Value == value);
 
             Items[index].SelectedChanged -= ItemSelectedChanged;
             mItems.RemoveAt(index);
@@ -94,13 +94,13 @@ namespace XApp.Components
                 isSelected = value;
                 SelectedChanged?.Invoke(this, value);
                 
-                OnPropertyChanged();
+                NotifyPropertyChanged();
             }
         }
         public object Value
         {
             get => value;
-            set => SetAndNotify(value, ref this.value);
+            set => SetWithNotify(ref this.value, value, true);
         }
 
         public event Action<ListBoxItem, bool> SelectedChanged;

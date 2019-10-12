@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 
-using XApp.Helpers;
-using XApp.Logging;
+using Vardirsoft.Shared.Helpers;
 
-namespace XApp.Application.Events
+using Vardirsoft.XApp.Logging;
+
+namespace Vardirsoft.XApp.Application.Events
 {
     public class EventBroadcaster
     {

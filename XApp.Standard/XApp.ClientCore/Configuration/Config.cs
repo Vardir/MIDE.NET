@@ -1,4 +1,4 @@
-﻿namespace XApp.Application.Configuration
+﻿namespace Vardirsoft.XApp.Application.Configuration
 {
     public struct Config
     {

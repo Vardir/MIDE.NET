@@ -1,4 +1,4 @@
-﻿namespace XApp.API.Validations
+﻿namespace Vardirsoft.XApp.API.Validations
 {
     public struct ValidationError
     {

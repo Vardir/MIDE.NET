@@ -1,9 +1,11 @@
 ﻿using System;
-using XApp.Collections;
-using XApp.Components;
 using System.Threading.Tasks;
 
-namespace XApp.Extensibility
+using Vardirsoft.Shared.CustomImpl.Collections;
+
+using Vardirsoft.XApp.Components;
+
+namespace Vardirsoft.XApp.Extensibility
 {
     /// <summary>
     /// A base class for application components that are intended to execute some specific jobs on parallel thread

@@ -1,4 +1,4 @@
-﻿namespace XApp.API
+﻿namespace Vardirsoft.XApp.API
 {
     /// <summary>
     /// Provides the bridge between application and clipboard service (such as Windows system Clipboard) to store, share and retrieve data.

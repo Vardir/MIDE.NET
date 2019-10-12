@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Collections.ObjectModel;
 
-using XApp.Helpers;
+using Vardirsoft.Shared.Helpers;
 
-namespace XApp.Components
+namespace Vardirsoft.XApp.Components
 {
     public class Toolbar : LayoutComponent
     {
@@ -57,7 +57,7 @@ namespace XApp.Components
         }
         protected void RemoveChild_Impl(string id)
         {
-            var index = Items.FirstIndexWith(i => i.Id == id);
+            var index = Items.IndexWith(i => i.Id == id);
             if (index > -1)
             {  
                 mItems.RemoveAt(index);

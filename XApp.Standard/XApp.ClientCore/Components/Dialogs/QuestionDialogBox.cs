@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace XApp.Components
+namespace Vardirsoft.XApp.Components
 {
     /// <summary>
     /// Asks user a question and returns Yes or No

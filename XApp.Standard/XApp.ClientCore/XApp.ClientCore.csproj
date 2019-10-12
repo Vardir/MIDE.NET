@@ -18,9 +18,13 @@
     <PackageTags>xapp clientcore netstandard</PackageTags>
     <Version>0.9.0</Version>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BoilerplateCode.CustomStructures" Version="1.1.1" />
+    <PackageReference Include="BoilerplateCode.Helpers" Version="1.1.1" />
+    <PackageReference Include="BoilerplateCode.MVVM" Version="1.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
   </ItemGroup>
 

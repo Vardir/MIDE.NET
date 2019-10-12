@@ -4,12 +4,13 @@ using System.Text.RegularExpressions;
 
 using Newtonsoft.Json;
 
-using XApp.API;
-using XApp.IoC;
-using XApp.Logging;
-using XApp.Helpers;
+using Vardirsoft.Shared.Helpers;
 
-namespace XApp.Application.Localization
+using Vardirsoft.XApp.API;
+using Vardirsoft.XApp.IoC;
+using Vardirsoft.XApp.Logging;
+
+namespace Vardirsoft.XApp.Application.Localization
 {
     public sealed class LocalizationProvider : ILocalizationProvider
     {

@@ -7,16 +7,17 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-using XApp.API;
-using XApp.IoC;
-using XApp.Logging;
-using XApp.Helpers;
-using XApp.Components;
-using XApp.FileSystem;
-using XApp.Extensibility;
-using XApp.Application.Configuration;
+using Vardirsoft.Shared.Helpers;
 
-namespace XApp.Application
+using Vardirsoft.XApp.API;
+using Vardirsoft.XApp.IoC;
+using Vardirsoft.XApp.Logging;
+using Vardirsoft.XApp.Components;
+using Vardirsoft.XApp.FileSystem;
+using Vardirsoft.XApp.Extensibility;
+using Vardirsoft.XApp.Application.Configuration;
+
+namespace Vardirsoft.XApp.Application
 {
     /// <summary>
     /// Application extension manager that helps installing, enabling/disabling and uninstalling extensions

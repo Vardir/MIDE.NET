@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace XApp.API
+namespace Vardirsoft.XApp.API
 {
     public interface IExecutionProvider
     {

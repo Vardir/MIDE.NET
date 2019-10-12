@@ -1,6 +1,6 @@
-﻿using XApp.Helpers;
+﻿using Vardirsoft.Shared.Helpers;
 
-namespace XApp.FileSystem
+namespace Vardirsoft.XApp.FileSystem
 {
     /// <summary>
     /// A record-type structure to represent any item in file system
@@ -14,7 +14,7 @@ namespace XApp.FileSystem
         public DirectoryItem(string fullPath, FSObjectClass itemClass)
         {
             this.fullPath = fullPath;
-            name = itemClass.IsDrive ? fullPath : IOHelpers.GetFileFolderName(fullPath);
+            name = itemClass.IsDrive ? fullPath : IOHelper.GetFileFolderName(fullPath);
             this.itemClass = itemClass;
         }
     }

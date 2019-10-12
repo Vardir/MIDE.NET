@@ -1,11 +1,12 @@
 ﻿//using NuGet;
 using System;
 
-using XApp.Logging;
-using XApp.ExtensionsInstaller.ViewModels;
-using XApp.Helpers;
+using Vardirsoft.Shared.Helpers;
 
-namespace XApp.ExtensionsInstaller
+using Vardirsoft.XApp.Logging;
+using Vardirsoft.XApp.ExtensionsInstaller.ViewModels;
+
+namespace Vardirsoft.XApp.ExtensionsInstaller
 {
     public sealed class Installer
     {

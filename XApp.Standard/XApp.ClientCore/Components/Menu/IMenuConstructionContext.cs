@@ -1,4 +1,4 @@
-﻿namespace XApp.Components
+﻿namespace Vardirsoft.XApp.Components
 {
     /// <summary>
     /// Provides a simple construction interface to menu that allows only possibility to add items and receive basic information about menu contents
@@ -34,7 +34,7 @@
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        (string id, short ordinalIndex)[] GetItemsOrdinals(string path);
+        (string id, int ordinalIndex)[] GetItemsOrdinals(string path);
         /// <summary>
         /// Gets all the child items for the given path
         /// </summary>

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-using XApp.Visuals;
+using Vardirsoft.XApp.Visuals;
 
-namespace XApp.FileSystem
+namespace Vardirsoft.XApp.FileSystem
 {
     public sealed class GlyphPool
     {

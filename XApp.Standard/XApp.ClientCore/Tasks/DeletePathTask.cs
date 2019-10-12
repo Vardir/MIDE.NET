@@ -1,9 +1,9 @@
 ﻿using System;
 
-using XApp.API;
-using XApp.IoC;
+using Vardirsoft.XApp.API;
+using Vardirsoft.XApp.IoC;
 
-namespace XApp.Application.Tasks
+namespace Vardirsoft.XApp.Application.Tasks
 {
     [Serializable]
     public class DeletePathTask : AppTask

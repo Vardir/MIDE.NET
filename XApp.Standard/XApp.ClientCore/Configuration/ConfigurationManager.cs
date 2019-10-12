@@ -4,12 +4,13 @@ using System.Collections.Generic;
 
 using Newtonsoft.Json;
 
-using XApp.IoC;
-using XApp.API;
-using XApp.Helpers;
-using XApp.Logging;
+using Vardirsoft.Shared.Helpers;
 
-namespace XApp.Application.Configuration
+using Vardirsoft.XApp.IoC;
+using Vardirsoft.XApp.API;
+using Vardirsoft.XApp.Logging;
+
+namespace Vardirsoft.XApp.Application.Configuration
 {
     public class ConfigurationManager
     {

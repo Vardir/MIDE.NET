@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace XApp.Application.Localization
+namespace Vardirsoft.XApp.Application.Localization
 {
     public sealed class LocalizationNamespace
     {

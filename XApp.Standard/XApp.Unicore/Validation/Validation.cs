@@ -3,7 +3,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Collections.Generic;
 
-namespace XApp.API.Validations
+namespace Vardirsoft.XApp.API.Validations
 {
     public abstract class Validation : INotifyDataErrorInfo
     {

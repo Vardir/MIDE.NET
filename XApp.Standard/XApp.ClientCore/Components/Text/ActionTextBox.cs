@@ -1,6 +1,6 @@
-﻿using XApp.Commands;
+﻿using Vardirsoft.Shared.MVVM;
 
-namespace XApp.Components
+namespace Vardirsoft.XApp.Components
 {
     public class ActionTextBox : TextBox
     {
@@ -9,7 +9,7 @@ namespace XApp.Components
         public BaseCommand ActionCommand
         {
             get => actionCommand;
-            set => SetAndNotify(value, ref actionCommand);
+            set => SetWithNotify(ref actionCommand, value, true);
         }
 
         public ActionTextBox(string id, string defaultValue = null) : base(id, defaultValue)

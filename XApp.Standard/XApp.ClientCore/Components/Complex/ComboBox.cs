@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 
-using XApp.API;
-using XApp.Helpers;
+using Vardirsoft.Shared.MVVM;
+using Vardirsoft.Shared.Helpers;
 
-namespace XApp.Components
+namespace Vardirsoft.XApp.Components
 {
     public class ComboBox : LayoutComponent
     {
@@ -15,12 +15,12 @@ namespace XApp.Components
         public int SelectedIndex
         {
             get => selectedIndex;
-            set => SetAndNotify(value, ref selectedIndex);
+            set => SetWithNotify(ref selectedIndex, value);
         }
         public ComboBoxItem SelectedItem
         {
             get => selectedItem;
-            set => SetAndNotify(value, ref selectedItem);
+            set => SetWithNotify(ref selectedItem, value, true);
         }
         public ObservableCollection<ComboBoxItem> Items { get; }
 
@@ -35,7 +35,7 @@ namespace XApp.Components
         }
         public void Remove(object obj)
         {
-            var index = Items.FirstIndexWith(cbi => cbi.Value == obj);
+            var index = Items.IndexWith(cbi => cbi.Value == obj);
 
             if (index == -1)
                 return;
@@ -61,12 +61,12 @@ namespace XApp.Components
         public object Value
         {
             get => value;
-            set => SetAndNotify(value, ref this.value);
+            set => SetWithNotify(ref this.value, value, true);
         }
         public string Caption
         {
             get => caption;
-            set => SetAndNotify(value, ref caption);
+            set => SetWithNotify(ref caption, value, true);
         }
 
         public ComboBoxItem(object value, string caption)

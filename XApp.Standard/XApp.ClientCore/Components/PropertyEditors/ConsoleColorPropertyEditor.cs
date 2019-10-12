@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace XApp.Components.PropertyEditors
+namespace Vardirsoft.XApp.Components.PropertyEditors
 {
     /// <summary>
     /// Test console color property editor

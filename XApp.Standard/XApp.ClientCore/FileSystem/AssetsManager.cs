@@ -2,15 +2,16 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 
-using XApp.IoC;
-using XApp.API;
-using XApp.Visuals;
-using XApp.Helpers;
-using XApp.Logging;
-using XApp.Application;
-using XApp.Application.Configuration;
+using Vardirsoft.Shared.Helpers;
 
-namespace XApp.FileSystem
+using Vardirsoft.XApp.IoC;
+using Vardirsoft.XApp.API;
+using Vardirsoft.XApp.Visuals;
+using Vardirsoft.XApp.Logging;
+using Vardirsoft.XApp.Application;
+using Vardirsoft.XApp.Application.Configuration;
+
+namespace Vardirsoft.XApp.FileSystem
 {
     public class AssetsManager
     {

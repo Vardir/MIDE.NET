@@ -1,4 +1,4 @@
-﻿namespace XApp.ExtensionsInstaller
+﻿namespace Vardirsoft.XApp.ExtensionsInstaller
 {
     public enum InstallationProgress
     {

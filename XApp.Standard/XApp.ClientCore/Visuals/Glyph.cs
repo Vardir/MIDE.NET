@@ -3,11 +3,12 @@ using System.Globalization;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
 
-using XApp.IoC;
-using XApp.API;
-using XApp.Helpers;
+using Vardirsoft.Shared.Helpers;
 
-namespace XApp.Visuals
+using Vardirsoft.XApp.IoC;
+using Vardirsoft.XApp.API;
+
+namespace Vardirsoft.XApp.Visuals
 {
     /// <summary>
     /// Implement this interface to provide possibility to add graphical information your application components 
