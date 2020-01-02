@@ -32,7 +32,7 @@ namespace Vardirsoft.XApp.Components
         public DialogButton CancelButton { get; private set; }
         public FileSystemTreeView FileSystemView { get; private set; }
 
-        public OpenDirectoryDialogBox(string title) : base(title)
+        public OpenDirectoryDialogBox(string title) : base(title, DialogMode.Modal)
         {
             InitializeComponents();
             Directory = @"\";

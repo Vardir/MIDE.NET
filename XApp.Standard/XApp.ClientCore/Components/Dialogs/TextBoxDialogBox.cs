@@ -15,7 +15,7 @@ namespace Vardirsoft.XApp.Components
         public DialogButton AcceptButton { get; }
         public DialogButton CancelButton { get; }
 
-        public TextBoxDialogBox(string title, string message, string defaultValue = null) : base(title)
+        public TextBoxDialogBox(string title, string message, string defaultValue = null) : base(title, DialogMode.Modal)
         {
             Message = localization[message];
             Input = new TextBox("input", defaultValue);

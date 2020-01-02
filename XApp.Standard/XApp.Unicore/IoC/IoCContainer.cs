@@ -106,7 +106,7 @@ namespace Vardirsoft.XApp.IoC
                 this.creationMode = mode;
                 this.builder = builder;
 
-                if (mode == CreationMode.CreateOnceOnExctraction)
+                if (mode == CreationMode.CreateOnceOnRegister)
                 {
                     instance = builder();
                 }

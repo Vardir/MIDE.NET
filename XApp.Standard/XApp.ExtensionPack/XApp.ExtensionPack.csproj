@@ -1,11 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>xpack</AssemblyName>
     <PackageId>XApp.ExtensionPack</PackageId>
     <Authors>Vardir</Authors>
-    <Company>Vardir Products</Company>
+    <Company>Vardirsoft</Company>
     <Product>XApp Extension Pack</Product>
     <Copyright>Copyright 2019 © Andrew Satura</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -14,6 +13,9 @@
     <RepositoryType>Git</RepositoryType>
     <PackageTags>xapp extension packs</PackageTags>
     <LangVersion>latest</LangVersion>
+    <AssemblyVersion>2.0.0</AssemblyVersion>
+    <FileVersion>2.0.0</FileVersion>
+    <TargetFrameworks>netstandard2.0;netcoreapp3.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>

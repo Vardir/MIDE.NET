@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 
 using Vardirsoft.Shared.Helpers;
-
-using Vardirsoft.XApp.Application.Localization;
+using Vardirsoft.XApp.API;
+using Vardirsoft.XApp.IoC;
 
 namespace Vardirsoft.XApp.Components
 {
@@ -14,15 +14,17 @@ namespace Vardirsoft.XApp.Components
     {
         private readonly HashSet<DialogResult> validationIgnoredResults;
 
-        protected static readonly LocalizationProvider localization = LocalizationProvider.Instance;
+        protected static readonly ILocalizationProvider localization = IoCContainer.Resolve<ILocalizationProvider>();
 
+        public DialogMode DialogMode { get; }
         public DialogResult SelectedResult { get; set; }
         public string Title { get; }
 
         public event Action ResultSelected;
 
-        public BaseDialogBox(string title)
+        public BaseDialogBox(string title, DialogMode mode)
         {
+            DialogMode = mode;
             Title = localization[title];
             validationIgnoredResults = new HashSet<DialogResult>();
             validationIgnoredResults.AddRange(GetValidationIgnoredResults());
@@ -56,7 +58,7 @@ namespace Vardirsoft.XApp.Components
     /// <typeparam name="TData"></typeparam>
     public abstract class BaseDialogBox<TData> : BaseDialogBox
     {
-        public BaseDialogBox(string title) : base(title) { }
+        public BaseDialogBox(string title, DialogMode mode) : base(title, mode) { }
 
         /// <summary>
         /// Returns data model of the dialog box
@@ -72,5 +74,10 @@ namespace Vardirsoft.XApp.Components
         Ok     = 4,  Cancel = 8,
         Accept = 16, Abort  = 32,
         Skip   = 64, Retry  = 128
+    }
+
+    public enum DialogMode
+    {
+        Modal, Normal
     }
 }

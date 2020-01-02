@@ -34,7 +34,7 @@ namespace Vardirsoft.XApp.Components
         public DialogButton CancelButton { get; private set; }
         public FileSystemTreeView FileSystemView { get; private set; }
 
-        public OpenFileDialogBox(string title, string filter) : base(title)
+        public OpenFileDialogBox(string title, string filter) : base(title, DialogMode.Modal)
         {
             Filter = filter;
             InitializeComponents();

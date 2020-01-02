@@ -105,8 +105,6 @@ namespace Vardirsoft.XApp.Application.Events
             else
             {
                 Logger.PushWarning("Attempt to remove empty listener");
-                
-                return;
             }
         }
     }

@@ -14,8 +14,6 @@ namespace Vardirsoft.XApp.Application.Localization
 {
     public sealed class LocalizationProvider : ILocalizationProvider
     {
-        private static LocalizationProvider instance;
-        public static LocalizationProvider Instance => instance ?? (instance = new LocalizationProvider());
 
         public const string KEY_PATTERN = @"(\([a-zA-Z0-9_-]+:?[a-zA-Z0-9_-]*\))";
 
@@ -33,7 +31,7 @@ namespace Vardirsoft.XApp.Application.Localization
             }
         }
 
-        private LocalizationProvider()
+        public LocalizationProvider()
         {
             regex = new Regex(KEY_PATTERN, RegexOptions.Compiled);
             namespaces = new Dictionary<string, LocalizationNamespace>()

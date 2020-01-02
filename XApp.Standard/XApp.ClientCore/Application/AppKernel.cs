@@ -86,13 +86,16 @@ namespace Vardirsoft.XApp.Application
 
                 if (IoCContainer.Resolve<IFileManager>() == null)
                     throw new NullReferenceException("The FileManager expected to be instantiated before application start");
+                
+                if (IoCContainer.Resolve<ConfigurationManager>() == null)
+                    throw new NullReferenceException("The ConfigurationManager expected to be instantiated before application start");
 
                 callingAssembly = Assembly.GetCallingAssembly();
 
-                var assemblyVertification = VerifyAssemblyAttributes();
+                var assemblyVerification = VerifyAssemblyAttributes();
 
-                if (assemblyVertification.HasValue())
-                    throw new ApplicationException(assemblyVertification);
+                if (assemblyVerification.HasValue())
+                    throw new ApplicationException(assemblyVerification);
             }
             catch (Exception ex)
             {
@@ -222,11 +225,11 @@ namespace Vardirsoft.XApp.Application
             {
                 configuration.LoadFrom("config.json");
 
-                var value = configuration["XAppKernel"] as string;
+                var value = configuration["XAPP.Kernel"] as string;
                 var parsed = Version.TryParse(value, out Version version);
 
                 if (!parsed || version != KernelVersion)
-                    configuration.AddOrUpdate(new Config("XAppKernel", KernelVersion.ToString(3)));
+                    configuration.AddOrUpdate(new Config("XAPP.Kernel", KernelVersion.ToString(3)));
 
                 var loggingLevel = LoggingLevel.NONE;
                 var arr = configuration["log_levels"].Trim().Split(',');

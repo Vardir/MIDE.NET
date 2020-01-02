@@ -309,6 +309,23 @@ namespace Vardirsoft.XApp.FileSystem
             return null;
         }
 
+        public void EnsurePath(string path)
+        {
+            if (IsFile(path))
+            {
+                var directoryName = Path.GetDirectoryName(path);
+
+                if (directoryName.HasValue())
+                {
+                    Directory.CreateDirectory(directoryName);
+                }
+            }
+            else
+            {
+                Directory.CreateDirectory(path);
+            }
+        }
+        
         /// <summary>
         /// Reads file by the given path, if file not exists creates and fills with default content
         /// </summary>
@@ -319,6 +336,8 @@ namespace Vardirsoft.XApp.FileSystem
         {
             if (File.Exists(filePath))
                 return File.ReadAllText(filePath);
+
+            EnsurePath(filePath);
             
             using (FileStream fs = File.Create(filePath))
             {

@@ -5,10 +5,10 @@ using System.Runtime.CompilerServices;
 
 using Vardirsoft.Shared.MVVM;
 using Vardirsoft.Shared.Helpers;
-
+using Vardirsoft.XApp.API;
 using Vardirsoft.XApp.Application;
 using Vardirsoft.XApp.Application.Events;
-using Vardirsoft.XApp.Application.Localization;
+using Vardirsoft.XApp.IoC;
 
 namespace Vardirsoft.XApp.Components
 {
@@ -20,7 +20,7 @@ namespace Vardirsoft.XApp.Components
     {
         private static readonly TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
 
-        protected static readonly LocalizationProvider localization = LocalizationProvider.Instance;
+        protected static readonly ILocalizationProvider localization = IoCContainer.Resolve<ILocalizationProvider>();
 
         /// <summary>
         /// The RegEx pattern that is applied to ID of all the components

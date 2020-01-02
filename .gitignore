@@ -6,6 +6,7 @@
 *.user
 *.userosscache
 *.sln.docstates
+.editorconfig
 
 # Build results
 [Dd]ebug/
@@ -44,3 +45,6 @@ Publish/
 .ionide/
 .github/
 packages/
+
+#JetBrains IDEA, Resharper, Rider
+.idea/

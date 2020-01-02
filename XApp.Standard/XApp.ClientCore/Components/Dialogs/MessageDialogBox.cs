@@ -12,7 +12,7 @@ namespace Vardirsoft.XApp.Components
         public string Message { get; }
         public DialogButton OkButton { get; }
 
-        public MessageDialogBox(string title, string message) : base(title)
+        public MessageDialogBox(string title, string message, DialogMode mode = DialogMode.Normal) : base(title, mode)
         {
             Message = localization[message];
             OkButton = new DialogButton(this, DialogResult.Ok);

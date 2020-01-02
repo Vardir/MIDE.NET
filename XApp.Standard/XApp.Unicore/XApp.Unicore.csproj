@@ -1,11 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>unicore</AssemblyName>
     <RootNamespace>XApp</RootNamespace>
     <Authors>Vardir</Authors>
-    <Company>Vardir Products</Company>
+    <Company>Vardirsoft</Company>
     <Product>XApp Unicore</Product>
     <Description>A unified shared core library for XApp ecosystem</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -16,6 +15,9 @@
     <RepositoryType>Git</RepositoryType>
     <PackageTags>xapp unicore netstandard</PackageTags>
     <LangVersion>latest</LangVersion>
+    <AssemblyVersion>2.0.0</AssemblyVersion>
+    <FileVersion>2.0.0</FileVersion>
+    <TargetFrameworks>netstandard2.0;netcoreapp3.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>

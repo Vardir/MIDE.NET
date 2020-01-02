@@ -27,7 +27,7 @@ namespace Vardirsoft.XApp.Application.Configuration
             }
         }
 
-        private ConfigurationManager()
+        public ConfigurationManager()
         {
             configs = new Dictionary<string, Config>();
         }

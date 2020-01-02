@@ -13,7 +13,7 @@ namespace Vardirsoft.XApp.Components
         public DialogButton YesButton { get; }
         public DialogButton NoButton { get; }
 
-        public QuestionDialogBox(string title, string question) : base(title)
+        public QuestionDialogBox(string title, string question) : base(title, DialogMode.Modal)
         {
             Question  = question;
             YesButton = new DialogButton(this, DialogResult.Yes);

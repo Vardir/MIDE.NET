@@ -145,6 +145,8 @@ namespace Vardirsoft.XApp.Logging
             Exception = exception;
         }
 
+        public override string ToString() => $"{base.ToString()}\n{Exception.StackTrace}";
+
         /// <summary>
         /// Extracts serialization data of the event
         /// </summary>

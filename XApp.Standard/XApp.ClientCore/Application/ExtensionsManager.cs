@@ -36,7 +36,7 @@ namespace Vardirsoft.XApp.Application
         /// </summary>
         public IEnumerable<AppExtensionEntry> Extensions => registered.Select(kvp => kvp.Value);
 
-        private ExtensionsManager() : base("app-extension-manager")
+        public ExtensionsManager() : base("app-extension-manager")
         {
             serializerSettings = new JsonSerializerSettings();
             serializerSettings.Error = OnSerializationError;
@@ -59,7 +59,7 @@ namespace Vardirsoft.XApp.Application
             //localRespository = PackageRepositoryFactory.Default.CreateRepository(directory);
             //localPathResolver = new DefaultPackagePathResolver(directory);
             var lines = fileManager.TryReadLines(fileManager.Combine(directory, ".enabled"));
-            var enabledExtensions = new HashSet<string>(lines.Where(l => !string.IsNullOrWhiteSpace(l)));
+            var enabledExtensions = new HashSet<string>(lines?.Where(l => !string.IsNullOrWhiteSpace(l)) ?? new string[]{});
             //foreach (var pack in localRespository.GetPackages())
             //{
             //    string error = Validate(pack);

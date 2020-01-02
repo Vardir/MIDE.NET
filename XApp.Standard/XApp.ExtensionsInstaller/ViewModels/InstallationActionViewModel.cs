@@ -1,7 +1,7 @@
 ﻿using Vardirsoft.Shared.MVVM;
-
+using Vardirsoft.XApp.API;
 using Vardirsoft.XApp.Schemes.JSON;
-using Vardirsoft.XApp.Application.Localization;
+using Vardirsoft.XApp.IoC;
 
 namespace Vardirsoft.XApp.ExtensionsInstaller.ViewModels
 {
@@ -20,7 +20,7 @@ namespace Vardirsoft.XApp.ExtensionsInstaller.ViewModels
         public string ProgressMessage
         {
             get => progressMessage;
-            set => SetWithNotify(ref progressMessage, LocalizationProvider.Instance[value], false);
+            set => SetWithNotify(ref progressMessage, IoCContainer.Resolve<ILocalizationProvider>()[value], false);
         }
         public string ExtensionId { get; }
         public string ExtensionSource { get; }
