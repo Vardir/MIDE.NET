@@ -19,7 +19,7 @@ namespace Vardirsoft.XApp.ExtensionPack.Helpers
         {
             writer.Write(array.Length);
 
-            for (int i = 0; i < array.Length; i++)
+            for (var i = 0; i < array.Length; i++)
             {
                 writer.Write(array[i]);
             }
@@ -36,7 +36,7 @@ namespace Vardirsoft.XApp.ExtensionPack.Helpers
         {
             writer.Write(array.Length);
 
-            for (int i = 0; i < array.Length; i++)
+            for (var i = 0; i < array.Length; i++)
             {
                 writer.Write(array[i]);
             }

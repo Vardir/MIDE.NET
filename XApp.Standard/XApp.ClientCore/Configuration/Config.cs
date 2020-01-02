@@ -1,4 +1,6 @@
-﻿namespace Vardirsoft.XApp.Application.Configuration
+﻿using System.Diagnostics;
+
+namespace Vardirsoft.XApp.Application.Configuration
 {
     public struct Config
     {
@@ -12,6 +14,7 @@
             Value = value;
             Temporary = false;
         }
+        
         public Config(string key, string value, bool temporary)
         {
             Key = key;
@@ -19,17 +22,13 @@
             Temporary = temporary;
         }
 
-        public static implicit operator Config((string key, string value) tuple)
-        {
-            return new Config(tuple.key, tuple.value);
-        }
-        public static implicit operator Config((string key, string value, bool temporary) tuple)
-        {
-            return new Config(tuple.key, tuple.value, tuple.temporary);
-        }
-        public static implicit operator (string key, string value, bool temporary)(Config config)
-        {
-            return (config.Key, config.Value, config.Temporary);
-        }
+        [DebuggerStepThrough]
+        public static implicit operator Config((string key, string value) tuple) => new Config(tuple.key, tuple.value);
+
+        [DebuggerStepThrough]
+        public static implicit operator Config((string key, string value, bool temporary) tuple) => new Config(tuple.key, tuple.value, tuple.temporary);
+
+        [DebuggerStepThrough]
+        public static implicit operator (string key, string value, bool temporary)(Config config) => (config.Key, config.Value, config.Temporary);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 
 using Vardirsoft.XApp.Visuals;
 
@@ -6,22 +7,13 @@ namespace Vardirsoft.XApp.FileSystem
 {
     public sealed class GlyphPool
     {
-        private readonly Dictionary<string, Glyph> pool;
+        private readonly Dictionary<string, Glyph> _pool;
 
-        public Glyph this[string key]
-        {
-            get
-            {
-                if (pool.TryGetValue(key, out Glyph g))
-                    return g;
-
-                return new Glyph('x');
-            }
-        }
+        public Glyph this[string key] { [DebuggerStepThrough] get => _pool.TryGetValue(key, out Glyph g) ? g : new Glyph('x'); }
 
         public GlyphPool()
         {
-            pool = new Dictionary<string, Glyph>();
+            _pool = new Dictionary<string, Glyph>();
         }
 
         public void AddOrUpdate(string key, Glyph glyph)
@@ -29,37 +21,34 @@ namespace Vardirsoft.XApp.FileSystem
             if (string.IsNullOrWhiteSpace(key))
                 return;
 
-            if (glyph == null)
+            if (glyph is null)
                 return;
 
-            if (pool.ContainsKey(key))
+            if (_pool.ContainsKey(key))
             {    
-                pool[key] = glyph;
+                _pool[key] = glyph;
             }
             else
             {    
-                pool.Add(key, glyph);
+                _pool.Add(key, glyph);
             }
         }
-        public void Remove(string key)
-        {
-            pool.Remove(key);
-        }
+        
+        [DebuggerStepThrough]
+        public void Remove(string key) => _pool.Remove(key);
 
-        public bool Contains(string key) => pool.ContainsKey(key);
-        public Glyph Find(string key)
-        {
-            if (pool.TryGetValue(key, out Glyph glyph))
-                return glyph;
+        [DebuggerStepThrough]
+        public bool Contains(string key) => _pool.ContainsKey(key);
+        
+        [DebuggerStepThrough]
+        public Glyph Find(string key) => _pool.TryGetValue(key, out Glyph glyph) ? glyph : null;
 
-            return null;
-        }
         public Glyph GetOrAdd(string key, Glyph glyph)
         {
-            if (pool.TryGetValue(key, out Glyph g))
+            if (_pool.TryGetValue(key, out Glyph g))
                 return g;
 
-            pool.Add(key, glyph);
+            _pool.Add(key, glyph);
             
             return glyph;
         }

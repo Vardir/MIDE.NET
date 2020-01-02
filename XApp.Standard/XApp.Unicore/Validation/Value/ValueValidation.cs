@@ -23,8 +23,6 @@ namespace Vardirsoft.XApp.API.Validations
         /// <summary>
         /// Validates the given value and adds validation errors in the provided collection
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="errorsCollection"></param>
         public void Validate(T value, string propertyName, ICollection<ValidationError> errorsCollection)
         {
             foreach (var (message, invalidValue) in Validate(value))

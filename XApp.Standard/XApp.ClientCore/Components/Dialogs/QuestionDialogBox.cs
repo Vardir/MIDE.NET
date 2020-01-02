@@ -7,10 +7,12 @@ namespace Vardirsoft.XApp.Components
     /// </summary>
     public sealed class QuestionDialogBox : BaseDialogBox<bool>
     {
-        private DialogResult[] validationIgnored = new[] { DialogResult.Yes, DialogResult.No };
+        private DialogResult[] validationIgnored = { DialogResult.Yes, DialogResult.No };
 
         public string Question { get; }
+        
         public DialogButton YesButton { get; }
+
         public DialogButton NoButton { get; }
 
         public QuestionDialogBox(string title, string question) : base(title, DialogMode.Modal)

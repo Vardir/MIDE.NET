@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System;
 using System.IO;
-using System.Linq;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 using Newtonsoft.Json;
@@ -37,12 +38,11 @@ namespace Vardirsoft.XApp.FileSystem
 
         public IFilePropertiesExtractor FilePropertiesExtractor { get; set; }
 
-        public FSObjectClass this[string id] => fsObjectClasses[id];
+        public FSObjectClass this[string id] { [DebuggerStepThrough] get => fsObjectClasses[id]; }
         
         public FileSystemInfo()
         {
-            fsObjectClasses = new Dictionary<string, FSObjectClass>()
-            {
+            fsObjectClasses = new Dictionary<string, FSObjectClass> {
                 ["drive"]  = new FSObjectClass("drive", DRIVE_EXTENSION),
                 ["folder"] = new FSObjectClass("folder", FOLDER_EXTENSION),
                 ["file"]   = new FSObjectClass("file", ANY_FILE_EXTENSION)
@@ -51,10 +51,12 @@ namespace Vardirsoft.XApp.FileSystem
             Initialize();
         }
         
+        [DebuggerStepThrough]
         public bool IsRegistered(FSObjectClass fsoClass) => fsObjectClasses.ContainsKey(fsoClass.Id);
+        
         public bool RegisterClass(FSObjectClass fsoClass)
         {
-            if (fsoClass == null)
+            if (fsoClass is null)
                 throw new ArgumentNullException(nameof(fsoClass));
 
             if (IsSpecialExtension(fsoClass.Extension))
@@ -95,7 +97,7 @@ namespace Vardirsoft.XApp.FileSystem
         }
         public IEnumerable<FSObjectClass> Select(Func<FSObjectClass, bool> match)
         {
-            if (match == null)
+            if (match is null)
                 throw new ArgumentNullException(nameof(match));
 
             foreach (var kvp in fsObjectClasses)
@@ -111,7 +113,7 @@ namespace Vardirsoft.XApp.FileSystem
         /// <returns></returns>
         public IEnumerable<(string prop, string val)> ExtractProperties(string path)
         {
-            if (FilePropertiesExtractor == null)
+            if (FilePropertiesExtractor is null)
             {
                 var file = new FileInfo(path);
                 if (file.Exists)
@@ -239,15 +241,15 @@ namespace Vardirsoft.XApp.FileSystem
 
         private IEnumerable<(string prop, string val)> GetFileProperties(FileInfo file)
         {
-            yield return ("Creation time UTC", file.CreationTimeUtc.ToString());
+            yield return ("Creation time UTC", file.CreationTimeUtc.ToString(CultureInfo.InvariantCulture));
             yield return ("Parent directory", file.DirectoryName);
             yield return ("Extension", file.Extension);
             yield return ("Length", file.Length.ToString());
         }
         private IEnumerable<(string prop, string val)> GetDirectoryProperties(DirectoryInfo directory)
         {
-            yield return ("Creation time UTC", directory.CreationTimeUtc.ToString());
-            yield return ("Parent directory", directory.Parent.FullName);
+            yield return ("Creation time UTC", directory.CreationTimeUtc.ToString(CultureInfo.InvariantCulture));
+            yield return ("Parent directory", directory.Parent?.FullName);
         }
     }
 }

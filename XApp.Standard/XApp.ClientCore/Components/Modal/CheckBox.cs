@@ -1,31 +1,33 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace Vardirsoft.XApp.Components
 {
     public class CheckBox : LayoutComponent
     {
-        private bool isChecked;
-        private string caption;
+        private bool _isChecked;
+        private string _caption;
 
         public bool IsChecked
         {
-            get => isChecked;
+            [DebuggerStepThrough]
+            get => _isChecked;
             set
             {
-                if (isChecked == value || !IsEnabled)
+                if (_isChecked == value || !IsEnabled)
                     return;
 
-                isChecked = value;
+                _isChecked = value;
                 
                 NotifyPropertyChanged();
-                CheckedChanged?.Invoke(isChecked);
+                CheckedChanged?.Invoke(_isChecked);
                 OnCheckedChanged();
             }
         }
         public string Caption
         {
-            get => caption;
-            set => SetLocalizedAndNotify(value, ref caption);
+            get => _caption;
+            set => SetLocalizedAndNotify(value, ref _caption);
         }
 
         public event Action<bool> CheckedChanged;
@@ -35,7 +37,7 @@ namespace Vardirsoft.XApp.Components
         protected override LayoutComponent CloneInternal(string id)
         {
             var clone = new CheckBox(id);
-            clone.caption = caption;
+            clone._caption = _caption;
 
             return clone;
         }

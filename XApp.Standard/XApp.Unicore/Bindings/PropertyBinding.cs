@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using System.ComponentModel;
+using System.Diagnostics;
 
 using Vardirsoft.Shared.Helpers;
 
@@ -19,50 +20,53 @@ namespace Vardirsoft.XApp.Bindings
         protected const BindingFlags SET_PROP_FLAGS = BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.Public;
         protected const BindingFlags PROP_FLAGS = BindingFlags.GetProperty | BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.Public;
 
-        private bool suppressHandler;
-        private INotifyPropertyChanged source;
-        private INotifyPropertyChanged destination;
-        private PropertyInfo sourceProperty;
-        private PropertyInfo destinationProperty;
+        private bool _suppressHandler;
+        private INotifyPropertyChanged _source;
+        private INotifyPropertyChanged _destination;
+        private PropertyInfo _sourceProperty;
+        private PropertyInfo _destinationProperty;
 
         /// <summary>
         /// The first one element in binding that is usually interpreted as the source
         /// </summary>
         public INotifyPropertyChanged Source
         {
-            get => source;
+            [DebuggerStepThrough]
+            get => _source;
             set
             {
-                if (value == null)
+                if (value is null)
                     throw new ArgumentNullException(nameof(value));
 
-                if (source.HasValue())
+                if (_source.HasValue())
                 {    
-                    source.PropertyChanged -= Source_PropertyChanged;
+                    _source.PropertyChanged -= Source_PropertyChanged;
                 }
 
-                source = value;
-                source.PropertyChanged += Source_PropertyChanged;
+                _source = value;
+                _source.PropertyChanged += Source_PropertyChanged;
             }
         }
+        
         /// <summary>
         /// The second one element in binding that is usually interpreted as the destination
         /// </summary>
         public INotifyPropertyChanged Destination
         {
-            get => destination;
+            [DebuggerStepThrough]
+            get => _destination;
             set
             {
-                if (value == null)
+                if (value is null)
                     throw new ArgumentNullException(nameof(value));
 
-                if (destination != null)
+                if (_destination.HasValue())
                 {    
-                    destination.PropertyChanged -= Destination_PropertyChanged;
+                    _destination.PropertyChanged -= Destination_PropertyChanged;
                 }
 
-                destination = value;
-                destination.PropertyChanged += Destination_PropertyChanged;
+                _destination = value;
+                _destination.PropertyChanged += Destination_PropertyChanged;
             }
         }
         public BindingKind BindingKind { get; set; }
@@ -98,54 +102,54 @@ namespace Vardirsoft.XApp.Bindings
         /// <param name="destinationProp">The property of the destination object to listen to changing event of</param>
         public void Bind(string sourceProp, string destinationProp)
         {
-            sourceProperty = source.GetType().GetProperty(sourceProp);
-            destinationProperty = destination.GetType().GetProperty(destinationProp);
+            _sourceProperty = _source.GetType().GetProperty(sourceProp);
+            _destinationProperty = _destination.GetType().GetProperty(destinationProp);
 
-            if (sourceProperty == null)
-                throw new ArgumentException($"Type [{source.GetType()}]  does not have declaration for property '{sourceProp}' or it is inaccessible");
+            if (_sourceProperty is null)
+                throw new ArgumentException($"Type [{_source.GetType()}]  does not have declaration for property '{sourceProp}' or it is inaccessible");
             
-            if (destinationProperty == null)
-                throw new ArgumentException($"Type [{destination.GetType()}] does not have declaration for property '{destinationProp}' or it is inaccessible");
+            if (_destinationProperty is null)
+                throw new ArgumentException($"Type [{_destination.GetType()}] does not have declaration for property '{destinationProp}' or it is inaccessible");
         }
 
         private void Source_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (suppressHandler)
+            if (_suppressHandler)
                     return;
 
-            if (e.PropertyName == sourceProperty.Name)
+            if (e.PropertyName == _sourceProperty.Name)
             {
-                suppressHandler = true;
+                _suppressHandler = true;
                 switch (BindingKind)
                 {
                     case BindingKind.TwoWay:
                     case BindingKind.OneWay:
-                        var value = Converter.Convert(sourceProperty.GetValue(source));
-                        destinationProperty.SetValue(destination, value);
+                        var value = Converter.Convert(_sourceProperty.GetValue(_source));
+                        _destinationProperty.SetValue(_destination, value);
                         break;
                 }
 
-                suppressHandler = false;
+                _suppressHandler = false;
             }
         }
         private void Destination_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (suppressHandler)
+            if (_suppressHandler)
                 return;
 
-            if (e.PropertyName == destinationProperty.Name)
+            if (e.PropertyName == _destinationProperty.Name)
             {
-                suppressHandler = true;
+                _suppressHandler = true;
                 switch (BindingKind)
                 {
                     case BindingKind.TwoWay:
                     case BindingKind.OneWayToSource:
-                        var value = Converter.ConvertBack(destinationProperty.GetValue(destination));
-                        sourceProperty.SetValue(source, value);
+                        var value = Converter.ConvertBack(_destinationProperty.GetValue(_destination));
+                        _sourceProperty.SetValue(_source, value);
                         break;
                 }
                 
-                suppressHandler = false;
+                _suppressHandler = false;
             }
         }
     }

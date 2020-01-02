@@ -12,15 +12,16 @@ namespace Vardirsoft.XApp.Extensibility
     /// </summary>
     public abstract class Module : ApplicationComponent, IDisposable
     {
-        protected object _lock = new object();
-        private Queue<ModuleJob> pendingJobs;
+        private Queue<ModuleJob> _pendingJobs;
         
+        protected object Lock = new object();
+
         public bool IsExecuting { get; private set; }
         public AppExtension Extension { get; internal set; }
 
         public Module(string id) : base(id)
         {
-            pendingJobs = new Queue<ModuleJob>();
+            _pendingJobs = new Queue<ModuleJob>();
         }
 
         public abstract void Initialize();
@@ -32,12 +33,11 @@ namespace Vardirsoft.XApp.Extensibility
         /// <summary>
         /// Executes module's routine on parallel thread
         /// </summary>
-        /// <param name="parameter"></param>
         public void Execute(object parameter, IModuleExecutionListener listener)
         {
             if (IsExecuting)
             {
-                pendingJobs.Enqueue(new ModuleJob(parameter, listener));
+                _pendingJobs.Enqueue(new ModuleJob(parameter, listener));
 
                 return;
             }
@@ -50,9 +50,9 @@ namespace Vardirsoft.XApp.Extensibility
 
         public void Dispose()
         {
-            _lock = null;
-            pendingJobs.Clear();
-            pendingJobs = null;
+            Lock = null;
+            _pendingJobs.Clear();
+            _pendingJobs = null;
         }
 
         /// <summary>
@@ -65,25 +65,25 @@ namespace Vardirsoft.XApp.Extensibility
         private void OnExecutionCompleted(Task<ModuleJob> task)
         {
             IsExecuting = false;
-            task.Result.listener.ReceiveResult(task.Result.parameter);
+            task.Result.Listener.ReceiveResult(task.Result.Parameter);
             
-            if (pendingJobs.Length > 0)
+            if (_pendingJobs.Length > 0)
             {
-                var job = pendingJobs.Dequeue();
-                Execute(job.parameter, job.listener);
+                var job = _pendingJobs.Dequeue();
+                Execute(job.Parameter, job.Listener);
             }
         }
     }
 
     public struct ModuleJob
     {
-        public readonly object parameter;
-        public readonly IModuleExecutionListener listener;
+        public readonly object Parameter;
+        public readonly IModuleExecutionListener Listener;
 
         public ModuleJob(object parameter, IModuleExecutionListener listener)
         {
-            this.parameter = parameter;
-            this.listener = listener;
+            Parameter = parameter;
+            Listener = listener;
         }
     }
 

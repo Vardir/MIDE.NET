@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 using Vardirsoft.XApp.API.Validations;
 
@@ -7,23 +8,32 @@ namespace Vardirsoft.XApp.Components
 {
     public class TextBox : TextComponent
     {
-        private bool hasErrors;
-        private bool isReadonly;
+        private bool _hasErrors;
+        private bool _isReadonly;
 
-        protected ObservableCollection<ValidationError> validationErrors;
+        protected readonly ObservableCollection<ValidationError> validationErrors;
 
         public bool HasErrors
         {
-            get => hasErrors;
-            private set => SetWithNotify(ref hasErrors, value);
+            [DebuggerStepThrough]
+            get => _hasErrors;
+            
+            [DebuggerStepThrough]
+            private set => SetWithNotify(ref _hasErrors, value);
         }
+        
         public bool IsReadonly
         {
-            get => isReadonly;
-            set => SetWithNotify(ref isReadonly, value);
+            [DebuggerStepThrough]
+            get => _isReadonly;
+            
+            [DebuggerStepThrough]
+            set => SetWithNotify(ref _isReadonly, value);
         }
+        
         public override string Text
         {
+            [DebuggerStepThrough]
             get => text ?? Default;
             set
             {
@@ -45,8 +55,11 @@ namespace Vardirsoft.XApp.Components
                 }
             }
         }
+        
         public string Default { get; }
+        
         public List<ValueValidation<string>> Validations { get; }
+        
         public ReadOnlyObservableCollection<ValidationError> ValidationErrors { get; }
 
         public TextBox(string id, string defaultValue = null) : base(id)
@@ -66,12 +79,13 @@ namespace Vardirsoft.XApp.Components
         protected override LayoutComponent CloneInternal(string id)
         {
             var clone = new TextBox(id, Default);
-            clone.isReadonly = isReadonly;
+            clone._isReadonly = _isReadonly;
             clone.text = text;
 
             return clone;
         }
 
+        [DebuggerStepThrough]
         protected virtual TextBox Create(string id) => new TextBox(id, Default);
     }
 }

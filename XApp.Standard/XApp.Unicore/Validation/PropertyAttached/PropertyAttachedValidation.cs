@@ -14,38 +14,36 @@ namespace Vardirsoft.XApp.API.Validations
         protected const BindingFlags PROP_FLAGS = BindingFlags.GetProperty | BindingFlags.SetProperty | 
                                                   BindingFlags.Public | BindingFlags.Instance;
 
-        private IValidate attachedObject;
-        private List<PropertyInfo> supportedProps;
-        private readonly Type supportedPropertyType;
-        private readonly List<ValidationError> validationMessages;
+        private IValidate _attachedObject;
+        private List<PropertyInfo> _supportedProps;
+        private readonly Type _supportedPropertyType;
+        private readonly List<ValidationError> _validationMessages;
 
-        public override bool HasErrors => validationMessages.Count > 0;
+        public override bool HasErrors => _validationMessages.Count > 0;
         public bool RaiseExceptionOnError { get; }
 
         public event PropertyChangedEventHandler PropertyChanged;
         
         public PropertyAttachedValidation(bool raiseExceptionOnError)
         {
-            validationMessages = new List<ValidationError>();
+            _validationMessages = new List<ValidationError>();
             RaiseExceptionOnError = raiseExceptionOnError;
-            supportedPropertyType = typeof(T);
+            _supportedPropertyType = typeof(T);
         }
 
         /// <summary>
         /// Attaches validation to an object. All properties of the required type will be validated on change
         /// <para>If property names to observe are supplied, only those will be validated</para>
         /// </summary>
-        /// <param name="obj"></param>
-        /// <exception cref="ArgumentNullException"></exception>
         public void AttachTo(IValidate obj, params string[] propertiesToObserve)
         {
-            if (attachedObject != null)
+            if (_attachedObject.HasValue())
             {
-                attachedObject.Validations.Remove(this);
-                attachedObject.PropertyChanged -= Obj_PropertyChanging;
+                _attachedObject.Validations.Remove(this);
+                _attachedObject.PropertyChanged -= Obj_PropertyChanging;
             }
 
-            attachedObject = obj ?? throw new ArgumentNullException(nameof(obj));
+            _attachedObject = obj ?? throw new ArgumentNullException(nameof(obj));
             LoadSupportedProperties(obj.GetType(), propertiesToObserve);
             obj.PropertyChanged += Obj_PropertyChanging;
             obj.Validations.Add(this);
@@ -61,32 +59,32 @@ namespace Vardirsoft.XApp.API.Validations
         /// <returns></returns>
         public override IEnumerable GetErrors(string propertyName)
         {
-            if (propertyName == null)
-                return validationMessages;
+            if (propertyName is null)
+                return _validationMessages;
 
-            return validationMessages.Where(v => v.PropertyName == propertyName);
+            return _validationMessages.Where(v => v.PropertyName == propertyName);
         }
         public IEnumerable<ValidationError> GetAllErrors(string propertyName = null)
         {
-            if (propertyName == null)
-                return validationMessages;
+            if (propertyName is null)
+                return _validationMessages;
 
-            return validationMessages.Where(v => v.PropertyName == propertyName);
+            return _validationMessages.Where(v => v.PropertyName == propertyName);
         }
         
         protected abstract void Validate(string property, T value);
 
         protected void AddError(string property, string message, object value)
         {
-            validationMessages.Add(new ValidationError(property, message, value));
-            attachedObject.NotifyError();
+            _validationMessages.Add(new ValidationError(property, message, value));
+            _attachedObject.NotifyError();
 
             OnPropertyChanged(nameof(HasErrors));
         }
         protected void ClearErrors()
         {
-            validationMessages.Clear();
-            attachedObject.NotifyError();
+            _validationMessages.Clear();
+            _attachedObject.NotifyError();
 
             OnPropertyChanged(nameof(HasErrors));
         }
@@ -97,42 +95,42 @@ namespace Vardirsoft.XApp.API.Validations
 
         private void InvalidateAll()
         {
-            foreach (var prop in supportedProps)
+            foreach (var prop in _supportedProps)
             {
-                Obj_PropertyChanging(attachedObject, new PropertyChangedEventArgs(prop.Name));
+                Obj_PropertyChanging(_attachedObject, new PropertyChangedEventArgs(prop.Name));
             }
         }
         private void LoadSupportedProperties(Type type, string[] propsToObserve)
         {
-            var selected = type.GetProperties(PROP_FLAGS).Where(p => p.PropertyType == supportedPropertyType);
-            supportedProps = new List<PropertyInfo>(selected);
+            var selected = type.GetProperties(PROP_FLAGS).Where(p => p.PropertyType == _supportedPropertyType);
+            _supportedProps = new List<PropertyInfo>(selected);
 
-            if (propsToObserve != null && propsToObserve.Length != 0)
+            if (propsToObserve.HasValue() && propsToObserve.Length != 0)
             {
-                for (int i = 0; i < supportedProps.Count; i++)
+                for (var i = 0; i < _supportedProps.Count; i++)
                 {
-                    if (!propsToObserve.Contains(supportedProps[i].Name))
+                    if (!propsToObserve.Contains(_supportedProps[i].Name))
                     {    
-                        supportedProps.RemoveAt(i--);
+                        _supportedProps.RemoveAt(i--);
                     }
                 }
 
-                if (supportedProps.AnyNotIn(p => p.Name, propsToObserve))
+                if (_supportedProps.AnyNotIn(p => p.Name, propsToObserve))
                     throw new ArgumentException($"Type [{type}] contains not all the properties that were asked");
             }
 
-            if (supportedProps.Count == 0)
+            if (_supportedProps.Count == 0)
                 throw new ArgumentException($"Type [{type}] has no available properties of type [{typeof(T)}] to validate");
         }
         private void Obj_PropertyChanging(object sender, PropertyChangedEventArgs e)
         {
-            var property = supportedProps.Find(p => p.Name == e.PropertyName);
-            if (property == null)
+            var property = _supportedProps.Find(p => p.Name == e.PropertyName);
+            if (property is null)
                 return;
 
-            Validate(e.PropertyName, (T)property.GetValue(attachedObject));
+            Validate(e.PropertyName, (T)property.GetValue(_attachedObject));
 
-            if (validationMessages.Count > 0)
+            if (_validationMessages.Count > 0)
             {
                 if (RaiseExceptionOnError)
                     throw new FormatException($"Property [{e.PropertyName}]: Value has invalid format");

@@ -59,7 +59,7 @@ namespace Vardirsoft.XApp.Components
         {
             get
             {
-                for (int i = 0; i < menuGroups.Count; i++)
+                for (var i = 0; i < menuGroups.Count; i++)
                 {
                     foreach (var item in menuGroups[i].Items)
                     {
@@ -78,7 +78,7 @@ namespace Vardirsoft.XApp.Components
         {
             get
             {
-                for (int i = 0; i < menuGroups.Count; i++)
+                for (var i = 0; i < menuGroups.Count; i++)
                 {
                     foreach (var item in menuGroups[i].Items)
                     {
@@ -108,20 +108,20 @@ namespace Vardirsoft.XApp.Components
         /// <summary>
         /// Makes copy of items from source and adds them to destination
         /// </summary>
-        /// <param name="fdscheme"></param>
+        /// <param name="source"></param>
         public void MergeWith(MenuItem source)
         {
-            for (int i = 0; i < source.menuGroups.Count; i++)
+            for (var i = 0; i < source.menuGroups.Count; i++)
             {
                 var group = source.menuGroups[i];
                 var innerGroup = menuGroups.Find(mg => mg.Id == group.Id);
 
-                if (innerGroup == null)
+                if (innerGroup is null)
                     AddGroup(group.Id, group.OrdinalIndex);
 
                 foreach (var item in group.Items)
                 {
-                    if (innerGroup == null || !innerGroup.Items.Contains(mi => mi.Id == item.Id))
+                    if (innerGroup is null || !innerGroup.Items.Contains(mi => mi.Id == item.Id))
                         Add(item.Clone() as MenuItem, null);
                 }
             }
@@ -135,14 +135,14 @@ namespace Vardirsoft.XApp.Components
         /// <param name="searchRecursively">Search parent recursively</param>
         public void Add(MenuItem item, string parentId, bool searchRecursively = false)
         {
-            if (item.Group == null)
+            if (item.Group is null)
                 item.Group = DEFAULT_GROUP;
 
             MenuGroup group;
-            if (parentId == null)
+            if (parentId is null)
             {
                 group = menuGroups.Find(g => g.Id == item.Group);
-                if (group == null)
+                if (group is null)
                 {
                     item.Group = DEFAULT_GROUP;
                     group = menuGroups[0];
@@ -165,7 +165,7 @@ namespace Vardirsoft.XApp.Components
             }
 
             var parent = Find(parentId, searchRecursively);
-            if (parent == null)
+            if (parent is null)
                 throw new ArgumentException($"The menu item with ID {parentId} not found");
 
             parent.Add(item, null);
@@ -187,7 +187,7 @@ namespace Vardirsoft.XApp.Components
             if (item.HasValue())
             {
                 var group = menuGroups.Find(g => g.Id == item.Group);
-                if (group == null)
+                if (group is null)
                     throw new InvalidOperationException("An item's group ID was changed");
 
                 ChildCount--;
@@ -205,7 +205,7 @@ namespace Vardirsoft.XApp.Components
             if (id == DEFAULT_GROUP)
                 return;
 
-            int index = menuGroups.IndexWith(mg => mg.Id == id);
+            var index = menuGroups.IndexWith(mg => mg.Id == id);
             if (index == -1)
                 return;
 
@@ -248,7 +248,6 @@ namespace Vardirsoft.XApp.Components
         /// <summary>
         /// Searches for the last item in the given path and produces it's child items ordinal indexes
         /// </summary>
-        /// <param name="path"></param>
         /// <returns></returns>
         public (string, int)[] GetItemsOrdinals()
         {
@@ -256,7 +255,7 @@ namespace Vardirsoft.XApp.Components
             for (int i = 0, k = 0; i < menuGroups.Count; i++)
             {
                 var items = menuGroups[i].Items;
-                for (int j = 0; j < items.Count; j++, k++)
+                for (var j = 0; j < items.Count; j++, k++)
                 {
                     array[k] = (items[j].Id, items[j].OrdinalIndex);
                 }
@@ -268,15 +267,13 @@ namespace Vardirsoft.XApp.Components
         /// <summary>
         /// Searches for the last item in the given path and produces out array of all child items ID
         /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
         public string[] GetAllItemsIDs()
         {
             string[] array = new string[menuGroups.Sum(g => g.Items.Count)];
             for (int i = 0, k = 0; i < menuGroups.Count; i++)
             {
                 var items = menuGroups[i].Items;
-                for (int j = 0; j < items.Count; j++, k++)
+                for (var j = 0; j < items.Count; j++, k++)
                 {
                     array[k] = items[j].Id;
                 }

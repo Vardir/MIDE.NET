@@ -12,12 +12,14 @@ namespace Vardirsoft.XApp.Components
     /// </summary>
     public abstract class BaseDialogBox
     {
-        private readonly HashSet<DialogResult> validationIgnoredResults;
+        private readonly HashSet<DialogResult> _validationIgnoredResults;
 
-        protected static readonly ILocalizationProvider localization = IoCContainer.Resolve<ILocalizationProvider>();
+        protected static readonly ILocalizationProvider Localization = IoCContainer.Resolve<ILocalizationProvider>();
 
         public DialogMode DialogMode { get; }
+        
         public DialogResult SelectedResult { get; set; }
+        
         public string Title { get; }
 
         public event Action ResultSelected;
@@ -25,9 +27,9 @@ namespace Vardirsoft.XApp.Components
         public BaseDialogBox(string title, DialogMode mode)
         {
             DialogMode = mode;
-            Title = localization[title];
-            validationIgnoredResults = new HashSet<DialogResult>();
-            validationIgnoredResults.AddRange(GetValidationIgnoredResults());
+            Title = Localization[title];
+            _validationIgnoredResults = new HashSet<DialogResult>();
+            _validationIgnoredResults.AddRange(GetValidationIgnoredResults());
         }
 
         /// <summary>
@@ -38,8 +40,8 @@ namespace Vardirsoft.XApp.Components
             if (SelectedResult == DialogResult.None)
                 return;
                 
-            bool close = true;
-            if(!validationIgnoredResults.Contains(SelectedResult))
+            var close = true;
+            if(!_validationIgnoredResults.Contains(SelectedResult))
                 close = Validate();
 
             if (close)

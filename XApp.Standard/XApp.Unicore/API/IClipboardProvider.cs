@@ -5,7 +5,7 @@
     /// </summary>
     public interface IClipboardProvider
     {
-        // <summary>
+        /// <summary>
         /// Pushes the given data into the clipboard's storage
         /// </summary>
         /// <param name="obj">The data to store</param>

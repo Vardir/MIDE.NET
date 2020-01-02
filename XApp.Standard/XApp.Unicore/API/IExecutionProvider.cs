@@ -26,15 +26,15 @@ namespace Vardirsoft.XApp.API
 
     public struct ExternalExecutionResult
     {
-        public readonly int exitCode;
-        public readonly string output;
-        public readonly string errors;
+        public readonly int ExitCode;
+        public readonly string Output;
+        public readonly string Errors;
 
         public ExternalExecutionResult(int exitCode, string output, string errors)
         {
-            this.output = output;
-            this.errors = errors;
-            this.exitCode = exitCode;
+            Output = output;
+            Errors = errors;
+            ExitCode = exitCode;
         }
     }
 }

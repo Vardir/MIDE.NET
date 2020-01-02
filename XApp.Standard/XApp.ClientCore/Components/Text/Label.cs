@@ -4,7 +4,7 @@
     {
         public Label(string id, string text) : base(id)
         {
-            Text = localization[text];
+            Text = Localization[text];
         }
 
         protected override LayoutComponent CloneInternal(string id)

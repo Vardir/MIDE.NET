@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace Vardirsoft.XApp.Logging
 {
@@ -33,6 +34,7 @@ namespace Vardirsoft.XApp.Logging
             Message = message;
         }
 
+        [DebuggerStepThrough]
         public override string ToString() => $"{Time} [{Level}]:> {Message}"; //17:43:20 [DEBUG]:> My message 
 
         /// <summary>
@@ -56,6 +58,7 @@ namespace Vardirsoft.XApp.Logging
 
         }
 
+        [DebuggerStepThrough]
         public override object[] GetSerializationData() => null;
     }
 
@@ -83,6 +86,7 @@ namespace Vardirsoft.XApp.Logging
         /// Extracts serialization data of the event
         /// </summary>
         /// <returns></returns>
+        [DebuggerStepThrough]
         public override object[] GetSerializationData() => new[] { Context };
     }
 
@@ -104,6 +108,7 @@ namespace Vardirsoft.XApp.Logging
         /// Extracts serialization data of the event
         /// </summary>
         /// <returns></returns>
+        [DebuggerStepThrough]
         public override object[] GetSerializationData() => null;
     }
 
@@ -145,12 +150,14 @@ namespace Vardirsoft.XApp.Logging
             Exception = exception;
         }
 
+        [DebuggerStepThrough]
         public override string ToString() => $"{base.ToString()}\n{Exception.StackTrace}";
 
         /// <summary>
         /// Extracts serialization data of the event
         /// </summary>
         /// <returns></returns>
+        [DebuggerStepThrough]
         public override object[] GetSerializationData() => new[] { Exception, Context };
     }
 
@@ -172,6 +179,7 @@ namespace Vardirsoft.XApp.Logging
         /// Extracts serialization data of the event
         /// </summary>
         /// <returns></returns>
+        [DebuggerStepThrough]
         public override object[] GetSerializationData() => null;
     }
 }

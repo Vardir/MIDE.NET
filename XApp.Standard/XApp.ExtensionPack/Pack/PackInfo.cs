@@ -5,17 +5,17 @@
     /// </summary>
     public struct PackInfo
     {
-        public readonly string id;
-        public readonly string title;
-        public readonly string description;
-        public readonly string releaseNotes;
+        public readonly string Id;
+        public readonly string Title;
+        public readonly string Description;
+        public readonly string ReleaseNotes;
 
         public PackInfo(string id, string title, string description, string releaseNotes)
         {
-            this.id = id;
-            this.title = title;
-            this.description = description;
-            this.releaseNotes = releaseNotes;
+            Id = id;
+            Title = title;
+            Description = description;
+            ReleaseNotes = releaseNotes;
         }
     }
 }

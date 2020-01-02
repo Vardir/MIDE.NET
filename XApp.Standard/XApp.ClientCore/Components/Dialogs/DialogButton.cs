@@ -12,7 +12,9 @@ namespace Vardirsoft.XApp.Components
 
         public DialogButton(string id, BaseDialogBox box, DialogResult dialogResult) : base(id)
         {
-            PressCommand = new RelayCommand(OnPress, null);            
+            parentBox = box;
+            DialogResult = dialogResult;
+            PressCommand = new RelayCommand(OnPress);
         }
         public DialogButton(BaseDialogBox box, DialogResult dialogResult) 
             : this(ToSafeId(dialogResult.ToString()), box, dialogResult)

@@ -9,28 +9,30 @@ namespace Vardirsoft.XApp.Components
 {
     public class ListBox : LayoutComponent
     {
-        private bool isMultiselect;
-       
-        protected ObservableCollection<ListBoxItem> mItems;
+        private bool _isMultiselect;
+
+        private readonly ObservableCollection<ListBoxItem> _items;
 
         public bool IsMultiselect
         {
-            get => isMultiselect;
-            set => SetWithNotify(ref isMultiselect, value);
+            get => _isMultiselect;
+            set => SetWithNotify(ref _isMultiselect, value);
         }
+        
         public List<ListBoxItem> SelectedItems { get; }
+        
         public ReadOnlyObservableCollection<ListBoxItem> Items { get; }
 
         public ListBox(string id) : base(id)
         {
             SelectedItems = new List<ListBoxItem>();
-            mItems = new ObservableCollection<ListBoxItem>();
-            Items = new ReadOnlyObservableCollection<ListBoxItem>(mItems);
+            _items = new ObservableCollection<ListBoxItem>();
+            Items = new ReadOnlyObservableCollection<ListBoxItem>(_items);
         }
 
         public void Add(object value)
         {
-            if (value == null)
+            if (value is null)
                 throw new ArgumentNullException(nameof(value));
 
             var item = new ListBoxItem();
@@ -38,14 +40,14 @@ namespace Vardirsoft.XApp.Components
             item.SelectedChanged += ItemSelectedChanged;
             item.Value = value;
 
-            mItems.Add(item);
+            _items.Add(item);
         }
         public void Remove(object value)
         {
             var index = Items.IndexWith(item => item.Value == value);
 
             Items[index].SelectedChanged -= ItemSelectedChanged;
-            mItems.RemoveAt(index);
+            _items.RemoveAt(index);
         }
         public void Clear()
         {
@@ -54,7 +56,7 @@ namespace Vardirsoft.XApp.Components
                 item.SelectedChanged -= ItemSelectedChanged;
             }
 
-            mItems.Clear();
+            _items.Clear();
         }
         
         protected override LayoutComponent CloneInternal(string id)
@@ -80,18 +82,18 @@ namespace Vardirsoft.XApp.Components
 
     public class ListBoxItem : BaseViewModel
     {
-        private bool isSelected;
-        private object value;
+        private bool _isSelected;
+        private object _value;
 
         public bool IsSelected
         {
-            get => isSelected;
+            get => _isSelected;
             set
             {
-                if (isSelected == value)
+                if (_isSelected == value)
                     return;
 
-                isSelected = value;
+                _isSelected = value;
                 SelectedChanged?.Invoke(this, value);
                 
                 NotifyPropertyChanged();
@@ -99,15 +101,10 @@ namespace Vardirsoft.XApp.Components
         }
         public object Value
         {
-            get => value;
-            set => SetWithNotify(ref this.value, value, true);
+            get => _value;
+            set => SetWithNotify(ref this._value, value, true);
         }
 
         public event Action<ListBoxItem, bool> SelectedChanged;
-
-        public ListBoxItem()
-        {
-
-        }
     }
 }

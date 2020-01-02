@@ -8,21 +8,21 @@ namespace Vardirsoft.XApp.Components
 {
     public class Toolbar : LayoutComponent
     {
-        protected ObservableCollection<IToolBarItem> mItems;
+        protected readonly ObservableCollection<IToolBarItem> _items;
 
         public ReadOnlyObservableCollection<IToolBarItem> Items { get; }
 
         public Toolbar(string id) : base(id)
         {
-            mItems = new ObservableCollection<IToolBarItem>();
-            Items = new ReadOnlyObservableCollection<IToolBarItem>(mItems);
+            _items = new ObservableCollection<IToolBarItem>();
+            Items = new ReadOnlyObservableCollection<IToolBarItem>(_items);
         }
 
-        public bool Contains(string id) => Items.FirstOrDefault(item => item.Id == id) != null;
+        public bool Contains(string id) => Items.FirstOrDefault(item => item.Id == id).HasValue();
         public LayoutComponent Find(string id)
         {
             var item = Items.FirstOrDefault(i => i.Id == id);
-            if (item == null)
+            if (item is null)
                 return null;
 
             return item as LayoutComponent;
@@ -40,14 +40,14 @@ namespace Vardirsoft.XApp.Components
         {
             if (component is IToolBarItem item)
             {
-                int index = Items.LastIndexWith(i => i.Group == item.Group && i.Order < item.Order);
+                var index = Items.LastIndexWith(i => i.Group == item.Group && i.Order < item.Order);
                 if (index > -1)
                 {
-                    mItems.Insert(index, item);
+                    _items.Insert(index, item);
                 }
                 else
                 {
-                    mItems.Add(item);
+                    _items.Add(item);
                 }
             }
             else
@@ -60,17 +60,17 @@ namespace Vardirsoft.XApp.Components
             var index = Items.IndexWith(i => i.Id == id);
             if (index > -1)
             {  
-                mItems.RemoveAt(index);
+                _items.RemoveAt(index);
             }
         }
         protected void RemoveChild_Impl(LayoutComponent component)
         {
-            if (component == null)
+            if (component is null)
                 throw new ArgumentNullException(nameof(component));
 
             if (component is IToolBarItem item)
             {
-                mItems.Remove(item);
+                _items.Remove(item);
             }
             else
             {

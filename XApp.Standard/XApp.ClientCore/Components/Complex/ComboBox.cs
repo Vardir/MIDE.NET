@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 using Vardirsoft.Shared.MVVM;
 using Vardirsoft.Shared.Helpers;
@@ -8,20 +9,29 @@ namespace Vardirsoft.XApp.Components
 {
     public class ComboBox : LayoutComponent
     {
-        private int selectedIndex;
-        private ComboBoxItem selectedItem;
+        private int _selectedIndex;
+        private ComboBoxItem _selectedItem;
 
-        public int ItemsCount => Items.Count;
+        public int ItemsCount { [DebuggerStepThrough] get => Items.Count; }
+        
         public int SelectedIndex
         {
-            get => selectedIndex;
-            set => SetWithNotify(ref selectedIndex, value);
+            [DebuggerStepThrough]
+            get => _selectedIndex;
+            
+            [DebuggerStepThrough]
+            set => SetWithNotify(ref _selectedIndex, value);
         }
+        
         public ComboBoxItem SelectedItem
         {
-            get => selectedItem;
-            set => SetWithNotify(ref selectedItem, value, true);
+            [DebuggerStepThrough]
+            get => _selectedItem;
+            
+            [DebuggerStepThrough]
+            set => SetWithNotify(ref _selectedItem, value, true);
         }
+        
         public ObservableCollection<ComboBoxItem> Items { get; }
 
         public ComboBox(string id) : base(id)
@@ -55,18 +65,25 @@ namespace Vardirsoft.XApp.Components
 
     public class ComboBoxItem : BaseViewModel
     {
-        private object value;
-        private string caption;
+        private object _value;
+        private string _caption;
 
         public object Value
         {
-            get => value;
-            set => SetWithNotify(ref this.value, value, true);
+            [DebuggerStepThrough]
+            get => _value;
+            
+            [DebuggerStepThrough]
+            set => SetWithNotify(ref this._value, value, true);
         }
+        
         public string Caption
         {
-            get => caption;
-            set => SetWithNotify(ref caption, value, true);
+            [DebuggerStepThrough]
+            get => _caption;
+            
+            [DebuggerStepThrough]
+            set => SetWithNotify(ref _caption, value, true);
         }
 
         public ComboBoxItem(object value, string caption)

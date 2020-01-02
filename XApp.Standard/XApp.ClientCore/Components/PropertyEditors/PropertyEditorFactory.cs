@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Reflection;
 using System.ComponentModel;
 using System.Collections.Generic;
+
+using Vardirsoft.Shared.Helpers;
 
 namespace Vardirsoft.XApp.Components.PropertyEditors
 {
@@ -11,19 +12,19 @@ namespace Vardirsoft.XApp.Components.PropertyEditors
 
         static PropertyEditorFactory()
         {
-            Editors = new Dictionary<string, Func<string, BasePropertyEditor>>()
+            Editors = new Dictionary<string, Func<string, BasePropertyEditor>> 
             {
-                ["Boolean"] = (name) => new BoolPropertyEditor(name),
-                ["Byte"] = (name) => new BytePropertyEditor(name),
-                ["Int16"] = (name) => new Int16PropertyEditor(name),
-                ["Int32"] = (name) => new Int32PropertyEditor(name),
-                ["Int64"] = (name) => new Int64PropertyEditor(name),
-                ["Single"] = (name) => new FloatPropertyEditor(name),
-                ["Double"] = (name) => new DoublePropertyEditor(name),
-                ["ConsoleColor"] = (name) => new ConsoleColorPropertyEditor(name),
-                ["DateTime"] = (name) => new DateTimePropertyEditor(name),
-                ["Object"] = (name) => new ObjectPropertyEditor(name),
-                ["String"] = (name) => new StringPropertyEditor(name),
+                ["Boolean"] = name => new BoolPropertyEditor(name),
+                ["Byte"] = name => new BytePropertyEditor(name),
+                ["Int16"] = name => new Int16PropertyEditor(name),
+                ["Int32"] = name => new Int32PropertyEditor(name),
+                ["Int64"] = name => new Int64PropertyEditor(name),
+                ["Single"] = name => new FloatPropertyEditor(name),
+                ["Double"] = name => new DoublePropertyEditor(name),
+                ["ConsoleColor"] = name => new ConsoleColorPropertyEditor(name),
+                ["DateTime"] = name => new DateTimePropertyEditor(name),
+                ["Object"] = name => new ObjectPropertyEditor(name),
+                ["String"] = name => new StringPropertyEditor(name),
             };
         }
 
@@ -40,13 +41,12 @@ namespace Vardirsoft.XApp.Components.PropertyEditors
             var notifyPropertyChanged = obj as INotifyPropertyChanged;
             var propertyInfos = type.GetProperties();
 
-            for (int i = 0; i < propertyInfos.Length; i++)
+            foreach (var property in propertyInfos)
             {
-                var property = propertyInfos[i];
                 if (property.CanRead || property.GetMethod.IsPublic)
                 {
                     var editor = GetEditorFor(property.PropertyType, property.Name);
-                    if (notifyPropertyChanged != null)
+                    if (notifyPropertyChanged.HasValue())
                     { 
                         editor.AttachTo(notifyPropertyChanged, property.Name);
                     }

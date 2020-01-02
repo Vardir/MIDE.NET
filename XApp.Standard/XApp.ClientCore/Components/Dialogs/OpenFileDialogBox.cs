@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 
 using Vardirsoft.XApp.IoC;
 using Vardirsoft.XApp.API;
@@ -12,26 +13,31 @@ namespace Vardirsoft.XApp.Components
     /// </summary>
     public sealed class OpenFileDialogBox : BaseDialogBox<string>
     {
-        private string directory;
-        private DialogResult[] validationIgnored = new[] { DialogResult.Cancel };
+        private string _directory;
+        private readonly DialogResult[] _validationIgnored = { DialogResult.Cancel };
 
         public string Filter { get; }
 
         public string Directory
         {
-            get => directory;
+            [DebuggerStepThrough]
+            get => _directory;
             set
             {
-                if (value == directory)
+                if (value == _directory)
                     return;
 
-                directory = value;
-                FileSystemView.Show(directory);
+                _directory = value;
+                FileSystemView.Show(_directory);
             }
         }
+        
         public TextBox SelectedFile { get; private set; }
+        
         public DialogButton OkButton { get; private set; }
+        
         public DialogButton CancelButton { get; private set; }
+        
         public FileSystemTreeView FileSystemView { get; private set; }
 
         public OpenFileDialogBox(string title, string filter) : base(title, DialogMode.Modal)
@@ -44,7 +50,7 @@ namespace Vardirsoft.XApp.Components
         private void InitializeComponents()
         {
             FileSystemView = new FileSystemTreeView("file-system-view");
-            FileSystemView.Generator = (directoryItem) => new FileSystemTreeViewItem(directoryItem);
+            FileSystemView.Generator = directoryItem => new FileSystemTreeViewItem(directoryItem);
             SelectedFile = new TextBox("selected-file");
             OkButton = new DialogButton(this, DialogResult.Ok);
             CancelButton = new DialogButton(this, DialogResult.Cancel);
@@ -52,15 +58,17 @@ namespace Vardirsoft.XApp.Components
             var selectedFileBinding = new ObjectBinding<FileSystemTreeView, TextBox>(FileSystemView, SelectedFile);
             selectedFileBinding.BindingKind = BindingKind.OneWay;
             selectedFileBinding.Bind(fsv => fsv.SelectedItem, tb => tb.Text,
-                                     item => {
-                                         if (item == null || !((FileSystemTreeViewItem)item).ObjectClass.IsFile)
+                                     item => 
+                                     {
+                                         if (item is null || !((FileSystemTreeViewItem)item).ObjectClass.IsFile)
                                              return null;
+                                         
                                          return ((FileSystemTreeViewItem)item).FullPath;
                                      }, null);
         }
 
         public override string GetData() => SelectedFile.Text;
         protected override bool Validate() => IoCContainer.Resolve<IFileManager>().FileExists(SelectedFile.Text);
-        protected override IEnumerable<DialogResult> GetValidationIgnoredResults() => validationIgnored;
+        protected override IEnumerable<DialogResult> GetValidationIgnoredResults() => _validationIgnored;
     }
 }

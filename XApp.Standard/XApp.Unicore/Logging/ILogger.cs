@@ -20,5 +20,6 @@ namespace Vardirsoft.XApp.Logging
         void PushInfo(string message);
         void PushWarning(string message);
         void SaveToFile(string folder, string fileName, string[] info);
+        void SetLoggingLevel(object sender, LoggingLevel level);
     }
 }

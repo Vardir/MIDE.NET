@@ -21,7 +21,7 @@ namespace Vardirsoft.XApp.Components.Complex
         
         public void Show(string path)
         {
-            mItems.Clear();
+            _items.Clear();
 
             var items = Enumerable.Empty<DirectoryItem>();
             if (path == @"\")
@@ -33,43 +33,43 @@ namespace Vardirsoft.XApp.Components.Complex
                 items = FileSystemInfo.GetDirectoryContents(path, FileFilter);
             }
 
-            mItems.AddRange(items.Select(Generator));
+            _items.AddRange(items.Select(Generator));
         }
     }
 
     public class FileSystemTreeViewItem : TreeViewItem
     {
-        private string fullPath;
-        private FSObjectClass fsObjectClass;
+        private string _fullPath;
+        private FSObjectClass _fsObjectClass;
 
         public override bool CanExpand => !ObjectClass.IsFile;
         public FSObjectClass ObjectClass
         {
-            get => fsObjectClass;
+            get => _fsObjectClass;
             set
             {
-                if (fsObjectClass == value)
+                if (_fsObjectClass == value)
                     return;
 
-                fsObjectClass = value;
-                ItemClass = fsObjectClass.Id;
-                ItemGlyph = fsObjectClass.ObjectGlyph;
+                _fsObjectClass = value;
+                ItemClass = _fsObjectClass.Id;
+                ItemGlyph = _fsObjectClass.ObjectGlyph;
                 
                 NotifyPropertyChanged();
             }
         }
         public string FullPath
         {
-            get => fullPath;
-            set => SetWithNotify(ref fullPath, value, true);
+            get => _fullPath;
+            set => SetWithNotify(ref _fullPath, value, true);
         }
 
         public FileSystemTreeViewItem(DirectoryItem directoryItem)
-            : this(directoryItem.name, directoryItem.fullPath, directoryItem.itemClass)
+            : this(directoryItem.Name, directoryItem.FullPath, directoryItem.ItemClass)
         {
             
         }
-        public FileSystemTreeViewItem(string caption, string fullPath, FSObjectClass fsObjectClass) : base()
+        public FileSystemTreeViewItem(string caption, string fullPath, FSObjectClass fsObjectClass)
         {
             ExpandCommand = new RelayCommand(Expand, () => CanExpand);
 
@@ -82,7 +82,7 @@ namespace Vardirsoft.XApp.Components.Complex
 
         protected override TreeViewItem CloneInternal()
         {
-            var clone = new FileSystemTreeViewItem(Caption, fullPath, fsObjectClass);
+            var clone = new FileSystemTreeViewItem(Caption, _fullPath, _fsObjectClass);
             
             return clone;
         }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Text;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 using Vardirsoft.Shared.Helpers;
 
@@ -14,22 +16,15 @@ namespace Vardirsoft.XApp.Logging
     /// </summary>
     public class Logger : ILogger
     {
-        private readonly IFileManager fileManager;
-        private DateTime TimeNow => UseUtcTime ? DateTime.UtcNow : DateTime.Now;
-        private readonly LinkedList<LoggedEvent> events;
-
-        /// <summary>
-        /// A flag to indicate whether to use UTC time for registering events
-        /// </summary>
+        private readonly IFileManager _fileManager;
+        private DateTime TimeNow { [DebuggerStepThrough] get => UseUtcTime ? DateTime.UtcNow : DateTime.Now; }
+        private readonly LinkedList<LoggedEvent> _events;
+        
         public bool UseUtcTime { get; }
-        /// <summary>
-        /// A set of flags to filter out incoming events
-        /// </summary>
+        
         public LoggingLevel Levels { get; internal set; }
-        /// <summary>
-        /// Count of all events stored in collection
-        /// </summary>
-        public int EventsCount => events.Count;
+        
+        public int EventsCount { [DebuggerStepThrough] get => _events.Count; }
 
         public event EventHandler<FatalEvent> FatalEventRegistered;
 
@@ -37,22 +32,18 @@ namespace Vardirsoft.XApp.Logging
         {
             Levels = levels;
             UseUtcTime = useUtcTime;
-            events = new LinkedList<LoggedEvent>();
-            fileManager = IoCContainer.Resolve<IFileManager>();
+            _events = new LinkedList<LoggedEvent>();
+            _fileManager = IoCContainer.Resolve<IFileManager>();
         }
-
-        /// <summary>
-        /// Saves log entries into the given file
-        /// </summary>
-        /// <param name="path"></param>
+        
         public void SaveToFile(string folder, string fileName, string[] info)
         {
             var builder = new StringBuilder();
-            if (info != null)
+            if (info.HasValue())
             {
-                for (int i = 0; i < info.Length; i++)
+                foreach (var x in info)
                 {
-                    builder.Append(info[i]);
+                    builder.Append(x);
                     builder.AppendLine();
                 }
             }
@@ -65,24 +56,24 @@ namespace Vardirsoft.XApp.Logging
             var binIndex = 0;
             foreach (var item in Pull())
             {
-                builder.Append(item.ToString());
+                builder.Append(item);
 
                 var serializationData = item.GetSerializationData();
-                if (serializationData != null)
+                if (serializationData.HasValue())
                 {
-                    for (int i = 0; i < serializationData.Length; i++)
+                    foreach (var x in serializationData)
                     {
-                        if (serializationData[i].HasValue())
+                        if (x.HasValue())
                         {
                             builder.AppendLine();
                             builder.Append('\t');
-                            builder.Append(serializationData[i].GetType());
+                            builder.Append(x.GetType());
                             builder.Append("  - [");
                             builder.Append(binIndex + 1);
                             builder.Append(".bin]");
 
-                            var binFile = fileManager.Combine(folder, (binIndex + 1).ToString());
-                            fileManager.Serialize(serializationData[i], $"{binFile}.bin");
+                            var binFile = _fileManager.Combine(folder, (binIndex + 1).ToString());
+                            _fileManager.Serialize(x, $"{binFile}.bin");
                             binIndex++;
                         }
                     }
@@ -91,16 +82,12 @@ namespace Vardirsoft.XApp.Logging
                 builder.AppendLine();
             }
 
-            fileManager.Write(builder.ToString(), fileManager.Combine(folder, fileName));
+            _fileManager.Write(builder.ToString(), _fileManager.Combine(folder, fileName));
         }
-
-        /// <summary>
-        /// Adds the given event into collection
-        /// </summary>
-        /// <param name="applicationEvent"></param>
+        
         public void PushEvent(LoggedEvent applicationEvent)
         {
-            if (applicationEvent == null)
+            if (applicationEvent is null)
             {
                 PushArgumentError(nameof(applicationEvent), "Can't register empty event");
 
@@ -109,13 +96,10 @@ namespace Vardirsoft.XApp.Logging
 
             if (Levels.Has(applicationEvent.Level))
             {   
-                events.AddLast(applicationEvent);
+                _events.AddLast(applicationEvent);
             }
         }
-        /// <summary>
-        /// Adds an informational event into collection
-        /// </summary>
-        /// <param name="message"></param>
+        
         public void PushInfo(string message)
         {
             if (string.IsNullOrEmpty(message))
@@ -127,15 +111,11 @@ namespace Vardirsoft.XApp.Logging
 
             if (Levels.Has(LoggingLevel.INFO))
             {    
-                events.AddLast(new InfoEvent(message, TimeNow));
+                _events.AddLast(new InfoEvent(message, TimeNow));
             }
         }
-        /// <summary>
-        /// Adds a debug event into collection based on context
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="message"></param>
-        public void PushDebug(object context, string message)
+        
+       public void PushDebug(object context, string message)
         {
             if (string.IsNullOrEmpty(message))
             {
@@ -146,13 +126,10 @@ namespace Vardirsoft.XApp.Logging
 
             if (Levels.Has(LoggingLevel.DEBUG))
             {    
-                events.AddLast(new DebugEvent(context, message, TimeNow));
+                _events.AddLast(new DebugEvent(context, message, TimeNow));
             }
         }
-        /// <summary>
-        /// Adds a warning event into collection
-        /// </summary>
-        /// <param name="message"></param>
+        
         public void PushWarning(string message)
         {
             if (string.IsNullOrEmpty(message))
@@ -164,18 +141,13 @@ namespace Vardirsoft.XApp.Logging
 
             if (Levels.Has(LoggingLevel.WARN))
             {    
-                events.AddLast(new WarnEvent(message));
+                _events.AddLast(new WarnEvent(message));
             }
         }
-        /// <summary>
-        /// Adds an error event with exception instance
-        /// </summary>
-        /// <param name="exception"></param>
-        /// <param name="context"></param>
-        /// <param name="message"></param>
+        
         public void PushError(Exception exception, object context, string message = "")
         {
-            if (exception == null)
+            if (exception is null)
             {
                 PushArgumentError(nameof(exception), "Can't add error event without exception instance");
 
@@ -184,13 +156,10 @@ namespace Vardirsoft.XApp.Logging
 
             if (Levels.Has(LoggingLevel.ERROR))
             {    
-                events.AddLast(new ErrorEvent(exception, context, message, TimeNow));
+                _events.AddLast(new ErrorEvent(exception, context, message, TimeNow));
             }
         }
-        /// <summary>
-        /// Adds a fatal error event with description of problem occur
-        /// </summary>
-        /// <param name="message"></param>
+        
         public void PushFatal(string message)
         {
             if (string.IsNullOrEmpty(message))
@@ -199,22 +168,23 @@ namespace Vardirsoft.XApp.Logging
             }
 
             var fatalEvent = new FatalEvent(message, TimeNow);
-            events.AddLast(fatalEvent);
+            _events.AddLast(fatalEvent);
             FatalEventRegistered?.Invoke(this, fatalEvent);
         }
+        
         /// <summary>
         /// Filters out all events that are not set to the given levels
         /// </summary>
         /// <param name="levels"></param>
         public void FilterEvents(LoggingLevel levels)
         {
-            var node = events.First;
-            while (node != null)
+            var node = _events.First;
+            while (node.HasValue())
             {
                 var next = node.Next;
                 if (!levels.HasFlag(node.Value.Level))
                 {    
-                    events.Remove(node);
+                    _events.Remove(node);
                 }
                 
                 node = next;
@@ -226,14 +196,10 @@ namespace Vardirsoft.XApp.Logging
         /// </summary>
         /// <param name="levels"></param>
         /// <returns></returns>
-        public IEnumerable<LoggedEvent> Pull(LoggingLevel levels = LoggingLevel.ALL)
-        {
-            foreach (LoggedEvent appEvent in events)
-            {
-                if (levels.Has(appEvent.Level))
-                    yield return appEvent;
-            }
-        }
+        public IEnumerable<LoggedEvent> Pull(LoggingLevel levels = LoggingLevel.ALL) => _events.Where(appEvent => levels.Has(appEvent.Level));
+
+        [DebuggerStepThrough]
+        public void SetLoggingLevel(object sender, LoggingLevel level) => Levels = level;
 
         private void PushArgumentError(string argumentName, string message)
         {

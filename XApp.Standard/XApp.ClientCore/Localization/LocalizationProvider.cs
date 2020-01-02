@@ -14,27 +14,17 @@ namespace Vardirsoft.XApp.Application.Localization
 {
     public sealed class LocalizationProvider : ILocalizationProvider
     {
-
         public const string KEY_PATTERN = @"(\([a-zA-Z0-9_-]+:?[a-zA-Z0-9_-]*\))";
 
-        private readonly Regex regex;
-        private readonly Dictionary<string, LocalizationNamespace> namespaces;
+        private readonly Regex _regex;
+        private readonly Dictionary<string, LocalizationNamespace> _namespaces;
 
-        public string this[string str]
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(str))
-                    return str;
-
-                return regex.Replace(str, Resolve);
-            }
-        }
+        public string this[string str] => string.IsNullOrEmpty(str) ? str : _regex.Replace(str, Resolve);
 
         public LocalizationProvider()
         {
-            regex = new Regex(KEY_PATTERN, RegexOptions.Compiled);
-            namespaces = new Dictionary<string, LocalizationNamespace>()
+            _regex = new Regex(KEY_PATTERN, RegexOptions.Compiled);
+            _namespaces = new Dictionary<string, LocalizationNamespace> 
             {
                 [string.Empty] = new LocalizationNamespace()
             };
@@ -72,20 +62,15 @@ namespace Vardirsoft.XApp.Application.Localization
             }
         }
 
-        private string GetValue(string namespaceKey, string key)
-        {
-            if (namespaces.TryGetValue(namespaceKey, out var space))
-                return space[key];
+        private string GetValue(string namespaceKey, string key) => _namespaces.TryGetValue(namespaceKey, out var space) ? space[key] : null;
 
-            return null;
-        }
         private string Resolve(Match match)
         {
             var expr = match.Value.Between('(', ')');
             var (prefix, key) = Split(expr);
             var result = GetValue(prefix, key);
 
-            if (result == null && prefix.HasValue())
+            if (result is null && prefix.HasValue())
             {    
                 result = GetValue(string.Empty, key);
             }
@@ -95,6 +80,7 @@ namespace Vardirsoft.XApp.Application.Localization
         private (string prefix, string key) Split(string str)
         {
             var (head, tail) = str.ExtractUntil(0, ':');
+            
             if (string.IsNullOrEmpty(tail))
                 return (string.Empty, head);
 
@@ -102,11 +88,11 @@ namespace Vardirsoft.XApp.Application.Localization
         }
         private LocalizationNamespace GetOrAddNamespace(string key)
         {
-            if (namespaces.TryGetValue(key, out var space))
+            if (_namespaces.TryGetValue(key, out var space))
                 return space;
                 
             space = new LocalizationNamespace();
-            namespaces.Add(key, space);
+            _namespaces.Add(key, space);
             
             return space;
         }

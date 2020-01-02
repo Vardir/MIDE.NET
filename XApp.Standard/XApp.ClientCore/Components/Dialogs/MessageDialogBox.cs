@@ -7,14 +7,15 @@ namespace Vardirsoft.XApp.Components
     /// </summary>
     public sealed class MessageDialogBox : BaseDialogBox<bool>
     {
-        private DialogResult[] validationIgnored = new[] { DialogResult.Ok };
+        private readonly DialogResult[] validationIgnored = { DialogResult.Ok };
 
         public string Message { get; }
+        
         public DialogButton OkButton { get; }
 
         public MessageDialogBox(string title, string message, DialogMode mode = DialogMode.Normal) : base(title, mode)
         {
-            Message = localization[message];
+            Message = Localization[message];
             OkButton = new DialogButton(this, DialogResult.Ok);
         }
 

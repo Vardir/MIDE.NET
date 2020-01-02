@@ -4,50 +4,35 @@ namespace Vardirsoft.XApp.Application.Localization
 {
     public sealed class LocalizationNamespace
     {
-        private readonly Dictionary<string, string> dictionary;
+        private readonly Dictionary<string, string> _dictionary;
 
-        public string this[string key]
-        {
-            get
-            {
-                if (dictionary.TryGetValue(key, out string value))
-                    return value;
-
-                return key;
-            }
-        }
+        public string this[string key] => _dictionary.TryGetValue(key, out var value) ? value : key;
 
         public LocalizationNamespace()
         {
-            dictionary = new Dictionary<string, string>();
+            _dictionary = new Dictionary<string, string>();
         }
 
         public void Add(string key, string value)
         {
-            if (dictionary.ContainsKey(key))
+            if (_dictionary.ContainsKey(key))
                 return;
 
-            dictionary.Add(key, value);
+            _dictionary.Add(key, value);
         }
         public void AddOrUpdate(string key, string value)
         {
-            if (dictionary.ContainsKey(key))
+            if (_dictionary.ContainsKey(key))
             {
-                dictionary[key] = value;
+                _dictionary[key] = value;
 
                 return;
             }
 
-            dictionary.Add(key, value);
+            _dictionary.Add(key, value);
         }
 
-        public string GetString(string key) => dictionary[key];
-        public string GetString(string key, string defaultValue = "")
-        {
-            if (dictionary.TryGetValue(key, out string value))
-                return value;
-                
-            return defaultValue;
-        }
+        public string GetString(string key) => _dictionary[key];
+        public string GetString(string key, string defaultValue) => _dictionary.TryGetValue(key, out var value) ? value : defaultValue;
     }
 }

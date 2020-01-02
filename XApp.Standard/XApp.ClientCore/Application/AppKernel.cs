@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Linq;
 
 using Vardirsoft.Shared.Helpers;
 
@@ -12,36 +12,29 @@ using Vardirsoft.XApp.FileSystem;
 using Vardirsoft.XApp.Application.Tasks;
 using Vardirsoft.XApp.Application.Attributes;
 using Vardirsoft.XApp.Application.Configuration;
+
 using Module = Vardirsoft.XApp.Extensibility.Module;
 
 namespace Vardirsoft.XApp.Application
 {
     public class AppKernel : IDisposable
     {
-        private static AppKernel instance;
-        public static AppKernel Instance => instance ?? (instance = new AppKernel());
+        private static AppKernel _instance;
+        public static AppKernel Instance => _instance ??= new AppKernel();
 
-        private bool isRunning;
-        private Assembly currentAssembly;
-        private Assembly callingAssembly;
-        private ApplicationPaths paths;
-        private LinkedList<AppTask> tasks;
+        private bool _isRunning;
+        private Assembly _callingAssembly;
+        
+        private readonly ApplicationPaths _paths;
+        private readonly LinkedList<AppTask> _tasks;
+        private readonly Assembly currentAssembly;
 
         #region Public properties
 
-        /// <summary>
-        /// A time when application kernel was started
-        /// </summary>
         public DateTime TimeStarted { get; private set; }
 
-        /// <summary>
-        /// Version of application kernel
-        /// </summary>
         public Version KernelVersion { get; }
 
-        /// <summary>
-        /// Name of application kernel
-        /// </summary>
         public string ApplicationName { get; private set; }
 
         #endregion
@@ -50,8 +43,8 @@ namespace Vardirsoft.XApp.Application
 
         private AppKernel()
         {
-            paths = ApplicationPaths.Instance;
-            tasks = new LinkedList<AppTask>();
+            _paths = ApplicationPaths.Instance;
+            _tasks = new LinkedList<AppTask>();
 
             currentAssembly = Assembly.GetAssembly(typeof(AppKernel));
             
@@ -64,9 +57,6 @@ namespace Vardirsoft.XApp.Application
             logger.PushDebug(null, "Application Kernel created");
         }
 
-        /// <summary>
-        /// Starts the application kernel
-        /// </summary>
         public void Start()
         {
             var logger = IoCContainer.Resolve<ILogger>();
@@ -75,22 +65,22 @@ namespace Vardirsoft.XApp.Application
 
             try
             {
-                if (isRunning)
+                if (_isRunning)
                     throw new ApplicationException("Application kernel is already loaded and running!");
 
-                if (IoCContainer.Resolve<IClipboardProvider>() == null)
+                if (IoCContainer.Resolve<IClipboardProvider>() is null)
                     throw new NullReferenceException("The SystemBuffer expected to be assigned before application start");
 
-                if (IoCContainer.Resolve<UIManager>() == null)
+                if (IoCContainer.Resolve<UIManager>() is null)
                     throw new NullReferenceException("The UIManager expected to be assigned before application start");
 
-                if (IoCContainer.Resolve<IFileManager>() == null)
+                if (IoCContainer.Resolve<IFileManager>() is null)
                     throw new NullReferenceException("The FileManager expected to be instantiated before application start");
                 
-                if (IoCContainer.Resolve<ConfigurationManager>() == null)
+                if (IoCContainer.Resolve<ConfigurationManager>() is null)
                     throw new NullReferenceException("The ConfigurationManager expected to be instantiated before application start");
 
-                callingAssembly = Assembly.GetCallingAssembly();
+                _callingAssembly = Assembly.GetCallingAssembly();
 
                 var assemblyVerification = VerifyAssemblyAttributes();
 
@@ -99,15 +89,13 @@ namespace Vardirsoft.XApp.Application
             }
             catch (Exception ex)
             {
-                isRunning = true;
+                _isRunning = true;
                 logger.PushFatal(ex.Message);
             }
 
             LoadConfigurations();
 
-            var langPath = IoCContainer.Resolve<IFileManager>().Combine(paths[ApplicationPaths.ASSETS], 
-                                                                        "lang", 
-                                                                        $"{IoCContainer.Resolve<ConfigurationManager>()["lang"]}.json");
+            var langPath = IoCContainer.Resolve<IFileManager>().Combine(_paths[ApplicationPaths.ASSETS], "lang", $"{IoCContainer.Resolve<ConfigurationManager>()["lang"]}.json");
             
             IoCContainer.Resolve<ILocalizationProvider>().LoadFrom(langPath);
             
@@ -116,7 +104,7 @@ namespace Vardirsoft.XApp.Application
 
             logger.PushDebug(null, "Application Kernel started");
             TimeStarted = DateTime.UtcNow;
-            isRunning = true;
+            _isRunning = true;
 
             try
             {
@@ -130,16 +118,13 @@ namespace Vardirsoft.XApp.Application
             OnStarted();
         }
 
-        /// <summary>
-        /// Saves current session's log entries
-        /// </summary>
         public void SaveLog()
         {
             var logger = IoCContainer.Resolve<ILogger>();
 
             if (logger.EventsCount != 0)
             {
-                var folder = $"{paths[ApplicationPaths.LOGS]}\\{TimeStarted.ToString("dd-M-yyyy HH-mm-ss")}\\";
+                var folder = $"{_paths[ApplicationPaths.LOGS]}\\{TimeStarted:dd-M-yyyy HH-mm-ss}\\";
 
                 IoCContainer.Resolve<IFileManager>().MakeFolder(folder);
                 logger.SaveToFile(folder, "log.txt", info: new[] { ApplicationName, KernelVersion.ToString() });
@@ -153,9 +138,9 @@ namespace Vardirsoft.XApp.Application
         public void Exit()
         {
             var logger = IoCContainer.Resolve<ILogger>();
-            if (isRunning)
+            if (_isRunning)
             {
-                isRunning = false;
+                _isRunning = false;
                 logger.PushDebug(null, "Application Kernel stopped");
 
                 Dispose();
@@ -179,38 +164,32 @@ namespace Vardirsoft.XApp.Application
         {
             if (task.HasValue())
             {
-                if (tasks.Contains(task))
+                if (_tasks.Contains(task))
                     return;
 
-                tasks.AddLast(task);
+                _tasks.AddLast(task);
             }
         }
 
-        /// <summary>
-        /// Verifies if the module is valid for the current application.
-        /// Returns null if valid, otherwise returns message.
-        /// </summary>
-        /// <param name="module"></param>
-        /// <returns></returns>
-        public string VerifyModule(Module module)
+        public OperationResult VerifyModule(Module module)
         {
-            if (module == null)
-                return "Null module reference";
+            if (module is null)
+                return OperationResult.FailWith("Null module reference");
 
-            return null;
+            return OperationResult.SuccessfulResult();
         }
-        public override string ToString() => $"KERNEL [{KernelVersion}] >> {callingAssembly?.FullName ?? "?"}";
+        
+        public override string ToString() => $"KERNEL [{KernelVersion}] >> {_callingAssembly?.FullName ?? "?"}";
 
         public void Dispose()
         {
-            if (isRunning)
+            if (_isRunning)
             {
                 IoCContainer.Resolve<ILogger>().PushWarning("Attempt to dispose of resources while application still running");
                 
                 return;
             }
 
-            //TODO: dispose all the application resources
             IoCContainer.Resolve<ExtensionsManager>().Dispose();
         }
 
@@ -225,7 +204,7 @@ namespace Vardirsoft.XApp.Application
             {
                 configuration.LoadFrom("config.json");
 
-                var value = configuration["XAPP.Kernel"] as string;
+                var value = configuration["XAPP.Kernel"];
                 var parsed = Version.TryParse(value, out Version version);
 
                 if (!parsed || version != KernelVersion)
@@ -237,11 +216,10 @@ namespace Vardirsoft.XApp.Application
                 if (arr.HasItems())
                 {
                     var type = typeof(LoggingLevel);
-                    for (int i = 0; i < arr.Length; i++)
-                    {
-                        loggingLevel |= (LoggingLevel)Enum.Parse(type, arr[i]?.ToString(), true);
-                    }
+                    loggingLevel = arr.Aggregate(loggingLevel, (accum, level) => accum | (LoggingLevel)Enum.Parse(type, level.ToString(), true));
                 }
+
+                logger.SetLoggingLevel(this, loggingLevel);
             }
             catch (Exception ex)
             {
@@ -249,7 +227,7 @@ namespace Vardirsoft.XApp.Application
             }
             
             logger.FilterEvents(logger.Levels);
-            IoCContainer.Resolve<AssetsManager>().LoadAssets(paths[ApplicationPaths.ASSETS]);
+            IoCContainer.Resolve<AssetsManager>().LoadAssets(_paths[ApplicationPaths.ASSETS]);
 
             logger.PushDebug(null, "Application configurations loaded");
         }
@@ -257,9 +235,9 @@ namespace Vardirsoft.XApp.Application
         private void SaveTasks()
         {
             var fileManager = IoCContainer.Resolve<IFileManager>();
-            int i = 0;
+            var i = 0;
 
-            foreach (var task in tasks)
+            foreach (var task in _tasks)
             {
                 if (task.RepetitionMode == TaskRepetitionMode.NotLimitedOnce && task.Origin.HasValue())
                 {    
@@ -269,7 +247,7 @@ namespace Vardirsoft.XApp.Application
                 if (task.Origin.HasValue())
                     continue;
 
-                var path = fileManager.Combine(paths[ApplicationPaths.TASKS], task.ToString() + i + ".bin");
+                var path = fileManager.Combine(_paths[ApplicationPaths.TASKS], task.ToString() + i + ".bin");
                 
                 fileManager.Serialize(task, path);
                 i++;
@@ -278,36 +256,40 @@ namespace Vardirsoft.XApp.Application
         private void LoadTasks()
         {
             var fileManager = IoCContainer.Resolve<IFileManager>();
-            var files = fileManager.EnumerateFiles(paths[ApplicationPaths.TASKS], "*.bin");
+            var files = fileManager.EnumerateFiles(_paths[ApplicationPaths.TASKS], "*.bin");
 
             foreach (var file in files)
             {
                 var task = fileManager.Deserialize<AppTask>(file);
                 task.Origin = file;
-                tasks.AddLast(task);
+                _tasks.AddLast(task);
             }
         }
+        
         private void OnStarting()
         {
             ApplyTaskAction(TaskActivationEvent.BeforeLoad);
-            tasks.Remove(at => at.ActivationEvent == TaskActivationEvent.BeforeLoad && at.RepetitionMode == TaskRepetitionMode.Once);
+            _tasks.Remove(at => at.ActivationEvent == TaskActivationEvent.BeforeLoad && at.RepetitionMode == TaskRepetitionMode.Once);
         }
+        
         private void OnStarted()
         {
             ApplyTaskAction(TaskActivationEvent.OnLoad);
-            tasks.Remove(at => at.ActivationEvent == TaskActivationEvent.OnLoad && at.RepetitionMode == TaskRepetitionMode.Once);
+            _tasks.Remove(at => at.ActivationEvent == TaskActivationEvent.OnLoad && at.RepetitionMode == TaskRepetitionMode.Once);
         }
+        
         private void OnExit()
         {
             ApplyTaskAction(TaskActivationEvent.OnExit);
-            tasks.Remove(at => at.ActivationEvent == TaskActivationEvent.OnExit && at.RepetitionMode == TaskRepetitionMode.Once);
+            _tasks.Remove(at => at.ActivationEvent == TaskActivationEvent.OnExit && at.RepetitionMode == TaskRepetitionMode.Once);
         }
+        
         private void ApplyTaskAction(TaskActivationEvent activation)
         {
             var fileManager = IoCContainer.Resolve<IFileManager>();
-            var path = paths[ApplicationPaths.TASKS];
+            var path = _paths[ApplicationPaths.TASKS];
 
-            tasks.ForEach(task =>
+            _tasks.ForEach(task =>
             {
                 if (task.ActivationEvent == activation)
                 {
@@ -326,21 +308,21 @@ namespace Vardirsoft.XApp.Application
             var logger = IoCContainer.Resolve<ILogger>();
             logger.PushDebug(null, "Verifying assembly attributes");
 
-            var hasAppPropsAttriburte = false;
-            var attributes = Attribute.GetCustomAttributes(callingAssembly);
+            var hasAppPropsAttribute = false;
+            var attributes = Attribute.GetCustomAttributes(_callingAssembly);
 
             foreach (var attribute in attributes)
             {
                 switch (attribute)
                 {
                     case ApplicationPropertiesAttribute attr:
-                        hasAppPropsAttriburte = true;
+                        hasAppPropsAttribute = true;
                         ApplicationName = attr.ApplicationName;
                         break;
                 }
             }
 
-            if (hasAppPropsAttriburte)
+            if (hasAppPropsAttribute)
             {
                 logger.PushDebug(null, "Assembly attributes verified");
 

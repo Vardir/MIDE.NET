@@ -1,4 +1,6 @@
-﻿namespace Vardirsoft.XApp.API.Validations
+﻿using System.Diagnostics;
+
+namespace Vardirsoft.XApp.API.Validations
 {
     public struct ValidationError
     {
@@ -13,6 +15,7 @@
             ValidationMessage = validationMessage;
         }
 
+        [DebuggerStepThrough]
         public override string ToString() => ValidationMessage;
     }
 }

@@ -1,4 +1,6 @@
-﻿using Vardirsoft.XApp.API;
+﻿using System.Diagnostics;
+
+using Vardirsoft.XApp.API;
 
 namespace Vardirsoft.XApp.Components
 {
@@ -7,25 +9,34 @@ namespace Vardirsoft.XApp.Components
     /// </summary>
     public abstract class LayoutComponent : ApplicationComponent, ICloneable<LayoutComponent>
     {
-        private bool isEnabled = true;
-        private Visibility visibility;
-        private LayoutComponent parent;
-        private ContextMenu currentContextMenu;
+        private bool _isEnabled = true;
+        private Visibility _visibility;
+        private LayoutComponent _parent;
+        private ContextMenu _currentContextMenu;
 
         public bool IsEnabled
         {
-            get => isEnabled;
-            set => SetWithNotify(ref isEnabled, value);
+            [DebuggerStepThrough]
+            get => _isEnabled;
+            
+            [DebuggerStepThrough]
+            set => SetWithNotify(ref _isEnabled, value);
         }
         public Visibility Visibility
         {
-            get => visibility;
-            set => SetWithNotify(ref visibility, value);
+            [DebuggerStepThrough]
+            get => _visibility;
+            
+            [DebuggerStepThrough]
+            set => SetWithNotify(ref _visibility, value);
         }
         public LayoutComponent Parent
         {
-            get => parent;
-            set => SetWithNotify(ref parent, value, true);
+            [DebuggerStepThrough]
+            get => _parent;
+            
+            [DebuggerStepThrough]
+            set => SetWithNotify(ref _parent, value, true);
         }
 
         public LayoutComponent(string id) : base(id)
@@ -36,14 +47,17 @@ namespace Vardirsoft.XApp.Components
         public LayoutComponent Clone(string id)
         {
             var clone = CloneInternal(id);
-            clone.isEnabled = isEnabled;
-            clone.visibility = visibility;
-            clone.parent = null;
-            clone.currentContextMenu = currentContextMenu;
+            clone._isEnabled = _isEnabled;
+            clone._visibility = _visibility;
+            clone._parent = null;
+            clone._currentContextMenu = _currentContextMenu;
 
             return clone;
         }
+        
+        [DebuggerStepThrough]
         public LayoutComponent Clone() => Clone(Id);
+        
         protected abstract LayoutComponent CloneInternal(string id);
     }
 }

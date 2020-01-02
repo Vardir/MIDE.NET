@@ -9,7 +9,7 @@ namespace Vardirsoft.XApp.FileSystem
     /// </summary>
     public class FSObjectClass
     {
-        private string extension;
+        private string _extension;
 
         public bool IsFile => Extension != FileSystemInfo.DRIVE_EXTENSION && Extension != FileSystemInfo.FOLDER_EXTENSION;
         public bool IsDrive => Extension == FileSystemInfo.DRIVE_EXTENSION;
@@ -17,16 +17,16 @@ namespace Vardirsoft.XApp.FileSystem
         public string Id { get; }
         public string Extension
         {
-            get => extension;
+            get => _extension;
             private set
             {
-                if (value == null)
+                if (value is null)
                     throw new ArgumentNullException(nameof(value));
 
                 if (!FileSystemInfo.IsValidExtension(value))
                     throw new FormatException("Extension was of invalid format");
 
-                extension = value;
+                _extension = value;
             }
         }
         public string Editor { get; private set; }
@@ -43,12 +43,9 @@ namespace Vardirsoft.XApp.FileSystem
 
         public FSObjectClass(string objectClass, string extension, string editor, Glyph objectGlyph)
         {
-            if (objectClass == null)
-                throw new ArgumentNullException(nameof(objectClass));
-
             Editor = editor;
             Extension = extension;
-            Id = objectClass;
+            Id = objectClass ?? throw new ArgumentNullException(nameof(objectClass));
             ObjectGlyph = objectGlyph;
         }
 

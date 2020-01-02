@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 using Newtonsoft.Json;
 
+using Vardirsoft.Shared.Helpers;
 using Vardirsoft.XApp.IoC;
 using Vardirsoft.XApp.API;
 using Vardirsoft.XApp.Logging;
@@ -16,12 +17,12 @@ namespace Vardirsoft.XApp.ExtensionsInstaller
 {
     public class InstallerKernel
     {
-        private static InstallerKernel instance;
-        public static InstallerKernel Instance => instance ?? (instance = new InstallerKernel());
+        private static InstallerKernel _instance;
+        public static InstallerKernel Instance => _instance ??= new InstallerKernel();
 
-        private ApplicationPaths paths;
-        private Installer installer;
-        private Uninstaller uninstaller;
+        private readonly ApplicationPaths _paths;
+        private readonly Installer _installer;
+        private readonly Uninstaller _uninstaller;
         //private DefaultPackagePathResolver localPathResolver;
 
         public DateTime TimeStarted { get; private set; }
@@ -32,11 +33,11 @@ namespace Vardirsoft.XApp.ExtensionsInstaller
         private InstallerKernel()
         {
             TimeStarted = DateTime.UtcNow;
-            paths = ApplicationPaths.Instance;
+            _paths = ApplicationPaths.Instance;
             EventLogger = new Logger(LoggingLevel.ALL, true);
             EventLogger.FatalEventRegistered += EventLogger_FatalEventRegistered;
-            installer = new Installer(EventLogger);
-            uninstaller = new Uninstaller(EventLogger);
+            _installer = new Installer(EventLogger);
+            _uninstaller = new Uninstaller(EventLogger);
         }
         
         public void Execute()
@@ -47,7 +48,7 @@ namespace Vardirsoft.XApp.ExtensionsInstaller
         }
         public void Exit()
         {
-            IoCContainer.Resolve<IFileManager>().Delete(paths["installer-config"]);
+            IoCContainer.Resolve<IFileManager>().Delete(_paths["installer-config"]);
             EventLogger.PushInfo("Kernel stopped");
             EventLogger.PushInfo("Closing application");
             SaveLog();
@@ -66,21 +67,21 @@ namespace Vardirsoft.XApp.ExtensionsInstaller
                 EventLogger.PushFatal(ex.Message);
             }
 
-            var path = paths[ApplicationPaths.EXTENSIONS];
+            var path = _paths[ApplicationPaths.EXTENSIONS];
             var fileManager = IoCContainer.Resolve<IFileManager>();
 
             path = fileManager.GetAbsolutePath(path);
-            paths.AddOrUpdate(ApplicationPaths.EXTENSIONS, path);
-            paths.AddOrUpdate("installer-config", fileManager.Combine(path, "installer.json"));
-            paths.AddOrUpdate("installer-log", fileManager.Combine(path, "installer"));
+            _paths.AddOrUpdate(ApplicationPaths.EXTENSIONS, path);
+            _paths.AddOrUpdate("installer-config", fileManager.Combine(path, "installer.json"));
+            _paths.AddOrUpdate("installer-log", fileManager.Combine(path, "installer"));
 
-            if (fileManager.DirectoryExists(paths["installer-log"]))
+            if (fileManager.DirectoryExists(_paths["installer-log"]))
             {
-                fileManager.CleanDirectory(paths["installer-log"]);
+                fileManager.CleanDirectory(_paths["installer-log"]);
             }
             else
             {
-                fileManager.MakeFolder(paths["installer-log"]);
+                fileManager.MakeFolder(_paths["installer-log"]);
             }
             //localPathResolver = new DefaultPackagePathResolver(paths[ApplicationPaths.EXTENSIONS]);
             //installer.LocalPathResolver = localPathResolver;
@@ -91,15 +92,15 @@ namespace Vardirsoft.XApp.ExtensionsInstaller
             EventLogger.PushInfo("Fetching actions");
             try
             {
-                var data = IoCContainer.Resolve<IFileManager>().TryRead(paths["installer-config"]);
-                if (data == null)
+                var data = IoCContainer.Resolve<IFileManager>().TryRead(_paths["installer-config"]);
+                if (data is null)
                     return;
 
                 var config = JsonConvert.DeserializeObject<ExtensionsInstall[]>(data);
-                if (config == null)
+                if (config is null)
                     return;
 
-                for (int i = 0; i < config.Length; i++)
+                for (var i = 0; i < config.Length; i++)
                 {
                     var item = config[i];
                     //InstallerTabSection.Instance.AddInstallationAction(item.Id, item.Repository, item.Mode, item.AutoEnable);
@@ -121,11 +122,12 @@ namespace Vardirsoft.XApp.ExtensionsInstaller
                 switch (viewModel.InstallationMode)
                 {
                     case InstallationMode.Install:
-                        message = installer.Install(viewModel); break;
+                        message = _installer.Install(viewModel); break;
                     case InstallationMode.Uninstall:
-                        message = uninstaller.Uninstall(viewModel); break;
+                        message = _uninstaller.Uninstall(viewModel); break;
                 }
-                if (message != null)
+                
+                if (message.HasValue())
                 {    
                     EventLogger.PushWarning(message);
                 }
@@ -136,7 +138,7 @@ namespace Vardirsoft.XApp.ExtensionsInstaller
             if (EventLogger.EventsCount == 0)
                 return;
                 
-            EventLogger.SaveToFile(paths["installer-log"], "log.txt", 
+            EventLogger.SaveToFile(_paths["installer-log"], "log.txt", 
                                    info: new[] { "Extensions installer", $"Installation finished at {DateTime.UtcNow}" });
         }
         

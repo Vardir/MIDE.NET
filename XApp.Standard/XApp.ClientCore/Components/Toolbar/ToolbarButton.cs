@@ -1,31 +1,40 @@
-﻿using Vardirsoft.Shared.MVVM;
+﻿using System.Diagnostics;
+
+using Vardirsoft.Shared.MVVM;
 
 namespace Vardirsoft.XApp.Components
 {
     public class ToolbarButton : LayoutComponent, IToolBarItem
     {
-        private BaseCommand pressCommand;
+        private BaseCommand _pressCommand;
 
         public int Order { get; set; }
+        
         public string Group { get; set; }
 
         public BaseCommand PressCommand
         {
-            get => pressCommand;
-            set => SetWithNotify(ref pressCommand, value, true);
+            [DebuggerStepThrough]
+            get => _pressCommand;
+            
+            [DebuggerStepThrough]
+            set => SetWithNotify(ref _pressCommand, value, true);
         }
 
         public ToolbarButton(string id) : base(id) {}
 
+        [DebuggerStepThrough]
         public void Press(object parameter) => PressCommand.Execute(parameter);
 
         protected override LayoutComponent CloneInternal(string id)
         {
-            var clone = new ToolbarButton(id);
-            clone.Order = Order;
-            clone.Group = Group;
-            clone.pressCommand = pressCommand;
-            
+            var clone = new ToolbarButton(id) 
+            {
+                Order = Order, 
+                Group = Group, 
+                _pressCommand = _pressCommand
+            };
+
             return clone;
         }
     }

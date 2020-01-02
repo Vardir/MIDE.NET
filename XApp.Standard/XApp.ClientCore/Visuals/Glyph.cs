@@ -15,20 +15,20 @@ namespace Vardirsoft.XApp.Visuals
     /// </summary>
     public class Glyph : INotifyPropertyChanged
     {
-        private object value;
-        private Color alternateColor;
+        private object _value;
+        private Color _alternateColor;
 
         public object Value
         {
-            get => value;
+            get => _value;
             set
             {
-                if (this.value == value)
+                if (_value == value)
                     return;
 
                 if (Validate(value))
                 {
-                    this.value = value;
+                    _value = value;
                     OnPropertyChanged(nameof(Value));
                 }
             }
@@ -36,13 +36,13 @@ namespace Vardirsoft.XApp.Visuals
         public GlyphKind Kind { get; }
         public Color AlternateColor
         {
-            get => alternateColor;
+            get => _alternateColor;
             set
             {
-                if (value == alternateColor)
+                if (value == _alternateColor)
                     return;
 
-                alternateColor = value;
+                _alternateColor = value;
                 OnPropertyChanged(nameof(AlternateColor));
             }
         }
@@ -53,17 +53,17 @@ namespace Vardirsoft.XApp.Visuals
         {
             AlternateColor = Color.White;
         }
-        public Glyph(string fontAwesomeIcon) : base()
+        public Glyph(string fontAwesomeIcon)
         {
             Kind = GlyphKind.FontAwesome;
             Value = fontAwesomeIcon;
         }
-        public Glyph(char unicodeSymbol) : base()
+        public Glyph(char unicodeSymbol)
         {
             Kind = GlyphKind.UnicodeSymbol;
             Value = unicodeSymbol;
         }
-        public Glyph(object value, GlyphKind kind = GlyphKind.ImagePath) : base()
+        public Glyph(object value, GlyphKind kind = GlyphKind.ImagePath)
         {
             Kind = kind;
             Value = value;
@@ -72,7 +72,7 @@ namespace Vardirsoft.XApp.Visuals
         public static Glyph From(string format)
         {
             Glyph glyph = null;
-            if (format == null)
+            if (format is null)
                 return null;
 
             if (format.Length > 4 && format.StartsWith("@fa-")) // @fa-f07c:0000ff -- blue folder icon
@@ -111,10 +111,7 @@ namespace Vardirsoft.XApp.Visuals
             return glyph;
         }
 
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
         private bool Validate(object value)
         {

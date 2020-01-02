@@ -2,8 +2,6 @@
 using System.Linq;
 using System.Collections.Generic;
 
-using Vardirsoft.Shared.Helpers;
-
 using Vardirsoft.XApp.IoC;
 using Vardirsoft.XApp.Logging;
 using Vardirsoft.XApp.Components;
@@ -13,23 +11,18 @@ namespace Vardirsoft.XApp.Extensibility
 {
     public abstract class AppExtension : ApplicationComponent, IDisposable
     {
-        private readonly List<Module> modules;
+        private readonly List<Module> _modules;
 
-        /// <summary>
-        /// A flag to indicate whether the extension is enabled to load
-        /// </summary>
         public bool IsEnabled { get; }
-        /// <summary>
-        /// A flag to indicate whether the extension was initialized
-        /// </summary>
+        
         public bool IsInitialized { get; private set; }
         
-        public IEnumerable<Module> Modules => modules;
+        public IEnumerable<Module> Modules => _modules;
 
         public AppExtension(string id, bool isEnabled) : base(id)
         {
             IsEnabled = isEnabled;
-            modules = new List<Module>();
+            _modules = new List<Module>();
         }
 
         public void Initialize()
@@ -44,7 +37,7 @@ namespace Vardirsoft.XApp.Extensibility
 
                 RegisterModules();
 
-                if (modules.Count > 0)
+                if (_modules.Count > 0)
                 {   
                     logger.PushDebug(null, $"Extension {Id} :: modules loaded");
                 }
@@ -57,14 +50,14 @@ namespace Vardirsoft.XApp.Extensibility
         {
             if (IsInitialized)
             {
-                foreach (var module in modules)
+                foreach (var module in _modules)
                 {
                     //if (module.IsRunning)
                     //    module.Stop();
                     module.Unload();
                 }
 
-                modules.Clear();
+                _modules.Clear();
                 Dispose();
             }
         }
@@ -72,34 +65,28 @@ namespace Vardirsoft.XApp.Extensibility
         public T GetModule<T>(string id)
             where T: Module
         {
-            var module = modules.Find(m => m.Id == id);
-            if (module == null)
+            var module = _modules.Find(m => m.Id == id);
+            if (module is null)
                 return null;
                 
             return module as T;
         }
         public override string ToString() => $"EXTENSION [{GetType().Name}] :: {Id}";
 
-        /// <summary>
-        /// Registers the module in the internal extension storage
-        /// </summary>
-        /// <param name="module"></param>
-        /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="ArgumentException"></exception>
         protected void RegisterModule(Module module)
         {
-            if (module == null)
-                throw new ArgumentNullException("Module parameter can not be null");
+            if (module is null)
+                throw new ArgumentNullException(nameof(module), "Module parameter can not be null");
 
-            if (modules.Any(m => m.Id == module.Id))
+            if (_modules.Any(m => m.Id == module.Id))
                 throw new ArgumentException("Duplicate module ID");
 
             var validation = Kernel.VerifyModule(module);
-            if (validation.HasValue())
-                throw new ArgumentException($"The given module [{module.Id}] is invalid: {validation}");
+            if (validation is OperationResult.Failure failure)
+                throw new ArgumentException($"The given module [{module.Id}] is invalid: {failure.Message}");
 
             module.Extension = this;
-            modules.Add(module);
+            _modules.Add(module);
             module.Initialize();
 
             IoCContainer.Resolve<ILogger>().PushDebug(null, $"Extension {Id} :: module {module.Id} registered");
@@ -110,7 +97,7 @@ namespace Vardirsoft.XApp.Extensibility
 
         public void Dispose()
         {
-            foreach (var module in modules)
+            foreach (var module in _modules)
             {
                 //if (module.IsRunning)
                 //    module.Stop();
@@ -118,7 +105,7 @@ namespace Vardirsoft.XApp.Extensibility
                 module.Dispose();
             }
             
-            modules.Clear();
+            _modules.Clear();
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Vardirsoft.XApp.Logging
+﻿using System.Diagnostics;
+
+namespace Vardirsoft.XApp.Logging
 {
     /// <summary>
     /// Local logging helpers class
@@ -11,12 +13,7 @@
         /// <param name="levels"></param>
         /// <param name="level"></param>
         /// <returns></returns>
-        public static bool Has(this LoggingLevel levels, LoggingLevel level)
-        {
-            if ((levels & level) == level)
-                return true;
-                
-            return false;
-        }
+        [DebuggerStepThrough]
+        public static bool Has(this LoggingLevel levels, LoggingLevel level) => (levels & level) == level;
     }
 }

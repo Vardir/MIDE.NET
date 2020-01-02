@@ -7,15 +7,15 @@ namespace Vardirsoft.XApp.FileSystem
     /// </summary>
     public struct DirectoryItem
     {
-        public readonly string name;
-        public readonly string fullPath;
-        public readonly FSObjectClass itemClass;
+        public readonly string Name;
+        public readonly string FullPath;
+        public readonly FSObjectClass ItemClass;
 
         public DirectoryItem(string fullPath, FSObjectClass itemClass)
         {
-            this.fullPath = fullPath;
-            name = itemClass.IsDrive ? fullPath : IOHelper.GetFileFolderName(fullPath);
-            this.itemClass = itemClass;
+            FullPath = fullPath;
+            Name = itemClass.IsDrive ? fullPath : IOHelper.GetFileFolderName(fullPath);
+            ItemClass = itemClass;
         }
     }
 }

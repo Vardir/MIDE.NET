@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Diagnostics;
 
 using Vardirsoft.Shared.MVVM;
 using Vardirsoft.Shared.Helpers;
@@ -14,35 +15,44 @@ namespace Vardirsoft.XApp.Components
 {
     public class TreeView : LayoutComponent
     {
-        private bool multiselect;
-        private TreeViewItem selectedItem;
+        private bool _multiselect;
+        private TreeViewItem _selectedItem;
         
-        protected ObservableCollection<TreeViewItem> mItems;
+        protected readonly ObservableCollection<TreeViewItem> _items;
 
         public bool Multiselect
         {
-            get => multiselect;
-            set => SetWithNotify(ref multiselect, value);
+            [DebuggerStepThrough]
+            get => _multiselect;
+            
+            [DebuggerStepThrough]
+            set => SetWithNotify(ref _multiselect, value);
         }
+        
         public TreeViewItem SelectedItem
         {
-            get => selectedItem;
-            set => SetWithNotify(ref selectedItem, value, true);
+            [DebuggerStepThrough]
+            get => _selectedItem;
+            
+            [DebuggerStepThrough]
+            set => SetWithNotify(ref _selectedItem, value, true);
         }
+        
         public List<TreeViewItem> SelectedItems { get; }
+        
         public ReadOnlyObservableCollection<TreeViewItem> Items { get; }
 
         public TreeView(string id) : base(id)
         {
             SelectedItems = new List<TreeViewItem>();
-            mItems = new ObservableCollection<TreeViewItem>();
-            mItems.CollectionChanged += Items_CollectionChanged;
-            Items = new ReadOnlyObservableCollection<TreeViewItem>(mItems);
+            _items = new ObservableCollection<TreeViewItem>();
+            _items.CollectionChanged += Items_CollectionChanged;
+            Items = new ReadOnlyObservableCollection<TreeViewItem>(_items);
         }
 
         public void Clear()
         {
-            mItems.Clear();
+            _items.Clear();
             SelectedItem = null;
             SelectedItems.Clear();
         }
@@ -75,7 +85,7 @@ namespace Vardirsoft.XApp.Components
         }
         private void OnItemsAdded(IList list)
         {
-            if (list == null)
+            if (list is null)
                 return;
 
             foreach (var item in list)
@@ -88,7 +98,7 @@ namespace Vardirsoft.XApp.Components
         }
         private void OnItemsRemove(IList list)
         {
-            if (list == null)
+            if (list is null)
                 return;
 
             foreach (var item in list)
@@ -109,7 +119,7 @@ namespace Vardirsoft.XApp.Components
         {
             var item = sender as TreeViewItem;
 
-            if (item != null && item.ParentTree == this)
+            if (item.HasValue() && item.ParentTree == this)
             {
                 if (args.PropertyName == nameof(TreeViewItem.IsSelected))
                 {
@@ -127,17 +137,19 @@ namespace Vardirsoft.XApp.Components
 
     public abstract class TreeViewItem : BaseViewModel, ICloneable<TreeViewItem>
     {
-        private bool isExpanded;
-        private bool isSelected;
-        private string caption;
-        private string itemClass;
-        private Glyph glyph;
-        private ContextMenu contextMenu;
+        private bool _isExpanded;
+        private bool _isSelected;
+        private string _caption;
+        private string _itemClass;
+        private Glyph _glyph;
+        private ContextMenu _contextMenu;
 
         public abstract bool CanExpand { get; }
+        
         public virtual bool IsExpanded
         {
-            get => isExpanded;
+            [DebuggerStepThrough]
+            get => _isExpanded;
             set
             {
                 if (value)
@@ -145,39 +157,62 @@ namespace Vardirsoft.XApp.Components
                    Expand();
                 }
 
-                isExpanded = value;
+                _isExpanded = value;
             }
         }
+        
         public bool IsSelected
         {
-            get => isSelected;
-            set => SetWithNotify(ref isSelected, value);
+            [DebuggerStepThrough]
+            get => _isSelected;
+            
+            [DebuggerStepThrough]
+            set => SetWithNotify(ref _isSelected, value);
         }
+        
         /// <summary>
         /// Type of an item (e.g. 'drive', 'file' and 'directory' for file system objects)
         /// </summary>
         public string Caption
         {
-            get => caption;
-            set => SetWithNotify(ref caption, value, true);
+            [DebuggerStepThrough]
+            get => _caption;
+            
+            [DebuggerStepThrough]
+            set => SetWithNotify(ref _caption, value, true);
         }
+        
         public string ItemClass
         {
-            get => itemClass;
-            set => SetWithNotify(ref itemClass, value, true);
+            [DebuggerStepThrough]
+            get => _itemClass;
+            
+            [DebuggerStepThrough]
+            set => SetWithNotify(ref _itemClass, value, true);
         }
+        
         public Glyph ItemGlyph
         {
-            get => glyph;
-            set => SetWithNotify(ref glyph, value, true);
+            [DebuggerStepThrough]
+            get => _glyph;
+            
+            [DebuggerStepThrough]
+            set => SetWithNotify(ref _glyph, value, true);
         }
+        
         public TreeView ParentTree { get; set; }
+        
         public TreeViewItem Parent { get; set; }
+        
         public ContextMenu ContextMenu
         {
-            get => contextMenu;
-            set => SetWithNotify(ref contextMenu, value, true);
+            [DebuggerStepThrough]
+            get => _contextMenu;
+            
+            [DebuggerStepThrough]
+            set => SetWithNotify(ref _contextMenu, value, true);
         }
+        
         public ObservableCollection<TreeViewItem> Children { get; }
 
         public BaseCommand ExpandCommand { get; protected set; }
@@ -187,24 +222,27 @@ namespace Vardirsoft.XApp.Components
             Children = new ObservableCollection<TreeViewItem>();
         }
 
+        [DebuggerStepThrough]
         public override string ToString() => $"tree-view-item :: {Caption} [{ItemClass}]";
 
         public TreeViewItem Clone()
         {
             var clone = CloneInternal();
             clone.Children.AddRange(Children.Select(item => item.Clone()));
-            clone.caption = caption;
-            clone.itemClass = itemClass;
-            clone.glyph = glyph;
-            clone.contextMenu = contextMenu;
+            clone._caption = _caption;
+            clone._itemClass = _itemClass;
+            clone._glyph = _glyph;
+            clone._contextMenu = _contextMenu;
 
             return clone;
         }
+        
+        [DebuggerStepThrough]
         public TreeViewItem Clone(string _) => Clone();
 
         protected virtual void OnChildrenClearing()
         {
-            if (Children.Count != 0 && Children[0] != null)
+            if (Children.Count != 0 && Children[0].HasValue())
             {   
                 foreach (var child in Children)
                 {
@@ -226,7 +264,7 @@ namespace Vardirsoft.XApp.Components
         {
             if (CanExpand)
             {
-                //if (Children.Count > 0 && Children[0] != null)
+                //if (Children.Count > 0 && Children[0].HasValue())
                 //    return;
 
                 var childItems = GetChildItems();

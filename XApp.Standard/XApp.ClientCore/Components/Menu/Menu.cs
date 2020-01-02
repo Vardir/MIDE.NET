@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 using Vardirsoft.Shared.Helpers;
@@ -13,10 +14,11 @@ namespace Vardirsoft.XApp.Components
 
         public const string PATH_PATTERN = "^(" + ID_PATTERN_INL + ")(?:/(" + ID_PATTERN_INL + "))*$";
 
-        public int ItemsCount => items.Count;
-        public IEnumerable<MenuItem> Items => items;
+        public int ItemsCount { [DebuggerStepThrough] get => items.Count; }
+        
+        public IEnumerable<MenuItem> Items { [DebuggerStepThrough] get => items; }
 
-        public MenuItem this[string id] => items.FirstOrDefault(i => i.Id == id);
+        public MenuItem this[string id] { [DebuggerStepThrough] get => items.FirstOrDefault(i => i.Id == id); }
 
         public Menu(string id) : base(id)
         {
@@ -26,7 +28,7 @@ namespace Vardirsoft.XApp.Components
         /// <summary>
         /// Makes copy of items from source and adds them to destination
         /// </summary>
-        /// <param name="fdscheme"></param>
+        /// <param name="source"></param>
         public void MergeWith(Menu source)
         {
             foreach (var item in source.Items)
@@ -68,7 +70,7 @@ namespace Vardirsoft.XApp.Components
                 {
                     var (rootId, tail) = path.ExtractUntil(0, '/');
                     var root = this[rootId];
-                    if (root == null)
+                    if (root is null)
                     {
                         root = new MenuButton(rootId, 0);
                         items.Insert(item);
@@ -103,7 +105,8 @@ namespace Vardirsoft.XApp.Components
             {
                 var (rootId, tail) = path.ExtractUntil(0, '/');
                 var root = this[rootId];
-                if (root == null)
+                
+                if (root is null)
                     return false;
 
                 return GetItem(root, tail, false).HasValue();
@@ -111,7 +114,8 @@ namespace Vardirsoft.XApp.Components
 
             throw new FormatException("Path has invalid format");
         }
-        public bool Contains(string id) => items.FirstOrDefault(i => i.Id == id) != null;
+        
+        public bool Contains(string id) => items.FirstOrDefault(i => i.Id == id).HasValue();
 
         /// <summary>
         /// Searches recursively for the menu item with specified ID. Returns null if nothing found
@@ -154,14 +158,12 @@ namespace Vardirsoft.XApp.Components
             {
                 var (rootId, tail) = path.ExtractUntil(0, '/');
                 var root = this[rootId];
-                if (root == null)
+                if (root is null)
                     return null;
 
                 var item = GetItem(root, tail, false);
-                if (item == null)
-                    return null;
 
-                return item.GetAllItemsIDs();
+                return item?.GetAllItemsIDs();
             }
 
             throw new FormatException("Path has invalid format");
@@ -186,7 +188,7 @@ namespace Vardirsoft.XApp.Components
             {
                 var (rootId, tail) = path.ExtractUntil(0, '/');
                 var root = this[rootId];
-                if (root == null)
+                if (root is null)
                     return null;
 
                 var segment = tail;
@@ -194,7 +196,7 @@ namespace Vardirsoft.XApp.Components
                 {
                     var (elementId, tail2) = segment.ExtractUntil(0, '/');
                     var element = root[elementId];
-                    if (element == null)
+                    if (element is null)
                         return null;
 
                     root = element;
@@ -220,13 +222,13 @@ namespace Vardirsoft.XApp.Components
         }
         protected void RemoveChild_Impl(string id)
         {
-            int index = items.IndexWith(i => i.Id == id);
+            var index = items.IndexWith(i => i.Id == id);
             if (index > -1)
                 items.RemoveAt(index);
         }
         protected void RemoveChild_Impl(LayoutComponent component)
         {
-            int index = items.IndexWith(i => i == component);
+            var index = items.IndexWith(i => i == component);
             if (index > -1)
                 items.RemoveAt(index);
         }
@@ -249,16 +251,16 @@ namespace Vardirsoft.XApp.Components
                 return GetItem(root, tail, createIfNotExist);
 
             var item = root.Find(segment);
-            if (item == null && !createIfNotExist)
+            if (item is null && !createIfNotExist)
                 return null;
 
-            if (item == null)
+            if (item is null)
             {
                 item = new MenuButton(segment, 0);
                 root.Add(item, null);
             }
 
-            if (tail == null)
+            if (tail is null)
                 return item;
 
             return GetItem(item, tail, createIfNotExist);

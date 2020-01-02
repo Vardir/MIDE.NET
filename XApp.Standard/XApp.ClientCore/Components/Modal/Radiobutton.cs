@@ -1,4 +1,6 @@
-﻿namespace Vardirsoft.XApp.Components
+﻿using Vardirsoft.Shared.Helpers;
+
+namespace Vardirsoft.XApp.Components
 {
     public class RadioButton : CheckBox
     {
@@ -8,7 +10,7 @@
 
         protected override void OnCheckedChanged()
         {
-            if (IsChecked && Group != null)
+            if (IsChecked && Group.HasValue())
             {
                 Group.SetButton(this);
             }

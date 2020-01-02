@@ -1,4 +1,6 @@
-﻿namespace Vardirsoft.XApp.Components
+﻿using System.Diagnostics;
+
+namespace Vardirsoft.XApp.Components
 {
     public abstract class TextComponent : LayoutComponent
     {
@@ -6,7 +8,10 @@
 
         public virtual string Text
         {
+            [DebuggerStepThrough]
             get => text;
+            
+            [DebuggerStepThrough]
             set => SetWithNotify(ref text, value, false);
         }
 

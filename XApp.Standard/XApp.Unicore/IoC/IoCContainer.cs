@@ -1,68 +1,77 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Vardirsoft.XApp.IoC
 {
     public static class IoCContainer
     {        
-        private static Dictionary<Type, Shelf> shelves;
+        private static readonly Dictionary<Type, Shelf> Shelves;
         
         static IoCContainer()
         {
-            shelves = new Dictionary<Type, Shelf>();
+            Shelves = new Dictionary<Type, Shelf>();
         }
 
         public static void Store(object instance)
         {
             var type = instance.GetType();
 
-            if (shelves.ContainsKey(type))
+            if (Shelves.ContainsKey(type))
                 throw new NotImplementedException("Storing multiple instances per one shelf is not implemented yet");
 
-            shelves.Add(type, new Shelf(() => instance, CreationMode.CreateOnceOnRegister));
+            Shelves.Add(type, new Shelf(() => instance, CreationMode.CreateOnceOnRegister));
         }
+        
+        [DebuggerStepThrough]
         public static void Store<TKey, TInstance>(TInstance instance) => Store(typeof(TKey), instance);
+        
         public static void Store(Type key, object instance)
         {
-            if (shelves.ContainsKey(key))
+            if (Shelves.ContainsKey(key))
                 throw new NotImplementedException("Storing multiple instances per one shelf is not implemented yet");
 
-            shelves.Add(key, new Shelf(() => instance, CreationMode.CreateOnceOnRegister));
+            Shelves.Add(key, new Shelf(() => instance, CreationMode.CreateOnceOnRegister));
         }
-        public static void Registrate<TKey, TInstance>(CreationMode creationMode = CreationMode.CreateOnceOnExctraction)
+        
+        public static void Register<TKey, TInstance>(CreationMode creationMode = CreationMode.CreateOnceOnExctraction)
             where TInstance: new()
         {
             var keyType = typeof(TKey);
             var instanceType = typeof(TInstance);
 
-            Registrate(keyType, instanceType, creationMode);
+            Register(keyType, instanceType, creationMode);
         }
-        public static void Registrate<TKey, TInstance>(Func<object> builder,
-                                                CreationMode creationMode = CreationMode.CreateOnceOnExctraction)
+        
+        public static void Register<TKey>(Func<object> builder, CreationMode creationMode = CreationMode.CreateOnceOnExctraction)
         {
             var keyType = typeof(TKey);
 
-            Registrate(keyType, builder, creationMode);
+            Register(keyType, builder, creationMode);
         }
-        public static void Registrate(Type keyType, Type instanceType,
-                               CreationMode creationMode = CreationMode.CreateOnceOnExctraction)
+        
+        public static void Register(Type keyType, Type instanceType, CreationMode creationMode = CreationMode.CreateOnceOnExctraction)
         {
-            if (shelves.ContainsKey(keyType))
+            if (Shelves.ContainsKey(keyType))
                 throw new NotImplementedException("Storing multiple instances per one shelf is not implemented yet");
 
-            shelves.Add(keyType, new Shelf(() => Activator.CreateInstance(instanceType), creationMode));
+            Shelves.Add(keyType, new Shelf(() => Activator.CreateInstance(instanceType), creationMode));
         }
-        public static void Registrate(Type key, Func<object> builder,
-                               CreationMode creationMode = CreationMode.CreateOnceOnExctraction)
+        
+        public static void Register(Type key, Func<object> builder, CreationMode creationMode = CreationMode.CreateOnceOnExctraction)
         {
-            if (shelves.ContainsKey(key))
+            if (Shelves.ContainsKey(key))
                 throw new NotImplementedException("Storing multiple instances per one shelf is not implemented yet");
 
-            shelves.Add(key, new Shelf(builder, creationMode));
+            Shelves.Add(key, new Shelf(builder, creationMode));
         }
 
+        [DebuggerStepThrough]
         public static TKey Resolve<TKey>(bool throwIfCantCast = false, bool throwIfNotFound = false) => Extract<TKey, TKey>(throwIfCantCast, throwIfNotFound);
+        
+        [DebuggerStepThrough]
         public static object Extract<TKey>(bool throwIfNotFound = false) => Extract(typeof(TKey), throwIfNotFound);
+        
         public static TInstance Extract<TKey, TInstance>(bool throwIfCantCast = false, bool throwIfNotFound = false)
         {
             var result = Extract(typeof(TKey), throwIfNotFound);
@@ -78,11 +87,12 @@ namespace Vardirsoft.XApp.IoC
 
             return default;
         }
+        
         public static object Extract(Type type, bool throwIfNotFound = false)
         {
             try
             {
-                return shelves[type].Extract();
+                return Shelves[type].Extract();
             }
             catch
             {
@@ -96,31 +106,27 @@ namespace Vardirsoft.XApp.IoC
 
         private class Shelf
         {
-            private bool onceCreated;
-            private object instance;
-            private Func<object> builder;
-            private readonly CreationMode creationMode;
+            private object _instance;
+            private readonly Func<object> _builder;
+            private readonly CreationMode _creationMode;
 
             public Shelf(Func<object> builder, CreationMode mode)
             {
-                this.creationMode = mode;
-                this.builder = builder;
+                _creationMode = mode;
+                _builder = builder;
 
                 if (mode == CreationMode.CreateOnceOnRegister)
                 {
-                    instance = builder();
+                    _instance = builder();
                 }
             }
 
             public object Extract()
             {
-                if (instance == null && creationMode == CreationMode.CreateOnceOnExctraction)
-                    return (instance = builder());
+                if (_instance is null && _creationMode == CreationMode.CreateOnceOnExctraction)
+                    return _instance = _builder();
                     
-                if (creationMode == CreationMode.CreatePerCall)
-                    return builder();
-
-                return instance;
+                return _creationMode == CreationMode.CreatePerCall ? _builder() : _instance;
             }
         }
     }

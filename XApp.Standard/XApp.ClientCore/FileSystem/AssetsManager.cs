@@ -8,21 +8,17 @@ using Vardirsoft.XApp.IoC;
 using Vardirsoft.XApp.API;
 using Vardirsoft.XApp.Visuals;
 using Vardirsoft.XApp.Logging;
-using Vardirsoft.XApp.Application;
 using Vardirsoft.XApp.Application.Configuration;
 
 namespace Vardirsoft.XApp.FileSystem
 {
     public class AssetsManager
     {
-        private AppKernel appKernel;
-
         public GlyphPool GlyphPool { get; }
 
         public AssetsManager()
         {
             GlyphPool = new GlyphPool();
-            appKernel = AppKernel.Instance;
         }
 
         public void LoadAssets(string source)
@@ -47,7 +43,7 @@ namespace Vardirsoft.XApp.FileSystem
         {
             var fileManager = IoCContainer.Resolve<IFileManager>();
             var configurations = IoCContainer.Resolve<ConfigurationManager>();
-            var path = buildPath((string)configurations["theme"]) ?? buildPath("default");
+            var path = buildPath(configurations["theme"]) ?? buildPath("default");
 
             if (path.HasValue())
             {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 using Newtonsoft.Json;
 
@@ -14,12 +15,13 @@ namespace Vardirsoft.XApp.FileSystem
 {
     public class ApplicationPaths
     {
-        private static ApplicationPaths instance;
-        public static ApplicationPaths Instance => instance ?? (instance = new ApplicationPaths());
+        private static ApplicationPaths _instance;
+        public static ApplicationPaths Instance { [DebuggerStepThrough] get => _instance ??= new ApplicationPaths(); }
 
-        private readonly Dictionary<string, string> paths;
+        private readonly Dictionary<string, string> _paths;
 
         #region Common Paths
+        
         public const string LOGS = "logs";
         public const string ROOT = "root";
         public const string TEMP = "temp";
@@ -30,22 +32,17 @@ namespace Vardirsoft.XApp.FileSystem
         public const string SETTINGS = "settings";
         public const string TEMPLATES = "templates";
         public const string EXTENSIONS = "extensions";
+        
         #endregion
 
         public string this[string pathId]
         {
-            get
-            {
-                if (paths.TryGetValue(pathId, out string path))
-                    return path;
-
-                return null;
-            }
+            [DebuggerStepThrough] get => _paths.TryGetValue(pathId, out var path) ? path : null;
         }
 
         private ApplicationPaths()
         {
-            paths = new Dictionary<string, string>
+            _paths = new Dictionary<string, string>
             {
                 [LOGS] = "root\\",
                 [ROOT] = "root\\logs\\",
@@ -75,13 +72,13 @@ namespace Vardirsoft.XApp.FileSystem
             if (string.IsNullOrEmpty(value))
                 throw new ArgumentException("Path Value can not be null or empty", nameof(value));
 
-            if (paths.ContainsKey(pathId))
+            if (_paths.ContainsKey(pathId))
             {
-                paths[pathId] = value;
+                _paths[pathId] = value;
             }
             else
             {
-                paths.Add(pathId, value);
+                _paths.Add(pathId, value);
             }
         }
 
@@ -96,7 +93,7 @@ namespace Vardirsoft.XApp.FileSystem
             if (fileManager.FileExists(path))
             {
                 var fileData = fileManager.TryRead(path);
-                if (fileData == null)
+                if (fileData is null)
                     return;
                 
                 ApplicationPathItem[] pathItems = null;
@@ -119,7 +116,7 @@ namespace Vardirsoft.XApp.FileSystem
         /// <param name="collection"></param>
         public void LoadFrom(IEnumerable<ApplicationPathItem> collection)
         {
-            if (collection == null)
+            if (collection is null)
                 return;
 
             var fileManager = IoCContainer.Resolve<IFileManager>();
@@ -151,10 +148,8 @@ namespace Vardirsoft.XApp.FileSystem
         public string GetFilePath(string pathId, string file)
         {
             var folder = this[pathId];
-            if (folder.HasValue())
-                return IoCContainer.Resolve<IFileManager>().Combine(folder, file);            
-
-            return null;
+            
+            return folder.HasValue() ? IoCContainer.Resolve<IFileManager>().Combine(folder, file) : null;
         }
 
         /// <summary>
@@ -165,8 +160,8 @@ namespace Vardirsoft.XApp.FileSystem
         /// <returns></returns>
         public string GetOrAddPath(string key, string defaultValue = null)
         {
-            if (paths.ContainsKey(key))
-                return paths[key];
+            if (_paths.ContainsKey(key))
+                return _paths[key];
             
             AddOrUpdate(key, defaultValue);
             

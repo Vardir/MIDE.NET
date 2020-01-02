@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 using Newtonsoft.Json;
 
@@ -14,59 +15,53 @@ namespace Vardirsoft.XApp.Application.Configuration
 {
     public class ConfigurationManager
     {
-        private readonly Dictionary<string, Config> configs;
+        private readonly Dictionary<string, Config> _configs;
 
-        public string this[string key]
-        {
-            get
-            {
-                if (configs.TryGetValue(key, out Config config))
-                    return config.Value;
-
-                return null;
-            }
-        }
+        public string this[string key] { [DebuggerStepThrough] get => _configs.TryGetValue(key, out Config config) ? config.Value : null; }
 
         public ConfigurationManager()
         {
-            configs = new Dictionary<string, Config>();
+            _configs = new Dictionary<string, Config>();
         }
 
         public void AddOrUpdate(Config config)
         {
-            if (configs.ContainsKey(config.Key))
+            if (_configs.ContainsKey(config.Key))
             {
-                configs[config.Key] = config;
+                _configs[config.Key] = config;
             }
             else
             {
-                configs.Add(config.Key, config);
+                _configs.Add(config.Key, config);
             }
         }
+        
         public void AddRange(IEnumerable<Config> sequence)
         {
             foreach (var config in sequence)
             {
-                if (configs.ContainsKey(config.Key))
+                if (_configs.ContainsKey(config.Key))
                     throw new InvalidOperationException($"Duplicate configuration key entry on '{config.Key}'");
 
-                configs.Add(config.Key, config);
+                _configs.Add(config.Key, config);
             }
         }
+        
         public void AddOrUpdate(IEnumerable<Config> sequence)
         {
             foreach (var config in sequence)
             {
-                if (configs.ContainsKey(config.Key))
+                if (_configs.ContainsKey(config.Key))
                 {
-                    configs[config.Key] = config;
+                    _configs[config.Key] = config;
                 }
                 else
                 {
-                    configs.Add(config.Key, config);
+                    _configs.Add(config.Key, config);
                 }
             }
         }
+        
         public void LoadFrom(string path)
         {
             var fileManager = IoCContainer.Resolve<IFileManager>();
@@ -76,7 +71,7 @@ namespace Vardirsoft.XApp.Application.Configuration
                 var fileData = fileManager.TryRead(path);
                 if (fileData.HasValue())
                 {
-                    Dictionary<string, string> configItems = null;
+                    Dictionary<string, string> configItems;
                     try
                     {
                         configItems = JsonConvert.DeserializeObject<Dictionary<string, string>>(fileData);
@@ -92,9 +87,10 @@ namespace Vardirsoft.XApp.Application.Configuration
                 }
             }
         }
+        
         public void SaveTo(string path)
         {
-            var selected = configs.Select(kvp => kvp.Value)
+            var selected = _configs.Select(kvp => kvp.Value)
                                   .Where(config => !config.Temporary)
                                   .ToDictionary(config => config.Key, config => config.Value);
             var data = JsonConvert.SerializeObject(selected, Formatting.Indented);
@@ -102,6 +98,7 @@ namespace Vardirsoft.XApp.Application.Configuration
             IoCContainer.Resolve<IFileManager>().Write(data, path);
         }
 
-        public bool Contains(string key) => configs.ContainsKey(key);
+        [DebuggerStepThrough]
+        public bool Contains(string key) => _configs.ContainsKey(key);
     }
 }

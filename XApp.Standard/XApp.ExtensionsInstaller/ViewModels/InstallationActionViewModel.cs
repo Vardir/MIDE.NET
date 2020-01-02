@@ -7,20 +7,20 @@ namespace Vardirsoft.XApp.ExtensionsInstaller.ViewModels
 {
     public class InstallationActionViewModel : BaseViewModel
     {
-        private InstallationProgress progress;
-        private string progressMessage;
+        private InstallationProgress _progress;
+        private string _progressMessage;
 
         public bool AutoEnable { get; set; }
         public InstallationProgress Progress
         {
-            get => progress;
-            set => SetWithNotify(ref progress, value);
+            get => _progress;
+            set => SetWithNotify(ref _progress, value);
         }
         public InstallationMode InstallationMode { get; }
         public string ProgressMessage
         {
-            get => progressMessage;
-            set => SetWithNotify(ref progressMessage, IoCContainer.Resolve<ILocalizationProvider>()[value], false);
+            get => _progressMessage;
+            set => SetWithNotify(ref _progressMessage, IoCContainer.Resolve<ILocalizationProvider>()[value], false);
         }
         public string ExtensionId { get; }
         public string ExtensionSource { get; }

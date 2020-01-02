@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Runtime.CompilerServices;
@@ -18,9 +19,9 @@ namespace Vardirsoft.XApp.Components
     /// </summary>
     public abstract class ApplicationComponent : BaseViewModel, IEventListener
     {
-        private static readonly TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+        private static readonly TextInfo TextInfo = new CultureInfo("en-US", false).TextInfo;
 
-        protected static readonly ILocalizationProvider localization = IoCContainer.Resolve<ILocalizationProvider>();
+        protected static readonly ILocalizationProvider Localization = IoCContainer.Resolve<ILocalizationProvider>();
 
         /// <summary>
         /// The RegEx pattern that is applied to ID of all the components
@@ -70,13 +71,17 @@ namespace Vardirsoft.XApp.Components
         /// <para>The ID 'hello-world' transforms into 'Hello World'</para>
         /// </summary>
         /// <returns></returns>
-        public string FormatId() => textInfo.ToTitleCase(Id.Replace('-', ' '));
+        [DebuggerStepThrough]
+        public string FormatId() => TextInfo.ToTitleCase(Id.Replace('-', ' '));
 
         /// <summary>
         /// Gets string specification representation of the component in the following format: [type] ID:[id]
         /// </summary>
         /// <returns></returns>
+        [DebuggerStepThrough]
         public string GetSpec() => $"[{GetType().Name}] ID:{Id}";
+        
+        [DebuggerStepThrough]
         public override string ToString() => GetSpec();
 
         /// <summary>
@@ -104,7 +109,6 @@ namespace Vardirsoft.XApp.Components
         {
             if (char.IsDigit(Id[Id.Length - 1]))
             {
-                var firstDigit = Id.Length - 1;
                 var hasDash = false;
                 var i = Id.Length - 1;
                 var number = 1;
@@ -136,7 +140,7 @@ namespace Vardirsoft.XApp.Components
 
         protected bool SetLocalizedAndNotify(string value, ref string field, [CallerMemberName] string propertyName = null)
         {
-            var localized = localization[value];
+            var localized = Localization[value];
             if (localized == field)
                 return false;
 

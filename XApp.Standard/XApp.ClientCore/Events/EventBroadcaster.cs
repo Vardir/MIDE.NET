@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 using Vardirsoft.Shared.Helpers;
 
@@ -8,14 +9,15 @@ namespace Vardirsoft.XApp.Application.Events
 {
     public class EventBroadcaster
     {
-        private readonly Dictionary<string, LinkedList<IEventListener>> groups;
+        private readonly Dictionary<string, LinkedList<IEventListener>> _groups;
 
         public bool WriteLog { get; set; }
+        
         public Logger Logger { get; }
 
         public EventBroadcaster()
         {
-            groups = new Dictionary<string, LinkedList<IEventListener>>();
+            _groups = new Dictionary<string, LinkedList<IEventListener>>();
             Logger = new Logger(LoggingLevel.INFO | LoggingLevel.WARN, useUtcTime: true);
         }
 
@@ -25,12 +27,11 @@ namespace Vardirsoft.XApp.Application.Events
             {
                 Logger.PushInfo($"{sender} sent message to <{group}>");
             }
-            if (groups.TryGetValue(group, out var listeners))
+            
+            if (_groups.TryGetValue(group, out var listeners))
             {
-                foreach (var listener in listeners)
-                {
-                    listener.Receive(sender, message);
-                }
+                listeners.ForEach(x => x.Receive(sender, message));
+
                 if (WriteLog)
                 {
                     Logger.PushInfo($"{listeners.Count} listeners received last message");
@@ -44,41 +45,37 @@ namespace Vardirsoft.XApp.Application.Events
                 }
             }
         }
+        
         public void AddListener(IEventListener listener, string group)
         {
-            if (listener == null)
+            if (listener is null)
             {
                 Logger.PushWarning("Attempt to add empty listener");
 
                 return;
             }
-            if (group == null)
+            if (group is null)
             {
                 Logger.PushWarning("Attempt to add listener to group");
 
                 return;
             }
 
-            if (!groups.ContainsKey(group))
+            if (!_groups.ContainsKey(group))
             {    
-                groups.Add(group, new LinkedList<IEventListener>());
+                _groups.Add(group, new LinkedList<IEventListener>());
             }
 
-            groups[group].AddLast(listener);
+            _groups[group].AddLast(listener);
         }
+        
         public void RemoveListener(IEventListener listener)
         {
             if (listener.HasValue())
             {
-                foreach (var kvp in groups)
+                foreach (var kvp in _groups.Where(kvp => kvp.Value.Remove(listener)).Where(kvp => WriteLog))
                 {
-                    if (kvp.Value.Remove(listener))
-                    {
-                        if (WriteLog)
-                        {    
-                            Logger.PushInfo($"Listener {listener.Id} removed from <{kvp.Key}>");
-                        }
-                    }
+                    Logger.PushInfo($"Listener {listener.Id} removed from <{kvp.Key}>");
                 }
             }
             else
@@ -90,9 +87,9 @@ namespace Vardirsoft.XApp.Application.Events
         {
             if (listener.HasValue())
             {
-                if (group.HasValue() && groups.ContainsKey(group))
+                if (group.HasValue() && _groups.ContainsKey(group))
                 {
-                    if (groups[group].Remove(listener) && WriteLog)
+                    if (_groups[group].Remove(listener) && WriteLog)
                     {   
                         Logger.PushInfo($"Listener {listener.Id} removed from <{group}>");
                     }

@@ -30,7 +30,7 @@ namespace Vardirsoft.XApp.ExtensionsInstaller
             eventLogger.PushInfo($"Attempting to install extension '{id}' from '{repositoryPath}'");
 
             object packageInstaller = null;//GetInstallerManager(repositoryPath);
-            if (packageInstaller == null)
+            if (packageInstaller is null)
             {
                 action.SetProgress(InstallationProgress.Error, "(ext-installer:progr-error-repo-notfound)");
 
@@ -38,7 +38,7 @@ namespace Vardirsoft.XApp.ExtensionsInstaller
             }
 
             object package = null;//packageInstaller.SourceRepository.FindPackage(id);
-            if (package == null)
+            if (package is null)
             {
                 action.SetProgress(InstallationProgress.Error, "(ext-installer:progr-error-ext-notfound)");
 
@@ -81,7 +81,7 @@ namespace Vardirsoft.XApp.ExtensionsInstaller
         //    if (packManagers.TryGetValue(path, out PackageManager manager))
         //        return manager;
         //    var repository = PackageRepositoryFactory.Default.CreateRepository(path);
-        //    if (repository == null)
+        //    if (repository is null)
         //        return null;
         //    manager = new PackageManager(repository, ApplicationPaths.Instance[ApplicationPaths.EXTENSIONS]);
         //    packManagers.Add(path, manager);

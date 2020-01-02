@@ -46,9 +46,9 @@ namespace Vardirsoft.XApp.ExtensionPack
         private void WriteLocals(BinaryWriter writer, string lang, PackInfo info)
         {
             writer.Write(lang);
-            writer.Write(info.title);
-            writer.Write(info.description);
-            writer.Write(info.releaseNotes);
+            writer.Write(info.Title);
+            writer.Write(info.Description);
+            writer.Write(info.ReleaseNotes);
         }
     }
 }

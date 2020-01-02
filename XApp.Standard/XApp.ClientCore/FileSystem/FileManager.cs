@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.Serialization.Formatters.Binary;
 
 using Vardirsoft.Shared.Helpers;
@@ -43,6 +44,7 @@ namespace Vardirsoft.XApp.FileSystem
         /// </summary>
         /// <param name="data"></param>
         /// <param name="path"></param>
+        [DebuggerStepThrough]
         public void Write(string data, string path) => File.WriteAllText(path, data);
 
         /// <summary>
@@ -50,15 +52,16 @@ namespace Vardirsoft.XApp.FileSystem
         /// </summary>
         /// <param name="data"></param>
         /// <param name="path"></param>
+        [DebuggerStepThrough]
         public void Write(string[] data, string path) => File.WriteAllLines(path, data);
+        
         public void Write(IEnumerable<string> data, string path)
         {
-            using (var writer = new StreamWriter(File.OpenWrite(path)))
+            using var writer = new StreamWriter(File.OpenWrite(path));
+            
+            foreach (var line in data)
             {
-                foreach (var line in data)
-                {
-                    writer.WriteLine(line);
-                }
+                writer.WriteLine(line);
             }
         }
 
@@ -79,13 +82,13 @@ namespace Vardirsoft.XApp.FileSystem
                 var dir = new DirectoryInfo(source);
                 foreach (var file in  dir.GetFiles())
                 {
-                    string temppath = Path.Combine(destination, file.Name);
+                    var temppath = Path.Combine(destination, file.Name);
                     file.CopyTo(temppath, false);
                 }
 
                 foreach (var subdir in dir.GetDirectories())
                 {
-                    string temppath = Path.Combine(destination, subdir.Name);
+                    var temppath = Path.Combine(destination, subdir.Name);
                     Copy(subdir.FullName, temppath);
                 }
             }
@@ -98,28 +101,31 @@ namespace Vardirsoft.XApp.FileSystem
         /// <param name="path"></param>
         public void Serialize(object data, string path)
         {
-            if (data == null)
-                File.WriteAllText(path, "<null>");
-                
-            var type = data.GetType();
-            if (type.HasAttribute<SerializableAttribute>())
+            if (data is null)
             {
-                var formatter = new BinaryFormatter();
-                try
+                File.WriteAllText(path, "<null>");
+            }
+            else
+            {
+                var type = data.GetType();
+                if (type.HasAttribute<SerializableAttribute>())
                 {
-                    using (var fs = new FileStream(path, FileMode.OpenOrCreate))
+                    var formatter = new BinaryFormatter();
+                    try
                     {
+                        using var fs = new FileStream(path, FileMode.OpenOrCreate);
+                        
                         formatter.Serialize(fs, data);
                     }
+                    catch (Exception ex)
+                    {
+                        IoCContainer.Resolve<ILogger>().PushError(ex, formatter, "Can not serialize data");
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    IoCContainer.Resolve<ILogger>().PushError(ex, formatter, "Can not serialize data");
+                    File.WriteAllText(path, data.ToString());
                 }
-            }
-            else             
-            {
-                File.WriteAllText(path, data.ToString());
             }
         }
 
@@ -135,14 +141,8 @@ namespace Vardirsoft.XApp.FileSystem
                 var dirs = dir.GetDirectories();
                 var files = dir.GetFiles();
 
-                foreach (var file in files)
-                {
-                    Delete(file.FullName);
-                }
-                foreach (var subdir in dirs)
-                {
-                    DeleteDirectory(subdir.FullName);
-                }
+                files.ForEach(x => Delete(x.FullName));
+                dirs.ForEach(x => DeleteDirectory(x.FullName));
             }
         }
 
@@ -156,25 +156,10 @@ namespace Vardirsoft.XApp.FileSystem
         /// <returns></returns>
         public bool Exists(string path) => File.Exists(path) || Directory.Exists(path);
 
-        /// <summary>
-        /// Verifies if the given path is existing file
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
         public bool FileExists(string path) => File.Exists(path);
 
-        /// <summary>
-        /// Verifies if the given path is existing directory
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
         public bool DirectoryExists(string path) => Directory.Exists(path);
 
-        /// <summary>
-        /// Verifies if the given path is file
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
         public bool IsFile(string path) => Path.HasExtension(path);
 
         /// <summary>
@@ -182,46 +167,23 @@ namespace Vardirsoft.XApp.FileSystem
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public byte[] TryReadBytes(string path)
-        {
-            if (File.Exists(path))
-                return File.ReadAllBytes(path);
+        public byte[] TryReadBytes(string path) => File.Exists(path) ? File.ReadAllBytes(path) : null;
 
-            return null;
-        }
-        public string GetFileParent(string file)
-        {
-            if (File.Exists(file))
-                return Path.GetDirectoryName(file);
-
-            return null;
-        }
+        public string GetFileParent(string file) => File.Exists(file) ? Path.GetDirectoryName(file) : null;
 
         /// <summary>
         /// Tries to load data from the given file and returns null if file does not exist
         /// </summary>
         /// <param name="filePath"></param>
         /// <returns></returns>
-        public string TryRead(string filePath)
-        {
-            if (File.Exists(filePath))
-                return File.ReadAllText(filePath);
-
-            return null;
-        }
+        public string TryRead(string filePath) => File.Exists(filePath) ? File.ReadAllText(filePath) : null;
 
         /// <summary>
         /// Tries to load data from the given file and returns null if file does not exist
         /// </summary>
         /// <param name="filePath"></param>
         /// <returns></returns>
-        public string[] TryReadLines(string filePath)
-        {
-            if (File.Exists(filePath))
-                return File.ReadAllLines(filePath);
-
-            return null;
-        }
+        public string[] TryReadLines(string filePath) => File.Exists(filePath) ? File.ReadAllLines(filePath) : null;
 
         /// <summary>
         /// Extracts the exact file or directory name from the given path
@@ -234,12 +196,8 @@ namespace Vardirsoft.XApp.FileSystem
             {
                 return Path.GetFileName(path);
             }
-            else if (Directory.Exists(path))
-            {
-                return Path.GetDirectoryName(path);
-            }
-            
-            return null;
+
+            return Directory.Exists(path) ? Path.GetDirectoryName(path) : null;
         }
 
         /// <summary>
@@ -381,10 +339,9 @@ namespace Vardirsoft.XApp.FileSystem
             var formatter = new BinaryFormatter();
             try
             {
-                using (var fs = new FileStream(path, FileMode.OpenOrCreate))
-                {
-                    return formatter.Deserialize(fs) as T;
-                }
+                using var fs = new FileStream(path, FileMode.OpenOrCreate);
+                
+                return formatter.Deserialize(fs) as T;
             }
             catch (Exception ex)
             {

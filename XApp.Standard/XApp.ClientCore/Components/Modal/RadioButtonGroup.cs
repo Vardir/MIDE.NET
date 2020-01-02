@@ -5,11 +5,11 @@ namespace Vardirsoft.XApp.Components
 {
     public class RadioButtonGroup : ApplicationComponent
     {
-        private readonly List<RadioButton> radioButtons;
+        private readonly List<RadioButton> _radioButtons;
 
         public RadioButtonGroup(string id) : base(id)
         {
-            radioButtons = new List<RadioButton>();
+            _radioButtons = new List<RadioButton>();
         }
 
         public void SetButton(RadioButton radiobutton)
@@ -17,9 +17,9 @@ namespace Vardirsoft.XApp.Components
             if (radiobutton.Group != this)
                 throw new ArgumentException("The given radio-button does not belong to the group");
             
-            for (int i = 0; i < radioButtons.Count; i++)
+            for (var i = 0; i < _radioButtons.Count; i++)
             {
-                if (radioButtons[i].Id != radiobutton.Id)
+                if (_radioButtons[i].Id != radiobutton.Id)
                 {
                     radiobutton.IsChecked = false;
                 }
@@ -31,7 +31,7 @@ namespace Vardirsoft.XApp.Components
             radioButton.Group = null;
             radioButton.IsChecked = false;
             radioButton.Group = this;
-            radioButtons.Add(radioButton);
+            _radioButtons.Add(radioButton);
         }
     }
 }

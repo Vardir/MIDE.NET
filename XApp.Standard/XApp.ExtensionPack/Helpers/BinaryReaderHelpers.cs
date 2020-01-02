@@ -20,7 +20,7 @@ namespace Vardirsoft.XApp.ExtensionPack.Helpers
             var count = reader.ReadInt32();
             var bytes = new byte[count];
 
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
                 bytes[i] = reader.ReadByte();
             }
@@ -37,7 +37,7 @@ namespace Vardirsoft.XApp.ExtensionPack.Helpers
             var count = reader.ReadInt32();
             var strings = new string[count];
 
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
                 strings[i] = reader.ReadString();
             }
@@ -57,7 +57,7 @@ namespace Vardirsoft.XApp.ExtensionPack.Helpers
             var count = reader.ReadInt32();
             var list = new List<T>(count);
 
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
                 list.Add(transform(reader.ReadString()));
             }

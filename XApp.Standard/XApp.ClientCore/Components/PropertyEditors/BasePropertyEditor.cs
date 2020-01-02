@@ -10,18 +10,18 @@ namespace Vardirsoft.XApp.Components.PropertyEditors
 {
     public abstract class BasePropertyEditor : LayoutComponent
     {
-        private bool hasErrors;
-        private string propName;
+        private bool _hasErrors;
+        private string _propName;
 
         public bool HasErrors
         {
-            get => hasErrors;
-            protected set => SetWithNotify(ref hasErrors, value);
+            get => _hasErrors;
+            protected set => SetWithNotify(ref _hasErrors, value);
         }
         public string PropertyName
         {
-            get => propName;
-            set => SetWithNotify(ref propName, value, true);
+            get => _propName;
+            set => SetWithNotify(ref _propName, value, true);
         }
 
         public BasePropertyEditor(string id) : base(id)
@@ -30,7 +30,7 @@ namespace Vardirsoft.XApp.Components.PropertyEditors
         }
 
         public abstract void AttachTo(object obj, string propertyName);
-        public abstract void AttachTo(INotifyPropertyChanged obj, string propertyName);
+        public abstract void AttachTo(INotifyPropertyChanged notifyPropertyChanged, string propertyName);
     }
 
     /// <summary>
@@ -39,26 +39,26 @@ namespace Vardirsoft.XApp.Components.PropertyEditors
     /// <typeparam name="T"></typeparam>
     public abstract class BasePropertyEditor<T> : BasePropertyEditor
     {
-        private bool isReadonly;
-        private object attachedObject;
-        private PropertyInfo property;
-        private readonly Type expectedValueType = typeof(T);
-        private INotifyPropertyChanged attachedNotifyObject;
+        private bool _isReadonly;
+        private object _attachedObject;
+        private PropertyInfo _property;
+        private readonly Type _expectedValueType = typeof(T);
+        private INotifyPropertyChanged _attachedNotifyObject;
 
         /// <summary>
         /// Indicates that editor does not support changing property value
         /// </summary>
         public bool IsReadonly
         {
-            get => isReadonly;
-            set => SetWithNotify(ref isReadonly, value);
+            get => _isReadonly;
+            set => SetWithNotify(ref _isReadonly, value);
         }
         /// <summary>
         /// Gets or sets value of attached object's property
         /// </summary>
         public virtual T Value
         {
-            get => (T)property.GetValue(attachedObject);
+            get => (T)_property.GetValue(_attachedObject);
             set
             {
                 if (IsReadonly)
@@ -74,7 +74,7 @@ namespace Vardirsoft.XApp.Components.PropertyEditors
                     return;
                 }
 
-                property.SetValue(attachedObject, value);
+                _property.SetValue(_attachedObject, value);
             }
         }
         /// <summary>
@@ -100,46 +100,47 @@ namespace Vardirsoft.XApp.Components.PropertyEditors
         /// <param name="propertyName"></param>
         public override void AttachTo(object obj, string propertyName)
         {
-            if (obj == null)
+            if (obj is null)
                 throw new ArgumentNullException(nameof(obj));
                 
-            if (propertyName == null)
+            if (propertyName is null)
                 throw new ArgumentNullException(nameof(propertyName));
 
-            attachedObject = obj;
-            attachedNotifyObject = null;
+            _attachedObject = obj;
+            _attachedNotifyObject = null;
             PropertyName = propertyName;
             
-            var type = attachedObject.GetType();
-            property = type.GetProperty(propertyName);
+            var type = _attachedObject.GetType();
+            _property = type.GetProperty(propertyName);
 
-            if (property == null)
+            if (_property is null)
                 throw new ArgumentException($"Can not find public property '{propertyName}' on type [{type}] with accessible get method");
 
-            if (!property.CanRead || !property.GetMethod.IsPublic)
+            if (!_property.CanRead || !_property.GetMethod.IsPublic)
                 throw new ArgumentException($"Can not attach editor to property without public 'get' method");
 
-            if (!property.PropertyType.Equals(expectedValueType))
-                throw new ArgumentException($"Can not attach editor of type [{expectedValueType}] to property of type [{property.PropertyType}]");
+            if (_property.PropertyType != _expectedValueType)
+                throw new ArgumentException($"Can not attach editor of type [{_expectedValueType}] to property of type [{_property.PropertyType}]");
 
-            if (!property.CanWrite || !property.SetMethod.IsPublic)
+            if (!_property.CanWrite || !_property.SetMethod.IsPublic)
                 IsReadonly = true;
         }
+        
         /// <summary>
         /// Attaches editor to any object that implements <seealso cref="INotifyPropertyChanged"/> interface
         /// </summary>
-        /// <param name="obj"></param>
+        /// <param name="notifyPropertyChanged"></param>
         /// <param name="propertyName"></param>
-        public override void AttachTo(INotifyPropertyChanged obj, string propertyName)
+        public override void AttachTo(INotifyPropertyChanged notifyPropertyChanged, string propertyName)
         {
-            AttachTo(obj, propertyName);
-            attachedNotifyObject = obj;            
-            attachedNotifyObject.PropertyChanged += AttachedNotifyObject_PropertyChanged;
+            AttachTo((object)notifyPropertyChanged, propertyName);
+            _attachedNotifyObject = notifyPropertyChanged;            
+            _attachedNotifyObject.PropertyChanged += AttachedNotifyObject_PropertyChanged;
         }
 
         protected override LayoutComponent CloneInternal(string id)
         {
-            var clone = Create(id, isReadonly);
+            var clone = Create(id, _isReadonly);
             clone.Validations.AddRange(Validations);
 
             return clone;

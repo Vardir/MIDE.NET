@@ -6,16 +6,20 @@ namespace Vardirsoft.XApp.FileSystem
 {
     public class DefaultExecutionProvider : IExecutionProvider
     {
-        public virtual void ExecuteExternalApplicationAsync(string path, string arguments,
-                                                            DataReceivedEventHandler outputHandler, DataReceivedEventHandler errorHandler)
+        public virtual void ExecuteExternalApplicationAsync(string path, string arguments, DataReceivedEventHandler outputHandler, DataReceivedEventHandler errorHandler)
         {
-            var process = new Process();
-            process.StartInfo.FileName = path;
-            process.StartInfo.Arguments = arguments;
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.RedirectStandardError = true;
-            process.StartInfo.CreateNoWindow = true;
+            var process = new Process 
+            {
+                StartInfo =
+                {
+                    FileName = path,
+                    Arguments = arguments,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true
+                }
+            };
 
             if (outputHandler.HasValue())
             {   
@@ -34,13 +38,18 @@ namespace Vardirsoft.XApp.FileSystem
 
         public virtual ExternalExecutionResult ExecuteExternalApplication(string path, string arguments)
         {
-            var process = new Process();
-            process.StartInfo.FileName = path;
-            process.StartInfo.Arguments = arguments;
-            process.StartInfo.CreateNoWindow = true;
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.RedirectStandardError = true;
-            process.StartInfo.RedirectStandardOutput = true;
+            var process = new Process 
+            {
+                StartInfo = 
+                {
+                    FileName = path,
+                    Arguments = arguments,
+                    CreateNoWindow = true,
+                    UseShellExecute = false,
+                    RedirectStandardError = true,
+                    RedirectStandardOutput = true
+                }
+            };
             process.Start();
 
             var output = process.StandardOutput.ReadToEnd();

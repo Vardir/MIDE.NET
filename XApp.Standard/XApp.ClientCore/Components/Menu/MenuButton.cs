@@ -23,9 +23,8 @@ namespace Vardirsoft.XApp.Components
 
         protected override MenuItem Create(string id, int ordinalIndex, string group)
         {
-            var clone = new MenuButton(id, ordinalIndex);
-            clone.PressCommand = PressCommand;
-            
+            var clone = new MenuButton(id, ordinalIndex) { PressCommand = PressCommand };
+
             return clone;
         }
     }

@@ -19,6 +19,7 @@ namespace Vardirsoft.XApp.API.Validations
         protected override void Validate(string propertyName, string value)
         {
             ClearErrors();
+            
             if (string.IsNullOrEmpty(value))
             {
                 if (!AllowNullOrEmpty)

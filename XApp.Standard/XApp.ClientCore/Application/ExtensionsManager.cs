@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -25,23 +26,25 @@ namespace Vardirsoft.XApp.Application
     public sealed class ExtensionsManager : ApplicationComponent, IDisposable
     {
         private bool _disposed;
-        private JsonSerializerSettings serializerSettings;
+        private JsonSerializerSettings _serializerSettings;
         //private IPackageRepository localRespository;
         //private DefaultPackagePathResolver localPathResolver;
-        private LinkedList<AppExtensionEntry> pendingRegister;
-        private Dictionary<string, AppExtensionEntry> registered;
+        private readonly LinkedList<AppExtensionEntry> _pendingRegister;
+        private Dictionary<string, AppExtensionEntry> _registered;
 
         /// <summary>
         /// A set of registered application extensions
         /// </summary>
-        public IEnumerable<AppExtensionEntry> Extensions => registered.Select(kvp => kvp.Value);
+        public IEnumerable<AppExtensionEntry> Extensions
+        {
+            [DebuggerStepThrough] get => _registered.Select(kvp => kvp.Value);
+        }
 
         public ExtensionsManager() : base("app-extension-manager")
         {
-            serializerSettings = new JsonSerializerSettings();
-            serializerSettings.Error = OnSerializationError;
-            pendingRegister = new LinkedList<AppExtensionEntry>();
-            registered = new Dictionary<string, AppExtensionEntry>();
+            _serializerSettings = new JsonSerializerSettings { Error = OnSerializationError };
+            _pendingRegister = new LinkedList<AppExtensionEntry>();
+            _registered = new Dictionary<string, AppExtensionEntry>();
         }
 
         /// <summary>
@@ -63,7 +66,7 @@ namespace Vardirsoft.XApp.Application
             //foreach (var pack in localRespository.GetPackages())
             //{
             //    string error = Validate(pack);
-            //    if (error != null)
+            //    if (error.HasValue())
             //    {
             //        appLogger.PushWarning($"Couldn't load extension '{pack.Id}': {error}");
             //        continue;
@@ -83,8 +86,8 @@ namespace Vardirsoft.XApp.Application
         //        var (name, part) = assembly.AssemblyName.ExtractUntil(1, ':');
         //        Version version = Version.Parse(part);
         //        string entry = ConfigurationManager.Instance[name] as string;
-        //        Version version2 = entry != null ? Version.Parse(entry) : null;
-        //        if (version2 == null)
+        //        Version version2 = entry.HasValue() ? Version.Parse(entry) : null;
+        //        if (version2 is null)
         //            return $"Application does not meet extension's requirements on '{name}' of {version} version";
         //        if (version2 < version)
         //            return $"Extension requires '{name}' of {version} version but got {version2}";
@@ -95,7 +98,7 @@ namespace Vardirsoft.XApp.Application
         public T GetExtension<T>(string id)
             where T : AppExtension
         {
-            if (registered.TryGetValue(id, out var entry))
+            if (_registered.TryGetValue(id, out var entry))
                 return entry.Extension as T;
 
             return null;
@@ -107,8 +110,8 @@ namespace Vardirsoft.XApp.Application
                 return;
                 
             UnloadExtensions();
-            serializerSettings = null;
-            registered = null;
+            _serializerSettings = null;
+            _registered = null;
             //localRespository = null;
             _disposed = true;
         }
@@ -122,35 +125,35 @@ namespace Vardirsoft.XApp.Application
             logger.PushDebug(null, "Unloading extensions");
 
             var fileManager = IoCContainer.Resolve<IFileManager>();
-            var enabled = registered.Select(kvp => kvp.Value)
+            var enabled = _registered.Select(kvp => kvp.Value)
                                     .Where(e => e.IsEnabled && !e.PendingUninstall)
                                     .Select(e => e.Id);
             var directory = ApplicationPaths.Instance[ApplicationPaths.EXTENSIONS];
 
             fileManager.Write(enabled, fileManager.Combine(directory, ".enabled"));
-            foreach (var kvp in registered)
+            foreach (var kvp in _registered)
             {
                 kvp.Value.Extension.Unload();
             }
 
-            registered.Clear();
+            _registered.Clear();
 
             logger.PushDebug(null, "Extensions unloaded");
         }
         private void RegisterExtensions()
         {
-            var node = pendingRegister.First;
+            var node = _pendingRegister.First;
             while (node.HasValue())
             {
                 var entry = node.Value;
                 var next = node.Next;
 
-                pendingRegister.Remove(node);
+                _pendingRegister.Remove(node);
 
                 var resolved = true;
                 foreach (var dependency in entry.Dependencies)
                 {
-                    if (registered.TryGetValue(dependency, out var parent))
+                    if (_registered.TryGetValue(dependency, out var parent))
                     {
                         parent.AddDependent(entry.Id);
                         
@@ -161,7 +164,7 @@ namespace Vardirsoft.XApp.Application
                     }
 
                     resolved = false;
-                    pendingRegister.AddLast(node);
+                    _pendingRegister.AddLast(node);
 
                     break;
                 }
@@ -172,12 +175,12 @@ namespace Vardirsoft.XApp.Application
                     RegisterExtension(entry);
             }
 
-            foreach (var entry in pendingRegister)
+            foreach (var entry in _pendingRegister)
             {
                 IoCContainer.Resolve<ILogger>().PushWarning($"Couldn't register extension '{entry.Id}' because one of it dependencies wasn't loaded");
             }
 
-            pendingRegister.Clear();
+            _pendingRegister.Clear();
         }
         private void RegisterExtension(AppExtensionEntry entry)
         {
@@ -186,10 +189,10 @@ namespace Vardirsoft.XApp.Application
 
             try
             {
-                if (entry == null)
+                if (entry is null)
                     throw new ArgumentNullException("Extension parameter can not be null");
 
-                if (registered.ContainsKey(entry.Id))
+                if (_registered.ContainsKey(entry.Id))
                     throw new ArgumentException("Duplicate extension ID");
 
                 LoadExtension(entry);
@@ -201,7 +204,7 @@ namespace Vardirsoft.XApp.Application
             }
 
             entry.Extension.Initialize();
-            registered.Add(entry.Id, entry);
+            _registered.Add(entry.Id, entry);
             logger.PushDebug(null, $"Extension '{entry.Id}' registered");
         }
         private void LoadExtension(AppExtensionEntry entry)
@@ -214,9 +217,9 @@ namespace Vardirsoft.XApp.Application
             {
                 var assembly = Assembly.LoadFrom(file);
                 var types = assembly.GetTypes();
-                for (int i = 0; i < types.Length; i++)
+                for (var i = 0; i < types.Length; i++)
                 {
-                    bool isExtension = types[i].IsSubclassOf(typeof(AppExtension));
+                    var isExtension = types[i].IsSubclassOf(typeof(AppExtension));
                     if (isExtension)
                     {
                         var instance = Activator.CreateInstance(types[i], ToSafeId(entry.Id), entry.IsEnabled) as AppExtension;
@@ -224,7 +227,7 @@ namespace Vardirsoft.XApp.Application
                     }
                 }
 
-                if (entry.Extension == null)
+                if (entry.Extension is null)
                     throw new EntryPointNotFoundException("Extension kernel library does not have suitable extension definition");
 
                 file = fileManager.Combine(entry.Origin, "lib", configurationManager["platform"], $"{entry.Id}.UI.dll");
@@ -232,7 +235,7 @@ namespace Vardirsoft.XApp.Application
                     IoCContainer.Resolve<UIManager>().RegisterUIExtension(file);
 
                 file = fileManager.Combine(entry.Origin, "assets", "lang", $"{configurationManager["lang"]}.json");
-                localization.LoadFrom(file);
+                Localization.LoadFrom(file);
             }
             
             throw new DllNotFoundException("Extension does not have a kernel library");
@@ -247,7 +250,7 @@ namespace Vardirsoft.XApp.Application
         //private string Validate(IPackage package)
         //{
         //    string error = VerifyPackageFrameworkDependencies(package);
-        //    if (error != null)
+        //    if (error.HasValue())
         //        return error;
         //    return null;
         //}
@@ -255,48 +258,64 @@ namespace Vardirsoft.XApp.Application
     
     public class AppExtensionEntry
     {
-        private HashSet<string> dependants;
-        private HashSet<string> dependencies;
+        private HashSet<string> _dependants;
+        private HashSet<string> _dependencies;
 
         public string Id { get; }
+        
         /// <summary>
         /// A flag to indicate whether the extension is enabled to load
         /// </summary>
         public bool IsEnabled { get; internal set; }
+        
         /// <summary>
         /// A flag to indicate entry to uninstall from application
         /// </summary>
         public bool PendingUninstall { get; internal set; }
+        
         /// <summary>
         /// A descriptive name of the application that is visible to end user
         /// </summary>
         public string Title { get; }
+        
         /// <summary>
         /// A short description of the extension
         /// </summary>
         public string Description { get; }
-        public string Copyright { get; }        
+        
+        public string Copyright { get; }   
+             
         /// <summary>
         /// Original extension path from which it was loaded
         /// </summary>
         public string Origin { get; }
+        
         public Uri LiceseUrl { get; }
+        
         public Uri ProjectUrl { get; }
+        
         public Version Version { get; }
+        
         public string[] Tags { get; }
         
-        public int DependantsCount => dependants.Count;
-        public int DependenciesCount => dependencies.Count;
+        public int DependantsCount { [DebuggerStepThrough] get => _dependants.Count; }
+        
+        public int DependenciesCount { [DebuggerStepThrough] get => _dependencies.Count; }
+        
         /// <summary>
         /// A set of extensions id's this extension depends on
         /// </summary>
-        public IEnumerable<string> Dependencies => dependencies;
+        public IEnumerable<string> Dependencies { [DebuggerStepThrough] get => _dependencies; }
+        
         /// <summary>
         /// A set of extensions that are depend on this extension
         /// </summary>
-        public IEnumerable<string> Dependants => dependants;
+        public IEnumerable<string> Dependants { [DebuggerStepThrough] get => _dependants; }
+        
         public IEnumerable<string> Owners { get; }
+        
         public IEnumerable<string> Authors { get; }
+        
         public AppExtension Extension { get; internal set; }
 
         //public AppExtensionEntry(IPackage package, string location, bool isEnabled = true)
@@ -316,6 +335,6 @@ namespace Vardirsoft.XApp.Application
         //                                                             .Select(dp => dp.Id));
         //}
 
-        public void AddDependent(string id) => dependants.Add(id);
+        public void AddDependent(string id) => _dependants.Add(id);
     }
 }

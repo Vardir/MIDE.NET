@@ -38,7 +38,7 @@ namespace Vardirsoft.XApp.ExtensionPack
         private IEnumerable<(string local, PackInfo info)> ReadLocals(BinaryReader reader)
         {
             var count = reader.ReadInt32();
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
                 var local = reader.ReadString();
                 var title = reader.ReadString();

@@ -17,7 +17,7 @@ namespace Vardirsoft.XApp.Components.PropertyEditors
             var array = Enum.GetValues(typeof(ConsoleColor));
             var result = new ConsoleColor[array.Length];
 
-            for (int i = 0; i < array.Length; i++)
+            for (var i = 0; i < array.Length; i++)
             {
                 result[i] = (ConsoleColor)array.GetValue(i);
             }
