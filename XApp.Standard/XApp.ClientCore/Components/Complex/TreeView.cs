@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,6 +14,7 @@ using Vardirsoft.XApp.Visuals;
 
 namespace Vardirsoft.XApp.Components
 {
+    [Obsolete]
     public class TreeView : LayoutComponent
     {
         private bool _multiselect;
@@ -135,6 +137,7 @@ namespace Vardirsoft.XApp.Components
         }
     }
 
+    [Obsolete]
     public abstract class TreeViewItem : BaseViewModel, ICloneable<TreeViewItem>
     {
         private bool _isExpanded;

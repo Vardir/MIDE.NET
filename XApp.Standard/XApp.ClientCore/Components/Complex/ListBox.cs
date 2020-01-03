@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 using Vardirsoft.Shared.MVVM;
 using Vardirsoft.Shared.Helpers;
 
 namespace Vardirsoft.XApp.Components
 {
+    [Obsolete]
     public class ListBox : LayoutComponent
     {
         private bool _isMultiselect;
@@ -15,7 +17,10 @@ namespace Vardirsoft.XApp.Components
 
         public bool IsMultiselect
         {
+            [DebuggerStepThrough]
             get => _isMultiselect;
+            
+            [DebuggerStepThrough]
             set => SetWithNotify(ref _isMultiselect, value);
         }
         
@@ -80,6 +85,7 @@ namespace Vardirsoft.XApp.Components
         }
     }
 
+    [Obsolete]
     public class ListBoxItem : BaseViewModel
     {
         private bool _isSelected;
@@ -87,6 +93,7 @@ namespace Vardirsoft.XApp.Components
 
         public bool IsSelected
         {
+            [DebuggerStepThrough]
             get => _isSelected;
             set
             {
@@ -101,7 +108,10 @@ namespace Vardirsoft.XApp.Components
         }
         public object Value
         {
+            [DebuggerStepThrough]
             get => _value;
+            
+            [DebuggerStepThrough]
             set => SetWithNotify(ref this._value, value, true);
         }
 

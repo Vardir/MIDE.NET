@@ -10,7 +10,6 @@ namespace Vardirsoft.XApp.Components
     public abstract class LayoutComponent : ApplicationComponent, ICloneable<LayoutComponent>
     {
         private bool _isEnabled = true;
-        private Visibility _visibility;
         private LayoutComponent _parent;
         private ContextMenu _currentContextMenu;
 
@@ -22,14 +21,7 @@ namespace Vardirsoft.XApp.Components
             [DebuggerStepThrough]
             set => SetWithNotify(ref _isEnabled, value);
         }
-        public Visibility Visibility
-        {
-            [DebuggerStepThrough]
-            get => _visibility;
-            
-            [DebuggerStepThrough]
-            set => SetWithNotify(ref _visibility, value);
-        }
+        
         public LayoutComponent Parent
         {
             [DebuggerStepThrough]
@@ -48,7 +40,6 @@ namespace Vardirsoft.XApp.Components
         {
             var clone = CloneInternal(id);
             clone._isEnabled = _isEnabled;
-            clone._visibility = _visibility;
             clone._parent = null;
             clone._currentContextMenu = _currentContextMenu;
 

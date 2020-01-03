@@ -3,6 +3,7 @@ using System.Reflection;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 using Vardirsoft.XApp.API.Validations;
 
@@ -15,12 +16,19 @@ namespace Vardirsoft.XApp.Components.PropertyEditors
 
         public bool HasErrors
         {
+            [DebuggerStepThrough]
             get => _hasErrors;
+            
+            [DebuggerStepThrough]
             protected set => SetWithNotify(ref _hasErrors, value);
         }
+        
         public string PropertyName
         {
+            [DebuggerStepThrough]
             get => _propName;
+            
+            [DebuggerStepThrough]
             set => SetWithNotify(ref _propName, value, true);
         }
 
@@ -50,14 +58,19 @@ namespace Vardirsoft.XApp.Components.PropertyEditors
         /// </summary>
         public bool IsReadonly
         {
+            [DebuggerStepThrough]
             get => _isReadonly;
+            
+            [DebuggerStepThrough]
             set => SetWithNotify(ref _isReadonly, value);
         }
+        
         /// <summary>
         /// Gets or sets value of attached object's property
         /// </summary>
         public virtual T Value
         {
+            [DebuggerStepThrough]
             get => (T)_property.GetValue(_attachedObject);
             set
             {
@@ -81,6 +94,7 @@ namespace Vardirsoft.XApp.Components.PropertyEditors
         /// List of validations that are being applied before setting property's value
         /// </summary>
         public List<ValueValidation<T>> Validations { get; }
+        
         /// <summary>
         /// A collection of validation errors that occurred on last value setting
         /// </summary>
@@ -100,15 +114,9 @@ namespace Vardirsoft.XApp.Components.PropertyEditors
         /// <param name="propertyName"></param>
         public override void AttachTo(object obj, string propertyName)
         {
-            if (obj is null)
-                throw new ArgumentNullException(nameof(obj));
-                
-            if (propertyName is null)
-                throw new ArgumentNullException(nameof(propertyName));
-
-            _attachedObject = obj;
             _attachedNotifyObject = null;
-            PropertyName = propertyName;
+            _attachedObject = obj ?? throw new ArgumentNullException(nameof(obj));
+            PropertyName = propertyName ?? throw new ArgumentNullException(nameof(propertyName));
             
             var type = _attachedObject.GetType();
             _property = type.GetProperty(propertyName);

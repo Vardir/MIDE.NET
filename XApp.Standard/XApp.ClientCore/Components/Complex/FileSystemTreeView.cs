@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 using Vardirsoft.Shared.MVVM;
 using Vardirsoft.Shared.Helpers;
@@ -12,6 +13,7 @@ namespace Vardirsoft.XApp.Components.Complex
     public class FileSystemTreeView : TreeView
     {
         public string FileFilter { get; set; }
+        
         public Func<DirectoryItem, TreeViewItem> Generator { get; set; }
 
         public FileSystemTreeView(string id) : base(id)
@@ -42,9 +44,11 @@ namespace Vardirsoft.XApp.Components.Complex
         private string _fullPath;
         private FSObjectClass _fsObjectClass;
 
-        public override bool CanExpand => !ObjectClass.IsFile;
+        public override bool CanExpand { [DebuggerStepThrough] get => !ObjectClass.IsFile; }
+        
         public FSObjectClass ObjectClass
         {
+            [DebuggerStepThrough]
             get => _fsObjectClass;
             set
             {
@@ -60,7 +64,10 @@ namespace Vardirsoft.XApp.Components.Complex
         }
         public string FullPath
         {
+            [DebuggerStepThrough]
             get => _fullPath;
+            
+            [DebuggerStepThrough]
             set => SetWithNotify(ref _fullPath, value, true);
         }
 
