@@ -68,16 +68,16 @@ namespace Vardirsoft.XApp.Application
                 if (_isRunning)
                     throw new ApplicationException("Application kernel is already loaded and running!");
 
-                if (IoCContainer.Resolve<IClipboardProvider>() is null)
+                if (IoCContainer.NotRegistered<IClipboardProvider>())
                     throw new NullReferenceException("The SystemBuffer expected to be assigned before application start");
 
-                if (IoCContainer.Resolve<UIManager>() is null)
+                if (IoCContainer.NotRegistered<UIManager>())
                     throw new NullReferenceException("The UIManager expected to be assigned before application start");
 
-                if (IoCContainer.Resolve<IFileManager>() is null)
+                if (IoCContainer.NotRegistered<IFileManager>())
                     throw new NullReferenceException("The FileManager expected to be instantiated before application start");
                 
-                if (IoCContainer.Resolve<ConfigurationManager>() is null)
+                if (IoCContainer.NotRegistered<ConfigurationManager>())
                     throw new NullReferenceException("The ConfigurationManager expected to be instantiated before application start");
 
                 _callingAssembly = Assembly.GetCallingAssembly();
