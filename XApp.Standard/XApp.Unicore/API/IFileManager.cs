@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Vardirsoft.XApp.API
 {
@@ -82,6 +84,9 @@ namespace Vardirsoft.XApp.API
         /// <param name="path"></param>
         /// <returns></returns>
         byte[] TryReadBytes(string path);
+
+        TResult OpenBinaryFile<TResult>(string path, Func<BinaryReader, TResult> readingAction);
+        
         string GetFileParent(string file);
 
         /// <summary>

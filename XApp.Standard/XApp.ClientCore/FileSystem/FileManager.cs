@@ -65,6 +65,13 @@ namespace Vardirsoft.XApp.FileSystem
             }
         }
 
+        public void Write(byte[] data, string path)
+        {
+            using var writer = new BinaryWriter(File.OpenWrite(path));
+            
+            writer.Write(data);
+        }
+
         /// <summary>
         /// Copies all the files and subdirectories from the source directory to the given destination
         /// </summary>
@@ -168,6 +175,13 @@ namespace Vardirsoft.XApp.FileSystem
         /// <param name="path"></param>
         /// <returns></returns>
         public byte[] TryReadBytes(string path) => File.Exists(path) ? File.ReadAllBytes(path) : null;
+
+        public TResult OpenBinaryFile<TResult>(string path, Func<BinaryReader, TResult> readingAction)
+        {
+            using var stream = new BinaryReader(File.OpenRead(path));
+
+            return readingAction(stream);
+        }
 
         public string GetFileParent(string file) => File.Exists(file) ? Path.GetDirectoryName(file) : null;
 

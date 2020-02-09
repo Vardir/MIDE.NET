@@ -1,0 +1,7 @@
+Packed extension's file consists of the following parts:
+
+<metadata_length/><metadata/><core_assembly_length/><core_assembly/><compressed_files/>
+
+Core assembly consists of the following parts:
+
+<metadata_length/><metadata/><binary/>

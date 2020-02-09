@@ -39,6 +39,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FileSystem", "FileSystem", "{03B603F6-A0C1-478A-8682-9753694F5BF6}"
 	ProjectSection(SolutionItems) = preProject
 		Schemes\FileSystem\app-extension-scheme.txt = Schemes\FileSystem\app-extension-scheme.txt
+		Schemes\FileSystem\app-extension-file-scheme.txt = Schemes\FileSystem\app-extension-file-scheme.txt
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", "{9B822E5B-5FC2-4462-8650-21D1FB7D512B}"

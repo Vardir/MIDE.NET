@@ -1,6 +1,6 @@
 ...\root\extensions\%extension%\
 
-Every application extension for MIDE must meet the given requirements.
+Every application extension for XAPP must meet the given requirements.
 Extension manager will load an extension due to the scheme
 File system scheme:
 

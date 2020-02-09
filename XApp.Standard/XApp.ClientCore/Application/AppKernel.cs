@@ -102,6 +102,13 @@ namespace Vardirsoft.XApp.Application
             LoadTasks();
             OnStarting();
 
+            var extensionManager = IoCContainer.Resolve<ExtensionsManager>();
+
+            if (extensionManager.HasValue())
+            {
+                extensionManager.LoadExtensions();
+            }
+            
             logger.PushDebug(null, "Application Kernel started");
             TimeStarted = DateTime.UtcNow;
             _isRunning = true;
