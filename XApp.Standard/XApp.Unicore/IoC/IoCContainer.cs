@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
+using Vardirsoft.XApp.Helpers;
+
 namespace Vardirsoft.XApp.IoC
 {
     public static class IoCContainer
@@ -14,15 +16,7 @@ namespace Vardirsoft.XApp.IoC
         }
 
         [DebuggerStepThrough]
-        public static void Store(object instance)
-        {
-            var type = instance.GetType();
-
-            if (Shelves.ContainsKey(type))
-                throw new NotImplementedException("Storing multiple instances per one shelf is not implemented yet");
-
-            Shelves.Add(type, new ObjectShelf(() => instance, CreationMode.CreateOnceOnRegister));
-        }
+        public static void Store(object instance) => Store(instance.GetType(), instance);
         
         [DebuggerStepThrough]
         public static void Store<TKey, TInstance>(TInstance instance) => Store(typeof(TKey), instance);
@@ -30,8 +24,7 @@ namespace Vardirsoft.XApp.IoC
         [DebuggerStepThrough]
         public static void Store(Type key, object instance)
         {
-            if (Shelves.ContainsKey(key))
-                throw new NotImplementedException("Storing multiple instances per one shelf is not implemented yet");
+            Guard.EnsureNot(Shelves.ContainsKey(key), typeof(InvalidOperationException), "Can't store multiple instance per regular shelf, use mapped shelves instead");
 
             Shelves.Add(key, new ObjectShelf(() => instance, CreationMode.CreateOnceOnRegister));
         }
@@ -57,19 +50,17 @@ namespace Vardirsoft.XApp.IoC
         [DebuggerStepThrough]
         public static void Register(Type keyType, Type instanceType, CreationMode creationMode = CreationMode.CreateOnceOnExctraction)
         {
-            if (Shelves.ContainsKey(keyType))
-                throw new NotImplementedException("Storing multiple instances per one shelf is not implemented yet");
-
+            Guard.EnsureNot(Shelves.ContainsKey(keyType), typeof(InvalidOperationException), "Can't store multiple instance per regular shelf, use mapped shelves instead");
+            
             Shelves.Add(keyType, new ObjectShelf(() => Activator.CreateInstance(instanceType), creationMode));
         }
         
         [DebuggerStepThrough]
-        public static void Register(Type key, Func<object> builder, CreationMode creationMode = CreationMode.CreateOnceOnExctraction)
+        public static void Register(Type keyType, Func<object> builder, CreationMode creationMode = CreationMode.CreateOnceOnExctraction)
         {
-            if (Shelves.ContainsKey(key))
-                throw new NotImplementedException("Storing multiple instances per one shelf is not implemented yet");
+            Guard.EnsureNot(Shelves.ContainsKey(keyType), typeof(InvalidOperationException), "Can't store multiple instance per regular shelf, use mapped shelves instead");
 
-            Shelves.Add(key, new ObjectShelf(builder, creationMode));
+            Shelves.Add(keyType, new ObjectShelf(builder, creationMode));
         }
 
         [DebuggerStepThrough]
@@ -80,8 +71,7 @@ namespace Vardirsoft.XApp.IoC
         {
             var primaryKey = typeof(TPrimaryKey);
             
-            if (Shelves.ContainsKey(primaryKey))
-                throw new InvalidOperationException("Duplicate shelf primary key");
+            Guard.EnsureNot(Shelves.ContainsKey(primaryKey), typeof(InvalidOperationException), "Duplicate shelf primary key");
             
             Shelves.Add(primaryKey, new MappedShelf<TSecondaryKey, TInstance>());
         }
@@ -98,8 +88,7 @@ namespace Vardirsoft.XApp.IoC
             {
                 mappedShelf.Register(key, instance);
             }
-            
-            throw new KeyNotFoundException($"Couldn't find a shelf with key of type <{typeof(TSecondaryKey)}>");
+            else throw new KeyNotFoundException($"Couldn't find a shelf with key of type <{typeof(TSecondaryKey)}>");
         }
 
         [DebuggerStepThrough]
@@ -216,12 +205,11 @@ namespace Vardirsoft.XApp.IoC
         internal static void Register<TKey>(IShelf shelf) => Register(typeof(TKey), shelf);
         
         [DebuggerStepThrough]
-        internal static void Register(Type key, IShelf shelf)
+        internal static void Register(Type keyType, IShelf shelf)
         {
-            if (Shelves.ContainsKey(key))
-                throw new InvalidOperationException($"Couldn't register a shelf by duplicate key type <{key}>");
+            Guard.EnsureNot(Shelves.ContainsKey(keyType), typeof(InvalidOperationException), $"Couldn't register a shelf by duplicate key type <{keyType}>");
             
-            Shelves.Add(key, shelf);
+            Shelves.Add(keyType, shelf);
         }
     }
 }

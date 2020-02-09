@@ -12,6 +12,7 @@ using Vardirsoft.Shared.Helpers;
 
 using Vardirsoft.XApp.IoC;
 using Vardirsoft.XApp.API;
+using Vardirsoft.XApp.Helpers;
 using Vardirsoft.XApp.Logging;
 using Vardirsoft.XApp.Visuals;
 using Vardirsoft.XApp.Schemes.JSON;
@@ -56,11 +57,8 @@ namespace Vardirsoft.XApp.FileSystem
         
         public bool RegisterClass(FSObjectClass fsoClass)
         {
-            if (fsoClass is null)
-                throw new ArgumentNullException(nameof(fsoClass));
-
-            if (IsSpecialExtension(fsoClass.Extension))
-                throw new ArgumentException("Can not add duplicate special file system class", nameof(fsoClass));
+            Guard.EnsureNotNull(fsoClass, typeof(ArgumentNullException));
+            Guard.EnsureNot(IsSpecialExtension(fsoClass.Extension), typeof(ArgumentException), "Can not add duplicate special file system class");
 
             if (fsObjectClasses.ContainsKey(fsoClass.Id))
                 return false;
@@ -76,6 +74,7 @@ namespace Vardirsoft.XApp.FileSystem
 
             return null;
         }
+        
         public FSObjectClass FindBy(string extension)
         {
             if (extension == ANY_FILE_EXTENSION)
@@ -97,8 +96,7 @@ namespace Vardirsoft.XApp.FileSystem
         }
         public IEnumerable<FSObjectClass> Select(Func<FSObjectClass, bool> match)
         {
-            if (match is null)
-                throw new ArgumentNullException(nameof(match));
+            Guard.EnsureNotNull(match, typeof(ArgumentException));
 
             foreach (var kvp in fsObjectClasses)
             {

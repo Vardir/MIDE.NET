@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Collections.Generic;
 
 using Vardirsoft.Shared.Helpers;
+using Vardirsoft.XApp.Helpers;
 
 namespace Vardirsoft.XApp.API.Validations
 {
@@ -42,8 +43,10 @@ namespace Vardirsoft.XApp.API.Validations
                 _attachedObject.Validations.Remove(this);
                 _attachedObject.PropertyChanged -= Obj_PropertyChanging;
             }
+            
+            Guard.EnsureNotNull(obj, typeof(ArgumentNullException));
 
-            _attachedObject = obj ?? throw new ArgumentNullException(nameof(obj));
+            _attachedObject = obj;
             LoadSupportedProperties(obj.GetType(), propertiesToObserve);
             obj.PropertyChanged += Obj_PropertyChanging;
             obj.Validations.Add(this);
@@ -115,12 +118,10 @@ namespace Vardirsoft.XApp.API.Validations
                     }
                 }
 
-                if (_supportedProps.AnyNotIn(p => p.Name, propsToObserve))
-                    throw new ArgumentException($"Type [{type}] contains not all the properties that were asked");
+                Guard.Ensure(_supportedProps.AnyNotIn(p => p.Name, propsToObserve), $"Type [{type}] contains not all the properties that were asked");
             }
 
-            if (_supportedProps.Count == 0)
-                throw new ArgumentException($"Type [{type}] has no available properties of type [{typeof(T)}] to validate");
+            Guard.EnsureNonEmpty(_supportedProps, $"Type [{type}] has no available properties of type [{typeof(T)}] to validate");
         }
         private void Obj_PropertyChanging(object sender, PropertyChangedEventArgs e)
         {
@@ -132,8 +133,7 @@ namespace Vardirsoft.XApp.API.Validations
 
             if (_validationMessages.Count > 0)
             {
-                if (RaiseExceptionOnError)
-                    throw new FormatException($"Property [{e.PropertyName}]: Value has invalid format");
+                Guard.EnsureNot(RaiseExceptionOnError, typeof(FormatException), $"Property [{e.PropertyName}]: Value has invalid format");
                     
                 InvokeErrorsChanged(new DataErrorsChangedEventArgs(e.PropertyName));
             }

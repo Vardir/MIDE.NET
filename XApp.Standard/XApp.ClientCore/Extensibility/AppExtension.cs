@@ -6,6 +6,7 @@ using Vardirsoft.XApp.IoC;
 using Vardirsoft.XApp.Logging;
 using Vardirsoft.XApp.Components;
 using Vardirsoft.XApp.Application;
+using Vardirsoft.XApp.Helpers;
 
 namespace Vardirsoft.XApp.Extensibility
 {
@@ -66,24 +67,20 @@ namespace Vardirsoft.XApp.Extensibility
             where T: Module
         {
             var module = _modules.Find(m => m.Id == id);
-            if (module is null)
-                return null;
-                
+
             return module as T;
         }
         public override string ToString() => $"EXTENSION [{GetType().Name}] :: {Id}";
 
         protected void RegisterModule(Module module)
         {
-            if (module is null)
-                throw new ArgumentNullException(nameof(module), "Module parameter can not be null");
-
-            if (_modules.Any(m => m.Id == module.Id))
-                throw new ArgumentException("Duplicate module ID");
+            Guard.EnsureNotNull(module, typeof(ArgumentNullException));
+            Guard.EnsureNot(_modules.Any(m => m.Id == module.Id), typeof(ArgumentNullException), "Duplicate module ID");
 
             var validation = Kernel.VerifyModule(module);
-            if (validation is OperationResult.Failure failure)
-                throw new ArgumentException($"The given module [{module.Id}] is invalid: {failure.Message}");
+            
+            var failure = (OperationResult.Failure)validation;
+            Guard.EnsureIsNull(failure, typeof(ArgumentException), $"The given module [{module.Id}] is invalid: {failure.Message}");
 
             module.Extension = this;
             _modules.Add(module);

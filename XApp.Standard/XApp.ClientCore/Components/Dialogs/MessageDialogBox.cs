@@ -7,7 +7,7 @@ namespace Vardirsoft.XApp.Components
     /// </summary>
     public sealed class MessageDialogBox : BaseDialogBox<bool>
     {
-        private readonly DialogResult[] validationIgnored = { DialogResult.Ok };
+        private readonly DialogResult[] _validationIgnored = { DialogResult.Ok };
 
         public string Message { get; }
         
@@ -22,6 +22,6 @@ namespace Vardirsoft.XApp.Components
         public override bool GetData() => true;
         
         protected override bool Validate() => true;
-        protected override IEnumerable<DialogResult> GetValidationIgnoredResults() => validationIgnored;
+        protected override IEnumerable<DialogResult> GetValidationIgnoredResults() => _validationIgnored;
     }
 }

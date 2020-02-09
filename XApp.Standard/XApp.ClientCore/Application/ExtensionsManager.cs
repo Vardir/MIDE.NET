@@ -16,6 +16,7 @@ using Vardirsoft.XApp.Logging;
 using Vardirsoft.XApp.FileSystem;
 using Vardirsoft.XApp.Extensibility;
 using Vardirsoft.XApp.Application.Configuration;
+using Vardirsoft.XApp.Helpers;
 
 namespace Vardirsoft.XApp.Application
 {
@@ -181,18 +182,18 @@ namespace Vardirsoft.XApp.Application
 
             _pendingRegister.Clear();
         }
+        
         private void RegisterExtension(AppExtensionEntry entry)
         {
             var logger = IoCContainer.Resolve<ILogger>();
-            logger.PushDebug(null, $"Registering extension '{entry.Id}'");
 
             try
             {
-                if (entry is null)
-                    throw new ArgumentNullException("Extension parameter can not be null");
+                Guard.EnsureNotNull(entry, typeof(ArgumentNullException), "Extension parameter can not be null");
 
-                if (_registered.ContainsKey(entry.Id))
-                    throw new ArgumentException("Duplicate extension ID");
+                logger.PushDebug(null, $"Registering extension '{entry?.Id}'");
+                
+                Guard.EnsureNot(_registered.ContainsKey(entry.Id), typeof(ArgumentException), "Duplicate extension ID");
 
                 LoadExtension(entry);
             }
@@ -212,32 +213,31 @@ namespace Vardirsoft.XApp.Application
             var configurationManager = IoCContainer.Resolve<ConfigurationManager>();
             var file = fileManager.Combine(entry.Origin, $"{entry.Id}.dll");
 
+            Guard.Ensure(fileManager.FileExists(file), typeof(DllNotFoundException), "Extension does not have a kernel library");
+            
+            var assembly = Assembly.LoadFrom(file);
+            var types = assembly.GetTypes();
+            for (var i = 0; i < types.Length; i++)
+            {
+                var isExtension = types[i].IsSubclassOf(typeof(AppExtension));
+                if (isExtension)
+                {
+                    // var instance = Activator.CreateInstance(types[i], ToSafeId(entry.Id), entry.IsEnabled) as AppExtension;
+                    // entry.Extension = instance;
+                }
+            }
+
+            Guard.EnsureNotNull(entry.Extension, typeof(EntryPointNotFoundException), "Extension kernel library does not have suitable extension definition");
+            
+            file = fileManager.Combine(entry.Origin, "lib", configurationManager["platform"], $"{entry.Id}.UI.dll");
+            
             if (fileManager.FileExists(file))
             {
-                var assembly = Assembly.LoadFrom(file);
-                var types = assembly.GetTypes();
-                for (var i = 0; i < types.Length; i++)
-                {
-                    var isExtension = types[i].IsSubclassOf(typeof(AppExtension));
-                    if (isExtension)
-                    {
-                        // var instance = Activator.CreateInstance(types[i], ToSafeId(entry.Id), entry.IsEnabled) as AppExtension;
-                        // entry.Extension = instance;
-                    }
-                }
-
-                if (entry.Extension is null)
-                    throw new EntryPointNotFoundException("Extension kernel library does not have suitable extension definition");
-
-                file = fileManager.Combine(entry.Origin, "lib", configurationManager["platform"], $"{entry.Id}.UI.dll");
-                if (fileManager.FileExists(file))
-                    IoCContainer.Resolve<UIManager>().RegisterUIExtension(file);
-
-                file = fileManager.Combine(entry.Origin, "assets", "lang", $"{configurationManager["lang"]}.json");
-                //Localization.LoadFrom(file);
+                IoCContainer.Resolve<UIManager>().RegisterUIExtension(file);
             }
-            
-            throw new DllNotFoundException("Extension does not have a kernel library");
+
+            file = fileManager.Combine(entry.Origin, "assets", "lang", $"{configurationManager["lang"]}.json");
+            //Localization.LoadFrom(file);
         }
 
         private void OnSerializationError(object sender, ErrorEventArgs e)

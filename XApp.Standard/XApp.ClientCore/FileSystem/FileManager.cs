@@ -9,6 +9,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using Vardirsoft.Shared.Helpers;
 
 using Vardirsoft.XApp.API;
+using Vardirsoft.XApp.Helpers;
 using Vardirsoft.XApp.IoC;
 using Vardirsoft.XApp.Logging;
 
@@ -321,10 +322,9 @@ namespace Vardirsoft.XApp.FileSystem
         /// <returns></returns>
         public IEnumerable<string> EnumerateFiles(string directory, string filter = null)
         {
-            if (Directory.Exists(directory))
-                return Directory.EnumerateFiles(directory, filter);
-
-            throw new ArgumentException($"Directory not found [{directory}]");
+            Guard.Ensure(Directory.Exists(directory), typeof(DirectoryNotFoundException), $"Directory not found [{directory}]");
+            
+            return Directory.EnumerateFiles(directory, filter);
         }
 
         /// <summary>

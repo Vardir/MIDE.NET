@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 using Vardirsoft.Shared.Helpers;
+using Vardirsoft.XApp.Helpers;
 
 namespace Vardirsoft.XApp.Components
 {
@@ -58,8 +59,7 @@ namespace Vardirsoft.XApp.Components
             // if (IsSealed)
             //     throw new InvalidOperationException("Attempt to add item to sealed collection");
 
-            if (string.IsNullOrWhiteSpace(path) || path.Length == 0)
-                throw new ArgumentException("The path can not be empty");
+            Guard.EnsureNonEmpty(path, typeof(ArgumentException), "Path can not be empty");
 
             if (path == "/")
             {
@@ -67,23 +67,18 @@ namespace Vardirsoft.XApp.Components
             }
             else
             {
-                if (Regex.IsMatch(path, PATH_PATTERN))
-                {
-                    var (rootId, tail) = path.ExtractUntil(0, '/');
-                    var root = this[rootId];
-                    if (root is null)
-                    {
-                        root = new MenuButton(rootId, 0);
-                        _items.Insert(item);
-                    }
+                Guard.Ensure(Regex.IsMatch(path, PATH_PATTERN), typeof(FormatException), "Invalid path format");
 
-                    var last = GetItem(root, tail, true);
-                    last.Add(item, null);
-                }
-                else
+                var (rootId, tail) = path.ExtractUntil(0, '/');
+                var root = this[rootId];
+                if (root is null)
                 {
-                    throw new FormatException("Path has invalid format");
+                    root = new MenuButton(rootId, 0);
+                    _items.Insert(item);
                 }
+
+                var last = GetItem(root, tail, true);
+                last.Add(item, null);
             }
         }
 
@@ -96,24 +91,20 @@ namespace Vardirsoft.XApp.Components
         /// <exception cref="FormatException"></exception>
         public bool Exists(string path)
         {
-            if (string.IsNullOrWhiteSpace(path) || path.Length == 0)
-                throw new ArgumentException("The path can not be empty");
+            Guard.EnsureNonEmpty(path, typeof(ArgumentException), "The path can not be empty");
 
             if (path == "/")
                 return true;
 
-            if (Regex.IsMatch(path, PATH_PATTERN))
-            {
-                var (rootId, tail) = path.ExtractUntil(0, '/');
-                var root = this[rootId];
-                
-                if (root is null)
-                    return false;
+            Guard.Ensure(Regex.IsMatch(path, PATH_PATTERN), typeof(FormatException), "Invalid path format");
 
-                return GetItem(root, tail, false).HasValue();
-            }
+            var (rootId, tail) = path.ExtractUntil(0, '/');
+            var root = this[rootId];
 
-            throw new FormatException("Path has invalid format");
+            if (root is null)
+                return false;
+
+            return GetItem(root, tail, false).HasValue();
         }
         
         public bool Contains(string id) => _items.FirstOrDefault(i => i.Id == id).HasValue();
@@ -149,25 +140,22 @@ namespace Vardirsoft.XApp.Components
         /// <exception cref="FormatException"></exception>
         public string[] GetAllPaths(string path)
         {
-            if (string.IsNullOrWhiteSpace(path) || path.Length == 0)
-                throw new ArgumentException("The path can not be empty");
+            Guard.EnsureNonEmpty(path, typeof(ArgumentException), "Path can not be empty");
 
             if (path == "/")
                 return _items.Select(mi => mi.Id);
 
-            if (Regex.IsMatch(path, PATH_PATTERN))
-            {
-                var (rootId, tail) = path.ExtractUntil(0, '/');
-                var root = this[rootId];
-                if (root is null)
-                    return null;
+            Guard.Ensure(Regex.IsMatch(path, PATH_PATTERN), typeof(FormatException), "Invalid path format");
 
-                var item = GetItem(root, tail, false);
+            var (rootId, tail) = path.ExtractUntil(0, '/');
+            var root = this[rootId];
+            
+            if (root is null)
+                return null;
 
-                return item?.GetAllItemsIDs();
-            }
+            var item = GetItem(root, tail, false);
 
-            throw new FormatException("Path has invalid format");
+            return item?.GetAllItemsIDs();
         }
 
         /// <summary>
@@ -179,35 +167,33 @@ namespace Vardirsoft.XApp.Components
         /// <exception cref="FormatException"></exception>
         public (string id, int ordinalIndex)[] GetItemsOrdinals(string path)
         {
-            if (string.IsNullOrWhiteSpace(path) || path.Length == 0)
-                throw new ArgumentException("The path can not be empty");
+            Guard.EnsureNonEmpty(path, typeof(ArgumentException), "Path can not be empty");
 
             if (path == "/")
                 return _items.Select(mi => (mi.Id, mi.OrdinalIndex));
 
-            if (Regex.IsMatch(path, PATH_PATTERN))
+            Guard.Ensure(Regex.IsMatch(path, PATH_PATTERN), typeof(FormatException), "Invalid path format");
+
+            var (rootId, tail) = path.ExtractUntil(0, '/');
+            var root = this[rootId];
+            
+            if (root is null)
+                return null;
+
+            var segment = tail;
+            while (segment.HasValue())
             {
-                var (rootId, tail) = path.ExtractUntil(0, '/');
-                var root = this[rootId];
-                if (root is null)
+                var (elementId, tail2) = segment.ExtractUntil(0, '/');
+                var element = root[elementId];
+                
+                if (element is null)
                     return null;
 
-                var segment = tail;
-                while (segment.HasValue())
-                {
-                    var (elementId, tail2) = segment.ExtractUntil(0, '/');
-                    var element = root[elementId];
-                    if (element is null)
-                        return null;
-
-                    root = element;
-                    segment = tail2;
-                }
-
-                return root.GetItemsOrdinals();
+                root = element;
+                segment = tail2;
             }
 
-            throw new FormatException("Path has invalid format");
+            return root.GetItemsOrdinals();
         }
 
         protected override ApplicationComponent CloneInternal(string id)

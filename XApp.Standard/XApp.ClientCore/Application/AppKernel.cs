@@ -12,6 +12,7 @@ using Vardirsoft.XApp.FileSystem;
 using Vardirsoft.XApp.Application.Tasks;
 using Vardirsoft.XApp.Application.Attributes;
 using Vardirsoft.XApp.Application.Configuration;
+using Vardirsoft.XApp.Helpers;
 
 using Module = Vardirsoft.XApp.Extensibility.Module;
 
@@ -65,27 +66,17 @@ namespace Vardirsoft.XApp.Application
 
             try
             {
-                if (_isRunning)
-                    throw new ApplicationException("Application kernel is already loaded and running!");
-
-                if (IoCContainer.NotRegistered<IClipboardProvider>())
-                    throw new NullReferenceException("The SystemBuffer expected to be assigned before application start");
-
-                if (IoCContainer.NotRegistered<UIManager>())
-                    throw new NullReferenceException("The UIManager expected to be assigned before application start");
-
-                if (IoCContainer.NotRegistered<IFileManager>())
-                    throw new NullReferenceException("The FileManager expected to be instantiated before application start");
-                
-                if (IoCContainer.NotRegistered<ConfigurationManager>())
-                    throw new NullReferenceException("The ConfigurationManager expected to be instantiated before application start");
+                Guard.EnsureNot(_isRunning, typeof(ApplicationException), "Application kernel is already loaded and running");
+                Guard.Ensure(IoCContainer.IsRegistered<IClipboardProvider>(), "The SystemBuffer expected to be assigned before application start");
+                Guard.Ensure(IoCContainer.IsRegistered<UIManager>(), "The UIManager expected to be assigned before application start");
+                Guard.Ensure(IoCContainer.IsRegistered<IFileManager>(), "The FileManager expected to be instantiated before application start");
+                Guard.Ensure(IoCContainer.IsRegistered<ConfigurationManager>(), "The ConfigurationManager expected to be instantiated before application start");
 
                 _callingAssembly = Assembly.GetCallingAssembly();
 
                 var assemblyVerification = VerifyAssemblyAttributes();
 
-                if (assemblyVerification.HasValue())
-                    throw new ApplicationException(assemblyVerification);
+                Guard.EnsureEmpty(assemblyVerification, typeof(ApplicationException), assemblyVerification);
             }
             catch (Exception ex)
             {

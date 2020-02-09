@@ -7,6 +7,7 @@ using Vardirsoft.Shared.Helpers;
 
 using Vardirsoft.XApp.API;
 using Vardirsoft.XApp.Converters;
+using Vardirsoft.XApp.Helpers;
 
 namespace Vardirsoft.XApp.Bindings
 {
@@ -35,8 +36,7 @@ namespace Vardirsoft.XApp.Bindings
             get => _source;
             set
             {
-                if (value is null)
-                    throw new ArgumentNullException(nameof(value));
+                Guard.EnsureNotNull(value, typeof(ArgumentNullException));
 
                 if (_source.HasValue())
                 {    
@@ -57,8 +57,7 @@ namespace Vardirsoft.XApp.Bindings
             get => _destination;
             set
             {
-                if (value is null)
-                    throw new ArgumentNullException(nameof(value));
+                Guard.EnsureNotNull(value, typeof(ArgumentNullException));
 
                 if (_destination.HasValue())
                 {    
@@ -105,11 +104,8 @@ namespace Vardirsoft.XApp.Bindings
             _sourceProperty = _source.GetType().GetProperty(sourceProp);
             _destinationProperty = _destination.GetType().GetProperty(destinationProp);
 
-            if (_sourceProperty is null)
-                throw new ArgumentException($"Type [{_source.GetType()}]  does not have declaration for property '{sourceProp}' or it is inaccessible");
-            
-            if (_destinationProperty is null)
-                throw new ArgumentException($"Type [{_destination.GetType()}] does not have declaration for property '{destinationProp}' or it is inaccessible");
+            Guard.EnsureNotNull(_sourceProperty, typeof(ArgumentException), $"Type [{_source.GetType()}] does not have declaration for property '{sourceProp}' or it is inaccessible");
+            Guard.EnsureNotNull(_sourceProperty, typeof(ArgumentException), $"Type [{_destination.GetType()}] does not have declaration for property '{destinationProp}' or it is inaccessible");
         }
 
         private void Source_PropertyChanged(object sender, PropertyChangedEventArgs e)

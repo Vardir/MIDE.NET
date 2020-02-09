@@ -2,6 +2,7 @@
 using System.Diagnostics;
 
 using Vardirsoft.XApp.API;
+using Vardirsoft.XApp.Helpers;
 
 namespace Vardirsoft.XApp.Converters
 {
@@ -12,18 +13,25 @@ namespace Vardirsoft.XApp.Converters
 
         public ValueConverter(Func<T, Y> convert)
         {
+            Guard.EnsureNotNull(convert, typeof(ArgumentNullException));
+            
             _convertBack = null;
-            _convert = convert ?? throw new ArgumentNullException(nameof(convert));
+            _convert = convert;
         }
         public ValueConverter(Func<Y, T> convertBack)
         {
+            Guard.EnsureNotNull(convertBack, typeof(ArgumentNullException));
+            
             _convert = null;
-            _convertBack = convertBack ?? throw new ArgumentNullException(nameof(convertBack));
+            _convertBack = convertBack;
         }
         public ValueConverter(Func<T, Y> convert, Func<Y, T> convertBack)
         {
-            _convert = convert ?? throw new ArgumentNullException(nameof(convert));
-            _convertBack = convertBack ?? throw new ArgumentNullException(nameof(convertBack));
+            Guard.EnsureNotNull(convert, typeof(ArgumentNullException));
+            Guard.EnsureNotNull(convertBack, typeof(ArgumentNullException));
+            
+            _convert = convert;
+            _convertBack = convertBack;
         }
 
         public object Convert(object value)

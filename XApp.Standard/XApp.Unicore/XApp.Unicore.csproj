@@ -24,8 +24,4 @@
     <PackageReference Include="BoilerplateCode.Helpers" Version="1.1.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Helpers" />
-  </ItemGroup>
-
 </Project>

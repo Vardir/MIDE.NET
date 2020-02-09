@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 
 using Vardirsoft.Shared.Helpers;
+using Vardirsoft.XApp.Helpers;
 
 namespace Vardirsoft.XApp.IoC
 {
@@ -55,8 +56,7 @@ namespace Vardirsoft.XApp.IoC
 
         private static bool CanCreateViaActivator(Type type)
         {
-            if (type is null)
-                throw new ArgumentNullException(nameof(Type));
+            Guard.EnsureNotNull(type, typeof(ArgumentNullException));
 
             if (type.IsAbstract || type.IsInterface || type.IsPrimitive || type.IsNotPublic || type.IsCOMObject)
                 return false;

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 
+using Vardirsoft.XApp.Helpers;
+
 namespace Vardirsoft.XApp.Application.Attributes
 {
     public class ApplicationPropertiesAttribute : Attribute
@@ -11,17 +13,10 @@ namespace Vardirsoft.XApp.Application.Attributes
 
         public ApplicationPropertiesAttribute(string applicationName)
         {
-            if (string.IsNullOrWhiteSpace(applicationName))
-                throw new ArgumentException("Attribute must not be null or empty", nameof(applicationName));
-
-            if (Regex.IsMatch(applicationName, APP_NAME_PATTERN))
-            {
-                ApplicationName = applicationName;
-                
-                return;
-            }
+            Guard.EnsureNonEmpty(applicationName, typeof(ArgumentException));
+            Guard.Ensure(Regex.IsMatch(applicationName, APP_NAME_PATTERN), typeof(FormatException), "Application name does not match the pattern");
             
-            throw new FormatException("Application name does not match the pattern");
+            ApplicationName = applicationName;
         }
     }
 }

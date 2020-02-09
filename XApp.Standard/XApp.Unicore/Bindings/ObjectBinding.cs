@@ -8,6 +8,7 @@ using Vardirsoft.Shared.Helpers;
 
 using Vardirsoft.XApp.API;
 using Vardirsoft.XApp.Converters;
+using Vardirsoft.XApp.Helpers;
 
 namespace Vardirsoft.XApp.Bindings
 {
@@ -43,8 +44,7 @@ namespace Vardirsoft.XApp.Bindings
             get => _source;
             set
             {
-                if (value is null)
-                    throw new ArgumentNullException(nameof(value));
+                Guard.EnsureNotNull(value, typeof(ArgumentNullException));
 
                 if (_source.HasValue())
                 {    
@@ -65,8 +65,7 @@ namespace Vardirsoft.XApp.Bindings
             get => _destination;
             set
             {
-                if (value is null)
-                    throw new ArgumentNullException(nameof(value));
+                Guard.EnsureNotNull(value, typeof(ArgumentNullException));
 
                 if (_destination.HasValue())
                 {   
@@ -88,11 +87,8 @@ namespace Vardirsoft.XApp.Bindings
         }
         public ObjectBinding(TSource source, TDestination destination) : this()
         {
-            if (source is null)
-                throw new ArgumentNullException(nameof(source));
-
-            if (destination is null)
-                throw new ArgumentNullException(nameof(destination));
+            Guard.EnsureNot(source is null, typeof(ArgumentNullException));
+            Guard.EnsureNot(destination is null, typeof(ArgumentNullException));
 
             Source = source;
             Destination = destination;            
@@ -126,10 +122,7 @@ namespace Vardirsoft.XApp.Bindings
             {    
                 _converter = new ValueConverter<T, Y>(convertFunc);
             }
-            else
-            {    
-                throw new NullReferenceException("At least one of the converters must be set");
-            }
+            else throw new NullReferenceException("At least one of the converters must be set");
 
             if (defaults.SourceIsSet && _sourceProperty.CanWrite)
             {    
@@ -153,7 +146,9 @@ namespace Vardirsoft.XApp.Bindings
         public void Bind<T, Y>(Expression<Func<TSource, T>> sourceExpr, Expression<Func<TDestination, Y>> destinationExpr, 
                                ValueConverter<T, Y> converter, Defaults<T,Y> defaults = default)
         {
-            _converter = converter ?? throw new ArgumentNullException(nameof(converter));
+            Guard.EnsureNotNull(converter, typeof(ArgumentNullException));
+            
+            _converter = converter;
             _sourceProperty = _sourceType.GetProperty(GetMember(sourceExpr.Body));
             _destinationProperty = _destinationType.GetProperty(GetMember(destinationExpr.Body));
 
@@ -170,8 +165,7 @@ namespace Vardirsoft.XApp.Bindings
 
         private string GetMember(Expression expr)
         {
-            if (expr.NodeType != ExpressionType.MemberAccess)
-                throw new ArgumentException("Expected a member access expression");
+            Guard.EnsureNot(expr.NodeType != ExpressionType.MemberAccess, typeof(ArgumentException), "Expected a member access expression");
 
             var member = (expr as MemberExpression)?.Member;
 

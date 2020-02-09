@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 
+using Vardirsoft.XApp.Helpers;
+
 namespace Vardirsoft.XApp.IoC
 {
     internal abstract class MappedShelf : IShelf
@@ -28,8 +30,7 @@ namespace Vardirsoft.XApp.IoC
             where TK : TKey
             where TI : TInstance
         {
-            if (_singletons.ContainsKey(key))
-                throw new InvalidOperationException("Duplicate key entry given for mapped shelf");
+            Guard.EnsureNot(_singletons.ContainsKey(key), typeof(InvalidOperationException), "Duplicate key entry given for mapped shelf");
             
             _singletons.Add(key, new Shelf<TInstance>(() => instance, CreationMode.CreateOnceOnRegister));
         }

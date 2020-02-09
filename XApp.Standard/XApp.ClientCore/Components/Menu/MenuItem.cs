@@ -4,8 +4,7 @@ using System.Collections.Generic;
 
 using Vardirsoft.Shared.API;
 using Vardirsoft.Shared.Helpers;
-
-using Vardirsoft.XApp.API;
+using Vardirsoft.XApp.Helpers;
 
 namespace Vardirsoft.XApp.Components
 {
@@ -180,8 +179,8 @@ namespace Vardirsoft.XApp.Components
             }
 
             var parent = Find(parentId, searchRecursively);
-            if (parent is null)
-                throw new ArgumentException($"The menu item with ID {parentId} not found");
+            
+            Guard.EnsureNotNull(parent, typeof(ArgumentException), $"The menu item with ID {parentId} not found");
 
             parent.Add(item, null);
         }
@@ -198,8 +197,8 @@ namespace Vardirsoft.XApp.Components
             if (item.HasValue())
             {
                 var group = _menuGroups.Find(g => g.Id == item.Group);
-                if (group is null)
-                    throw new InvalidOperationException("An item's group ID was changed");
+                
+                Guard.EnsureNotNull(group, typeof(ArgumentException), "Item's group ID was changed");
 
                 ChildCount--;
                 group.Items.Remove(item);
@@ -308,15 +307,15 @@ namespace Vardirsoft.XApp.Components
 
         protected class MenuGroup : ApplicationComponent, IOrderable
         {
-            public const short MIN_ORDINAL = -8;
-            public const short MAX_ORDINAL = 8;
+            public const short G_MIN_ORDINAL = -8;
+            public const short G_MAX_ORDINAL = 8;
 
             public int OrdinalIndex { get; }
             public List<MenuItem> Items { get; }
 
             public MenuGroup(string id, int ordinalIndex) : base(id)
             {
-                OrdinalIndex = ordinalIndex.Clamp(MIN_ORDINAL, MAX_ORDINAL);
+                OrdinalIndex = ordinalIndex.Clamp(G_MIN_ORDINAL, G_MAX_ORDINAL);
                 Items = new List<MenuItem>();
             }
 

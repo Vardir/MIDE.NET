@@ -1,5 +1,6 @@
 ﻿using System;
 
+using Vardirsoft.XApp.Helpers;
 using Vardirsoft.XApp.Visuals;
 
 namespace Vardirsoft.XApp.FileSystem
@@ -20,11 +21,8 @@ namespace Vardirsoft.XApp.FileSystem
             get => _extension;
             private set
             {
-                if (value is null)
-                    throw new ArgumentNullException(nameof(value));
-
-                if (!FileSystemInfo.IsValidExtension(value))
-                    throw new FormatException("Extension was of invalid format");
+                Guard.EnsureNotNull(value, typeof(ArgumentNullException));
+                Guard.Ensure(FileSystemInfo.IsValidExtension(value), typeof(FormatException), "Extension was of invalid format");
 
                 _extension = value;
             }
@@ -43,9 +41,11 @@ namespace Vardirsoft.XApp.FileSystem
 
         public FSObjectClass(string objectClass, string extension, string editor, Glyph objectGlyph)
         {
+            Guard.EnsureNotNull(objectClass, typeof(ArgumentNullException));
+            
             Editor = editor;
             Extension = extension;
-            Id = objectClass ?? throw new ArgumentNullException(nameof(objectClass));
+            Id = objectClass;
             ObjectGlyph = objectGlyph;
         }
 

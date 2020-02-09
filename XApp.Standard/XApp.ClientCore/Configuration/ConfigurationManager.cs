@@ -9,6 +9,7 @@ using Vardirsoft.Shared.Helpers;
 
 using Vardirsoft.XApp.IoC;
 using Vardirsoft.XApp.API;
+using Vardirsoft.XApp.Helpers;
 using Vardirsoft.XApp.Logging;
 
 namespace Vardirsoft.XApp.Application.Configuration
@@ -40,9 +41,8 @@ namespace Vardirsoft.XApp.Application.Configuration
         {
             foreach (var config in sequence)
             {
-                if (_configs.ContainsKey(config.Key))
-                    throw new InvalidOperationException($"Duplicate configuration key entry on '{config.Key}'");
-
+                Guard.EnsureNot(_configs.ContainsKey(config.Key), typeof(InvalidOperationException), $"Duplicate configuration key entry on '{config.Key}'");
+                
                 _configs.Add(config.Key, config);
             }
         }

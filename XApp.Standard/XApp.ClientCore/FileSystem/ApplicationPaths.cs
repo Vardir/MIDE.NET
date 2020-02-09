@@ -8,6 +8,7 @@ using Vardirsoft.Shared.Helpers;
 
 using Vardirsoft.XApp.IoC;
 using Vardirsoft.XApp.API;
+using Vardirsoft.XApp.Helpers;
 using Vardirsoft.XApp.Logging;
 using Vardirsoft.XApp.Schemes.JSON;
 
@@ -66,11 +67,8 @@ namespace Vardirsoft.XApp.FileSystem
         /// <param name="value"></param>
         public void AddOrUpdate(string pathId, string value)
         {
-            if (string.IsNullOrEmpty(pathId))
-                throw new ArgumentException("Path Key can not be null or empty", nameof(pathId));
-
-            if (string.IsNullOrEmpty(value))
-                throw new ArgumentException("Path Value can not be null or empty", nameof(value));
+            Guard.EnsureNonEmpty(pathId, typeof(ArgumentException), "Path Key can not be null or empty");
+            Guard.EnsureNonEmpty(value, typeof(ArgumentException), "Path Value can not be null or empty");
 
             if (_paths.ContainsKey(pathId))
             {

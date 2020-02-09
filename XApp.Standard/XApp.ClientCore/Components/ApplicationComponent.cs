@@ -9,6 +9,7 @@ using Vardirsoft.Shared.Helpers;
 using Vardirsoft.XApp.API;
 using Vardirsoft.XApp.Application;
 using Vardirsoft.XApp.Application.Events;
+using Vardirsoft.XApp.Helpers;
 using Vardirsoft.XApp.IoC;
 
 namespace Vardirsoft.XApp.Components
@@ -45,18 +46,11 @@ namespace Vardirsoft.XApp.Components
 
         public ApplicationComponent(string id)
         {
-            if (string.IsNullOrWhiteSpace(id))
-                throw new ArgumentException("The ID must not be empty");
+            Guard.EnsureNonEmpty(id, typeof(ArgumentException), "The ID must not be empty");
+            Guard.Ensure(Regex.IsMatch(id, ID_PATTERN), typeof(FormatException), $"The ID '{id}' has invalid format");
 
-            if (Regex.IsMatch(id, ID_PATTERN))
-            {
-                Id = id;
-                Kernel = AppKernel.Instance;
-            }
-            else
-            {
-                throw new FormatException($"The ID '{id}' has invalid format");
-            }
+            Id = id;
+            Kernel = AppKernel.Instance;
         }
 
         /// <summary>
