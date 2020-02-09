@@ -2,9 +2,9 @@
 
 namespace Vardirsoft.XApp.Components
 {
-    public class DialogButton : LayoutComponent
+    public class DialogButton : ApplicationComponent
     {
-        private BaseDialogBox parentBox;
+        private readonly BaseDialogBox _parentBox;
 
         public DialogResult DialogResult { get; }
 
@@ -12,10 +12,11 @@ namespace Vardirsoft.XApp.Components
 
         public DialogButton(string id, BaseDialogBox box, DialogResult dialogResult) : base(id)
         {
-            parentBox = box;
+            _parentBox = box;
             DialogResult = dialogResult;
             PressCommand = new RelayCommand(OnPress);
         }
+        
         public DialogButton(BaseDialogBox box, DialogResult dialogResult) 
             : this(ToSafeId(dialogResult.ToString()), box, dialogResult)
         {
@@ -24,17 +25,17 @@ namespace Vardirsoft.XApp.Components
 
         public void Press() => PressCommand.Execute(null);
 
-        protected override LayoutComponent CloneInternal(string id)
+        protected override ApplicationComponent CloneInternal(string id)
         {
-            var clone = new DialogButton(parentBox, DialogResult);
+            var clone = new DialogButton(_parentBox, DialogResult);
             
             return clone;
         }
 
         private void OnPress()
         {
-            parentBox.SelectedResult = DialogResult;
-            parentBox.ValidateAndAccept();
+            _parentBox.SelectedResult = DialogResult;
+            _parentBox.ValidateAndAccept();
         }
     }
 }

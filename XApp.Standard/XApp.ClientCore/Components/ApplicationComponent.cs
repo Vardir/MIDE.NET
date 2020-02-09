@@ -17,7 +17,7 @@ namespace Vardirsoft.XApp.Components
     /// The base class that should be implemented for all elements
     /// that are required to be identified and considered as the application components.
     /// </summary>
-    public abstract class ApplicationComponent : BaseViewModel, IEventListener
+    public abstract class ApplicationComponent : BaseViewModel, ICloneable<ApplicationComponent>, IEventListener
     {
         private static readonly TextInfo TextInfo = new CultureInfo("en-US", false).TextInfo;
 
@@ -83,6 +83,18 @@ namespace Vardirsoft.XApp.Components
         
         [DebuggerStepThrough]
         public override string ToString() => GetSpec();
+
+        [DebuggerStepThrough]
+        public ApplicationComponent Clone() => Clone(Id);
+        
+        public ApplicationComponent Clone(string id)
+        {
+            var clone = CloneInternal(id);
+
+            return clone;
+        }
+        
+        protected abstract ApplicationComponent CloneInternal(string id);
 
         /// <summary>
         /// Transforms the given string to valid ID

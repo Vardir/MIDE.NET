@@ -9,7 +9,7 @@ using Vardirsoft.XApp.API;
 
 namespace Vardirsoft.XApp.Components
 {
-    public abstract class MenuItem : LayoutComponent, IOrderable
+    public abstract class MenuItem : ApplicationComponent, IOrderable
     {
         /// <summary>
         /// Minimum ordinal index for menu item, specify for the item that always should be the first one
@@ -22,8 +22,10 @@ namespace Vardirsoft.XApp.Components
         public const short MAX_ORDINAL = 99;
         public const string DEFAULT_GROUP = "default";
 
-        private string caption;
-        private List<MenuGroup> menuGroups;
+        private string _caption;
+        private readonly List<MenuGroup> _menuGroups;
+
+        #region Properties
 
         public int ChildCount { get; private set; }
 
@@ -33,8 +35,8 @@ namespace Vardirsoft.XApp.Components
         public int OrdinalIndex { get; }
         public string Caption
         {
-            get => caption;
-            set => SetLocalizedAndNotify(value, ref caption);
+            get => _caption;
+            set => SetLocalizedAndNotify(value, ref _caption);
         }
 
         /// <summary>
@@ -59,14 +61,14 @@ namespace Vardirsoft.XApp.Components
         {
             get
             {
-                for (var i = 0; i < menuGroups.Count; i++)
+                for (var i = 0; i < _menuGroups.Count; i++)
                 {
-                    foreach (var item in menuGroups[i].Items)
+                    foreach (var item in _menuGroups[i].Items)
                     {
                         yield return item;
                     }
 
-                    if (menuGroups[i].Items.Count > 0 && i < menuGroups.Count - 1 && menuGroups[i + 1].Items.Count > 0)
+                    if (_menuGroups[i].Items.Count > 0 && i < _menuGroups.Count - 1 && _menuGroups[i + 1].Items.Count > 0)
                     {
                         yield return new MenuSplitter("splitter", 0);
                     }
@@ -78,9 +80,9 @@ namespace Vardirsoft.XApp.Components
         {
             get
             {
-                for (var i = 0; i < menuGroups.Count; i++)
+                foreach (var group in _menuGroups)
                 {
-                    foreach (var item in menuGroups[i].Items)
+                    foreach (var item in group.Items)
                     {
                         if (item.Id == id)
                             return item;
@@ -91,19 +93,26 @@ namespace Vardirsoft.XApp.Components
             }
         }
 
+        #endregion // Properties
+
+        #region Constructors
+
         public MenuItem(string id, int ordinalIndex) : base(id)
         {
             Caption = $"({id})";
             OrdinalIndex = ordinalIndex.Clamp(MIN_ORDINAL, MAX_ORDINAL);
-            menuGroups = new List<MenuGroup>(1)
+            _menuGroups = new List<MenuGroup>(1)
             {
                 new MenuGroup(DEFAULT_GROUP, -99)
             };
         }
+        
         public MenuItem(string id, string group, int ordinalIndex) : this(id, ordinalIndex)
         {
             Group = group;
         }
+
+        #endregion // Constructors
 
         /// <summary>
         /// Makes copy of items from source and adds them to destination
@@ -111,18 +120,22 @@ namespace Vardirsoft.XApp.Components
         /// <param name="source"></param>
         public void MergeWith(MenuItem source)
         {
-            for (var i = 0; i < source.menuGroups.Count; i++)
+            for (var i = 0; i < source._menuGroups.Count; i++)
             {
-                var group = source.menuGroups[i];
-                var innerGroup = menuGroups.Find(mg => mg.Id == group.Id);
+                var group = source._menuGroups[i];
+                var innerGroup = _menuGroups.Find(mg => mg.Id == group.Id);
 
                 if (innerGroup is null)
+                {
                     AddGroup(group.Id, group.OrdinalIndex);
+                }
 
                 foreach (var item in group.Items)
                 {
                     if (innerGroup is null || !innerGroup.Items.Contains(mi => mi.Id == item.Id))
+                    {
                         Add(item.Clone() as MenuItem, null);
+                    }
                 }
             }
         }
@@ -136,16 +149,18 @@ namespace Vardirsoft.XApp.Components
         public void Add(MenuItem item, string parentId, bool searchRecursively = false)
         {
             if (item.Group is null)
+            {
                 item.Group = DEFAULT_GROUP;
+            }
 
             MenuGroup group;
             if (parentId is null)
             {
-                group = menuGroups.Find(g => g.Id == item.Group);
+                group = _menuGroups.Find(g => g.Id == item.Group);
                 if (group is null)
                 {
                     item.Group = DEFAULT_GROUP;
-                    group = menuGroups[0];
+                    group = _menuGroups[0];
                 }
 
                 group.Items.Insert(item);
@@ -154,7 +169,7 @@ namespace Vardirsoft.XApp.Components
                 return;
             }
 
-            group = menuGroups.Find(mg => mg.Id == parentId);
+            group = _menuGroups.Find(mg => mg.Id == parentId);
             if (group.HasValue())
             {
                 item.Group = parentId;
@@ -171,22 +186,18 @@ namespace Vardirsoft.XApp.Components
             parent.Add(item, null);
         }
 
-        /// <summary>
-        /// Creates a menu group
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="ordinalIndex"></param>
         public void AddGroup(string id, int ordinalIndex)
         {
             var group = new MenuGroup(id, ordinalIndex);
-            menuGroups.Insert(group);
+            _menuGroups.Insert(group);
         }
+        
         public void RemoveItem(string id)
         {
             var item = this[id];
             if (item.HasValue())
             {
-                var group = menuGroups.Find(g => g.Id == item.Group);
+                var group = _menuGroups.Find(g => g.Id == item.Group);
                 if (group is null)
                     throw new InvalidOperationException("An item's group ID was changed");
 
@@ -194,6 +205,7 @@ namespace Vardirsoft.XApp.Components
                 group.Items.Remove(item);
             }
         }
+        
         /// <summary>
         /// Removes an existing menu group. If <paramref name="removeItems"/> parameter is false, moves all group's items to default group
         /// <para>If the given ID is <see cref="DEFAULT_GROUP"/>nothing changes</para>
@@ -205,11 +217,11 @@ namespace Vardirsoft.XApp.Components
             if (id == DEFAULT_GROUP)
                 return;
 
-            var index = menuGroups.IndexWith(mg => mg.Id == id);
+            var index = _menuGroups.IndexWith(mg => mg.Id == id);
             if (index == -1)
                 return;
 
-            var group = menuGroups[index];
+            var group = _menuGroups[index];
             if (removeItems)
             {
                 ChildCount -= group.Items.Count;
@@ -219,14 +231,15 @@ namespace Vardirsoft.XApp.Components
                 foreach (var item in group.Items)
                 {
                     item.Group = DEFAULT_GROUP;
-                    menuGroups[0].Items.Insert(item);
+                    _menuGroups[0].Items.Insert(item);
                 }
             }
 
-            menuGroups.RemoveAt(index);
+            _menuGroups.RemoveAt(index);
         }
 
-        public bool ContainsGroup(string id) => menuGroups.Contains(mg => mg.Id == id);
+        public bool ContainsGroup(string id) => _menuGroups.Contains(mg => mg.Id == id);
+        
         public MenuItem Find(string id, bool searchRecursively = false)
         {
             foreach (var item in Children)
@@ -251,10 +264,10 @@ namespace Vardirsoft.XApp.Components
         /// <returns></returns>
         public (string, int)[] GetItemsOrdinals()
         {
-            var array = new (string, int)[menuGroups.Sum(g => g.Items.Count)];
-            for (int i = 0, k = 0; i < menuGroups.Count; i++)
+            var array = new (string, int)[_menuGroups.Sum(g => g.Items.Count)];
+            for (int i = 0, k = 0; i < _menuGroups.Count; i++)
             {
-                var items = menuGroups[i].Items;
+                var items = _menuGroups[i].Items;
                 for (var j = 0; j < items.Count; j++, k++)
                 {
                     array[k] = (items[j].Id, items[j].OrdinalIndex);
@@ -269,10 +282,10 @@ namespace Vardirsoft.XApp.Components
         /// </summary>
         public string[] GetAllItemsIDs()
         {
-            string[] array = new string[menuGroups.Sum(g => g.Items.Count)];
-            for (int i = 0, k = 0; i < menuGroups.Count; i++)
+            string[] array = new string[_menuGroups.Sum(g => g.Items.Count)];
+            for (int i = 0, k = 0; i < _menuGroups.Count; i++)
             {
-                var items = menuGroups[i].Items;
+                var items = _menuGroups[i].Items;
                 for (var j = 0; j < items.Count; j++, k++)
                 {
                     array[k] = items[j].Id;
@@ -282,18 +295,18 @@ namespace Vardirsoft.XApp.Components
             return array;
         }
 
-        protected override LayoutComponent CloneInternal(string id)
+        protected override ApplicationComponent CloneInternal(string id)
         {
             var clone = Create(id, OrdinalIndex, Group);
             clone.Group = Group;
-            clone.menuGroups.Clear();
-            clone.menuGroups.AddRange(menuGroups.Select(g => g.Clone()));
+            clone._menuGroups.Clear();
+            clone._menuGroups.AddRange(_menuGroups.Select(g => (MenuGroup)g.Clone()));
 
             return clone;
         }
         protected abstract MenuItem Create(string id, int ordinalIndex, string group);
 
-        protected class MenuGroup : ApplicationComponent, ICloneable<MenuGroup>, IOrderable
+        protected class MenuGroup : ApplicationComponent, IOrderable
         {
             public const short MIN_ORDINAL = -8;
             public const short MAX_ORDINAL = 8;
@@ -307,14 +320,7 @@ namespace Vardirsoft.XApp.Components
                 Items = new List<MenuItem>();
             }
 
-            public MenuGroup Clone()
-            {
-                var clone = new MenuGroup(Id, OrdinalIndex);
-                clone.Items.AddRange(Items);
-
-                return clone;
-            }
-            public MenuGroup Clone(string id)
+            protected override ApplicationComponent CloneInternal(string id)
             {
                 var clone = new MenuGroup(id, OrdinalIndex);
                 clone.Items.AddRange(Items);

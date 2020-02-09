@@ -13,7 +13,6 @@ using Vardirsoft.Shared.Helpers;
 using Vardirsoft.XApp.API;
 using Vardirsoft.XApp.IoC;
 using Vardirsoft.XApp.Logging;
-using Vardirsoft.XApp.Components;
 using Vardirsoft.XApp.FileSystem;
 using Vardirsoft.XApp.Extensibility;
 using Vardirsoft.XApp.Application.Configuration;
@@ -23,7 +22,7 @@ namespace Vardirsoft.XApp.Application
     /// <summary>
     /// Application extension manager that helps installing, enabling/disabling and uninstalling extensions
     /// </summary>
-    public sealed class ExtensionsManager : ApplicationComponent, IDisposable
+    public sealed class ExtensionsManager : IDisposable
     {
         private bool _disposed;
         private JsonSerializerSettings _serializerSettings;
@@ -40,7 +39,7 @@ namespace Vardirsoft.XApp.Application
             [DebuggerStepThrough] get => _registered.Select(kvp => kvp.Value);
         }
 
-        public ExtensionsManager() : base("app-extension-manager")
+        public ExtensionsManager()
         {
             _serializerSettings = new JsonSerializerSettings { Error = OnSerializationError };
             _pendingRegister = new LinkedList<AppExtensionEntry>();
@@ -222,8 +221,8 @@ namespace Vardirsoft.XApp.Application
                     var isExtension = types[i].IsSubclassOf(typeof(AppExtension));
                     if (isExtension)
                     {
-                        var instance = Activator.CreateInstance(types[i], ToSafeId(entry.Id), entry.IsEnabled) as AppExtension;
-                        entry.Extension = instance;
+                        // var instance = Activator.CreateInstance(types[i], ToSafeId(entry.Id), entry.IsEnabled) as AppExtension;
+                        // entry.Extension = instance;
                     }
                 }
 
@@ -235,7 +234,7 @@ namespace Vardirsoft.XApp.Application
                     IoCContainer.Resolve<UIManager>().RegisterUIExtension(file);
 
                 file = fileManager.Combine(entry.Origin, "assets", "lang", $"{configurationManager["lang"]}.json");
-                Localization.LoadFrom(file);
+                //Localization.LoadFrom(file);
             }
             
             throw new DllNotFoundException("Extension does not have a kernel library");

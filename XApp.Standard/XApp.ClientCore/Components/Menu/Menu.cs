@@ -8,21 +8,21 @@ using Vardirsoft.Shared.Helpers;
 
 namespace Vardirsoft.XApp.Components
 {
-    public class Menu : LayoutComponent, IMenuConstructionContext
+    public class Menu : ApplicationComponent, IMenuConstructionContext
     {
-        private List<MenuItem> items;
+        private readonly List<MenuItem> _items;
 
         public const string PATH_PATTERN = "^(" + ID_PATTERN_INL + ")(?:/(" + ID_PATTERN_INL + "))*$";
 
-        public int ItemsCount { [DebuggerStepThrough] get => items.Count; }
+        public int ItemsCount { [DebuggerStepThrough] get => _items.Count; }
         
-        public IEnumerable<MenuItem> Items { [DebuggerStepThrough] get => items; }
+        public IEnumerable<MenuItem> Items { [DebuggerStepThrough] get => _items; }
 
-        public MenuItem this[string id] { [DebuggerStepThrough] get => items.FirstOrDefault(i => i.Id == id); }
+        public MenuItem this[string id] { [DebuggerStepThrough] get => _items.FirstOrDefault(i => i.Id == id); }
 
         public Menu(string id) : base(id)
         {
-            items = new List<MenuItem>();
+            _items = new List<MenuItem>();
         }
 
         /// <summary>
@@ -37,12 +37,13 @@ namespace Vardirsoft.XApp.Components
                 AddItem(copy);
             }
         }
+        
         public void AddItem(MenuItem item)
         {
             // if (IsSealed)
             //     throw new InvalidOperationException("Attempt to add item to sealed collection");
 
-            items.Insert(item);
+            _items.Insert(item);
         }
 
         /// <summary>
@@ -62,7 +63,7 @@ namespace Vardirsoft.XApp.Components
 
             if (path == "/")
             {
-                items.Insert(item);
+                _items.Insert(item);
             }
             else
             {
@@ -73,7 +74,7 @@ namespace Vardirsoft.XApp.Components
                     if (root is null)
                     {
                         root = new MenuButton(rootId, 0);
-                        items.Insert(item);
+                        _items.Insert(item);
                     }
 
                     var last = GetItem(root, tail, true);
@@ -115,7 +116,7 @@ namespace Vardirsoft.XApp.Components
             throw new FormatException("Path has invalid format");
         }
         
-        public bool Contains(string id) => items.FirstOrDefault(i => i.Id == id).HasValue();
+        public bool Contains(string id) => _items.FirstOrDefault(i => i.Id == id).HasValue();
 
         /// <summary>
         /// Searches recursively for the menu item with specified ID. Returns null if nothing found
@@ -124,9 +125,9 @@ namespace Vardirsoft.XApp.Components
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="FormatException"></exception>
-        public LayoutComponent Find(string id)
+        public ApplicationComponent Find(string id)
         {
-            foreach (var item in items)
+            foreach (var item in _items)
             {
                 if (item.Id == id)
                     return item;
@@ -152,7 +153,7 @@ namespace Vardirsoft.XApp.Components
                 throw new ArgumentException("The path can not be empty");
 
             if (path == "/")
-                return items.Select(mi => mi.Id);
+                return _items.Select(mi => mi.Id);
 
             if (Regex.IsMatch(path, PATH_PATTERN))
             {
@@ -182,7 +183,7 @@ namespace Vardirsoft.XApp.Components
                 throw new ArgumentException("The path can not be empty");
 
             if (path == "/")
-                return items.Select(mi => (mi.Id, mi.OrdinalIndex));
+                return _items.Select(mi => (mi.Id, mi.OrdinalIndex));
 
             if (Regex.IsMatch(path, PATH_PATTERN))
             {
@@ -209,34 +210,10 @@ namespace Vardirsoft.XApp.Components
             throw new FormatException("Path has invalid format");
         }
 
-        protected void AddChild_Impl(LayoutComponent component)
-        {
-            if (component is MenuItem item)
-            {
-                items.Insert(item);
-            }
-            else
-            {
-                throw new ArgumentException($"Expected [MenuItem] but got [{component.GetType()}]");
-            }
-        }
-        protected void RemoveChild_Impl(string id)
-        {
-            var index = items.IndexWith(i => i.Id == id);
-            if (index > -1)
-                items.RemoveAt(index);
-        }
-        protected void RemoveChild_Impl(LayoutComponent component)
-        {
-            var index = items.IndexWith(i => i == component);
-            if (index > -1)
-                items.RemoveAt(index);
-        }
-
-        protected override LayoutComponent CloneInternal(string id)
+        protected override ApplicationComponent CloneInternal(string id)
         {
             var clone = new Menu(id);
-            clone.items.AddRange(items.Select(item => item.Clone() as MenuItem));
+            clone._items.AddRange(_items.Select(item => item.Clone() as MenuItem));
 
             return clone;
         }
