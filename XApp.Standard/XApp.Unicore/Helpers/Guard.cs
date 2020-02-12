@@ -100,6 +100,12 @@ namespace Vardirsoft.XApp.Helpers
                 throw GenerateException(exceptionType, typeof(NullReferenceException), failureMessage);
         }
 
+        public static void ArgumentNotNull<T>(T obj, string argumentName)
+        {
+            if (obj is null)
+                throw new ArgumentNullException(argumentName);
+        }
+
         public static void EnsureCanUpCast(Type type, Type baseType, string failureMessage = null)
         {
             EnsureNotNull(type);

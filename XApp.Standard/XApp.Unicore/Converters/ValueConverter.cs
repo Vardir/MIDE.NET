@@ -13,22 +13,22 @@ namespace Vardirsoft.XApp.Converters
 
         public ValueConverter(Func<T, Y> convert)
         {
-            Guard.EnsureNotNull(convert, typeof(ArgumentNullException));
+            Guard.ArgumentNotNull(convert, nameof(convert));
             
             _convertBack = null;
             _convert = convert;
         }
         public ValueConverter(Func<Y, T> convertBack)
         {
-            Guard.EnsureNotNull(convertBack, typeof(ArgumentNullException));
+            Guard.ArgumentNotNull(convertBack, nameof(convertBack));
             
             _convert = null;
             _convertBack = convertBack;
         }
         public ValueConverter(Func<T, Y> convert, Func<Y, T> convertBack)
         {
-            Guard.EnsureNotNull(convert, typeof(ArgumentNullException));
-            Guard.EnsureNotNull(convertBack, typeof(ArgumentNullException));
+            Guard.ArgumentNotNull(convert, nameof(convertBack));
+            Guard.ArgumentNotNull(convertBack, nameof(convertBack));
             
             _convert = convert;
             _convertBack = convertBack;
